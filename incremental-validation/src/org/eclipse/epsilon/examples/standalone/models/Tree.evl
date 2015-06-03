@@ -1,0 +1,9 @@
+context Tree {
+
+	constraint hasLabel {
+		check : self.children.forAll(t : Tree | 
+			not t.labelContainer.label.isUndefined()
+		)
+	}
+
+}

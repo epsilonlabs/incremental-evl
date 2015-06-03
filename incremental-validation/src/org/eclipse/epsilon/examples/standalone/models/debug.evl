@@ -1,0 +1,5 @@
+context Outer {
+	constraint hasLabel {
+		check : not self.innerRef.innerLabel.isUndefined()
+	}
+}

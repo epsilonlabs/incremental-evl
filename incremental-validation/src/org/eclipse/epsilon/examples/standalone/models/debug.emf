@@ -1,0 +1,14 @@
+package IncDebug;
+
+class Container {
+	val Outer[*] outers;
+}
+
+class Outer {
+	attr String outerLabel;
+	val Inner innerRef;
+}
+
+class Inner {
+	attr String innerLabel;
+}

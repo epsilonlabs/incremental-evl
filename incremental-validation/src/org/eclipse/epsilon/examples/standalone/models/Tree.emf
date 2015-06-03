@@ -1,0 +1,12 @@
+@namespace(uri="TreeDsl", prefix="TreeDsl")
+package TreeDsl;
+
+class Tree {
+	val Tree[*]#parent children;
+	ref Tree#children parent;
+	val LabelContainer labelContainer;
+}
+
+class LabelContainer {
+	attr String label;
+}
