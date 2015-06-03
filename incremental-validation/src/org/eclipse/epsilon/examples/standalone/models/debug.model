@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ASCII"?>
+<IncDebug:Foo xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:IncDebug="IncDebug" xmi:id="_cF2YYAmUEeW5PIp2Ma-77w">
+  <strs>a</strs>
+  <strs>b</strs>
+  <strs>c</strs>
+  <strs>d</strs>
+  <strs>e</strs>
+</IncDebug:Foo>
