@@ -5,5 +5,10 @@ context Tree {
 			not t.labelContainer.label.isUndefined()
 		)
 	}
+}
 
+context LabelContainer {
+		constraint hasLabel {
+		check : not self.label.isUndefined()
+	}
 }
