@@ -10,10 +10,10 @@ import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 
 public class IncEvlModule extends EvlModule {
 	
+	private Collection<RuleInstance> ruleInstances = new HashSet<RuleInstance>();
+	
 	/**
 	 * Main execution method
-	 * 
-	 * FIXME: Currently prints trace
 	 */
 	@Override
 	public Object execute() throws EolRuntimeException {
@@ -27,20 +27,13 @@ public class IncEvlModule extends EvlModule {
 		// Execute pre-conditions
 		execute(getPre(), context);
 
-		// Check all constraints
-		Collection<RuleInstance> ruleInstances = new HashSet<RuleInstance>();
-		
+		// Check all constraints and log the trace
 		for (ConstraintContext conCtx : getConstraintContexts()) {
 			TraceConstraintContext incConCtx = new TraceConstraintContext(conCtx);
 			incConCtx.checkAll(context);
 			ruleInstances.addAll(incConCtx.getRuleInstances());
 		}
 	
-		for (RuleInstance ruleInstance : ruleInstances) {
-			System.out.println(ruleInstance);
-		}
-		
-
 		// Execute fixers
 		if (fixer != null)
 			fixer.fix(this);
@@ -49,6 +42,10 @@ public class IncEvlModule extends EvlModule {
 		execute(getPost(), context);
 
 		return null;
+	}
+
+	public Collection<RuleInstance> getRuleInstances() {
+		return ruleInstances;
 	}
 
 }

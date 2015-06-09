@@ -75,7 +75,7 @@ public class TraceConstraintContext extends ConstraintContext {
 						// FIXME: Move to own method
 						// Build RuleInstance
 						this.ruleInstances.add(
-								new RuleInstance(constraint.getName(), 
+								new RuleInstance(this.getName() + "." + constraint.getName(), 
 										context.getModelRepository().getOwningModel(object).getElementId(object), 
 										listener.getScopes()));
 						
