@@ -3,10 +3,8 @@ package org.eclipse.epsilon.evl.notifications;
 import java.util.Collection;
 
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.RuleInstance;
