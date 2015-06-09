@@ -3,3 +3,6 @@
 
 # Built binaries
 bin/
+
+# Ignore Scratch files
+scratch/
