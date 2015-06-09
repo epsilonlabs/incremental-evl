@@ -19,31 +19,23 @@ import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
  */
 public class ScopeBuilderListener implements IExecutionListener {
 
-	private Collection<String> scopes = new HashSet<String>();
+	private Collection<Scope> scopes = new HashSet<Scope>();
 	
-	private Object lastResult = null;
+	// The last model element accessed
+	private Object lastElement = null;
 
 	@Override
-	public void finishedExecuting(AST ast, Object result, IEolContext ctx) {		
-		// Log the name of the property if a call is made
+	public void finishedExecuting(AST ast, Object result, IEolContext ctx) {
+		// Log the name of the property accessed in the model element
 		if (ast instanceof PropertyCallExpression) {
-			scopes.add(getElementId(lastResult, ctx)
-					+ "."
-					+ ((PropertyCallExpression) ast).getPropertyNameExpression().getName());
+			String id = getElementId(lastElement, ctx);
+			String prop = ((PropertyCallExpression) ast)
+					.getPropertyNameExpression().getName();
+			scopes.add(new Scope(id, prop));
 		}
-		
-		this.lastResult = result;
-	
-		// FIXME: Is this needed still? Property access logging IDS only
-//		if (result instanceof EObject) {
-//		scopes.add(getElementId(result, ctx));
-//	} else if (result instanceof EcoreEList) {
-//		for (Object o : ((Collection<?>) result)) {
-//			scopes.add(getElementId(o, ctx));
-//		}
-//	} else {
-//		scopes.add(((PropertyCallExpression) ast).getPropertyNameExpression().getName());
-//	}
+
+		// Store the last model element accessed
+		this.lastElement = result;
 	}
 
 	@Override
@@ -57,10 +49,17 @@ public class ScopeBuilderListener implements IExecutionListener {
 		// Do nothing
 	}
 	
-	public Collection<String> getScopes() {
+	public Collection<Scope> getScopes() {
 		return scopes;
 	}
 
+	/**
+	 * Utility method to get an element ID
+	 * 
+	 * @param o
+	 * @param ctx
+	 * @return
+	 */
 	private String getElementId(Object o, IEolContext ctx) {
 		if (o instanceof EObject) {
 			String elementId = ctx.getModelRepository().getOwningModel(o).getElementId(o);

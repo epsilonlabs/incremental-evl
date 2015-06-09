@@ -3,7 +3,6 @@ package org.eclipse.epsilon.evl;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Wrapper for properties that make up a Rule Instance.
@@ -12,7 +11,7 @@ import java.util.List;
  * <ul>
  * <li>Rule - the name of the rule/constraint</li>
  * <li>Root Element ID - the ID of the root element that the rule applies to</li>
- * <li>Scopes - list of IDs and fields that affect this rule instance</li>
+ * <li>Scopes - Collection of Scope objects</li>
  * </ul>
  * 
  * @author Jonathan Co
@@ -22,17 +21,15 @@ public class RuleInstance {
 
 	private String rule;
 	private String rootElementId;
-	private Collection<String> scopes;
+	private Collection<Scope> scopes;
 	
-	public RuleInstance(String rule, String rootElementId, Collection<String> scopes) {
+	public RuleInstance(String rule, String rootElementId, Collection<Scope> scopes) {
 		this.rule = rule;
 		this.rootElementId = rootElementId;
 		
-		// TODO: Is this necessary?
 		// Create safe copy
-		this.scopes = new HashSet<String>();
+		this.scopes = new HashSet<Scope>();
 		this.scopes.addAll(scopes);
-		this.scopes.add(rootElementId);
 	}
 
 	public String getRule() {
@@ -51,12 +48,14 @@ public class RuleInstance {
 		this.rootElementId = rootElement;
 	}
 
-	public Collection<String> getScopes() {
+	public Collection<Scope> getScopes() {
 		return scopes;
 	}
 
-	public void setScopes(List<String> scopes) {
-		this.scopes = scopes;
+	public void setScopes(Collection<Scope> scopes) {
+		// Create safe copy
+		this.scopes = new HashSet<Scope>();
+		this.scopes.addAll(scopes);
 	}
 
 	public boolean isComplete() {
@@ -70,10 +69,15 @@ public class RuleInstance {
 		.append("\", \"root\": \"").append(rootElementId)
 		.append("\", \"scopes\": [ ");
 		
-		Iterator<String> it = scopes.iterator();
+		Iterator<Scope> it = scopes.iterator();
+		Scope scope = null;
 		while(it.hasNext()) {
-			String s = it.next();
-			sb.append("\"").append(s).append("\"");
+			scope = it.next();
+			sb.append("\"")
+				.append(scope.getElementId())
+				.append(".")
+				.append(scope.getPropertyName())
+				.append("\"");
 			if (it.hasNext()) sb.append(", ");
 		}
 		sb.append(" ] }");
