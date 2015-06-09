@@ -1,20 +1,12 @@
 package org.eclipse.epsilon.examples.standalone.evl;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EFactory;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage.Registry;
 import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.eol.IEolExecutableModule;
-import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.IncEvlModule;
-import org.eclipse.epsilon.evl.RuleInstance;
 import org.eclipse.epsilon.evl.notifications.ReEvaluateListener;
 import org.eclipse.epsilon.examples.standalone.EpsilonStandaloneExample;
 
@@ -72,6 +64,13 @@ public class IncEvlStandaloneExample extends EpsilonStandaloneExample {
 		new IncEvlStandaloneExample(metamodel, model, evl).execute();
 	}
 	
+	/**
+	 * Default constructor
+	 * 
+	 * @param metamodel
+	 * @param model
+	 * @param evl
+	 */
 	public IncEvlStandaloneExample(String metamodel, String model, String evl) {
 		this.metamodel = metamodel;
 		this.model = model;
@@ -91,9 +90,9 @@ public class IncEvlStandaloneExample extends EpsilonStandaloneExample {
 		}
 	}
 
-	// FIXME: for testing
 	@Override
 	public void postProcess() {
+		// FIXME: for testing
 		super.postProcess();
 	}
 
@@ -120,7 +119,5 @@ public class IncEvlStandaloneExample extends EpsilonStandaloneExample {
 		models.add(emfModel);
 		return models;
 	}
-	
-
 	
 }
