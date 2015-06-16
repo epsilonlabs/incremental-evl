@@ -4,11 +4,19 @@
 	<classpathentry exported="true" kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/blueprints-core-2.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/orientdb-core-2.0.10.jar"/>
-	<classpathentry kind="lib" path="lib/orientdb-graphdb-2.0.10.jar"/>
 	<classpathentry kind="lib" path="lib/commons-configuration-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/frames-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/gremlin-java-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/pipes-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/orientdb-core-2.0.10.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/incremental-validation/lib/orientdb-core-2.0.10-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/orientdb-graphdb-2.0.10.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/incremental-validation/lib/orientdb-graphdb-2.0.10-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
