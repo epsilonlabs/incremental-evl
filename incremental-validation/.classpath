@@ -6,5 +6,9 @@
 	<classpathentry kind="lib" path="lib/blueprints-core-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb-core-2.0.10.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb-graphdb-2.0.10.jar"/>
+	<classpathentry kind="lib" path="lib/commons-configuration-1.6.jar"/>
+	<classpathentry kind="lib" path="lib/frames-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/gremlin-java-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/pipes-2.6.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
