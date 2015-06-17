@@ -2,7 +2,6 @@ package org.eclipse.epsilon.evl;
 
 import java.io.File;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,6 +23,13 @@ import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.dom.Constraints;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
+import org.eclipse.epsilon.evl.trace.TConstraint;
+import org.eclipse.epsilon.evl.trace.TElement;
+import org.eclipse.epsilon.evl.trace.TProperty;
+import org.eclipse.epsilon.evl.trace.TScope;
+import org.eclipse.epsilon.evl.trace.TraceGraph;
+
+import com.tinkerpop.blueprints.Graph;
 
 /**
  * Decorator class for {@link ConstraintContext} for use in incremental
@@ -36,49 +42,42 @@ import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 public class TraceConstraintContext extends ConstraintContext {
 
 	private final ConstraintContext ctx;
-	private final Collection<RuleInstance> ruleInstances = new ArrayList<RuleInstance>();
+	private final TraceGraph<? extends Graph> traceGraph;
 
-	public TraceConstraintContext(ConstraintContext ctx) {
+	public TraceConstraintContext(ConstraintContext ctx,
+			TraceGraph<? extends Graph> traceGraph) {
 		this.ctx = ctx;
+		this.traceGraph = traceGraph;
 	}
-	
-	public Collection<RuleInstance> getRuleInstances() {
-		return this.ruleInstances;
-	}
-	
+
 	@Override
 	public void checkAll(IEvlContext context) throws EolRuntimeException {
 		// Get all the elements that are of the required kind
 
-		Collection allOfKind = getAllOfSourceKind(context);
-		Iterator it = allOfKind.iterator();
+		Collection<?> allOfKind = getAllOfSourceKind(context);
+		Iterator<?> it = allOfKind.iterator();
 
 		// Iterator over each object of kind
 		while (it.hasNext()) {
 			Object object = it.next();
 
 			// If constraint context applies to object then perform the
-			// constraint checkE
+			// constraint check
 			if (appliesTo(object, context)) {
 				Iterator cit = getConstraints().values().iterator();
 				while (cit.hasNext()) {
 					Constraint constraint = (Constraint) cit.next();
-					if (!constraint.isLazy(context)
-							&& constraint.appliesTo(object, context)) {
-											
+
+					if (!constraint.isLazy(context) && constraint.appliesTo(object, context)) {
 						// Set a listener to trace property accesses
-						ScopeBuilderListener listener = new ScopeBuilderListener();
+						ConstraintCheckListener listener = new ConstraintCheckListener();
 						context.getExecutorFactory().addExecutionListener(listener);
+
 						// Perform actual checks
 						constraint.check(object, context);
 						
-						// FIXME: Move to own method
-						// Build RuleInstance
-						this.ruleInstances.add(
-								new RuleInstance(this.getName() + "." + constraint.getName(), 
-										context.getModelRepository().getOwningModel(object).getElementId(object), 
-										listener.getScopes()));
-						
+						addToTrace(context, constraint, object, listener.getScopes());
+
 						// Clean-up the listener
 						context.getExecutorFactory().removeExecutionListener(listener);
 					}
@@ -86,6 +85,29 @@ public class TraceConstraintContext extends ConstraintContext {
 
 			}
 		}
+	}
+
+	private void addToTrace(IEvlContext ctx, 
+			Constraint constraint, 
+			Object modelElement,
+			Collection<Scope> scopes) {
+
+		final TConstraint tConstraint = this.traceGraph.getConstraint(this
+				.getName() + "." + constraint.getName());
+		final TElement tElement = this.traceGraph.getElement(ctx
+				.getModelRepository().getOwningModel(modelElement)
+				.getElementId(modelElement));
+		final TScope tScope = this.traceGraph.getScope(tConstraint, tElement);
+		
+		for (Scope s : scopes) {
+			final TElement element = 
+					this.traceGraph.getElement(s.getElementId());
+			final TProperty property = 
+					this.traceGraph.getProperty(s.getPropertyName(), element);
+			
+			tScope.addProperty(property);
+		}
+		
 	}
 
 	public void addChild(Tree arg0) {
