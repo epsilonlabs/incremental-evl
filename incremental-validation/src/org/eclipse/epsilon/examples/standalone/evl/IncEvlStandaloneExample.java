@@ -3,11 +3,16 @@ package org.eclipse.epsilon.examples.standalone.evl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.eol.IEolExecutableModule;
 import org.eclipse.epsilon.eol.models.IModel;
+import org.eclipse.epsilon.eol.types.EolModelElementType;
 import org.eclipse.epsilon.evl.IncEvlModule;
-import org.eclipse.epsilon.evl.notifications.ReEvaluateListener;
+import org.eclipse.epsilon.evl.trace.TConstraint;
+import org.eclipse.epsilon.evl.trace.TElement;
+import org.eclipse.epsilon.evl.trace.TProperty;
 import org.eclipse.epsilon.examples.standalone.EpsilonStandaloneExample;
 
 /**
@@ -34,10 +39,6 @@ public class IncEvlStandaloneExample extends EpsilonStandaloneExample {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		for (String s : args) {
-			System.out.println(s);
-		}
-		 
 		String metamodel = null;
 		String model = null;
 		String evl = null;
@@ -60,8 +61,14 @@ public class IncEvlStandaloneExample extends EpsilonStandaloneExample {
 		if (metamodel == null || model == null || evl == null) {
 			throw new IllegalArgumentException("All arguments must have a value");
 		}
+		
+		System.out.println("METAMODEL :: " + metamodel);
+		System.out.println("MODEL :: " + model);
+		System.out.println("EVL :: " + evl);
 
 		new IncEvlStandaloneExample(metamodel, model, evl).execute();
+		
+		System.out.println("FINISHED");
 	}
 	
 	/**
@@ -80,19 +87,37 @@ public class IncEvlStandaloneExample extends EpsilonStandaloneExample {
 	@Override
 	public void preProcess() {
 		super.preProcess();
-		for (IModel model : module.getContext().getModelRepository().getModels()) {
-			if (model instanceof EmfModel) {
-				((EmfModel) model)
-				.getResource()
-				.eAdapters()
-				.add(new ReEvaluateListener(((IncEvlModule) module).getRuleInstances(), model));
-			}
-		}
 	}
 
 	@Override
 	public void postProcess() {
-		// FIXME: for testing
+
+		final IncEvlModule mod = (IncEvlModule) this.module;
+		
+		// get the property to change
+		Iterable<TProperty> allProps = mod.getTraceGraph().getAllProperties();
+		TProperty property = allProps.iterator().next();
+		String elementId = property.getOwner().getElementId();
+		String propName = property.getName();
+		
+		EObject eobj = null;
+		
+		for (IModel model : mod.getContext().getModelRepository().getModels()) {
+			Object o = model.getElementById(elementId);
+			if (o instanceof EObject) {
+				eobj = (EObject) o;
+				break;
+			}
+		}
+	
+		for (EAttribute eAttribute : eobj.eClass().getEAttributes()) {
+			if (eAttribute.getName().equals(propName)) {
+				eobj.eSet(eAttribute, "new");
+			}
+		}
+		
+		// Change a feature
+		
 		super.postProcess();
 	}
 
