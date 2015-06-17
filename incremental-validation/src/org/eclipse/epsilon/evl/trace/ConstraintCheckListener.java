@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.evl;
+package org.eclipse.epsilon.evl.trace;
 
 import java.util.Collection;
 import java.util.HashSet;

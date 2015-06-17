@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.evl;
+package org.eclipse.epsilon.evl.trace;
 
 /**
  * POJO to hold a Scope.

@@ -5,6 +5,7 @@ import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.trace.OrientTraceGraphFactory;
+import org.eclipse.epsilon.evl.trace.TraceConstraintContext;
 import org.eclipse.epsilon.evl.trace.TraceGraph;
 import org.eclipse.epsilon.evl.trace.TraceGraphFactory;
 

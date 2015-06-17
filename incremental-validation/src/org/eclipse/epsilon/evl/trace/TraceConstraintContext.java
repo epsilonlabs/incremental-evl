@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.evl;
+package org.eclipse.epsilon.evl.trace;
 
 import java.io.File;
 import java.net.URI;
@@ -23,11 +23,6 @@ import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.dom.Constraints;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
-import org.eclipse.epsilon.evl.trace.TConstraint;
-import org.eclipse.epsilon.evl.trace.TElement;
-import org.eclipse.epsilon.evl.trace.TProperty;
-import org.eclipse.epsilon.evl.trace.TScope;
-import org.eclipse.epsilon.evl.trace.TraceGraph;
 
 import com.tinkerpop.blueprints.Graph;
 
