@@ -4,8 +4,10 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EContentAdapter;
+import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.IncEvlModule;
+import org.eclipse.epsilon.evl.dom.Constraint;
 
 public class ChangeListener extends EContentAdapter {
 
@@ -26,16 +28,31 @@ public class ChangeListener extends EContentAdapter {
 		if (notification.getNotifier() instanceof EObject 
 				&& notification.getFeature() instanceof ENamedElement) {
 			
+			// Get the property that was changed
 			TraceGraph<?> trace = module.getTraceGraph();
-			TElement element = 
-					trace.getElement(model.getElementId(notification.getNotifier()));
-			String propertyName = 
-					((ENamedElement) notification.getFeature()).getName();
+			TProperty property = trace.getProperty(
+					((ENamedElement) notification.getFeature()).getName(), 
+					trace.getElement(model.getElementId(notification.getNotifier())));
 			
-			TProperty property = trace.getProperty(propertyName, element);
-			
-			for (TScope tScope : property.getScopes()) {
-				System.out.println(tScope.getRootElement().getElementId());
+			// Retrieve the scopes and re-run the constraints
+			// FIXME: add context properly
+			for (TScope scope : property.getScopes()) {
+				String constraintName = scope.getConstraint().getName();
+				
+				Object target = model.getElementById(scope.getRootElement().getElementId());
+				
+				try {
+					Constraint constraint = this.module.getConstraints().getConstraint(
+							constraintName.split("\\.")[1], target,
+							this.module.getContext());
+					
+					if (constraint.getConstraintContext().getName()
+							.equals(constraintName.split("\\.")[0]))
+					constraint.check(target, this.module.getContext());
+					
+				} catch (EolRuntimeException e) {
+					e.printStackTrace();
+				}
 			}
 
 		}
