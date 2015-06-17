@@ -110,9 +110,10 @@ public class IncEvlStandaloneExample extends EpsilonStandaloneExample {
 			}
 		}
 	
+		System.out.println("Changing " + propName + "." + elementId);
 		for (EAttribute eAttribute : eobj.eClass().getEAttributes()) {
 			if (eAttribute.getName().equals(propName)) {
-				eobj.eSet(eAttribute, "new");
+				eobj.eSet(eAttribute, Long.toString(System.currentTimeMillis()));
 			}
 		}
 		
