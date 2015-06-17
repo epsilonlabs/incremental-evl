@@ -36,6 +36,7 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 		final TConstraint constraint = this.addVertex(TConstraint.TRACE_TYPE,
 				TConstraint.class);
 		constraint.setName(name);
+		this.baseGraph.commit();
 		return constraint;
 	}
 
@@ -51,6 +52,7 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 		final TScope scope = this.addVertex(TScope.TRACE_TYPE, TScope.class);
 		scope.setConstraint(constraint);
 		scope.setRootElement(element);
+		this.baseGraph.commit();
 		return scope;
 	}
 
@@ -71,6 +73,7 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 		// Element does not exist, create and return
 		TElement element = this.addVertex(TElement.TRACE_TYPE, TElement.class);
 		element.setElementId(elementId);
+		this.baseGraph.commit();
 		return element;
 	}
 
@@ -95,6 +98,7 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 				TProperty.class);
 		property.setOwner(owner);
 		property.setName(name);
+		this.baseGraph.commit();
 		return property;
 	}
 
