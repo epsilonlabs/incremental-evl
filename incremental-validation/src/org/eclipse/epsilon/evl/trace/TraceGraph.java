@@ -76,7 +76,7 @@ public interface TraceGraph<T extends Graph> extends WrapperGraph<T> {
 	/**
 	 * @return All the properties in the trace graph.
 	 */
-	Iterable<TProperty> getProperties();
+	Iterable<TProperty> getAllProperties();
 
 	/**
 	 * @return {@code true} if the underlying database used in the trace graph
