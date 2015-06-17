@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.tinkerpop.blueprints.GraphFactory;
-import com.tinkerpop.blueprints.Parameter;
-import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 
 /**
@@ -36,6 +34,8 @@ public class OrientTraceGraphFactory implements TraceGraphFactory<OrientGraph> {
 		this.config.put("blueprints.orientdb.url", url);
 		this.config.put("blueprints.orientdb.username", user);
 		this.config.put("blueprints.orientdb.password", pass);
+		this.config.put("log.console.level", "fine");
+		this.config.put("log.file.level", "fine");
 	}
 
 	@Override
@@ -58,28 +58,42 @@ public class OrientTraceGraphFactory implements TraceGraphFactory<OrientGraph> {
 	 */
 	private void setupClasses(OrientGraph graph) {
 		// Vertices
-		graph.createVertexType(TConstraint.TRACE_TYPE);
-		graph.createVertexType(TElement.TRACE_TYPE);
-		graph.createVertexType(TProperty.TRACE_TYPE);
-		graph.createVertexType(TScope.TRACE_TYPE);
+		if (graph.getVertexType(TConstraint.TRACE_TYPE) == null)
+			graph.createVertexType(TConstraint.TRACE_TYPE);
+		
+		if (graph.getVertexType(TElement.TRACE_TYPE) == null)
+			graph.createVertexType(TElement.TRACE_TYPE);
+		
+		if (graph.getVertexType(TProperty.TRACE_TYPE) == null)
+			graph.createVertexType(TProperty.TRACE_TYPE);
+		
+		if (graph.getVertexType(TScope.TRACE_TYPE) == null)
+			graph.createVertexType(TScope.TRACE_TYPE);
 
 		// Edges
+		if (graph.getEdgeType(TEvaluates.TRACE_TYPE) == null)
 		graph.createEdgeType(TEvaluates.TRACE_TYPE);
+		
+		if (graph.getEdgeType(TOwns.TRACE_TYPE) == null)
 		graph.createEdgeType(TOwns.TRACE_TYPE);
+
+		if (graph.getEdgeType(TRootOf.TRACE_TYPE) == null)
 		graph.createEdgeType(TRootOf.TRACE_TYPE);
+		
+		if (graph.getEdgeType(TAccesses.TRACE_TYPE) == null)
 		graph.createEdgeType(TAccesses.TRACE_TYPE);
 
 		// Indexes
 
-		// Unique Constraint name Index
-		graph.createKeyIndex(TConstraint.NAME, Vertex.class,
-				new Parameter<String, String>("type", "UNIQUE"),
-				new Parameter<String, String>("class", TConstraint.TRACE_TYPE));
-
-		// Unique Element ID index
-		graph.createKeyIndex(TElement.ELEMENT_ID, Vertex.class,
-				new Parameter<String, String>("type", "UNIQUE"),
-				new Parameter<String, String>("class", TElement.TRACE_TYPE));
+//		// Unique Constraint name Index
+//		graph.createKeyIndex(TConstraint.NAME, Vertex.class,
+//				new Parameter<String, String>("type", "UNIQUE"),
+//				new Parameter<String, String>("class", TConstraint.TRACE_TYPE));
+//
+//		// Unique Element ID index
+//		graph.createKeyIndex(TElement.ELEMENT_ID, Vertex.class,
+//				new Parameter<String, String>("type", "UNIQUE"),
+//				new Parameter<String, String>("class", TElement.TRACE_TYPE));
 	}
 
 }
