@@ -5,6 +5,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.FramedGraphFactory;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import com.tinkerpop.pipes.PipeFunction;
 
 import java.util.Iterator;
 
@@ -48,7 +49,24 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 	}
 
 	@Override
-	public TScope getScope(TConstraint constraint, TElement element) {
+	public TScope getScope(final TConstraint constraint, TElement element) {
+		GremlinPipeline<Vertex, Vertex> p = new GremlinPipeline<Vertex, Vertex>();
+		p.start(element.asVertex())
+		.outE(TRootOf.TRACE_TYPE)
+		.inV()
+		.as("scopes")
+		.inE(TEvaluates.TRACE_TYPE)
+		.outV()
+		.filter(new PipeFunction<Vertex, Boolean>() {
+			@Override
+			public Boolean compute(Vertex vertex) {
+				return vertex.getProperty(TConstraint.NAME).equals(constraint.getName());
+			}
+		})
+		.back("scopes");
+		
+		if (p.hasNext()) return this.framedGraph.frame(p.next(), TScope.class);
+		
 		final TScope scope = this.addVertex(TScope.TRACE_TYPE, TScope.class);
 		scope.setConstraint(constraint);
 		scope.setRootElement(element);
