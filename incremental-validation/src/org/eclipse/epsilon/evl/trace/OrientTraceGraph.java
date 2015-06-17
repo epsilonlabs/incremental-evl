@@ -103,7 +103,7 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 	}
 
 	@Override
-	public Iterable<TProperty> getProperties() {
+	public Iterable<TProperty> getAllProperties() {
 		return this.framedGraph.frameVertices(
 				this.baseGraph.getVerticesOfClass(TProperty.TRACE_TYPE),
 				TProperty.class);
