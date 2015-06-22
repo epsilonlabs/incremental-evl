@@ -1,13 +1,13 @@
 package org.eclipse.epsilon.evl.trace;
 
+import java.util.Iterator;
+
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.FramedGraphFactory;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
-
-import java.util.Iterator;
 
 /**
  * Implementation of {@link TraceGraph} that uses Orient DB as its underlying
@@ -26,17 +26,40 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 		FramedGraphFactory fgf = new FramedGraphFactory();
 		this.framedGraph = fgf.create(this.baseGraph);
 	}
-
+	
 	@Override
-	public TConstraint getConstraint(String name) {
-		Iterator<TConstraint> it = this.framedGraph.getVertices(
-				TConstraint.NAME, name, TConstraint.class).iterator();
+	public TContext getContext(String name) {
+		Iterator<TContext> it = this.framedGraph.getVertices(
+				TContext.NAME, name, TContext.class).iterator();
 		if (it.hasNext())
 			return it.next();
+
+		final TContext context = this.addVertex(TContext.TRACE_TYPE,
+				TContext.class);
+		context.setName(name);
+		this.baseGraph.commit();
+		return context;
+	}
+	
+	@Override
+	public Iterable<TContext> getAllContexts() {
+		return this.getAll(TContext.TRACE_TYPE, TContext.class);
+	}
+
+	@Override
+	public TConstraint getConstraint(String name, TContext context) {
+		GremlinPipeline<Vertex, Vertex> p = new GremlinPipeline<Vertex, Vertex>();
+		p.start(context.asVertex())
+		.inE(TIn.TRACE_TYPE)
+		.outV()
+		.has(TConstraint.NAME, name);
+		
+		if (p.hasNext()) return this.framedGraph.frame(p.next(), TConstraint.class);
 
 		final TConstraint constraint = this.addVertex(TConstraint.TRACE_TYPE,
 				TConstraint.class);
 		constraint.setName(name);
+		constraint.addContext(context);
 		this.baseGraph.commit();
 		return constraint;
 	}
@@ -147,4 +170,10 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 				clazz);
 	}
 
+	private <F> Iterable<F> getAll(String traceType, Class<F> clazz) {
+		return this.framedGraph.frameVertices(
+				this.baseGraph.getVerticesOfClass(traceType),
+				clazz);
+	}
+	
 }

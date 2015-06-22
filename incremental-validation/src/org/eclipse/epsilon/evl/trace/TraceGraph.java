@@ -13,15 +13,21 @@ import com.tinkerpop.blueprints.util.wrappers.WrapperGraph;
  */
 public interface TraceGraph<T extends Graph> extends WrapperGraph<T> {
 
+	TContext getContext(String name);
+
+	Iterable<TContext> getAllContexts();
+
 	/**
 	 * Get the constraint by its name. If the constraint does not exist then a
 	 * new constraint is returned.
 	 * 
 	 * @param name
 	 *            The name of the constraint to retrieve.
+	 * @param context
+	 *            The context this constraint is in.
 	 * @return A constraint with the given name.
 	 */
-	TConstraint getConstraint(String name);
+	TConstraint getConstraint(String name, TContext context);
 
 	/**
 	 * @return All the constraints in this trace graph.

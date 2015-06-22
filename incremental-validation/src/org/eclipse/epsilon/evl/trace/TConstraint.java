@@ -65,5 +65,11 @@ public interface TConstraint extends TraceVertex {
 	 */
 	@Adjacency(label = TEvaluates.TRACE_TYPE, direction = Direction.OUT)
 	void removeScope(TScope scope);
+	
+	@Adjacency(label = TIn.TRACE_TYPE, direction = Direction.OUT)
+	TContext getContext();
+	
+	@Adjacency(label = TIn.TRACE_TYPE, direction = Direction.OUT)
+	TContext addContext(TContext context);
 
 }

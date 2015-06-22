@@ -87,8 +87,9 @@ public class TraceConstraintContext extends ConstraintContext {
 			Object modelElement,
 			Collection<Scope> scopes) {
 
-		final TConstraint tConstraint = this.traceGraph.getConstraint(this
-				.getName() + "." + constraint.getName());
+		final TContext tContext = this.traceGraph.getContext(this.getName());
+		
+		final TConstraint tConstraint = this.traceGraph.getConstraint(constraint.getName(), tContext);
 		final TElement tElement = this.traceGraph.getElement(ctx
 				.getModelRepository().getOwningModel(modelElement)
 				.getElementId(modelElement));
