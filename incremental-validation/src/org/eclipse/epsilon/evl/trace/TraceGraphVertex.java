@@ -13,5 +13,5 @@ import com.tinkerpop.frames.VertexFrame;
  * @author Jonathan Co
  *
  */
-public interface TraceGraphVertex extends TraceElement, VertexFrame {
+public interface TraceGraphVertex extends TraceGraphElement, VertexFrame {
 }

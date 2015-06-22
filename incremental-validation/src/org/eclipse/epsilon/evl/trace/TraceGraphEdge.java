@@ -13,5 +13,5 @@ import com.tinkerpop.frames.EdgeFrame;
  * @author Jonathan Co
  *
  */
-public interface TraceGraphEdge extends TraceElement, EdgeFrame {
+public interface TraceGraphEdge extends TraceGraphElement, EdgeFrame {
 }
