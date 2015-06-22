@@ -6,15 +6,15 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
-import org.eclipse.epsilon.evl.IncEvlModule;
+import org.eclipse.epsilon.evl.TraceEvlModule;
 import org.eclipse.epsilon.evl.dom.Constraint;
 
 public class ChangeListener extends EContentAdapter {
 
 	private final IModel model;
-	private final IncEvlModule module;
+	private final TraceEvlModule module;
 
-	public ChangeListener(IModel model, IncEvlModule module) {
+	public ChangeListener(IModel model, TraceEvlModule module) {
 		this.model = model;
 		this.module = module;
 	}

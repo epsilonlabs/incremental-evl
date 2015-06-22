@@ -15,7 +15,7 @@ import org.eclipse.epsilon.evl.trace.TraceGraphFactory;
 
 import com.tinkerpop.blueprints.Graph;
 
-public class IncEvlModule extends EvlModule {
+public class TraceEvlModule extends EvlModule {
 	
 	private static final String URL_FORMAT = "remote:localhost/%s";
 	private static final String USER = "admin";
