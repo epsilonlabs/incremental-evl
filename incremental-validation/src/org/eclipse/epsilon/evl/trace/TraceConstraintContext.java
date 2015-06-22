@@ -36,12 +36,12 @@ import com.tinkerpop.blueprints.Graph;
  */
 public class TraceConstraintContext extends ConstraintContext {
 
-	private final ConstraintContext ctx;
+	private final ConstraintContext wrapped;
 	private final TraceGraph<? extends Graph> traceGraph;
 
-	public TraceConstraintContext(ConstraintContext ctx,
+	public TraceConstraintContext(ConstraintContext constraintContext,
 			TraceGraph<? extends Graph> traceGraph) {
-		this.ctx = ctx;
+		this.wrapped = constraintContext;
 		this.traceGraph = traceGraph;
 	}
 
@@ -107,340 +107,340 @@ public class TraceConstraintContext extends ConstraintContext {
 	}
 
 	public void addChild(Tree arg0) {
-		ctx.addChild(arg0);
+		wrapped.addChild(arg0);
 	}
 
 	public void addChildren(List arg0) {
-		ctx.addChildren(arg0);
+		wrapped.addChildren(arg0);
 	}
 
 	public boolean getBooleanAnnotationValue(String name, IEolContext context,
 			boolean ifNotExists, boolean ifNoValue) throws EolRuntimeException {
-		return ctx.getBooleanAnnotationValue(name, context, ifNotExists,
+		return wrapped.getBooleanAnnotationValue(name, context, ifNotExists,
 				ifNoValue);
 	}
 
 	public void build() {
-		ctx.build();
+		wrapped.build();
 	}
 
 	public List<Object> getAnnotationsValues(String name, IEolContext context)
 			throws EolRuntimeException {
-		return ctx.getAnnotationsValues(name, context);
+		return wrapped.getAnnotationsValues(name, context);
 	}
 
 	public boolean appliesTo(Object object, IEvlContext context)
 			throws EolRuntimeException {
-		return ctx.appliesTo(object, context);
+		return wrapped.appliesTo(object, context);
 	}
 
 	public Object deleteChild(int arg0) {
-		return ctx.deleteChild(arg0);
+		return wrapped.deleteChild(arg0);
 	}
 
 	public Tree dupNode() {
-		return ctx.dupNode();
+		return wrapped.dupNode();
 	}
 
 	public boolean equals(Object obj) {
-		return ctx.equals(obj);
+		return wrapped.equals(obj);
 	}
 
 	public void freshenParentAndChildIndexes() {
-		ctx.freshenParentAndChildIndexes();
+		wrapped.freshenParentAndChildIndexes();
 	}
 
 	public void freshenParentAndChildIndexes(int arg0) {
-		ctx.freshenParentAndChildIndexes(arg0);
+		wrapped.freshenParentAndChildIndexes(arg0);
 	}
 
 	public AnnotationBlock getAnnotationBlock() {
-		return ctx.getAnnotationBlock();
+		return wrapped.getAnnotationBlock();
 	}
 
 	public boolean getBooleanAnnotationValue(String name, IEolContext context)
 			throws EolRuntimeException {
-		return ctx.getBooleanAnnotationValue(name, context);
+		return wrapped.getBooleanAnnotationValue(name, context);
 	}
 
 	public AST getAnnotationsAst() {
-		return ctx.getAnnotationsAst();
+		return wrapped.getAnnotationsAst();
 	}
 
 	public String getBasename() {
-		return ctx.getBasename();
+		return wrapped.getBasename();
 	}
 
 	public Collection getAllOfSourceType(IEvlContext context)
 			throws EolModelElementTypeNotFoundException,
 			EolModelNotFoundException {
-		return ctx.getAllOfSourceType(context);
+		return wrapped.getAllOfSourceType(context);
 	}
 
 	public Collection getAllOfSourceKind(IEvlContext context)
 			throws EolModelElementTypeNotFoundException,
 			EolModelNotFoundException {
-		return ctx.getAllOfSourceKind(context);
+		return wrapped.getAllOfSourceKind(context);
 	}
 
 	public int getCharPositionInLine() {
-		return ctx.getCharPositionInLine();
+		return wrapped.getCharPositionInLine();
 	}
 
 	public AST getChild(int i) {
-		return ctx.getChild(i);
+		return wrapped.getChild(i);
 	}
 
 	public int getChildCount() {
-		return ctx.getChildCount();
+		return wrapped.getChildCount();
 	}
 
 	public int getChildIndex() {
-		return ctx.getChildIndex();
+		return wrapped.getChildIndex();
 	}
 
 	public List<Comment> getComments() {
-		return ctx.getComments();
+		return wrapped.getComments();
 	}
 
 	public String getDebugInfo() {
-		return ctx.getDebugInfo();
+		return wrapped.getDebugInfo();
 	}
 
 	public List<ModuleElement> getModuleElements() {
-		return ctx.getModuleElements();
+		return wrapped.getModuleElements();
 	}
 
 	public IModule getModule() {
-		return ctx.getModule();
+		return wrapped.getModule();
 	}
 
 	public HashMap<String, Object> getProperties() {
-		return ctx.getProperties();
+		return wrapped.getProperties();
 	}
 
 	public File getFile() {
-		return ctx.getFile();
+		return wrapped.getFile();
 	}
 
 	public Constraints getConstraints() {
-		return ctx.getConstraints();
+		return wrapped.getConstraints();
 	}
 
 	public List<AST> getChildren() {
-		return ctx.getChildren();
+		return wrapped.getChildren();
 	}
 
 	public AST getParent() {
-		return ctx.getParent();
+		return wrapped.getParent();
 	}
 
 	public int getLine() {
-		return ctx.getLine();
+		return wrapped.getLine();
 	}
 
 	public String getName() {
-		return ctx.getName();
+		return wrapped.getName();
 	}
 
 	public int getColumn() {
-		return ctx.getColumn();
+		return wrapped.getColumn();
 	}
 
 	public AST getNextSibling() {
-		return ctx.getNextSibling();
+		return wrapped.getNextSibling();
 	}
 
 	public int getNumberOfChildren() {
-		return ctx.getNumberOfChildren();
+		return wrapped.getNumberOfChildren();
 	}
 
 	public AST getFirstChild() {
-		return ctx.getFirstChild();
+		return wrapped.getFirstChild();
 	}
 
 	public AST getFourthChild() {
-		return ctx.getFourthChild();
+		return wrapped.getFourthChild();
 	}
 
 	public List<AST> getDescendants() {
-		return ctx.getDescendants();
+		return wrapped.getDescendants();
 	}
 
 	public List<Token> getExtraTokens() {
-		return ctx.getExtraTokens();
+		return wrapped.getExtraTokens();
 	}
 
 	public List<Token> getCommentTokens() {
-		return ctx.getCommentTokens();
+		return wrapped.getCommentTokens();
 	}
 
 	public Tree getFirstChildWithType(int arg0) {
-		return ctx.getFirstChildWithType(arg0);
+		return wrapped.getFirstChildWithType(arg0);
 	}
 
 	public AST getSecondChild() {
-		return ctx.getSecondChild();
+		return wrapped.getSecondChild();
 	}
 
 	public AST getThirdChild() {
-		return ctx.getThirdChild();
+		return wrapped.getThirdChild();
 	}
 
 	public Region getRegion() {
-		return ctx.getRegion();
+		return wrapped.getRegion();
 	}
 
 	public String getText() {
-		return ctx.getText();
+		return wrapped.getText();
 	}
 
 	public Token getToken() {
-		return ctx.getToken();
+		return wrapped.getToken();
 	}
 
 	public int getTokenStartIndex() {
-		return ctx.getTokenStartIndex();
+		return wrapped.getTokenStartIndex();
 	}
 
 	public int getTokenStopIndex() {
-		return ctx.getTokenStopIndex();
+		return wrapped.getTokenStopIndex();
 	}
 
 	public int getType() {
-		return ctx.getType();
+		return wrapped.getType();
 	}
 
 	public void setAnnotationBlock(AnnotationBlock annotationBlock) {
-		ctx.setAnnotationBlock(annotationBlock);
+		wrapped.setAnnotationBlock(annotationBlock);
 	}
 
 	public boolean hasAnnotation(String name) {
-		return ctx.hasAnnotation(name);
+		return wrapped.hasAnnotation(name);
 	}
 
 	public int hashCode() {
-		return ctx.hashCode();
+		return wrapped.hashCode();
 	}
 
 	public String getTypeName() {
-		return ctx.getTypeName();
+		return wrapped.getTypeName();
 	}
 
 	public AST setAnnotationsAst(AST annotations) {
-		return ctx.setAnnotationsAst(annotations);
+		return wrapped.setAnnotationsAst(annotations);
 	}
 
 	public URI getUri() {
-		return ctx.getUri();
+		return wrapped.getUri();
 	}
 
 	public boolean hasChildren() {
-		return ctx.hasChildren();
+		return wrapped.hasChildren();
 	}
 
 	public boolean isImaginary() {
-		return ctx.isImaginary();
+		return wrapped.isImaginary();
 	}
 
 	public boolean isNil() {
-		return ctx.isNil();
+		return wrapped.isNil();
 	}
 
 	public void replaceChildren(int arg0, int arg1, Object arg2) {
-		ctx.replaceChildren(arg0, arg1, arg2);
+		wrapped.replaceChildren(arg0, arg1, arg2);
 	}
 
 	public void sanityCheckParentAndChildIndexes() {
-		ctx.sanityCheckParentAndChildIndexes();
+		wrapped.sanityCheckParentAndChildIndexes();
 	}
 
 	public void sanityCheckParentAndChildIndexes(Tree arg0, int arg1) {
-		ctx.sanityCheckParentAndChildIndexes(arg0, arg1);
+		wrapped.sanityCheckParentAndChildIndexes(arg0, arg1);
 	}
 
 	public void setChild(int arg0, Tree arg1) {
-		ctx.setChild(arg0, arg1);
+		wrapped.setChild(arg0, arg1);
 	}
 
 	public void setChildIndex(int arg0) {
-		ctx.setChildIndex(arg0);
+		wrapped.setChildIndex(arg0);
 	}
 
 	public AST setModule(IModule module) {
-		return ctx.setModule(module);
+		return wrapped.setModule(module);
 	}
 
 	public void setUri(URI uri) {
-		ctx.setUri(uri);
+		wrapped.setUri(uri);
 	}
 
 	public AST setLine(int line) {
-		return ctx.setLine(line);
+		return wrapped.setLine(line);
 	}
 
 	public AST setColumn(int column) {
-		return ctx.setColumn(column);
+		return wrapped.setColumn(column);
 	}
 
 	public void setName(String name) {
-		ctx.setName(name);
+		wrapped.setName(name);
 	}
 
 	public String toString() {
-		return ctx.toString();
+		return wrapped.toString();
 	}
 
 	public AST setNextSibling(AST sibling) {
-		return ctx.setNextSibling(sibling);
+		return wrapped.setNextSibling(sibling);
 	}
 
 	public AST setFirstChild(AST child) {
-		return ctx.setFirstChild(child);
+		return wrapped.setFirstChild(child);
 	}
 
 	public void setToken(Token token) {
-		ctx.setToken(token);
+		wrapped.setToken(token);
 	}
 
 	public void setRegion(Region region) {
-		ctx.setRegion(region);
+		wrapped.setRegion(region);
 	}
 
 	public AST setImaginary(boolean imaginary) {
-		return ctx.setImaginary(imaginary);
+		return wrapped.setImaginary(imaginary);
 	}
 
 	public void setExtraTokens(List<Token> extraTokens) {
-		ctx.setExtraTokens(extraTokens);
+		wrapped.setExtraTokens(extraTokens);
 	}
 
 	public void setCommentTokens(List<Token> comments) {
-		ctx.setCommentTokens(comments);
+		wrapped.setCommentTokens(comments);
 	}
 
 	public void setParent(Tree arg0) {
-		ctx.setParent(arg0);
+		wrapped.setParent(arg0);
 	}
 
 	public void setTokenStartIndex(int arg0) {
-		ctx.setTokenStartIndex(arg0);
+		wrapped.setTokenStartIndex(arg0);
 	}
 
 	public void setTokenStopIndex(int arg0) {
-		ctx.setTokenStopIndex(arg0);
+		wrapped.setTokenStopIndex(arg0);
 	}
 
 	public String toExtendedStringTreeItem() {
-		return ctx.toExtendedStringTreeItem();
+		return wrapped.toExtendedStringTreeItem();
 	}
 
 	public String toExtendedStringTree() {
-		return ctx.toExtendedStringTree();
+		return wrapped.toExtendedStringTree();
 	}
 
 	public String toStringTree() {
-		return ctx.toStringTree();
+		return wrapped.toStringTree();
 	}
 
 }
