@@ -10,7 +10,7 @@ import com.tinkerpop.frames.Adjacency;
  * @author Jonathan Co
  *
  */
-public interface TScope extends TraceVertex {
+public interface TScope extends TraceGraphVertex {
 
 	/**
 	 * Common name of this trace element

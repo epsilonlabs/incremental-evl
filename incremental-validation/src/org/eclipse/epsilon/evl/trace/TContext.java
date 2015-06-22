@@ -4,7 +4,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 
-public interface TContext extends TraceVertex {
+public interface TContext extends TraceGraphVertex {
 
 	/**
 	 * Common name of this trace element

@@ -3,7 +3,7 @@ package org.eclipse.epsilon.evl.trace;
 import com.tinkerpop.frames.VertexFrame;
 
 /**
- * The {@link TraceVertex} interface represents a single node/vertex in the
+ * The {@link TraceGraphVertex} interface represents a single node/vertex in the
  * constraint trace graph. 
  * 
  * This interface also extends {@link VertexFrame} to allow sub-classes to be
@@ -13,5 +13,5 @@ import com.tinkerpop.frames.VertexFrame;
  * @author Jonathan Co
  *
  */
-public interface TraceVertex extends TraceElement, VertexFrame {
+public interface TraceGraphVertex extends TraceElement, VertexFrame {
 }

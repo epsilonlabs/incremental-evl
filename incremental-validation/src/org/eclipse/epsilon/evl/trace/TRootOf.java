@@ -10,7 +10,7 @@ import com.tinkerpop.frames.OutVertex;
  * @author Jonathan Co
  *
  */
-public interface TRootOf extends TraceEdge {
+public interface TRootOf extends TraceGraphEdge {
 
 	/**
 	 * Common name of this trace element
