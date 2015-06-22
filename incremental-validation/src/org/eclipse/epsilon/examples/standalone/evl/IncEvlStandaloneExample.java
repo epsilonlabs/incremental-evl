@@ -8,10 +8,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.eol.IEolExecutableModule;
 import org.eclipse.epsilon.eol.models.IModel;
-import org.eclipse.epsilon.eol.types.EolModelElementType;
 import org.eclipse.epsilon.evl.TraceEvlModule;
-import org.eclipse.epsilon.evl.trace.TConstraint;
-import org.eclipse.epsilon.evl.trace.TElement;
 import org.eclipse.epsilon.evl.trace.TProperty;
 import org.eclipse.epsilon.examples.standalone.EpsilonStandaloneExample;
 

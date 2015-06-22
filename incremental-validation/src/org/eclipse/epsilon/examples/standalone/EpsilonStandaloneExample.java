@@ -25,6 +25,9 @@ import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
+import org.eclipse.epsilon.evl.TraceEvlModule;
+
+import com.orientechnologies.orient.client.remote.OServerAdmin;
 
 public abstract class EpsilonStandaloneExample {
 	
@@ -41,7 +44,16 @@ public abstract class EpsilonStandaloneExample {
 	
 	public void postProcess() {};
 	
-	public void preProcess() {};
+	public void preProcess() {
+		try {
+			OServerAdmin serverAdmin = new OServerAdmin(((TraceEvlModule) module).getTraceLocation()).connect("root", "root");
+			serverAdmin.dropDatabase("trace");
+			serverAdmin.createDatabase("trace", "plocal");
+		} catch (Exception e) {
+			throw new IllegalArgumentException();
+		}
+
+	};
 	
 	public void execute() throws Exception {
 		

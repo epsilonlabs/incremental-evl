@@ -1,19 +1,25 @@
 package org.eclipse.epsilon.evl;
 
+import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.emc.emf.AbstractEmfModel;
 import org.eclipse.epsilon.emc.emf.EmfModel;
+import org.eclipse.epsilon.eol.dom.ExecutableBlock;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
+import org.eclipse.epsilon.evl.dom.Fix;
+import org.eclipse.epsilon.evl.dom.TraceConstraint;
+import org.eclipse.epsilon.evl.dom.TraceConstraintContext;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
-import org.eclipse.epsilon.evl.trace.OrientTraceGraphFactory;
+import org.eclipse.epsilon.evl.parse.EvlParser;
 import org.eclipse.epsilon.evl.trace.ChangeListener;
-import org.eclipse.epsilon.evl.trace.TraceConstraintContext;
+import org.eclipse.epsilon.evl.trace.OrientTraceGraphFactory;
 import org.eclipse.epsilon.evl.trace.TraceGraph;
 import org.eclipse.epsilon.evl.trace.TraceGraphFactory;
 
 import com.tinkerpop.blueprints.Graph;
+
 
 public class TraceEvlModule extends EvlModule {
 	
@@ -23,16 +29,11 @@ public class TraceEvlModule extends EvlModule {
 	
 	private TraceGraph<? extends Graph> traceGraph = null;
 	
-	/**
-	 * Main execution method
-	 */
 	@Override
 	public Object execute() throws EolRuntimeException {
-		
 		// Initialize the context
 		prepareContext(context);
 		context.setOperationFactory(new EvlOperationFactory());
-		context.getFrameStack().put(Variable.createReadOnlyVariable("constraintTrace", context.getConstraintTrace()));
 		context.getFrameStack().put(Variable.createReadOnlyVariable("thisModule", this));
 		
 		this.doChecks();
@@ -42,14 +43,17 @@ public class TraceEvlModule extends EvlModule {
 		return null;
 	}
 	
+	public String getTraceLocation() {
+//		System.out.println(System.getProperty("java.io.tmpdir"));
+//		File file = new File(System.getProperty("java.io.tmpdir")+ "/trace");
+//		file.mkdirs();
+//		String url = String.format(URL_FORMAT, file.toString());
+		return String.format(URL_FORMAT, "trace");
+	}
+	
 	public void initTraceGraph() {
 		if (this.traceGraph == null || !this.traceGraph.isOpen()) {
-//			System.out.println(System.getProperty("java.io.tmpdir"));
-//			File file = new File(System.getProperty("java.io.tmpdir")+ "/trace");
-//			file.mkdirs();
-//			String url = String.format(URL_FORMAT, file.toString());
-			String url = String.format(URL_FORMAT, "trace");
-			TraceGraphFactory<? extends Graph> tgf = new OrientTraceGraphFactory(url, USER, PASS);
+			TraceGraphFactory<? extends Graph> tgf = new OrientTraceGraphFactory(getTraceLocation(), USER, PASS);
 			this.traceGraph = tgf.getGraph();
 		}
 	}
@@ -65,9 +69,7 @@ public class TraceEvlModule extends EvlModule {
 		execute(getPre(), context);
 		
 		for (ConstraintContext conCtx : getConstraintContexts()) {
-			TraceConstraintContext incConCtx = 
-					new TraceConstraintContext(conCtx, this.getTraceGraph());
-			incConCtx.checkAll(context);
+			conCtx.checkAll(context);
 		}
 		
 		if (fixer != null) fixer.fix(this);
@@ -83,4 +85,25 @@ public class TraceEvlModule extends EvlModule {
 		}
 	}
 	
+	@Override
+	public AST adapt(AST cst, AST parentAst) {
+		switch (cst.getType()) {
+			case EvlParser.FIX: return new Fix();
+			case EvlParser.DO: return new ExecutableBlock<Void>(Void.class);
+			case EvlParser.TITLE: return new ExecutableBlock<String>(String.class);
+			case EvlParser.MESSAGE: return new ExecutableBlock<String>(String.class);
+			case EvlParser.CONSTRAINT: return new TraceConstraint();
+			case EvlParser.CRITIQUE: return new TraceConstraint();
+			case EvlParser.CONTEXT: return new TraceConstraintContext();
+			case EvlParser.CHECK: return new ExecutableBlock<Boolean>(Boolean.class);
+			case EvlParser.GUARD: return new ExecutableBlock<Boolean>(Boolean.class);
+		}
+		return super.adapt(cst, parentAst);
+	}
+	
+	@Override
+	public void reset() {
+		super.reset();
+		context = new TraceEvlContext();
+	}
 }

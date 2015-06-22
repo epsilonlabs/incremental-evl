@@ -43,9 +43,11 @@ public class ChangeListener extends EContentAdapter {
 
 				try {
 					Constraint constraint = this.module.getConstraints()
-							.getConstraint(tConstraint.getName(), target,
+							.getConstraint(
+									tConstraint.getName(), 
+									target,
 									this.module.getContext());
-
+					
 					if (constraint.getConstraintContext().getName()
 							.equals(tConstraint.getContext().getName())) {
 						constraint.check(target, this.module.getContext());
