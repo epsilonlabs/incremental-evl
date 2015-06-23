@@ -64,7 +64,11 @@ public class TraceEvlModule extends EvlModule {
 	}
 	
 	public String getTraceLocation() {
-		File file = new File(sourceFile.toString().split("\\.")[0] + "-trace");
+		StringBuilder sb = new StringBuilder(System.getProperty("user.dir"));
+		sb.append("/")
+		.append(sourceFile.getName().split("\\.")[0])
+		.append("-trace");
+		File file = new File(sb.toString());
 		file.mkdirs();
 		return String.format(URL_FORMAT, file.toString());
 	}
