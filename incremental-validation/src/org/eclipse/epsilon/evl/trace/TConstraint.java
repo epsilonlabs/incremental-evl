@@ -12,7 +12,7 @@ import com.tinkerpop.frames.Property;
  *
  */
 // TODO: Split name and add in a TClass or TContext vertex
-public interface TConstraint extends TraceVertex {
+public interface TConstraint extends TraceGraphVertex {
 
 	/**
 	 * Common name of this trace element

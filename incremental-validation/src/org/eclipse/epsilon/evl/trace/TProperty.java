@@ -11,7 +11,7 @@ import com.tinkerpop.frames.Property;
  * @author Jonathan Co
  *
  */
-public interface TProperty extends TraceVertex {
+public interface TProperty extends TraceGraphVertex {
 
 	/**
 	 * Common name of this trace element

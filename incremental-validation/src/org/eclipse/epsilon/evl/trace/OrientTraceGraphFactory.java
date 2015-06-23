@@ -58,31 +58,21 @@ public class OrientTraceGraphFactory implements TraceGraphFactory<OrientGraph> {
 	 */
 	private void setupClasses(OrientGraph graph) {
 		// Vertices
-		if (graph.getVertexType(TConstraint.TRACE_TYPE) == null)
-			graph.createVertexType(TConstraint.TRACE_TYPE);
-		
-		if (graph.getVertexType(TElement.TRACE_TYPE) == null)
-			graph.createVertexType(TElement.TRACE_TYPE);
-		
-		if (graph.getVertexType(TProperty.TRACE_TYPE) == null)
-			graph.createVertexType(TProperty.TRACE_TYPE);
-		
-		if (graph.getVertexType(TScope.TRACE_TYPE) == null)
-			graph.createVertexType(TScope.TRACE_TYPE);
+		setupVertexType(graph, 
+				TContext.TRACE_TYPE,
+				TConstraint.TRACE_TYPE,
+				TElement.TRACE_TYPE,
+				TProperty.TRACE_TYPE,
+				TScope.TRACE_TYPE);
 
 		// Edges
-		if (graph.getEdgeType(TEvaluates.TRACE_TYPE) == null)
-		graph.createEdgeType(TEvaluates.TRACE_TYPE);
+		setupEdgeType(graph, 
+				TEvaluates.TRACE_TYPE,
+				TOwns.TRACE_TYPE,
+				TRootOf.TRACE_TYPE,
+				TAccesses.TRACE_TYPE,
+				TIn.TRACE_TYPE);
 		
-		if (graph.getEdgeType(TOwns.TRACE_TYPE) == null)
-		graph.createEdgeType(TOwns.TRACE_TYPE);
-
-		if (graph.getEdgeType(TRootOf.TRACE_TYPE) == null)
-		graph.createEdgeType(TRootOf.TRACE_TYPE);
-		
-		if (graph.getEdgeType(TAccesses.TRACE_TYPE) == null)
-		graph.createEdgeType(TAccesses.TRACE_TYPE);
-
 		// Indexes
 
 //		// Unique Constraint name Index
@@ -94,6 +84,18 @@ public class OrientTraceGraphFactory implements TraceGraphFactory<OrientGraph> {
 //		graph.createKeyIndex(TElement.ELEMENT_ID, Vertex.class,
 //				new Parameter<String, String>("type", "UNIQUE"),
 //				new Parameter<String, String>("class", TElement.TRACE_TYPE));
+	}
+	
+	private void setupEdgeType(OrientGraph graph, String... types) {
+		for (String type : types) {
+			if (graph.getEdgeType(type) == null) graph.createEdgeType(type);
+		}
+	}
+	
+	private void setupVertexType(OrientGraph graph, String... types) {
+		for (String type : types) {
+			if (graph.getVertexType(type) == null) graph.createVertexType(type);
+		}
 	}
 
 }

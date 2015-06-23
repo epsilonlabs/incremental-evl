@@ -10,7 +10,7 @@ import com.tinkerpop.frames.OutVertex;
  * @author Jonathan Co
  *
  */
-public interface TOwns extends TraceEdge {
+public interface TOwns extends TraceGraphEdge {
 
 	/**
 	 * Common name of this trace element

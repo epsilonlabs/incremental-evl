@@ -2,7 +2,6 @@ package org.eclipse.epsilon.evl.trace;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.dom.PropertyCallExpression;

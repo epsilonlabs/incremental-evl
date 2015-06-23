@@ -8,10 +8,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.eol.IEolExecutableModule;
 import org.eclipse.epsilon.eol.models.IModel;
-import org.eclipse.epsilon.eol.types.EolModelElementType;
-import org.eclipse.epsilon.evl.IncEvlModule;
-import org.eclipse.epsilon.evl.trace.TConstraint;
-import org.eclipse.epsilon.evl.trace.TElement;
+import org.eclipse.epsilon.evl.TraceEvlModule;
 import org.eclipse.epsilon.evl.trace.TProperty;
 import org.eclipse.epsilon.examples.standalone.EpsilonStandaloneExample;
 
@@ -92,7 +89,7 @@ public class IncEvlStandaloneExample extends EpsilonStandaloneExample {
 	@Override
 	public void postProcess() {
 
-		final IncEvlModule mod = (IncEvlModule) this.module;
+		final TraceEvlModule mod = (TraceEvlModule) this.module;
 		
 		// get the property to change
 		Iterable<TProperty> allProps = mod.getTraceGraph().getAllProperties();
@@ -124,7 +121,7 @@ public class IncEvlStandaloneExample extends EpsilonStandaloneExample {
 
 	@Override
 	public IEolExecutableModule createModule() {
-		return new IncEvlModule();
+		return new TraceEvlModule();
 	}
 
 	@Override
