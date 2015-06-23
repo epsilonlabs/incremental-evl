@@ -31,14 +31,24 @@ public class TraceEvlModule extends EvlModule {
 	
 	@Override
 	public Object execute() throws EolRuntimeException {
+
+		// FIXME: Detect if a tracegraph is already present or do we want this to batch exec all the time?
+		
 		// Initialize the context
 		prepareContext(context);
 		context.setOperationFactory(new EvlOperationFactory());
 		context.getFrameStack().put(Variable.createReadOnlyVariable("thisModule", this));
 		
-		this.doChecks();
+		// Perform evaluation
+		execute(getPre(), context);
+		for (ConstraintContext conCtx : getConstraintContexts()) { 
+			conCtx.checkAll(context);	
+		}		
+		if (fixer != null) fixer.fix(this);
+		execute(getPost(), context);
+		
+		// Attach the listeners
 		this.attachChangeListeners();
-		this.getConstraints();
 		
 		return null;
 	}
@@ -65,17 +75,10 @@ public class TraceEvlModule extends EvlModule {
 		return this.traceGraph;
 	}
 	
-	private void doChecks() throws EolRuntimeException {
-		execute(getPre(), context);
-		
-		for (ConstraintContext conCtx : getConstraintContexts()) {
-			conCtx.checkAll(context);
-		}
-		
-		if (fixer != null) fixer.fix(this);
-		execute(getPost(), context);
-	}
-	
+	/**
+	 * Utility method - attach notification listeners to all models loaded in
+	 * current repository.
+	 */
 	private void attachChangeListeners() {
 		// Attach change listeners to models
 		for (IModel m : context.getModelRepository().getModels()) {
@@ -92,11 +95,13 @@ public class TraceEvlModule extends EvlModule {
 			case EvlParser.DO: return new ExecutableBlock<Void>(Void.class);
 			case EvlParser.TITLE: return new ExecutableBlock<String>(String.class);
 			case EvlParser.MESSAGE: return new ExecutableBlock<String>(String.class);
+			case EvlParser.CHECK: return new ExecutableBlock<Boolean>(Boolean.class);
+			case EvlParser.GUARD: return new ExecutableBlock<Boolean>(Boolean.class);
+			
+			// Modified to return the appropriate subclasses of Constraint
 			case EvlParser.CONSTRAINT: return new TraceConstraint();
 			case EvlParser.CRITIQUE: return new TraceConstraint();
 			case EvlParser.CONTEXT: return new TraceConstraintContext();
-			case EvlParser.CHECK: return new ExecutableBlock<Boolean>(Boolean.class);
-			case EvlParser.GUARD: return new ExecutableBlock<Boolean>(Boolean.class);
 		}
 		return super.adapt(cst, parentAst);
 	}
@@ -104,6 +109,7 @@ public class TraceEvlModule extends EvlModule {
 	@Override
 	public void reset() {
 		super.reset();
+		// Overwrite context with custom context
 		context = new TraceEvlContext();
 	}
 }
