@@ -1,10 +1,13 @@
 package org.eclipse.epsilon.evl;
 
+import java.io.File;
+
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.emc.emf.AbstractEmfModel;
 import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
@@ -23,11 +26,18 @@ import com.tinkerpop.blueprints.Graph;
 
 public class TraceEvlModule extends EvlModule {
 	
-	private static final String URL_FORMAT = "remote:localhost/%s";
+//	private static final String URL_FORMAT = "remote:localhost/%s";
+	private static final String URL_FORMAT = "plocal:%s";
 	private static final String USER = "admin";
 	private static final String PASS = "admin";
 	
 	private TraceGraph<? extends Graph> traceGraph = null;
+
+	@Override
+	protected void prepareContext(IEolContext context) {
+		super.prepareContext(context);
+		initTraceGraph();
+	}
 	
 	@Override
 	public Object execute() throws EolRuntimeException {
@@ -54,11 +64,9 @@ public class TraceEvlModule extends EvlModule {
 	}
 	
 	public String getTraceLocation() {
-//		System.out.println(System.getProperty("java.io.tmpdir"));
-//		File file = new File(System.getProperty("java.io.tmpdir")+ "/trace");
-//		file.mkdirs();
-//		String url = String.format(URL_FORMAT, file.toString());
-		return String.format(URL_FORMAT, "trace");
+		File file = new File(sourceFile.toString().split("\\.")[0] + "-trace");
+		file.mkdirs();
+		return String.format(URL_FORMAT, file.toString());
 	}
 	
 	public void initTraceGraph() {

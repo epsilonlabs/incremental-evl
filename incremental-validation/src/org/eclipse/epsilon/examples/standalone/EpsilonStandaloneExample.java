@@ -45,13 +45,12 @@ public abstract class EpsilonStandaloneExample {
 	public void postProcess() {};
 	
 	public void preProcess() {
-		try {
-			OServerAdmin serverAdmin = new OServerAdmin(((TraceEvlModule) module).getTraceLocation()).connect("root", "root");
-			serverAdmin.dropDatabase("trace");
-			serverAdmin.createDatabase("trace", "plocal");
-		} catch (Exception e) {
-			throw new IllegalArgumentException();
-		}
+//		try {
+//			OServerAdmin serverAdmin = new OServerAdmin(((TraceEvlModule) module).getTraceLocation()).connect("root", "root");
+//			serverAdmin.dropDatabase("trace");
+//			serverAdmin.createDatabase("trace", "plocal");
+//		} catch (Exception e) {
+//		}
 
 	};
 	
