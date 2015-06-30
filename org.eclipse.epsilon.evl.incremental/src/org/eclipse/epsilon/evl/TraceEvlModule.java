@@ -25,24 +25,26 @@ import com.tinkerpop.blueprints.Graph;
 
 public class TraceEvlModule extends EvlModule {
 	
-//	private static final String URL_FORMAT = "remote:localhost/%s";
-	private static final String URL_FORMAT = "plocal:%s";
+	private static final String PERSIST_URL_FORMAT = "plocal:%s";
+	private static final String MEMORY_URL_FORMAT = "memory:%s";
 	private static final String USER = "admin";
 	private static final String PASS = "admin";
 	
+	private final boolean persist;
+	
 	private TraceGraph<? extends Graph> traceGraph = null;
-
-	@Override
-	protected void prepareContext(IEolContext context) {
-		super.prepareContext(context);
-		initTraceGraph();
+	
+	public TraceEvlModule() {
+		this(true);
+	}
+	
+	public TraceEvlModule(boolean persist) {
+		this.persist = persist;
 	}
 	
 	@Override
 	public Object execute() throws EolRuntimeException {
-
 		// FIXME: Detect if a tracegraph is already present or do we want this to batch exec all the time?
-		
 		// Initialize the context
 		prepareContext(context);
 		context.setOperationFactory(new EvlOperationFactory());
@@ -63,13 +65,17 @@ public class TraceEvlModule extends EvlModule {
 	}
 	
 	public String getTraceLocation() {
-		StringBuilder sb = new StringBuilder(System.getProperty("user.dir"));
-		sb.append("/")
-		.append(sourceFile.getName().split("\\.")[0])
-		.append("-trace");
-		File file = new File(sb.toString());
-		file.mkdirs();
-		return String.format(URL_FORMAT, file.toString());
+		final StringBuilder sb = new StringBuilder();
+		if (persist) {
+			sb.append(System.getProperty("user.dir")).append("/");
+		}
+		sb.append(sourceFile.getName().split("\\.")[0]).append("-trace");
+		if (persist) {
+			File file = new File(sb.toString());
+			file.mkdirs();
+			return String.format(PERSIST_URL_FORMAT, file.toString());
+		}
+		return String.format(MEMORY_URL_FORMAT, sb.toString());
 	}
 	
 	public void initTraceGraph() {
@@ -97,6 +103,12 @@ public class TraceEvlModule extends EvlModule {
 				((EmfModel) m).getResource().eAdapters().add(new TraceEvlChangeListener(m, this));
 			}
 		}
+	}
+	
+	@Override
+	protected void prepareContext(IEolContext context) {
+		super.prepareContext(context);
+		initTraceGraph();
 	}
 	
 	@Override
