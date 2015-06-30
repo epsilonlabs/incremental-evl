@@ -29,6 +29,7 @@ import org.eclipse.epsilon.evl.TraceEvlModule;
 
 import com.orientechnologies.orient.client.remote.OServerAdmin;
 
+@Deprecated
 public abstract class EpsilonStandaloneExample {
 	
 	protected IEolExecutableModule module;
