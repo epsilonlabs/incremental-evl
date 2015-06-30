@@ -131,8 +131,10 @@ public class TraceEvlModule extends EvlModule {
 	
 	@Override
 	public void reset() {
-		super.reset();
-		// Overwrite context with custom context
+		super.reset();	
+		if (this.traceGraph != null && this.traceGraph.isOpen()) {
+			this.traceGraph.close();
+		}
 		context = new TraceEvlContext();
 	}
 	
