@@ -142,12 +142,27 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 		this.baseGraph.commit();
 		return property;
 	}
+	
+	@Override
+	public TProperty getProperty(String name, String elementId) {
+		return this.getProperty(name, this.getElement(elementId));
+	}
 
 	@Override
 	public Iterable<TProperty> getAllProperties() {
 		return this.framedGraph.frameVertices(
 				this.baseGraph.getVerticesOfClass(TProperty.TRACE_TYPE),
 				TProperty.class);
+	}
+
+	@Override
+	public void removeElement(String elementId) {
+		
+	}
+
+	@Override
+	public void removeElement(TElement element) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -158,6 +173,11 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 	@Override
 	public boolean isOpen() {
 		return !this.baseGraph.isClosed();
+	}
+	
+	@Override
+	public void commit() {
+		this.baseGraph.commit();
 	}
 
 	@Override

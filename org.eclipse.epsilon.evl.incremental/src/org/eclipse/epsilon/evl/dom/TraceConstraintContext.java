@@ -75,6 +75,9 @@ public class TraceConstraintContext extends ConstraintContext {
 			final TProperty property = graph.getProperty(s.getPropertyName(), element);
 			tScope.addProperty(property);
 		}
+		
+		// FIXME: Move to tracegraph itself
+		graph.commit();
 	}
 	
 }
