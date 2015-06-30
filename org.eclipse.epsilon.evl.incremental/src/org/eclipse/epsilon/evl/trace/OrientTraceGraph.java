@@ -106,16 +106,24 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 
 	@Override
 	public TElement getElement(String elementId) {
+		return getElement(elementId, true);
+	}
+	
+	@Override
+	public TElement getElement(String elementId, boolean create) {
 		Iterator<TElement> it = this.framedGraph.getVertices(
 				TElement.ELEMENT_ID, elementId, TElement.class).iterator();
 		if (it != null && it.hasNext())
 			return it.next();
 
-		// Element does not exist, create and return
-		TElement element = this.addVertex(TElement.TRACE_TYPE, TElement.class);
-		element.setElementId(elementId);
-		this.baseGraph.commit();
-		return element;
+		if (create) {
+			// Element does not exist, create and return
+			TElement element = this.addVertex(TElement.TRACE_TYPE, TElement.class);
+			element.setElementId(elementId);
+			this.baseGraph.commit();
+			return element;
+		}
+		return null;
 	}
 
 	@Override
@@ -195,5 +203,5 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 				this.baseGraph.getVerticesOfClass(traceType),
 				clazz);
 	}
-	
+
 }

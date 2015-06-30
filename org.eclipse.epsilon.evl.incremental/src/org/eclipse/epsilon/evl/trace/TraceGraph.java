@@ -61,6 +61,8 @@ public interface TraceGraph<T extends Graph> extends WrapperGraph<T> {
 	 * @return A element with the given name.
 	 */
 	TElement getElement(String elementId);
+	
+	TElement getElement(String elementId, boolean create);
 
 	/**
 	 * @return All the elements in the trace graph.
