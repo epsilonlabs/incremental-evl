@@ -1,6 +1,8 @@
 package org.eclipse.epsilon.evl.trace;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
@@ -165,12 +167,23 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 
 	@Override
 	public void removeElement(String elementId) {
-		
+		this.removeElement(this.getElement(elementId, false));
 	}
 
 	@Override
 	public void removeElement(TElement element) {
-		throw new UnsupportedOperationException();
+		if (element == null)
+			return;
+		
+		final List<Vertex> toRemove = new ArrayList<Vertex>();
+		final GremlinPipeline<Vertex, Vertex> p = new GremlinPipeline<Vertex, Vertex>(element.asVertex());
+		p.aggregate(toRemove).both().aggregate(toRemove).next();
+		
+		for (Vertex vertex : toRemove) {
+			this.baseGraph.removeVertex(vertex);
+		}
+		
+		this.commit();
 	}
 
 	@Override
