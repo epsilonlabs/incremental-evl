@@ -99,8 +99,6 @@ public class TraceEvlModule extends EvlModule {
 		}
 	}
 	
-
-	
 	@Override
 	public AST adapt(AST cst, AST parentAst) {
 		switch (cst.getType()) {
@@ -125,4 +123,5 @@ public class TraceEvlModule extends EvlModule {
 		// Overwrite context with custom context
 		context = new TraceEvlContext();
 	}
+	
 }
