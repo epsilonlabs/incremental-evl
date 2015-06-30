@@ -78,17 +78,25 @@ public interface TraceGraph<T extends Graph> extends WrapperGraph<T> {
 	 * @return A property with the given name.
 	 */
 	TProperty getProperty(String name, TElement owner);
+	
+	TProperty getProperty(String name, String elementId);
 
 	/**
 	 * @return All the properties in the trace graph.
 	 */
 	Iterable<TProperty> getAllProperties();
+	
+	void removeElement(String elementId);
+	
+	void removeElement(TElement element);
 
 	/**
 	 * @return {@code true} if the underlying database used in the trace graph
 	 *         is still in use, {@code false} otherwise.
 	 */
 	boolean isOpen();
+	
+	void commit();
 
 	/**
 	 * Shutdown the underlying database.
