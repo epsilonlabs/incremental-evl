@@ -124,7 +124,7 @@ public class TraceEvlModule extends EvlModule {
 			// Modified to return the appropriate subclasses of Constraint
 			case EvlParser.CONSTRAINT: return new TraceConstraint();
 			case EvlParser.CRITIQUE: return new TraceConstraint();
-			case EvlParser.CONTEXT: return new TraceConstraintContext();
+			case EvlParser.CONTEXT: return new ConstraintContext();
 		}
 		return super.adapt(cst, parentAst);
 	}
