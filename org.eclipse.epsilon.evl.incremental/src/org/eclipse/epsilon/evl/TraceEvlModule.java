@@ -16,7 +16,6 @@ import org.eclipse.epsilon.evl.dom.TraceConstraint;
 import org.eclipse.epsilon.evl.dom.TraceConstraintContext;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.parse.EvlParser;
-import org.eclipse.epsilon.evl.trace.ChangeListener;
 import org.eclipse.epsilon.evl.trace.OrientTraceGraphFactory;
 import org.eclipse.epsilon.evl.trace.TraceGraph;
 import org.eclipse.epsilon.evl.trace.TraceGraphFactory;
@@ -95,10 +94,12 @@ public class TraceEvlModule extends EvlModule {
 		// Attach change listeners to models
 		for (IModel m : context.getModelRepository().getModels()) {
 			if (m instanceof AbstractEmfModel) {
-				((EmfModel) m).getResource().eAdapters().add(new ChangeListener(m, this));
+				((EmfModel) m).getResource().eAdapters().add(new TraceEvlChangeListener(m, this));
 			}
 		}
 	}
+	
+
 	
 	@Override
 	public AST adapt(AST cst, AST parentAst) {
