@@ -1,5 +1,0 @@
-context Foo {
-	constraint hasStrs {
-		check : not self.strs.isUndefined()
-	}
-}
