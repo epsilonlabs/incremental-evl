@@ -3,6 +3,7 @@ package org.eclipse.epsilon.evl.trace;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -21,14 +22,15 @@ public class ConstraintCheckListener implements IExecutionListener {
 	private Collection<Scope> scopes = new HashSet<Scope>();
 	
 	// The last model element accessed
-	private Object lastElement = null;
-	
-	public ConstraintCheckListener() {
-		// TODO Auto-generated constructor stub
-	}
+	private EObject lastElement = null;
 
 	@Override
 	public void finishedExecuting(AST ast, Object result, IEolContext ctx) {
+		
+		if (result instanceof EObject) {
+			this.lastElement = (EObject) result;
+		}
+		
 		// Log the name of the property accessed in the model element
 		if (ast instanceof PropertyCallExpression) {
 			String id = ctx.getModelRepository().getOwningModel(lastElement).getElementId(lastElement);
@@ -36,9 +38,7 @@ public class ConstraintCheckListener implements IExecutionListener {
 					.getPropertyNameExpression().getName();
 			scopes.add(new Scope(id, prop));
 		}
-
-		// Store the last model element accessed
-		this.lastElement = result;
+		
 	}
 
 	@Override
