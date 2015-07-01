@@ -51,6 +51,10 @@ public interface TraceGraph<T extends Graph> extends WrapperGraph<T> {
 	 * @return All the scopes in this trace graph.
 	 */
 	Iterable<TScope> getAllScopes();
+	
+	Iterable<TScope> getScopesIn(TElement element);
+
+	Iterable<TScope> getScopesIn(String elementId);
 
 	/**
 	 * Get the model element by its id. If the element does not exist then a new
@@ -82,6 +86,10 @@ public interface TraceGraph<T extends Graph> extends WrapperGraph<T> {
 	TProperty getProperty(String name, TElement owner);
 	
 	TProperty getProperty(String name, String elementId);
+	
+	TProperty getProperty(String name, TElement owner, boolean create);
+	
+	TProperty getProperty(String name, String elementId, boolean create);
 
 	/**
 	 * @return All the properties in the trace graph.
@@ -91,6 +99,11 @@ public interface TraceGraph<T extends Graph> extends WrapperGraph<T> {
 	void removeElement(String elementId);
 	
 	void removeElement(TElement element);
+	
+	void removeProperty(String name, String elementId);
+	
+	void removeProperty(TProperty property);
+
 
 	/**
 	 * @return {@code true} if the underlying database used in the trace graph

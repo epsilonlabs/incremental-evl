@@ -105,6 +105,22 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 				this.baseGraph.getVerticesOfClass(TScope.TRACE_TYPE),
 				TScope.class);
 	}
+	
+	@Override
+	public Iterable<TScope> getScopesIn(TElement element) {
+		List<Vertex> results = new ArrayList<Vertex>();
+		if (element == null) {
+			return this.framedGraph.frameVertices(results, TScope.class);
+		}
+		GremlinPipeline<Vertex, Vertex> p = new GremlinPipeline<Vertex, Vertex>(element.asVertex());
+		p.out(TOwns.TRACE_TYPE).in(TAccesses.TRACE_TYPE).aggregate(results).next();
+		return this.framedGraph.frameVertices(results, TScope.class);
+	}
+	
+	@Override
+	public Iterable<TScope> getScopesIn(String elementId) {
+		return this.getScopesIn(this.getElement(elementId, false));
+	}
 
 	@Override
 	public TElement getElement(String elementId) {
@@ -137,6 +153,21 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 
 	@Override
 	public TProperty getProperty(String name, TElement owner) {
+		return this.getProperty(name, owner, true);
+	}
+	
+	@Override
+	public TProperty getProperty(String name, String elementId) {
+		return this.getProperty(name, this.getElement(elementId));
+	}
+	
+	@Override
+	public TProperty getProperty(String name, String elementId, boolean create) {
+		return this.getProperty(name, this.getElement(elementId), create);
+	}
+	
+	@Override
+	public TProperty getProperty(String name, TElement owner, boolean create) {
 		GremlinPipeline<Vertex, Vertex> p = new GremlinPipeline<Vertex, Vertex>();
 		p.start(owner.asVertex()).out(TOwns.TRACE_TYPE)
 				.has(TProperty.NAME, name).cast(Vertex.class);
@@ -145,17 +176,15 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 			return this.framedGraph.frame(p.next(), TProperty.class);
 		}
 
-		TProperty property = this.addVertex(TProperty.TRACE_TYPE,
-				TProperty.class);
-		property.setOwner(owner);
-		property.setName(name);
-		this.baseGraph.commit();
-		return property;
-	}
-	
-	@Override
-	public TProperty getProperty(String name, String elementId) {
-		return this.getProperty(name, this.getElement(elementId));
+		if (create) {
+			TProperty property = this.addVertex(TProperty.TRACE_TYPE,
+					TProperty.class);
+			property.setOwner(owner);
+			property.setName(name);
+			this.baseGraph.commit();
+			return property;
+		}
+		return null;
 	}
 
 	@Override
@@ -178,12 +207,26 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 		final List<Vertex> toRemove = new ArrayList<Vertex>();
 		final GremlinPipeline<Vertex, Vertex> p = new GremlinPipeline<Vertex, Vertex>(element.asVertex());
 		p.aggregate(toRemove).both().aggregate(toRemove).next();
-		
+		Object o = null;
 		for (Vertex vertex : toRemove) {
+			o = vertex.getId();
 			this.baseGraph.removeVertex(vertex);
 		}
 		
 		this.commit();
+	}
+	
+	@Override
+	public void removeProperty(String name, String elementId) {
+		this.removeProperty(this.getProperty(name, elementId, false));
+	}
+	
+	@Override
+	public void removeProperty(TProperty property) {
+		if (property != null) {
+			this.baseGraph.removeVertex(property.asVertex());
+			this.commit();
+		}
 	}
 
 	@Override
