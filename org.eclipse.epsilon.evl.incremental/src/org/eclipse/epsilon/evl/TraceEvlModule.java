@@ -13,7 +13,6 @@ import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.dom.Fix;
 import org.eclipse.epsilon.evl.dom.TraceConstraint;
-import org.eclipse.epsilon.evl.dom.TraceConstraintContext;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.parse.EvlParser;
 import org.eclipse.epsilon.evl.trace.OrientTraceGraphFactory;
