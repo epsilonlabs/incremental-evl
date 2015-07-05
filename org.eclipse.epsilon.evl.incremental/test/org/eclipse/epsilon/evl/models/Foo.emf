@@ -1,0 +1,20 @@
+@namespace(uri="Foo", prefix="Foo")
+package Foo;
+
+class Parent {
+	val Obj[*] objs;
+}
+
+class Obj {
+	attr int singleAttr;
+	attr int[*] listAttr;
+	val Meta singleObj;
+	val Meta[*] listObj;
+
+	ref Obj singleRef;
+	ref Obj[*] listRef;
+}
+
+class Meta {
+	attr String label;
+}
