@@ -6,7 +6,8 @@
         eType="#//Tree" containment="true" eOpposite="#//Tree/parent"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//Tree"
         eOpposite="#//Tree/children"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="meta" eType="#//Meta" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="meta" upperBound="-1" eType="#//Meta"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="numbers" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>

@@ -5,7 +5,7 @@ class Tree {
 	val Tree[*]#parent children;
 	ref Tree#children parent;
 	
-	val Meta meta; 
+	val Meta[*] meta; 
 	
 	attr String label;
 	attr int[*] numbers;

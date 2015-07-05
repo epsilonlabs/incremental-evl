@@ -3,3 +3,9 @@ context Tree {
 		check : self.label.isDefined()
 	}
 }
+
+context Meta {
+    constraint foo {
+        check: true
+    }
+}

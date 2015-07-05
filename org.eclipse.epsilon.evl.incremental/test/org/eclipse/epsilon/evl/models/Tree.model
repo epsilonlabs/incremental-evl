@@ -2,6 +2,8 @@
 <TreeDsl:Tree xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:TreeDsl="TreeDsl" xmi:id="_NF27MB3xEeWLVubRAeSCOA" label="a-1">
   <children xmi:id="_OEwMYB3xEeWLVubRAeSCOA" label="b-1">
     <meta xmi:id="_RRFzcB4bEeWLVubRAeSCOA"/>
+    <meta xmi:id="_egh-0B9QEeWZ5uBIxHRxCw"/>
+    <meta xmi:id="_fQk7sB9QEeWZ5uBIxHRxCw"/>
     <numbers>1</numbers>
     <numbers>2</numbers>
     <numbers>3</numbers>
