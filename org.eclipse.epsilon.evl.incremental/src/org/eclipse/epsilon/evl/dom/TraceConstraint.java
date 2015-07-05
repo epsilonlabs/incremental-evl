@@ -28,11 +28,13 @@ import com.tinkerpop.blueprints.Graph;
  * @author Jonathan Co
  *
  */
+// TODO put trace back in remove only ones that do not need to be re-run
 public class TraceConstraint extends Constraint {
 
 	@Override
 	public boolean check(Object self, IEvlContext context)
 			throws EolRuntimeException {
+		
 		// Return immediately if constraint does not apply
 		if (!appliesTo(self, context))
 			return false;
