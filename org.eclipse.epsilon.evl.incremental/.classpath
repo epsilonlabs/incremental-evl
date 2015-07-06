@@ -10,9 +10,9 @@
 	<classpathentry kind="lib" path="lib/gremlin-java-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/groovy-1.8.9.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb-client-2.0.10.jar"/>
-	<classpathentry kind="lib" path="lib/orientdb-core-2.0.10.jar"/>
+	<classpathentry kind="lib" path="lib/orientdb-core-2.0.10.jar" sourcepath="lib-src/orientdb-core-2.0.10-sources.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb-enterprise-2.0.10.jar"/>
-	<classpathentry kind="lib" path="lib/orientdb-graphdb-2.0.10.jar"/>
+	<classpathentry kind="lib" path="lib/orientdb-graphdb-2.0.10.jar" sourcepath="lib-src/orientdb-graphdb-2.0.10-sources.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb-object-2.0.10.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb-server-2.0.10.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb-tools-2.0.10.jar"/>
