@@ -3,8 +3,12 @@ package org.eclipse.epsilon.evl.trace;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.tinkerpop.blueprints.GraphFactory;
+import com.tinkerpop.blueprints.Parameter;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
+import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
 
 /**
  * Implementation of {@link TraceGraphFactory} that uses Orient-DB as its
@@ -57,14 +61,51 @@ public class OrientTraceGraphFactory implements TraceGraphFactory<OrientGraph> {
 	 *            The graph to add vertex types to
 	 */
 	private void setupClasses(OrientGraph graph) {
-		// Vertices
-		setupVertexType(graph, 
-				TContext.TRACE_TYPE,
-				TConstraint.TRACE_TYPE,
-				TElement.TRACE_TYPE,
-				TProperty.TRACE_TYPE,
-				TScope.TRACE_TYPE);
-
+		
+		// Context
+		OrientVertexType context = graph.getVertexType(TContext.TRACE_TYPE);
+		if (context == null) {
+			context = graph.createVertexType(TContext.TRACE_TYPE);
+			context.createProperty(TContext.NAME, OType.STRING);
+			graph.createKeyIndex(TContext.NAME, Vertex.class,
+					new Parameter<String, String>("type", "UNIQUE_HASH_INDEX"),
+					new Parameter<String, String>("class", TContext.TRACE_TYPE));
+		}
+		
+		// Constraint
+		OrientVertexType constraint = graph.getVertexType(TConstraint.TRACE_TYPE);
+		if (constraint == null) {
+			constraint = graph.createVertexType(TConstraint.TRACE_TYPE);
+			constraint.createProperty(TConstraint.NAME, OType.STRING);
+			graph.createKeyIndex(TConstraint.NAME, Vertex.class,
+					new Parameter<String, String>("type", "UNIQUE_HASH_INDEX"),
+					new Parameter<String, String>("class",
+							TConstraint.TRACE_TYPE));
+		}
+		
+		// Element
+		OrientVertexType element = graph.getVertexType(TElement.TRACE_TYPE);
+		if (element == null) {
+			element = graph.createVertexType(TElement.TRACE_TYPE);
+			element.createProperty(TElement.ELEMENT_ID, OType.STRING);
+			graph.createKeyIndex(TElement.ELEMENT_ID, Vertex.class,
+					new Parameter<String, String>("type", "UNIQUE_HASH_INDEX"),
+					new Parameter<String, String>("class", TElement.TRACE_TYPE));
+		}
+		
+		// Property
+		OrientVertexType property = graph.getVertexType(TProperty.TRACE_TYPE);
+		if (property == null) {
+			property = graph.createVertexType(TProperty.TRACE_TYPE);
+			property.createProperty(TProperty.NAME, OType.STRING);
+		}
+		
+		// Scope
+		OrientVertexType scope = graph.getVertexType(TScope.TRACE_TYPE);
+		if (scope == null) {
+			graph.createVertexType(TScope.TRACE_TYPE);
+		}
+		
 		// Edges
 		setupEdgeType(graph, 
 				TEvaluates.TRACE_TYPE,
@@ -73,29 +114,13 @@ public class OrientTraceGraphFactory implements TraceGraphFactory<OrientGraph> {
 				TAccesses.TRACE_TYPE,
 				TIn.TRACE_TYPE);
 		
-		// Indexes
-
-//		// Unique Constraint name Index
-//		graph.createKeyIndex(TConstraint.NAME, Vertex.class,
-//				new Parameter<String, String>("type", "UNIQUE"),
-//				new Parameter<String, String>("class", TConstraint.TRACE_TYPE));
-//
-//		// Unique Element ID index
-//		graph.createKeyIndex(TElement.ELEMENT_ID, Vertex.class,
-//				new Parameter<String, String>("type", "UNIQUE"),
-//				new Parameter<String, String>("class", TElement.TRACE_TYPE));
+		graph.commit();
 	}
-	
+
 	private void setupEdgeType(OrientGraph graph, String... types) {
 		for (String type : types) {
 			if (graph.getEdgeType(type) == null) graph.createEdgeType(type);
 		}
 	}
 	
-	private void setupVertexType(OrientGraph graph, String... types) {
-		for (String type : types) {
-			if (graph.getVertexType(type) == null) graph.createVertexType(type);
-		}
-	}
-
 }
