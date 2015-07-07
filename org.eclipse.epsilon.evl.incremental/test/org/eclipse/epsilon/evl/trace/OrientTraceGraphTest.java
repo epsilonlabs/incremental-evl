@@ -666,77 +666,222 @@ public class OrientTraceGraphTest extends AbstractOrientTraceGraphTest {
 
 	@Test
 	public void testRemoveContextString() {
-		fail("Not yet implemented");
+		final String contextName = "context-testRemoveContextString";
+		
+		final TContext create = this.graph.createContext(contextName);
+		assertNotNull(create);
+		assertEquals(contextName, create.getName());
+		
+		assertNotNull(this.graph.getContext(contextName));
+		this.graph.removeContext(contextName);
+		assertNull(this.graph.getContext(contextName));
 	}
 
 	@Test
 	public void testRemoveContextTContext() {
-		fail("Not yet implemented");
+		final String contextName = "context-testRemoveContextTContext";
+		
+		final TContext create = this.graph.createContext(contextName);
+		assertNotNull(create);
+		assertEquals(contextName, create.getName());
+		
+		assertNotNull(this.graph.getContext(contextName));
+		this.graph.removeContext(create);
+		assertNull(this.graph.getContext(contextName));
 	}
 
 	@Test
 	public void testRemoveConstraintTConstraint() {
-		fail("Not yet implemented");
+		final String contextName = "context-testRemoveContextTContext";
+		final String constraintName = "constraint-testRemoveContextTContext";
+		
+		final TConstraint create = this.graph.createConstraint(constraintName, contextName);
+		assertNotNull(create);
+		assertEquals(contextName, create.getContext().getName());
+		assertEquals(constraintName, create.getName());
+		
+		assertNotNull(this.graph.getConstraint(constraintName, contextName));
+		this.graph.removeConstraint(create);
+		assertNull(this.graph.getConstraint(constraintName, contextName));
 	}
 
 	@Test
 	public void testRemoveConstraintStringString() {
-		fail("Not yet implemented");
+		final String contextName = "context-testRemoveConstraintStringString";
+		final String constraintName = "constraint-testRemoveConstraintStringString";
+		
+		final TConstraint create = this.graph.createConstraint(constraintName, contextName);
+		assertNotNull(create);
+		assertEquals(contextName, create.getContext().getName());
+		assertEquals(constraintName, create.getName());
+		
+		assertNotNull(this.graph.getConstraint(constraintName, contextName));
+		this.graph.removeConstraint(constraintName, contextName);
+		assertNull(this.graph.getConstraint(constraintName, contextName));
 	}
 
 	@Test
 	public void testRemoveConstraintStringTContext() {
-		fail("Not yet implemented");
+		final String contextName = "context-testRemoveConstraintStringTContext";
+		final String constraintName = "constraint-testRemoveConstraintStringTContext";
+		
+		final TContext context = this.graph.createContext(contextName);
+		assertNotNull(context);
+		assertEquals(contextName, context.getName());
+		
+		final TConstraint create = this.graph.createConstraint(constraintName, contextName);
+		assertNotNull(create);
+		assertEquals(contextName, create.getContext().getName());
+		assertEquals(constraintName, create.getName());
+		
+		assertNotNull(this.graph.getConstraint(constraintName, contextName));
+		this.graph.removeConstraint(constraintName, context);
+		assertNull(this.graph.getConstraint(constraintName, contextName));
 	}
 
 	@Test
 	public void testRemoveElementTElement() {
-		fail("Not yet implemented");
+		final String elementId = "element-testRemoveElementTElement";
+		
+		final TElement create = this.graph.createElement(elementId);
+		assertNotNull(create);
+		assertEquals(elementId, create.getElementId());
+		
+		assertNotNull(this.graph.getElement(elementId));
+		this.graph.removeElement(create);
+		assertNull(this.graph.getElement(elementId));
 	}
 
 	@Test
 	public void testRemoveElementString() {
-		fail("Not yet implemented");
+		final String elementId = "element-testRemoveElementString";
+		
+		final TElement create = this.graph.createElement(elementId);
+		assertNotNull(create);
+		assertEquals(elementId, create.getElementId());
+		
+		assertNotNull(this.graph.getElement(elementId));
+		this.graph.removeElement(elementId);
+		assertNull(this.graph.getElement(elementId));
 	}
 
 	@Test
 	public void testRemoveScopeTScope() {
-		fail("Not yet implemented");
+		final String contextName = "context-testRemoveScopeTScope";
+		final String constraintName = "constraint-testRemoveScopeTScope";
+		final String elementId = "element-testRemoveScopeTScope";
+		
+		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		assertNotNull(scope);
+		
+		assertNotNull(this.graph.getScope(elementId, constraintName, contextName));
+		this.graph.removeScope(scope);
+		assertNull(this.graph.getScope(elementId, constraintName, contextName));
 	}
 
 	@Test
 	public void testRemoveScopeStringStringString() {
-		fail("Not yet implemented");
+		final String contextName = "context-testRemoveScopeStringStringString";
+		final String constraintName = "constraint-testRemoveScopeStringStringString";
+		final String elementId = "element-testRemoveScopeStringStringString";
+		
+		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		assertNotNull(scope);
+		
+		assertNotNull(this.graph.getScope(elementId, constraintName, contextName));
+		this.graph.removeScope(elementId, constraintName, contextName);
+		assertNull(this.graph.getScope(elementId, constraintName, contextName));
 	}
 
 	@Test
 	public void testRemoveScopeStringTConstraint() {
-		fail("Not yet implemented");
+		final String contextName = "context-testRemoveScopeStringTConstraint";
+		final String constraintName = "constraint-testRemoveScopeStringTConstraint";
+		final String elementId = "element-testRemoveScopeStringTConstraint";
+		
+		final TConstraint constraint = this.graph.createConstraint(constraintName, contextName);
+		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		assertNotNull(constraint);
+		assertNotNull(scope);
+		
+		assertNotNull(this.graph.getScope(elementId, constraintName, contextName));
+		this.graph.removeScope(elementId, constraint);
+		assertNull(this.graph.getScope(elementId, constraintName, contextName));
 	}
 
 	@Test
 	public void testRemoveScopeTElementStringString() {
-		fail("Not yet implemented");
+		final String contextName = "context-testRemoveScopeTElementStringString";
+		final String constraintName = "constraint-testRemoveScopeTElementStringString";
+		final String elementId = "element-testRemoveScopeTElementStringString";
+		
+		final TElement element = this.graph.createElement(elementId);
+		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		assertNotNull(element);
+		assertNotNull(scope);
+		
+		assertNotNull(this.graph.getScope(elementId, constraintName, contextName));
+		this.graph.removeScope(element, constraintName, contextName);
+		assertNull(this.graph.getScope(elementId, constraintName, contextName));
 	}
 
 	@Test
 	public void testRemoveScopeTElementTConstraint() {
-		fail("Not yet implemented");
+		final String contextName = "context-testRemoveScopeTElementTConstraint";
+		final String constraintName = "constraint-testRemoveScopeTElementTConstraint";
+		final String elementId = "element-testRemoveScopeTElementTConstraint";
+		
+		final TElement element = this.graph.createElement(elementId);
+		final TConstraint constraint = this.graph.createConstraint(constraintName, contextName);
+		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		assertNotNull(element);
+		assertNotNull(constraint);
+		assertNotNull(scope);
+		
+		assertNotNull(this.graph.getScope(elementId, constraintName, contextName));
+		this.graph.removeScope(element, constraint);
+		assertNull(this.graph.getScope(elementId, constraintName, contextName));
 	}
 
 	@Test
 	public void testRemovePropertyTProperty() {
-		fail("Not yet implemented");
+		final String propertyName = "property-testRemovePropertyTProperty";
+		final String elementId = "element-testRemovePropertyTProperty";
+		
+		final TProperty property = this.graph.createProperty(propertyName, elementId);
+		assertNotNull(property);
+		
+		assertNotNull(this.graph.getProperty(propertyName, elementId));
+		this.graph.removeProperty(property);
+		assertNull(this.graph.getProperty(propertyName, elementId));
 	}
 
 	@Test
 	public void testRemovePropertyStringString() {
-		fail("Not yet implemented");
+		final String propertyName = "property-testRemovePropertyStringString";
+		final String elementId = "element-testRemovePropertyStringString";
+		
+		final TProperty property = this.graph.createProperty(propertyName, elementId);
+		assertNotNull(property);
+		
+		assertNotNull(this.graph.getProperty(propertyName, elementId));
+		this.graph.removeProperty(propertyName, elementId);
+		assertNull(this.graph.getProperty(propertyName, elementId));
 	}
 
 	@Test
 	public void testRemovePropertyStringTElement() {
-		fail("Not yet implemented");
+		final String propertyName = "property-testRemovePropertyStringTElement";
+		final String elementId = "element-testRemovePropertyStringTElement";
+		
+		final TElement element = this.graph.createElement(elementId);
+		final TProperty property = this.graph.createProperty(propertyName, elementId);
+		assertNotNull(element);
+		assertNotNull(property);
+		
+		assertNotNull(this.graph.getProperty(propertyName, elementId));
+		this.graph.removeProperty(propertyName, element);
+		assertNull(this.graph.getProperty(propertyName, elementId));
 	}
 
 }
