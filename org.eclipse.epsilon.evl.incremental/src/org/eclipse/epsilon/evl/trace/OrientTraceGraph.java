@@ -104,17 +104,20 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 
 	@Override
 	public TProperty createProperty(String propertyName, String elementId) {
-		return this.createProperty(propertyName, this.getElement(elementId));
+		return this.createProperty(propertyName, this.createElement(elementId));
 	}
 
 	@Override
 	public TProperty createProperty(String propertyName, TElement element) {
 		if (element == null) return null;
 		
-		final TProperty property = this.addVertex(TProperty.TRACE_TYPE, TProperty.class);
-		property.setOwner(element);
-		property.setName(propertyName);
-		this.commit();
+		TProperty property = this.getProperty(propertyName, element);
+		if (property == null) {
+			property = this.addVertex(TProperty.TRACE_TYPE, TProperty.class);
+			property.setOwner(element);
+			property.setName(propertyName);
+			this.commit();
+		}
 		return property;
 	}
 

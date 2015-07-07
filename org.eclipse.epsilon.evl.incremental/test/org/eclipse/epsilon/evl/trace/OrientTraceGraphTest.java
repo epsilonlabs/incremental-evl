@@ -1,9 +1,11 @@
 package org.eclipse.epsilon.evl.trace;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import org.eclipse.epsilon.evl.AbstractOrientTraceGraphTest;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -93,6 +95,28 @@ public class OrientTraceGraphTest extends AbstractOrientTraceGraphTest {
 		assertEquals(constraintName, constraint.getName());
 		assertEquals(contextName, constraint.getContext().getName());
 	}
+	
+	@Test
+	public void testCreateConstraintDuplicate() {
+		final String contextName = "context-testCreateConstraintDuplicate";
+		final String constraintName = "constraint-testCreateConstraintDuplicate";
+		
+		assertNull(this.graph.getConstraint(constraintName, contextName));
+		
+		final TConstraint first = this.graph.createConstraint(constraintName, contextName);
+		assertNotNull(first);
+		assertEquals(contextName, first.getContext().getName());
+		assertEquals(constraintName, first.getName());
+		final Object contextRID = first.getContext().asVertex().getId();
+		final Object constraintRID = first.asVertex().getId();
+		
+		final TConstraint second = this.graph.createConstraint(constraintName, contextName);
+		assertNotNull(second);
+		assertEquals(contextName, second.getContext().getName());
+		assertEquals(constraintName, second.getName());
+		assertEquals(contextRID, second.getContext().asVertex().getId());
+		assertEquals(constraintRID, second.asVertex().getId());
+	}
 
 	@Test
 	public void testCreateElement() {
@@ -103,6 +127,23 @@ public class OrientTraceGraphTest extends AbstractOrientTraceGraphTest {
 		final TElement element = this.graph.createElement(elementId);
 		assertNotNull(element);
 		assertEquals(elementId, element.getElementId());
+	}
+	
+	@Test
+	public void testCreateElementDuplicate() {
+		final String elementId = "element-testCreateElementDuplicate";
+		
+		assertNull(this.graph.getElement(elementId));
+		
+		final TElement first = this.graph.createElement(elementId);
+		assertNotNull(first);
+		assertEquals(elementId, first.getElementId());
+		final Object elementRID = first.asVertex().getId();
+		
+		final TElement second = this.graph.createElement(elementId);
+		assertNotNull(second);
+		assertEquals(elementId, second.getElementId());
+		assertEquals(elementRID, second.asVertex().getId());
 	}
 
 	@Test
@@ -191,6 +232,29 @@ public class OrientTraceGraphTest extends AbstractOrientTraceGraphTest {
 		assertEquals(element, scope.getRootElement());
 		assertEquals(elementRID, scope.getRootElement().asVertex().getId());
 	}
+	
+	@Test
+	public void testCreateScopeDuplicate() {
+		final String contextName = "context-testCreateScopeDuplicate";
+		final String constraintName = "constraint-testCreateScopeDuplicate";
+		final String elementId = "element-testCreateScopeDuplicate";
+		
+		assertNull(this.graph.getScope(elementId, constraintName, contextName));
+		
+		final TScope first = this.graph.createScope(elementId, constraintName, contextName);
+		assertNotNull(first);
+		assertEquals(elementId, first.getRootElement().getElementId());
+		assertEquals(constraintName, first.getConstraint().getName());
+		assertEquals(contextName, first.getConstraint().getContext().getName());
+		final Object scopeRID = first.asVertex().getId();
+		
+		final TScope second = this.graph.createScope(elementId, constraintName, contextName);
+		assertNotNull(second);
+		assertEquals(elementId, second.getRootElement().getElementId());
+		assertEquals(constraintName, second.getConstraint().getName());
+		assertEquals(contextName, second.getConstraint().getContext().getName());
+		assertEquals(scopeRID, second.asVertex().getId());
+	}
 
 	@Test
 	public void testCreatePropertyStringString() {
@@ -223,6 +287,27 @@ public class OrientTraceGraphTest extends AbstractOrientTraceGraphTest {
 		assertEquals(elementRID, property.getOwner().asVertex().getId());
 		assertEquals(propertyName, property.getName());
 	}
+	
+	@Test
+	public void testCreatePropertyDuplicate() {
+		final String propertyName = "property-testCreatePropertyDuplicate";
+		final String elementId = "element-testCreatePropertyDuplicate";
+		
+		assertNull(this.graph.getElement(elementId));
+		assertNull(this.graph.getProperty(propertyName, elementId));
+		
+		final TProperty first = this.graph.createProperty(propertyName, elementId);
+		assertNotNull(first);
+		assertEquals(elementId, first.getOwner().getElementId());
+		assertEquals(propertyName, first.getName());
+		final Object propertyRID = first.asVertex().getId();
+		
+		final TProperty second = this.graph.createProperty(propertyName, elementId);
+		assertNotNull(second);
+		assertEquals(elementId, second.getOwner().getElementId());
+		assertEquals(propertyName, second.getName());
+		assertEquals(propertyRID, second.asVertex().getId());
+	}
 
 	@Test
 	public void testGetContext() {
@@ -238,53 +323,194 @@ public class OrientTraceGraphTest extends AbstractOrientTraceGraphTest {
 	
 	@Test
 	public void testGetContextDoesNotExist() {
-		final String contextName = "testGetContextDoesNotExist";
+		final String contextName = "context-testGetContextDoesNotExist";
 		assertNull(this.graph.getContext(contextName));
 	}
 
 	@Test
 	public void testGetConstraintStringString() {
-		fail("Not yet implemented");
+		final String contextName = "context-testGetConstraintStringString";
+		final String constraintName = "constraint-testGetConstraintStringString";
+		
+		assertNull(this.graph.getConstraint(constraintName, contextName));
+		
+		final TConstraint constraint = this.graph.createConstraint(constraintName, contextName);
+		assertNotNull(constraint);
+		assertEquals(contextName, constraint.getContext().getName());
+		assertEquals(constraintName, constraint.getName());
+		final Object constraintRID = constraint.asVertex().getId();
+		
+		final TConstraint get = this.graph.getConstraint(constraintName, contextName);
+		assertNotNull(get);
+		assertEquals(constraintRID, get.asVertex().getId());
 	}
 
 	@Test
 	public void testGetConstraintStringTContext() {
-		fail("Not yet implemented");
+		final String contextName = "context-testGetConstraintStringTContext";
+		final String constraintName = "constraint-testGetConstraintStringTContext";
+		
+		final TContext context = this.getGraph().createContext(contextName);
+		assertNotNull(context);
+		assertEquals(contextName, context.getName());
+		assertNull(this.graph.getConstraint(constraintName, context));
+		final Object contextRID = context.asVertex().getId();
+		
+		final TConstraint constraint = this.graph.createConstraint(constraintName, context);
+		assertNotNull(constraint);
+		assertEquals(constraintName, constraint.getName());
+		final Object constraintRID = constraint.asVertex().getId();
+		
+		final TConstraint get = this.graph.getConstraint(constraintName, context);
+		assertNotNull(get);
+		assertEquals(constraintName, constraint.getName());
+		assertEquals(constraintRID, get.asVertex().getId());
+		assertEquals(contextRID, get.getContext().asVertex().getId());
+	}
+	
+	@Test
+	public void getConstraintDoesNotExist() {
+		final String contextName = "context-getConstraintDoesNotExist";
+		final String constraintName = "constraint-getConstraintDoesNotExist";
+		
+		final TContext context = this.graph.createContext(contextName);
+		assertNotNull(context);
+		
+		assertNull(this.graph.getConstraint(constraintName, context));
 	}
 
 	@Test
 	public void testGetElement() {
-		fail("Not yet implemented");
+		final String elementId = "element-testGetElement";
+		
+		assertNull(this.graph.getElement(elementId));
+		
+		final TElement create = this.graph.createElement(elementId);
+		assertNotNull(create);
+		assertEquals(elementId, create.getElementId());
+		final Object rid = create.asVertex().getId();
+		
+		final TElement get = this.graph.getElement(elementId);
+		assertNotNull(get);
+		assertEquals(elementId, get.getElementId());
+		assertEquals(rid, get.asVertex().getId());
+	}
+	
+	@Test
+	public void testGetElementDoesNotExist(){
+		final String elementId = "element-testGetElementDoesNotExist";
+		assertNull(this.graph.getElement(elementId));
 	}
 
 	@Test
 	public void testGetScopeStringStringString() {
-		fail("Not yet implemented");
+		final String contextName = "context-testGetScopeStringStringString";
+		final String constraintName = "constraint-testGetScopeStringStringString";
+		final String elementId = "element-testGetScopeStringStringString";
+		
+		assertNull(this.getGraph().getScope(elementId, constraintName, contextName));
+		
+		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		assertNotNull(scope);
+		final Object rid = scope.asVertex().getId();
+		
+		final TScope get = this.graph.getScope(elementId, constraintName, contextName);
+		assertEquals(rid, get.asVertex().getId());
 	}
 
 	@Test
 	public void testGetScopeStringTConstraint() {
-		fail("Not yet implemented");
+		final String contextName = "context-testGetScopeStringTConstraint";
+		final String constraintName = "constraint-testGetScopeStringTConstraint";
+		final String elementId = "element-testGetScopeStringTConstraint";
+		
+		final TConstraint constraint = this.graph.createConstraint(constraintName, contextName);
+		assertNotNull(constraint);
+		assertNull(this.getGraph().getScope(elementId, constraint));
+		
+		final TScope scope = this.graph.createScope(elementId, constraint);
+		assertNotNull(scope);
+		final Object rid = scope.asVertex().getId();
+		
+		final TScope get = this.graph.getScope(elementId, constraint);
+		assertEquals(rid, get.asVertex().getId());
 	}
 
 	@Test
 	public void testGetScopeTElementStringString() {
-		fail("Not yet implemented");
+		final String contextName = "context-testGetScopeTElementStringString";
+		final String constraintName = "constraint-testGetScopeTElementStringString";
+		final String elementId = "element-testGetScopeTElementStringString";
+		
+		final TElement element = this.graph.createElement(elementId);
+		final TConstraint constraint = this.graph.createConstraint(constraintName, contextName);
+		assertNotNull(element);
+		assertNotNull(constraint);
+		assertNull(this.getGraph().getScope(element, constraint));
+
+		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		assertNotNull(scope);
+		final Object rid = scope.asVertex().getId();
+		
+		final TScope get = this.graph.getScope(element, constraint);
+		assertEquals(rid, get.asVertex().getId());
 	}
 
 	@Test
 	public void testGetScopeTElementTConstraint() {
-		fail("Not yet implemented");
+		final String contextName = "context-testGetScopeTElementTConstraint";
+		final String constraintName = "constraint-testGetScopeTElementTConstraint";
+		final String elementId = "element-testGetScopeTElementTConstraint";
+		
+		final TElement element = this.graph.createElement(elementId);
+		assertNotNull(element);
+		assertNull(this.getGraph().getScope(element, constraintName, contextName));
+		
+		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		assertNotNull(scope);
+		final Object rid = scope.asVertex().getId();
+		
+		final TScope get = this.graph.getScope(elementId, constraintName, contextName);
+		assertEquals(rid, get.asVertex().getId());
 	}
 
 	@Test
 	public void testGetPropertyStringString() {
-		fail("Not yet implemented");
+		final String propertyName = "property-testGetPropertyStringString";
+		final String elementId = "element-testGetPropertyStringString";
+		
+		assertNull(this.graph.getProperty(propertyName, elementId));
+		
+		final TProperty property = this.graph.createProperty(propertyName, elementId);
+		assertNotNull(property);
+		assertEquals(propertyName, property.getName());
+		final Object rid = property.asVertex().getId();
+		
+		final TProperty get = this.graph.getProperty(propertyName, elementId);
+		assertNotNull(get);
+		assertEquals(propertyName, get.getName());
+		assertEquals(rid, get.asVertex().getId());
 	}
 
 	@Test
 	public void testGetPropertyStringTElement() {
-		fail("Not yet implemented");
+		final String propertyName = "property-testGetPropertyStringTElement";
+		final String elementId = "element-testGetPropertyStringTElement";
+		
+		final TElement element = this.graph.createElement(elementId);
+		assertNotNull(element);
+		assertEquals(elementId, element.getElementId());
+		assertNull(this.graph.getProperty(propertyName, element));
+		
+		final TProperty create = this.graph.createProperty(propertyName, element);
+		assertNotNull(create);
+		assertEquals(propertyName, create.getName());
+		final Object rid = create.asVertex().getId();
+		
+		final TProperty get = this.graph.getProperty(propertyName, element);
+		assertNotNull(get);
+		assertEquals(propertyName, get.getName());
+		assertEquals(rid, get.asVertex().getId());
 	}
 
 	@Test
