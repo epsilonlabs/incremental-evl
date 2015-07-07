@@ -1,9 +1,9 @@
 package org.eclipse.epsilon.evl.trace;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
+
+import java.util.Arrays;
 
 import org.eclipse.epsilon.evl.AbstractOrientTraceGraphTest;
 import org.junit.Before;
@@ -538,27 +538,120 @@ public class OrientTraceGraphTest extends AbstractOrientTraceGraphTest {
 
 	@Test
 	public void testGetAllContexts() {
-		fail("Not yet implemented");
+		final String[] contextNames = {
+				"context-testGetAllContexts-1",
+				"context-testGetAllContexts-2",
+				"context-testGetAllContexts-3",
+				"context-testGetAllContexts-4",
+				"context-testGetAllContexts-5"
+		};
+		
+		for (String s : contextNames) {
+			this.graph.createContext(s);
+		}
+		
+		int count = 0;
+		for (TContext context : this.graph.getAllContexts()) {
+			count++;
+			assertThat(Arrays.asList(contextNames), hasItem(context.getName()));
+		}
+		assertEquals(contextNames.length, count);
 	}
 
 	@Test
 	public void testGetAllConstraints() {
-		fail("Not yet implemented");
+		final String contextName = "context-testGetAllConstraints";
+		final String[] constraintNames = {
+				"constraint-testGetAllConstraints-1",
+				"constraint-testGetAllConstraints-2",
+				"constraint-testGetAllConstraints-3",
+				"constraint-testGetAllConstraints-4",
+				"constraint-testGetAllConstraints-5"
+		};
+		
+		final TContext context = this.graph.createContext(contextName);
+		for (String s : constraintNames) {
+			this.graph.createConstraint(s, context);
+		}
+		
+		int count = 0;
+		for (TConstraint constraint : this.graph.getAllConstraints()) {
+			count++;
+			assertThat(Arrays.asList(constraintNames), hasItem(constraint.getName()));
+		}
+		assertEquals(constraintNames.length, count);
 	}
 
 	@Test
 	public void testGetAllElements() {
-		fail("Not yet implemented");
+		final String[] elementIds = {
+				"element-testGetAllElements-1",
+				"element-testGetAllElements-2",
+				"element-testGetAllElements-3",
+				"element-testGetAllElements-4",
+				"element-testGetAllElements-5"
+		};
+		
+		for (String s : elementIds) {
+			this.graph.createElement(s);
+		}
+		
+		int count = 0;
+		for (TElement element : this.graph.getAllElements()) {
+			count++;
+			assertThat(Arrays.asList(elementIds), hasItem(element.getElementId()));
+		}
+		assertEquals(elementIds.length, count);
 	}
 
 	@Test
 	public void testGetAllScopes() {
-		fail("Not yet implemented");
+		final String contextName = "context-testGetAllScopes";
+		final String constraintName = "constraint-testGetAllScopes";
+		final String[] elementIds = {
+				"element-testGetAllScopes-1",
+				"element-testGetAllScopes-2",
+				"element-testGetAllScopes-3",
+				"element-testGetAllScopes-4",
+				"element-testGetAllScopes-5"
+		};
+		
+		for (String s : elementIds) {
+			this.graph.createScope(s, constraintName, contextName);
+		}
+		
+		int count = 0;
+		for (TScope scope : this.graph.getAllScopes()) {
+			count++;
+			assertEquals(contextName, scope.getConstraint().getContext().getName());
+			assertEquals(constraintName, scope.getConstraint().getName());;
+			assertThat(Arrays.asList(elementIds), hasItem(scope.getRootElement().getElementId()));
+		}
+		assertEquals(elementIds.length, count);
 	}
 
 	@Test
 	public void testGetAllProperties() {
-		fail("Not yet implemented");
+		final String elementId = "element-testGetAllProperties";
+		final String[] propertyNames = {
+				"property-testGetAllProperties-1",
+				"property-testGetAllProperties-2",
+				"property-testGetAllProperties-3",
+				"property-testGetAllProperties-4",
+				"property-testGetAllProperties-5"
+		};
+		
+		for (String s : propertyNames) {
+			this.graph.createProperty(s, elementId);
+		}
+		
+		int count = 0;
+		for (TProperty property : this.graph.getAllProperties()) {
+			count++;
+			assertEquals(elementId, property.getOwner().getElementId());
+			assertThat(Arrays.asList(propertyNames), hasItem(property.getName()));
+		}
+		assertEquals(propertyNames.length, count);
 	}
 
 	@Test
