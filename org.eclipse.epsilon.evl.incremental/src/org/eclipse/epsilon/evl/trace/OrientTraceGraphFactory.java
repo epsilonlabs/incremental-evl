@@ -43,7 +43,7 @@ public class OrientTraceGraphFactory implements TraceGraphFactory<OrientGraph> {
 	}
 
 	@Override
-	public TraceGraph<OrientGraph> getGraph() {
+	public OrientTraceGraph getGraph() {
 		// Init the graph if not already done so
 		if (graphInstance == null || graphInstance.isOpen()) {
 			OrientGraph orientGraph = (OrientGraph) GraphFactory
@@ -77,10 +77,11 @@ public class OrientTraceGraphFactory implements TraceGraphFactory<OrientGraph> {
 		if (constraint == null) {
 			constraint = graph.createVertexType(TConstraint.TRACE_TYPE);
 			constraint.createProperty(TConstraint.NAME, OType.STRING);
-			graph.createKeyIndex(TConstraint.NAME, Vertex.class,
-					new Parameter<String, String>("type", "UNIQUE_HASH_INDEX"),
-					new Parameter<String, String>("class",
-							TConstraint.TRACE_TYPE));
+			// FIXME: Currently uses traversal, faster to use the index and iterate?
+//			graph.createKeyIndex(TConstraint.NAME, Vertex.class,
+//					new Parameter<String, String>("type", "NOTUNIQUE_HASH_INDEX"),
+//					new Parameter<String, String>("class",
+//							TConstraint.TRACE_TYPE));
 		}
 		
 		// Element
