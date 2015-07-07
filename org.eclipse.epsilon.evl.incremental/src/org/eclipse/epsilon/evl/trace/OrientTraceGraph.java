@@ -1,5 +1,8 @@
 package org.eclipse.epsilon.evl.trace;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.frames.FramedGraph;
@@ -243,15 +246,23 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 	}
 
 	@Override
-	public Iterable<TScope> getScopesIn(TElement element) {
-		throw new UnsupportedOperationException();
-
+	public Iterable<TScope> getScopesPartOf(TElement element) {
+		if (element == null) {
+			return new LinkedList<TScope>();
+		}
+		final List<Vertex> results = new LinkedList<Vertex>();
+		final GremlinPipeline<Vertex, Vertex> p = new GremlinPipeline<Vertex, Vertex>();
+		p.start(element.asVertex())
+			.out(TOwns.TRACE_TYPE)
+			.in(TAccesses.TRACE_TYPE)
+			.aggregate(results)
+			.next();
+		return this.framedGraph.frameVertices(results, TScope.class);
 	}
 
 	@Override
-	public Iterable<TScope> getScopesIn(String elementId) {
-		throw new UnsupportedOperationException();
-
+	public Iterable<TScope> getScopesPartOf(String elementId) {
+		return this.getScopesPartOf(this.getElement(elementId));
 	}
 
 	@Override

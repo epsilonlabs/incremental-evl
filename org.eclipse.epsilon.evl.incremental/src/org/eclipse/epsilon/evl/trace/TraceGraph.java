@@ -78,10 +78,6 @@ public interface TraceGraph<T extends Graph> extends WrapperGraph<T> {
 
 	Iterable<TProperty> getAllProperties();
 
-	Iterable<TScope> getScopesIn(TElement element);
-
-	Iterable<TScope> getScopesIn(String elementId);
-
 	/*
 	 * ========================================================================
 	 * DELETE
@@ -116,6 +112,10 @@ public interface TraceGraph<T extends Graph> extends WrapperGraph<T> {
 	void removeProperty(String propertyName, String elementId);
 
 	void removeProperty(String propertyName, TElement element);
+	
+	Iterable<TScope> getScopesPartOf(TElement element);
+	Iterable<TScope> getScopesPartOf(String elementId);
+
 
 	/**
 	 * @return {@code true} if the underlying database used in the trace graph
@@ -129,5 +129,6 @@ public interface TraceGraph<T extends Graph> extends WrapperGraph<T> {
 	 * Shutdown the underlying database.
 	 */
 	void shutdown();
+
 
 }

@@ -2,6 +2,8 @@ package org.eclipse.epsilon.evl;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -14,6 +16,7 @@ import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
+import org.eclipse.epsilon.evl.trace.TElement;
 import org.eclipse.epsilon.evl.trace.TProperty;
 import org.eclipse.epsilon.evl.trace.TScope;
 import org.eclipse.epsilon.evl.trace.TraceGraph;
@@ -133,20 +136,22 @@ public class TraceEvlChangeListener extends EContentAdapter {
 		final EObject notifier = (EObject) notice.getNotifier();
 		
 		// Still attached to a resource, element not deleted, do nothing
-		if (notifier.eResource() != null) return null;
+		if (notifier.eResource() != null) {
+			return null;
+		}
 		
 		// Retrieve ID. If no ID then this was never added to this model.
-		final String id = idMap.remove(notifier);
-		if (id == null) return null;
+		final String elementId = idMap.remove(notifier);
+		if (elementId == null) {
+			return null;
+		}
 		
 		// Get the properties
 		final TraceGraph<? extends Graph> graph = context.getTraceGraph();		
-		Map map =  processScopes(graph.getScopesIn(id));
-		graph.removeElement(id);
+		Map<EObject, Set<Constraint>> map = processScopes(graph.getScopesPartOf(elementId));
+		graph.removeElement(elementId);
 		return map;
 	}
-	
-	
 	
 	public Map<EObject, Set<Constraint>> getConstraints(String elementId, String property) {
 		final Map<EObject, Set<Constraint>> map = new HashMap<EObject, Set<Constraint>>();
