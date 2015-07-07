@@ -43,13 +43,13 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 	}
 
 	@Override
-	public TConstraint createConstraint(String contraintName, String contextName) {
-		return this.createConstraint(contraintName, this.getContext(contextName));
+	public TConstraint createConstraint(String constraintName, String contextName) {
+		return this.createConstraint(constraintName, this.createContext(contextName));
 	}
 
 	@Override
 	public TConstraint createConstraint(String constraintName, TContext context) {
-		if (context == null) throw new NullPointerException();
+		if (context == null) return null;
 		
 		TConstraint constraint = this.getConstraint(constraintName, context);
 		if (constraint == null) {
@@ -74,23 +74,23 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 
 	@Override
 	public TScope createScope(String elementId, String constraintName, String contextName) {
-		return this.createScope(this.getElement(elementId), 
-				this.getConstraint(constraintName, contextName));
+		return this.createScope(this.createElement(elementId), 
+				this.createConstraint(constraintName, contextName));
 	}
 
 	@Override
 	public TScope createScope(String elementId, TConstraint constraint) {
-		return this.createScope(this.getElement(elementId), constraint);
+		return this.createScope(this.createElement(elementId), constraint);
 	}
 
 	@Override
 	public TScope createScope(TElement element, String constraintName, String contextName) {
-		return this.createScope(element, this.getConstraint(constraintName, contextName));
+		return this.createScope(element, this.createConstraint(constraintName, contextName));
 	}
 
 	@Override
 	public TScope createScope(TElement element, final TConstraint constraint) {
-		if (element == null || constraint == null) throw new NullPointerException();
+		if (element == null || constraint == null) return null;
 		
 		TScope scope = this.getScope(element, constraint);
 		if (scope == null) {
@@ -109,9 +109,7 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 
 	@Override
 	public TProperty createProperty(String propertyName, TElement element) {
-		if (element == null) throw new NullPointerException();
-		
-
+		if (element == null) return null;
 		
 		final TProperty property = this.addVertex(TProperty.TRACE_TYPE, TProperty.class);
 		property.setOwner(element);
@@ -136,7 +134,7 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 
 	@Override
 	public TConstraint getConstraint(String constraintName, TContext context) {
-		if (context == null) throw new NullPointerException();
+		if (context == null) return null;
 		GremlinPipeline<Vertex, Vertex> p = new GremlinPipeline<Vertex, Vertex>();
 		p.start(context.asVertex())
 		.inE(TIn.TRACE_TYPE)
@@ -175,9 +173,7 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 
 	@Override
 	public TScope getScope(TElement element, final TConstraint constraint) {
-		if (element == null || constraint == null) {
-			throw new NullPointerException();
-		}
+		if (element == null || constraint == null) return null;
 		
 		final GremlinPipeline<Vertex, Vertex> p = new GremlinPipeline<Vertex, Vertex>();
 		p.start(element.asVertex())
@@ -206,7 +202,7 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 
 	@Override
 	public TProperty getProperty(String propertyName, TElement element) {
-		if (element == null) throw new NullPointerException();
+		if (element == null) return null;
 		
 		final GremlinPipeline<Vertex, Vertex> p = new GremlinPipeline<Vertex, Vertex>();
 		p.start(element.asVertex())
