@@ -1,5 +1,9 @@
 package org.eclipse.epsilon.evl;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.eclipse.epsilon.evl.trace.TraceGraph;
 import org.junit.After;
 
@@ -17,6 +21,20 @@ public abstract class AbstractTraceGraphTest<T extends TraceGraph> {
 	public void doTearDown() {
 		dropGraph();
 		tearDown();
+	}
+	
+	protected static File getFile(String filename) throws URISyntaxException {
+		URI binUri = AbstractTraceGraphTest.class.getResource(filename)
+				.toURI();
+		URI uri = null;
+
+		if (binUri.toString().indexOf("bin") > -1) {
+			uri = new URI(binUri.toString().replaceAll("bin", "test"));
+		} else {
+			uri = binUri;
+		}
+
+		return new File(uri);
 	}
 
 }
