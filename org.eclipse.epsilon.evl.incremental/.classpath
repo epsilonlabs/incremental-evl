@@ -7,7 +7,7 @@
 	<classpathentry kind="lib" path="lib/blueprints-core-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/frames-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/gremlin-groovy-2.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/gremlin-java-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/gremlin-java-2.6.0.jar" sourcepath="lib-src/gremlin-java-2.6.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/groovy-1.8.9.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb-client-2.0.10.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb-core-2.0.10.jar" sourcepath="lib-src/orientdb-core-2.0.10-sources.jar"/>
