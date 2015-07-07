@@ -397,24 +397,4 @@ public class OrientTraceGraphTest extends AbstractOrientTraceGraphTest {
 		fail("Not yet implemented");
 	}
 
-	@Test
-	public void testGetBaseGraph() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIsOpen() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testCommit() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testShutdown() {
-		fail("Not yet implemented");
-	}
-
 }
