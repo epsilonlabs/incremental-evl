@@ -76,7 +76,7 @@ public class TraceEvlChangeListenerTest {
 		final String id = "_Q7PJoB9XEeWZ5uBIxHRxCw";
 
 		// Check trace element is in graph
-		TElement beforeElement = this.graph.getElement(id, false);
+		TElement beforeElement = this.graph.getElement(id);
 		assertNotNull(beforeElement);
 
 		TProperty tp = beforeElement.getProperties().iterator().next();
@@ -95,7 +95,7 @@ public class TraceEvlChangeListenerTest {
 		// FIXME: Check the correct constraints reran
 		// FIXME: Check all the relevant scopes and properties removed
 		// Check if element has been deleted from trace graph
-		TElement afterElement = this.graph.getElement(id, false);
+		TElement afterElement = this.graph.getElement(id);
 		assertNull(afterElement);
 
 	}
@@ -105,7 +105,7 @@ public class TraceEvlChangeListenerTest {
 		final String id = "_Q7PJoB9XEeWZ5uBIxHRxCw";
 		final String attr = "singleAttr";
 		
-		final TProperty before = this.graph.getProperty(attr, id, false);
+		final TProperty before = this.graph.getProperty(attr, id);
 		assertNotNull(before);
 		
 		final EObject eobj = (EObject) model.getElementById(id);
@@ -116,7 +116,7 @@ public class TraceEvlChangeListenerTest {
 		eobj.eSet(feature, null);
 		assertFalse(eobj.eIsSet(feature));
 		
-		final TProperty after = this.graph.getProperty(attr, id, false);
+		final TProperty after = this.graph.getProperty(attr, id);
 		assertNull(after);
 		
 		for (TScope tScope : graph.getElement(id).getScopes()) {
@@ -133,7 +133,7 @@ public class TraceEvlChangeListenerTest {
 		final String id = "_Q7PJoB9XEeWZ5uBIxHRxCw";
 		final String attr = "singleAttr";
 		
-		final TProperty before = this.graph.getProperty(attr, id, false);
+		final TProperty before = this.graph.getProperty(attr, id);
 		assertNotNull(before);
 		
 		final EObject eobj = (EObject) model.getElementById(id);
@@ -144,7 +144,7 @@ public class TraceEvlChangeListenerTest {
 		eobj.eSet(feature, null);
 		assertFalse(eobj.eIsSet(feature));
 		
-		final TProperty after = this.graph.getProperty(attr, id, false);
+		final TProperty after = this.graph.getProperty(attr, id);
 		assertNull(after);
 		
 		for (TScope tScope : graph.getElement(id).getScopes()) {

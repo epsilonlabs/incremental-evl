@@ -180,7 +180,7 @@ public class TraceEvlChangeListener extends EContentAdapter {
 	
 	public void onDeleteAttr(String property, String elementId) { 
 		TraceGraph<? extends Graph> graph = context.getTraceGraph();
-		TProperty tProperty = graph.getProperty(property, elementId, false);
+		TProperty tProperty = graph.getProperty(property, elementId);
 		
 		if (tProperty != null) {
 			graph.removeProperty(property, elementId);

@@ -107,7 +107,7 @@ public class TraceConstraint extends Constraint {
 				ctx.getModelRepository()
 				.getOwningModel(modelElement)
 				.getElementId(modelElement));
-		final TScope tScope = graph.getScope(tConstraint, tElement);
+		final TScope tScope = graph.getScope(tElement, tConstraint);
 		
 		for (Scope s : scopes) {
 			final TElement element = graph.getElement(s.getElementId());

@@ -11,111 +11,124 @@ import com.tinkerpop.blueprints.util.wrappers.WrapperGraph;
  * @param <T>
  *            The type of graph engine used by this {@link TraceGraph}s.
  */
+@Deprecated
 public interface TraceGraph<T extends Graph> extends WrapperGraph<T> {
 
-	TContext getContext(String name);
+	/*
+	 * ========================================================================
+	 * CREATE
+	 * ========================================================================
+	 */
+	TContext createContext(String contextName);
 
+	TConstraint createConstraint(String contraintName, String contextName);
+
+	TConstraint createConstraint(String constraintName, TContext context);
+
+	TElement createElement(String elementId);
+
+	TScope createScope(String elementId, String constraintName, String contextName);
+
+	TScope createScope(String elementId, TConstraint constraint);
+
+	TScope createScope(TElement element, String constraintName, String contextName);
+
+	TScope createScope(TElement element, TConstraint constraint);
+
+	TProperty createProperty(String propertyName, String elementId);
+
+	TProperty createProperty(String propertyName, TElement element);
+
+	/*
+	 * ========================================================================
+	 * READ
+	 * ========================================================================
+	 */
+	TContext getContext(String contextName);
+
+	TConstraint getConstraint(String constraintName, String contextName);
+
+	TConstraint getConstraint(String constraintName, TContext context);
+
+	TElement getElement(String elementId);
+
+	TScope getScope(String elementId, String constraintName, String contextName);
+
+	TScope getScope(String elementId, TConstraint constraint);
+
+	TScope getScope(TElement element, String constraintName, String contextName);
+
+	TScope getScope(TElement element, TConstraint constraint);
+
+	TProperty getProperty(String propertyName, String elementId);
+
+	TProperty getProperty(String propertyName, TElement element);
+
+	/*
+	 * ========================================================================
+	 * READ - ALL
+	 * ========================================================================
+	 */
 	Iterable<TContext> getAllContexts();
 
-	/**
-	 * Get the constraint by its name. If the constraint does not exist then a
-	 * new constraint is returned.
-	 * 
-	 * @param name
-	 *            The name of the constraint to retrieve.
-	 * @param context
-	 *            The context this constraint is in.
-	 * @return A constraint with the given name.
-	 */
-	TConstraint getConstraint(String name, TContext context);
-
-	/**
-	 * @return All the constraints in this trace graph.
-	 */
 	Iterable<TConstraint> getAllConstraints();
 
-	/**
-	 * Get the scope that is evaluated by the given constraint and uses the
-	 * given element as its root. If the scope does not exist then a new scope
-	 * is returned.
-	 * 
-	 * @param constraint
-	 *            The constraint used to evaluate the scope.
-	 * @param element
-	 *            The element that is the root of the scope.
-	 * @return A scope or {@code null} if it does not exist.
-	 */
-	TScope getScope(TConstraint constraint, TElement element);
+	Iterable<TElement> getAllElements();
 
-	/**
-	 * @return All the scopes in this trace graph.
-	 */
 	Iterable<TScope> getAllScopes();
-	
+
+	Iterable<TProperty> getAllProperties();
+
 	Iterable<TScope> getScopesIn(TElement element);
 
 	Iterable<TScope> getScopesIn(String elementId);
 
-	/**
-	 * Get the model element by its id. If the element does not exist then a new
-	 * element is returned.
-	 * 
-	 * @param elementId
-	 *            The id of the element to retrieve.
-	 * @return A element with the given name.
+	/*
+	 * ========================================================================
+	 * DELETE
+	 * ========================================================================
 	 */
-	TElement getElement(String elementId);
-	
-	TElement getElement(String elementId, boolean create);
+	void removeContext(TContext context);
 
-	/**
-	 * @return All the elements in the trace graph.
-	 */
-	Iterable<TElement> getAllElements();
+	void removeContext(String contextName);
 
-	/**
-	 * Get the property by its name and owning element. If the property does not
-	 * exist then a new property is returned.
-	 * 
-	 * @param name
-	 *            The name of the property to retrieve.
-	 * @param owner
-	 *            The owning model element of the property to retrieve.
-	 * @return A property with the given name.
-	 */
-	TProperty getProperty(String name, TElement owner);
-	
-	TProperty getProperty(String name, String elementId);
-	
-	TProperty getProperty(String name, TElement owner, boolean create);
-	
-	TProperty getProperty(String name, String elementId, boolean create);
+	void removeConstraint(TConstraint constraint);
 
-	/**
-	 * @return All the properties in the trace graph.
-	 */
-	Iterable<TProperty> getAllProperties();
-	
-	void removeElement(String elementId);
-	
+	void removeConstraint(String constraintName, String contextName);
+
+	void removeConstraint(String constraintName, TContext context);
+
 	void removeElement(TElement element);
-	
-	void removeProperty(String name, String elementId);
-	
+
+	void removeElement(String elementId);
+
+	void removeScope(TScope scope);
+
+	void removeScope(String elementId, String constraintName, String contextName);
+
+	void removeScope(String elementId, TConstraint constraint);
+
+	void removeScope(TElement element, String constraintName, String contextName);
+
+	void removeScope(TElement element, TConstraint constraint);
+
 	void removeProperty(TProperty property);
 
+	void removeProperty(String propertyName, String elementId);
+
+	void removeProperty(String propertyName, TElement element);
 
 	/**
 	 * @return {@code true} if the underlying database used in the trace graph
 	 *         is still in use, {@code false} otherwise.
 	 */
 	boolean isOpen();
-	
+
 	void commit();
 
 	/**
 	 * Shutdown the underlying database.
 	 */
-	void close();
+	void shutdown();
 
 }
