@@ -11,7 +11,6 @@ import com.tinkerpop.blueprints.util.wrappers.WrapperGraph;
  * @param <T>
  *            The type of graph engine used by this {@link TraceGraph}s.
  */
-@Deprecated
 public interface TraceGraph<T extends Graph> extends WrapperGraph<T> {
 
 	/*
