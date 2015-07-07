@@ -4,73 +4,77 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.emc.emf.EmfModelFactory;
-import org.eclipse.epsilon.emc.emf.InMemoryEmfModel;
+import org.eclipse.epsilon.emc.emf.EmfModelFactory.AccessMode;
+import org.eclipse.epsilon.evl.trace.OrientTraceGraph;
 import org.eclipse.epsilon.evl.trace.TElement;
 import org.eclipse.epsilon.evl.trace.TProperty;
 import org.eclipse.epsilon.evl.trace.TScope;
 import org.eclipse.epsilon.evl.trace.TraceGraph;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class OldTraceEvlChangeListenerTest {
+import com.tinkerpop.blueprints.Graph;
 
-	private static TraceEvlModule module = null;
+public class TraceEvlChangeListenerTest extends AbstractOrientTraceGraphTest {
 
-	private InMemoryEmfModel model = null;
-	private TraceGraph<?> graph = null;
+	private static File modelFile = null;
+	private static File metaFile = null;
+	private static File evlFile = null;
+
+	private TraceEvlModule module = null;
+	private EmfModel model = null;
+	private TraceGraph<? extends Graph> graph = null;
 
 	@BeforeClass
 	public static void setupClass() throws Exception {
-		// Setup model
-
-
-		// Setup module
-		module = new TraceEvlModule(false);
-		module.parse(getFile("models/Foo.evl"));
-		if (module.getParseProblems().size() > 0) {
-			throw new Exception("Parse problems in EVL file");
-		}
+		modelFile = getFile("models/Foo.model");
+		metaFile = getFile("models/Foo.ecore");
+		evlFile = getFile("models/Foo.evl");
 	}
 
 	@Before
-	public void setUp() throws Exception {
-		File modelFile = getFile("models/Foo.model");
-		File metaFile = getFile("models/Foo.ecore");
-		EmfModel emf = EmfModelFactory.getInstance().createEmfModel("Model",
-				modelFile, metaFile);
-		emf.setStoredOnDisposal(false);
-		emf.load();
-		this.model = new InMemoryEmfModel(emf.getResource());
-		module.getContext().getModelRepository().addModel(model);
-		module.execute();
-		this.graph = module.getTraceGraph();
-		System.out.println("=== FINISHED SETUP ===");
+	public void setup() throws Exception {
+		// Setup module
+		this.module = new TraceEvlModule(false);
+		this.module.parse(evlFile);
+		assertTrue(this.module.getParseProblems().isEmpty());
+
+		// Setup model
+		this.model = EmfModelFactory.getInstance().createEmfModel("Model",
+				modelFile, metaFile, AccessMode.READ_ONLY);
+		this.model.setStoredOnDisposal(false);
+		this.model.load();
+		
+		this.module.getContext().getModelRepository().addModel(this.model);
+		this.module.execute();
+		
+		this.graph = this.module.getTraceGraph();
 	}
 
-	@After
-	public void tearDown() throws Exception {
-		System.out.println("=== REMOVING ALL ADAPTERS ===");
-		this.model.getResource().eAdapters().clear();
-		this.model.dispose();
+	@Override
+	public void tearDown() {
+		this.module.getContext().getModelRepository().dispose();
+		this.module = null;
 		this.model = null;
 		this.graph = null;
-		module.context.getModelRepository().dispose();
-		module.reset();
 	}
 
+	@Override
+	protected OrientTraceGraph getGraph() {
+		return (OrientTraceGraph) this.graph;
+	}
+	
 	@Test
 	public void testDeleteElement() throws Exception {		
 		final String id = "_Q7PJoB9XEeWZ5uBIxHRxCw";
@@ -165,20 +169,6 @@ public class OldTraceEvlChangeListenerTest {
 	@Test
 	@Ignore
 	public void testDeleteAttrFromList() {
-	}
-
-	protected static File getFile(String filename) throws URISyntaxException {
-		URI binUri = OldTraceEvlChangeListenerTest.class.getResource(filename)
-				.toURI();
-		URI uri = null;
-
-		if (binUri.toString().indexOf("bin") > -1) {
-			uri = new URI(binUri.toString().replaceAll("bin", "test"));
-		} else {
-			uri = binUri;
-		}
-
-		return new File(uri);
 	}
 
 }
