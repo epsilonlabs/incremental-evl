@@ -132,7 +132,7 @@ public class TraceEvlModule extends EvlModule {
 	public void reset() {
 		super.reset();	
 		if (this.traceGraph != null && this.traceGraph.isOpen()) {
-			this.traceGraph.close();
+			this.traceGraph.shutdown();
 		}
 		context = new TraceEvlContext();
 	}

@@ -101,17 +101,17 @@ public class TraceConstraint extends Constraint {
 		// FIXME: Check the cast
 		TraceGraph<? extends Graph> graph = ((TraceEvlContext) ctx).getTraceGraph();
 
-		final TContext tContext = graph.getContext(this.getName());
-		final TConstraint tConstraint = graph.getConstraint(this.getName(), tContext);
-		final TElement tElement = graph.getElement(
+		final TContext tContext = graph.createContext(this.getName());
+		final TConstraint tConstraint = graph.createConstraint(this.getName(), tContext);
+		final TElement tElement = graph.createElement(
 				ctx.getModelRepository()
 				.getOwningModel(modelElement)
 				.getElementId(modelElement));
-		final TScope tScope = graph.getScope(tConstraint, tElement);
+		final TScope tScope = graph.createScope(tElement, tConstraint);
 		
 		for (Scope s : scopes) {
-			final TElement element = graph.getElement(s.getElementId());
-			final TProperty property = graph.getProperty(s.getPropertyName(), element);
+			final TElement element = graph.createElement(s.getElementId());
+			final TProperty property = graph.createProperty(s.getPropertyName(), element);
 			tScope.addProperty(property);
 		}
 		

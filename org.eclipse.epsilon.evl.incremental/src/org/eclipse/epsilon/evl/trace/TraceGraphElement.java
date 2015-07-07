@@ -1,6 +1,5 @@
 package org.eclipse.epsilon.evl.trace;
 
-import com.tinkerpop.blueprints.Element;
 
 /**
  * The {@link TraceGraphElement} interface represents an element in the constraint
@@ -9,6 +8,6 @@ import com.tinkerpop.blueprints.Element;
  * @author Jonathan Co
  *
  */
-public interface TraceGraphElement extends Element {
+public interface TraceGraphElement {
 
 }
