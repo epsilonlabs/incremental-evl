@@ -1,0 +1,4 @@
+bin/
+junit/
+
+*-trace/

@@ -1,6 +1,0 @@
-@namespace(uri="IncDebug", prefix="IncDebug")
-package IncDebug;
-
-class Foo {
-	attr String[*] strs;
-}

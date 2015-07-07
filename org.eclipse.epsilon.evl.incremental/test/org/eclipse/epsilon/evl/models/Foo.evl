@@ -1,0 +1,18 @@
+context Obj {
+	//constraint metaHasLabel {
+	//	check: self.listObj.forAll(m | m.label.isDefined())
+	//}
+	
+	constraint hasListRef {
+	   check: self.listRef.forAll(i | i.isDefined())
+	}
+	
+	constraint hasListRef2 {
+	   check: self.listRef.forAll(i | i.isDefined())
+	}
+
+	constraint hasSingleAttr {
+		check: self.singleAttr.isDefined()
+	}
+
+}

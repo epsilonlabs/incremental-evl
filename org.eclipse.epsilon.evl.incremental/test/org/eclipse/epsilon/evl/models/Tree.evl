@@ -1,0 +1,11 @@
+context Tree {
+	constraint hasLabel {
+		check : self.label.isDefined()
+	}
+}
+
+context Meta {
+    constraint foo {
+        check: true
+    }
+}
