@@ -476,9 +476,9 @@ public class OrientTraceGraphTest extends AbstractOrientTraceGraphTest {
 	
 	@Test
 	public void testGetScopeDoesNotExist() {
-		final String contextName = "context-testGetScopeTElementTConstraint";
-		final String constraintName = "constraint-testGetScopeTElementTConstraint";
-		final String elementId = "element-testGetScopeTElementTConstraint";
+		final String contextName = "context-testGetScopeDoesNotExist";
+		final String constraintName = "constraint-testGetScopeDoesNotExist";
+		final String elementId = "element-testGetScopeDoesNotExist";
 		
 		final TConstraint constraint = this.graph.createConstraint(constraintName, contextName);
 		final TElement element = this.graph.createElement(elementId);
@@ -527,8 +527,8 @@ public class OrientTraceGraphTest extends AbstractOrientTraceGraphTest {
 	
 	@Test
 	public void testGetPropertyDoesNotExist() {
-		final String propertyName = "property-testGetPropertyStringTElement";
-		final String elementId = "element-testGetPropertyStringTElement";
+		final String propertyName = "property-testGetPropertyDoesNotExist";
+		final String elementId = "element-testGetPropertyDoesNotExist";
 		
 		final TElement element = this.graph.createElement(elementId);
 		assertNotNull(element);
