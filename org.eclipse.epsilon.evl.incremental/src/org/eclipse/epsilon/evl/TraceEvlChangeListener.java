@@ -2,26 +2,20 @@ package org.eclipse.epsilon.evl;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
-import org.eclipse.epsilon.evl.trace.TElement;
 import org.eclipse.epsilon.evl.trace.TProperty;
 import org.eclipse.epsilon.evl.trace.TScope;
 import org.eclipse.epsilon.evl.trace.TraceGraph;
-
-import com.tinkerpop.blueprints.Graph;
 
 public class TraceEvlChangeListener extends EContentAdapter {
 
@@ -46,7 +40,7 @@ public class TraceEvlChangeListener extends EContentAdapter {
 	@Override
 	public void notifyChanged(Notification notice) {
 		super.notifyChanged(notice);
-
+		
 		/*
 		 * CASES
 		 * - Elements
@@ -72,43 +66,24 @@ public class TraceEvlChangeListener extends EContentAdapter {
 		 */
 		
 		// Determine if anything needs to be done
-		if (!(notice.getNotifier() instanceof EObject))
+		if (!(notice.getNotifier() instanceof EObject)) {
 			return;
-		
-	
-		Map<EObject, Set<Constraint>> constraints = null; // Constraints to be re-run
-		String elementId = null; // ID of element changed
-		String property = null;	// Name of property changed if applicable
-		
-		// Object changed
-		EObject notifier = (EObject) notice.getNotifier();
-		
-		// EObject is detached from resource
-		if (notifier.eResource() == null) {
-			System.out.println(notice);
-			switch (notice.getEventType()) {
-			case Notification.REMOVING_ADAPTER:
-				constraints = this.onRemoveAdapter(notice);
-				break;
-			default:
-				break;
-			}
 		}
 
+		// Constraints to be re-run
+		Map<EObject, Set<Constraint>> constraints = null;
+		
 		switch (notice.getEventType()) {
+		case Notification.REMOVING_ADAPTER:
+			constraints = this.onRemoveAdapter(notice);
+			break;
 		case Notification.SET:
-			constraints = onSet(model.getElementId(notifier), ((ENamedElement) notice.getFeature()).getName());
-			
-			// The attribute was removed
-			if(notice.wasSet() && !notifier.eIsSet((EStructuralFeature) notice.getFeature())) {
-				onDeleteAttr(((ENamedElement) notice.getFeature()).getName(), model.getElementId(notifier));
-			}
-			
+			constraints = this.onSet(notice);
 			break;
 		default:
 			break;
 		}
-
+		
 		// Rerun constraints
 		if (constraints != null && !constraints.isEmpty()) {
 			for (Entry<EObject, Set<Constraint>> entry : constraints.entrySet()) {
@@ -118,21 +93,16 @@ public class TraceEvlChangeListener extends EContentAdapter {
 							constraint.check(entry.getKey(), context);
 						}
 					} catch (NullPointerException e) {
-						System.out.println();
-					}
-					
-					catch (EolRuntimeException e) {
-						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (EolRuntimeException e) {
 						e.printStackTrace();
 					}
 				}
 			}
 		}
-
-		// Finally call super
 	}
 	
-	Map<EObject, Set<Constraint>> onRemoveAdapter(Notification notice) {
+	public Map<EObject, Set<Constraint>> onRemoveAdapter(Notification notice) {
 		final EObject notifier = (EObject) notice.getNotifier();
 		
 		// Still attached to a resource, element not deleted, do nothing
@@ -147,10 +117,29 @@ public class TraceEvlChangeListener extends EContentAdapter {
 		}
 		
 		// Get the properties
-		final TraceGraph<? extends Graph> graph = context.getTraceGraph();		
-		Map<EObject, Set<Constraint>> map = processScopes(graph.getScopesPartOf(elementId));
-		graph.removeElement(elementId);
+		Iterable<TScope> scopes = this.getGraph().getScopesPartOf(elementId);	
+		Map<EObject, Set<Constraint>> map = processScopes(scopes);
+		this.getGraph().removeElement(elementId);
 		return map;
+	}
+	
+	public Map<EObject, Set<Constraint>> onSet(Notification notice) {
+		final EObject notifier = (EObject) notice.getNotifier();
+		final EStructuralFeature feature = (EStructuralFeature) notice.getFeature();
+		
+		final TProperty property = this.getGraph().getProperty(
+				feature.getName(), 
+				this.model.getElementId(notifier));
+		
+		final Map<EObject, Set<Constraint>> constraints = 
+				this.processScopes(property.getScopes());
+		
+		// Check if the property was deleted and remove from trace
+		if (notice.wasSet() && !notifier.eIsSet(feature)) {
+			this.getGraph().removeProperty(property);
+		}
+		
+		return constraints;
 	}
 	
 	public Map<EObject, Set<Constraint>> getConstraints(String elementId, String property) {
@@ -172,24 +161,6 @@ public class TraceEvlChangeListener extends EContentAdapter {
 		}
 		
 		return map;
-	}
-
-
-	
-	public Map<EObject, Set<Constraint>> onSet(String elementId, String property) {
-		TraceGraph<? extends Graph> graph = context.getTraceGraph();
-		TProperty tProperty = graph.getProperty(elementId, property);
-		Map<EObject, Set<Constraint>> map = this.processScopes(tProperty.getScopes());
-		return map;
-	}
-	
-	public void onDeleteAttr(String property, String elementId) { 
-		TraceGraph<? extends Graph> graph = context.getTraceGraph();
-		TProperty tProperty = graph.getProperty(property, elementId);
-		
-		if (tProperty != null) {
-			graph.removeProperty(property, elementId);
-		}
 	}
 	
 	public Map<EObject, Set<Constraint>> processScopes(Iterable<TScope> scopes) {
@@ -223,4 +194,7 @@ public class TraceEvlChangeListener extends EContentAdapter {
 		super.setTarget(target);
 	}
 	
+	private TraceGraph getGraph() {
+		return this.context.getTraceGraph();
+	}
 }

@@ -2,10 +2,10 @@ package org.eclipse.epsilon.evl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 
@@ -13,7 +13,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.emc.emf.EmfModelFactory;
-import org.eclipse.epsilon.emc.emf.EmfModelFactory.AccessMode;
 import org.eclipse.epsilon.evl.trace.OrientTraceGraph;
 import org.eclipse.epsilon.evl.trace.TElement;
 import org.eclipse.epsilon.evl.trace.TProperty;
@@ -52,7 +51,7 @@ public class TraceEvlChangeListenerTest extends AbstractOrientTraceGraphTest {
 
 		// Setup model
 		this.model = EmfModelFactory.getInstance().createEmfModel("Model",
-				modelFile, metaFile, AccessMode.READ_ONLY);
+				modelFile, metaFile);
 		this.model.setStoredOnDisposal(false);
 		this.model.load();
 		
@@ -95,6 +94,7 @@ public class TraceEvlChangeListenerTest extends AbstractOrientTraceGraphTest {
 		assertEquals(eobj.eResource(), model.getResource());
 		model.deleteElement(eobj);
 		assertNull(eobj.eResource());
+		assertNull(model.getElementById(id));
 
 		// FIXME: Check the correct constraints reran
 		// FIXME: Check all the relevant scopes and properties removed
@@ -111,6 +111,7 @@ public class TraceEvlChangeListenerTest extends AbstractOrientTraceGraphTest {
 		
 		final TProperty before = this.graph.getProperty(attr, id);
 		assertNotNull(before);
+		final Object ridBefore = before.asVertex().getId();
 		
 		final EObject eobj = (EObject) model.getElementById(id);
 		assertNotNull(eobj);
@@ -121,15 +122,8 @@ public class TraceEvlChangeListenerTest extends AbstractOrientTraceGraphTest {
 		assertFalse(eobj.eIsSet(feature));
 		
 		final TProperty after = this.graph.getProperty(attr, id);
-		assertNull(after);
-		
-		for (TScope tScope : graph.getElement(id).getScopes()) {
-			for (TProperty p : tScope.getProperties()) {
-				if (p.getName().equals(attr) && p.getOwner().getElementId().equals(id)) {
-					fail("Not deleted from scopes");
-				}
-			}
-		}
+		final Object ridAfter = after.asVertex().getId();
+		assertNotEquals(ridBefore, ridAfter);
 	}
 	
 	@Test
@@ -139,6 +133,7 @@ public class TraceEvlChangeListenerTest extends AbstractOrientTraceGraphTest {
 		
 		final TProperty before = this.graph.getProperty(attr, id);
 		assertNotNull(before);
+		Object ridBefore = before.asVertex().getId();
 		
 		final EObject eobj = (EObject) model.getElementById(id);
 		assertNotNull(eobj);
@@ -149,15 +144,8 @@ public class TraceEvlChangeListenerTest extends AbstractOrientTraceGraphTest {
 		assertFalse(eobj.eIsSet(feature));
 		
 		final TProperty after = this.graph.getProperty(attr, id);
-		assertNull(after);
-		
-		for (TScope tScope : graph.getElement(id).getScopes()) {
-			for (TProperty p : tScope.getProperties()) {
-				if (p.getName().equals(attr) && p.getOwner().getElementId().equals(id)) {
-					fail("Not deleted from scopes");
-				}
-			}
-		}
+		Object ridAfter = after.asVertex().getId();
+		assertNotEquals(ridBefore, ridAfter);
 	}
 
 
