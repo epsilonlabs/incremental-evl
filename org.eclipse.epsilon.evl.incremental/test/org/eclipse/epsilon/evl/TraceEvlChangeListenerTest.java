@@ -147,16 +147,4 @@ public class TraceEvlChangeListenerTest extends AbstractOrientTraceGraphTest {
 		Object ridAfter = after.asVertex().getId();
 		assertNotEquals(ridBefore, ridAfter);
 	}
-
-
-	@Test
-	@Ignore
-	public void testDeleteAttrList() {
-	}
-
-	@Test
-	@Ignore
-	public void testDeleteAttrFromList() {
-	}
-
 }
