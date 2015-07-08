@@ -17,6 +17,8 @@ import org.eclipse.epsilon.evl.trace.TProperty;
 import org.eclipse.epsilon.evl.trace.TScope;
 import org.eclipse.epsilon.evl.trace.TraceGraph;
 
+import com.tinkerpop.blueprints.Graph;
+
 public class TraceEvlChangeListener extends EContentAdapter {
 
 	private Map<EObject, String> idMap = new HashMap<EObject, String>();
@@ -194,7 +196,7 @@ public class TraceEvlChangeListener extends EContentAdapter {
 		super.setTarget(target);
 	}
 	
-	private TraceGraph getGraph() {
+	private TraceGraph<? extends Graph> getGraph() {
 		return this.context.getTraceGraph();
 	}
 }
