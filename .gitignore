@@ -4,5 +4,8 @@
 # Built binaries
 bin/
 
+# Sonar files
+.sonar
+
 # Ignore Scratch files
 scratch/
