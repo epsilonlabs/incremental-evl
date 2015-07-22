@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.emf.validation.constraintBindings">
+      <binding
+            category="org.eclipse.epsilon.evl.incremental.dt.category"
+            context="org.eclipse.epsilon.evl.incremental.dt.context">
+      </binding>
+      <clientContext
+            id="org.eclipse.epsilon.evl.incremental.dt.context">
+         <selector
+               class="org.eclipse.epsilon.evl.incremental.dt.DummyClientSelector">
+         </selector>
+      </clientContext>
+   </extension>
+   <extension
+         id="org.eclipse.epsilon.evl.incremental.dt.provider"
+         point="org.eclipse.emf.validation.constraintProviders">
+      <category
+            id="org.eclipse.epsilon.evl.incremental.dt.category"
+            mandatory="true"
+            name="Incremental Constraints">
+      </category>
+      <constraintProvider
+            cache="true"
+            class="org.eclipse.epsilon.evl.incremental.dt.EvlConstraintProvider"
+            mode="Live">
+         <package
+               namespaceUri="http://library">
+         </package>
+      </constraintProvider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="org.eclipse.epsilon.evl.incremental.dt.Startup">
+      </startup>
+   </extension>
+
+</plugin>

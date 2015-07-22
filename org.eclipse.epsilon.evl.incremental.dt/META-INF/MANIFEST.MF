@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Epsilon Validation Language Incremental Developer Tools
+Bundle-SymbolicName: org.eclipse.epsilon.evl.incremental.dt;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.emf.ecore.editor,
+ org.eclipse.epsilon.common.dt,
+ org.eclipse.epsilon.evl.emf.validation,
+ org.eclipse.emf.validation,
+ org.eclipse.osgi,
+ org.eclipse.epsilon.evl.engine,
+ org.eclipse.ui.workbench
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.emf.validation.impl.epsilon,
+ org.eclipse.epsilon.evl.incremental.dt
+Bundle-Activator: org.eclipse.epsilon.evl.incremental.dt.Activator
