@@ -1,5 +1,9 @@
 package org.eclipse.epsilon.evl.incremental.dt;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
@@ -21,19 +25,12 @@ import org.eclipse.ui.IWorkbenchPartReference;
  *
  */
 public class EditorListener implements IPartListener2 {
+	
+	private final Map<Notifier, LiveValidationListener> listenerMap = new HashMap<Notifier, LiveValidationListener>();
 
 	@Override
 	public void partOpened(IWorkbenchPartReference partRef) {
-		final EditingDomain editingDomain = this.getEditingDomain(partRef);
-		if (editingDomain == null) {
-			return;
-		}
-
-		final ResourceSet resourceSet = editingDomain.getResourceSet();
-		final LiveValidationListener listener = new LiveValidationListener();
-		resourceSet.eAdapters().add(listener);
-
-		this.modifyEcoreEditorMenu(partRef, listener);
+		// No-op
 	}
 
 	@Override
@@ -49,7 +46,20 @@ public class EditorListener implements IPartListener2 {
 
 	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
-		// No-op
+		final EditingDomain editingDomain = this.getEditingDomain(partRef);
+		if (editingDomain == null) {
+			return;
+		}
+
+		final ResourceSet resourceSet = editingDomain.getResourceSet();
+		LiveValidationListener listener = this.listenerMap.get(resourceSet);
+		if (listener == null) {
+			listener = new LiveValidationListener();
+			resourceSet.eAdapters().add(listener);
+			this.listenerMap.put(resourceSet, listener);
+		}
+
+		this.modifyEcoreEditorMenu(partRef, listener);
 	}
 
 	@Override
