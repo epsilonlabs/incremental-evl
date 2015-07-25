@@ -1,14 +1,11 @@
 package org.eclipse.epsilon.evl.incremental.dt;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.emf.edit.ui.provider.DiagnosticDecorator.LiveValidator.LiveValidationAction;
+import org.eclipse.epsilon.evl.incremental.dt.commands.EnableLiveValidationAction;
+import org.eclipse.epsilon.evl.incremental.validation.LiveValidationListener;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
@@ -25,8 +22,6 @@ import org.eclipse.ui.IWorkbenchPartReference;
  */
 public class EditorListener implements IPartListener2 {
 
-	private final Map<Notifier, EContentAdapter> listenerMap = new HashMap<Notifier, EContentAdapter>();
-
 	@Override
 	public void partOpened(IWorkbenchPartReference partRef) {
 		final EditingDomain editingDomain = this.getEditingDomain(partRef);
@@ -35,23 +30,16 @@ public class EditorListener implements IPartListener2 {
 		}
 
 		final ResourceSet resourceSet = editingDomain.getResourceSet();
-		final EContentAdapter listener = new LiveValidationContentAdapter();
+		final LiveValidationListener listener = new LiveValidationListener();
 		resourceSet.eAdapters().add(listener);
-		listenerMap.put(resourceSet, listener);
 
-		this.modifyEcoreEditorMenu(partRef);
+		this.modifyEcoreEditorMenu(partRef, listener);
 	}
 
 	@Override
 	public void partClosed(IWorkbenchPartReference partRef) {
-		final EditingDomain editingDomain = this.getEditingDomain(partRef);
-		if (editingDomain == null) {
-			return;
-		}
-
-		final ResourceSet resourceSet = editingDomain.getResourceSet();
-		final EContentAdapter listener = listenerMap.remove(resourceSet);
-		resourceSet.eAdapters().remove(listener);
+		// No-op
+		// TODO: Clean up of listener needed?
 	}
 
 	@Override
@@ -100,37 +88,49 @@ public class EditorListener implements IPartListener2 {
 		return null;
 	}
 
-	public void modifyEcoreEditorMenu(IWorkbenchPartReference partRef) {
+	/**
+	 * 
+	 * @param partRef
+	 */
+	public void modifyEcoreEditorMenu(IWorkbenchPartReference partRef,
+			LiveValidationListener listener) {
 		final IWorkbenchPart part = partRef.getPart(true);
 
 		// Actions to modify
+		IEditorPart editor = null;
 		IMenuManager ecoreMenuManager = null;
-		IContributionItem liveValidationAction = null;
+		ActionContributionItem liveValidationAction = null;
 		
 		// Get the Ecore Menu Manager
 		if (part instanceof IEditorPart) {
-			IMenuManager globalMenuManager = ((IEditorPart) part)
+			editor = (IEditorPart) part;
+			IMenuManager globalMenuManager = editor
 					.getEditorSite().getActionBars().getMenuManager();
 			ecoreMenuManager = (IMenuManager) globalMenuManager
 					.find("org.eclipse.emf.ecoreMenuID");
 		}
 		
 		if (ecoreMenuManager instanceof SubMenuManager) {
-			ecoreMenuManager = (IMenuManager) ((SubMenuManager) ecoreMenuManager).getParent();
+			ecoreMenuManager = (IMenuManager) ((SubMenuManager) ecoreMenuManager)
+					.getParent();
 		}
 		
 		// Retrieve the items to modify
 		for (IContributionItem item : ecoreMenuManager.getItems()) {
 			if (item instanceof ActionContributionItem
 					&& ((ActionContributionItem) item).getAction() instanceof LiveValidationAction) {
-				liveValidationAction = item;
+				liveValidationAction = (ActionContributionItem) item;
 				continue;
 			}
 		}
-		
+				
 		if (liveValidationAction != null) {
+			liveValidationAction.dispose();
 			ecoreMenuManager.remove(liveValidationAction);
 		}
+		
+		ecoreMenuManager.insertBefore("additions", 
+				new EnableLiveValidationAction(listener));
 	}
 	
 }

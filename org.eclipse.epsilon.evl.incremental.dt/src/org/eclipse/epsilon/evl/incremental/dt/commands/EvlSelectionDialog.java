@@ -6,6 +6,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.dialogs.SearchPattern;
 
+/**
+ * Selection dialog that shows available EVL files in the workspace.
+ * @author Jonathan Co
+ *
+ */
 public class EvlSelectionDialog extends FilteredResourcesSelectionDialog {
 
 	public EvlSelectionDialog(Shell shell) {
@@ -24,6 +29,7 @@ public class EvlSelectionDialog extends FilteredResourcesSelectionDialog {
 	 * @author Jonathan Co
 	 *
 	 */
+	// TODO: Modify filter so that previously selected EVL files are not included
 	class EvlResourceFilter extends ResourceFilter {
 
 		public static final String EVL_PATTERN = "*.evl";

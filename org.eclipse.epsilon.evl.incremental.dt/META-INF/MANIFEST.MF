@@ -18,6 +18,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.emf.validation.impl.epsilon,
- org.eclipse.epsilon.evl.incremental.dt
+Export-Package: org.eclipse.epsilon.evl.incremental.dt,
+ org.eclipse.epsilon.evl.incremental.dt.commands,
+ org.eclipse.epsilon.evl.incremental.validation
 Bundle-Activator: org.eclipse.epsilon.evl.incremental.dt.Activator
