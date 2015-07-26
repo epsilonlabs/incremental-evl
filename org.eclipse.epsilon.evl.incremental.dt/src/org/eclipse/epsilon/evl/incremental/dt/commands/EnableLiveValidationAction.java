@@ -12,7 +12,7 @@ public class EnableLiveValidationAction extends Action {
 	public EnableLiveValidationAction(LiveValidationListener listener) {
 		// TODO: Change to get from properties for localisation
 		super("Live Validation", Action.AS_CHECK_BOX);
-		this.setEnabled(true);
+		this.setChecked(true);
 		this.setId(EnableLiveValidationAction.ID);
 		this.listener = listener;
 	}
