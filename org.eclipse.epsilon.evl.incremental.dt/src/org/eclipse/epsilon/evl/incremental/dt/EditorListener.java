@@ -57,9 +57,8 @@ public class EditorListener implements IPartListener2 {
 			listener = new LiveValidationListener();
 			resourceSet.eAdapters().add(listener);
 			this.listenerMap.put(resourceSet, listener);
+			this.modifyEcoreEditorMenu(partRef, listener);
 		}
-
-		this.modifyEcoreEditorMenu(partRef, listener);
 	}
 
 	@Override
