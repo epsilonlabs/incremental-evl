@@ -16,7 +16,8 @@ Require-Bundle: org.eclipse.ui,
  org.apache.commons.collections_3.2.1;bundle-version="3.2.1",
  org.eclipse.core.expressions,
  org.eclipse.jface,
- org.eclipse.emf.common
+ org.eclipse.emf.common,
+ org.eclipse.epsilon.evl.incremental
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.epsilon.evl.incremental.dt,
