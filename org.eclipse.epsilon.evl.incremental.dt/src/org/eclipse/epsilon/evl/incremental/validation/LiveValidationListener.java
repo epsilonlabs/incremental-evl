@@ -22,10 +22,11 @@ public class LiveValidationListener extends EContentAdapter {
 		
 		// Live validation has been disabled, do nothing
 		if (!enabled) {
+			System.out.println("Live Validation is Off");
 			return;
 		}
 		
-		System.out.println("Live validation on");
+		System.out.println("Live validation is On");
 	}
 	
 	public boolean isEnabled() {
