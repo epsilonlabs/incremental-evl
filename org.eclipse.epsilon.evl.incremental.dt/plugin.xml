@@ -7,48 +7,5 @@
             class="org.eclipse.epsilon.evl.incremental.dt.Startup">
       </startup>
    </extension>
-   <extension
-         point="org.eclipse.ui.commands">
-      <category
-            id="org.eclipse.epsilon.evl.incremental.dt.commands.category"
-            name="EVL">
-      </category>
-      <command
-            categoryId="org.eclipse.epsilon.evl.incremental.dt.commands.category"
-            id="org.eclipse.epsilon.evl.incremental.dt.commands.evlSelection"
-            name="EVL Selection">
-         <defaultHandler
-               class="org.eclipse.epsilon.evl.incremental.dt.commands.EvlSelectionHandler">
-         </defaultHandler>
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
-         <menu
-               id="org.eclipse.epsilon.evl.incremental.dt.menus.sampleMenu"
-               label="EVL"
-               mnemonic="M">
-            <command
-                  commandId="org.eclipse.epsilon.evl.incremental.dt.commands.evlSelection"
-                  id="org.eclipse.epsilon.evl.incremental.dt.menus.evl.selection"
-                  mnemonic="S">
-            </command>
-         </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="menu:org.eclipse.emf.ecoreMenuID?after=additions">
-         <menu
-               label="label">
-            <command
-                  commandId="org.eclipse.epsilon.evl.incremental.dt.commands.evlSelection"
-                  label="Woot"
-                  style="push">
-            </command>
-         </menu>
-      </menuContribution>
-   </extension>
 
 </plugin>
