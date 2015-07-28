@@ -2,6 +2,7 @@ package org.eclipse.epsilon.evl.incremental;
 
 import java.io.File;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.emc.emf.AbstractEmfModel;
 import org.eclipse.epsilon.emc.emf.EmfModel;
@@ -11,6 +12,7 @@ import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.EvlModule;
+import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.dom.Fix;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
@@ -39,7 +41,19 @@ public class TraceEvlModule extends EvlModule {
 	}
 	
 	public TraceEvlModule(boolean persist) {
+		super();
 		this.persist = persist;
+		prepareContext(getContext());
+	}
+	
+	public Object execute(Constraint constraint, EObject obj) throws EolRuntimeException {
+		prepareContext(context);
+		context.setOperationFactory(new EvlOperationFactory());
+		context.getFrameStack().put(Variable.createReadOnlyVariable("thisModule", this));
+		
+		constraint.check(obj, this.getContext());
+		
+		return null;
 	}
 	
 	@Override
@@ -49,7 +63,7 @@ public class TraceEvlModule extends EvlModule {
 		prepareContext(context);
 		context.setOperationFactory(new EvlOperationFactory());
 		context.getFrameStack().put(Variable.createReadOnlyVariable("thisModule", this));
-		
+
 		// Perform evaluation
 		execute(getPre(), context);
 		for (ConstraintContext conCtx : getConstraintContexts()) { 
@@ -69,7 +83,8 @@ public class TraceEvlModule extends EvlModule {
 		if (persist) {
 			sb.append(System.getProperty("user.dir")).append("/");
 		}
-		sb.append(sourceFile.getName().split("\\.")[0]).append("-trace");
+		sb.append(System.currentTimeMillis());
+//		sb.append(sourceFile.getName().split("\\.")[0]).append("-trace");
 		if (persist) {
 			File file = new File(sb.toString());
 			file.mkdirs();

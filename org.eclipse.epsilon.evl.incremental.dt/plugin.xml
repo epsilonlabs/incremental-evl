@@ -7,5 +7,16 @@
             class="org.eclipse.epsilon.evl.incremental.dt.Startup">
       </startup>
    </extension>
+   <extension
+         point="org.eclipse.emf.validation.constraintProviders">
+      <constraintProvider
+            cache="false"
+            class="org.eclipse.epsilon.evl.incremental.validation.StaticEvlConstraintProvider"
+            mode="Live">
+         <package
+               namespaceUri="*">
+         </package>
+      </constraintProvider>
+   </extension>
 
 </plugin>
