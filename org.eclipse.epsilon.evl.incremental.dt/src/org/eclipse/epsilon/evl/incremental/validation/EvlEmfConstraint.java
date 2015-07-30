@@ -1,39 +1,52 @@
 package org.eclipse.epsilon.evl.incremental.validation;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.validation.IValidationContext;
 import org.eclipse.emf.validation.model.ConstraintSeverity;
 import org.eclipse.emf.validation.model.EvaluationMode;
+import org.eclipse.emf.validation.model.IModelConstraint;
 import org.eclipse.emf.validation.service.AbstractConstraintDescriptor;
+import org.eclipse.emf.validation.service.IConstraintDescriptor;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 
-public class EvlConstraintDescriptor extends AbstractConstraintDescriptor {
+public class EvlEmfConstraint extends AbstractConstraintDescriptor implements
+		IConstraintDescriptor, IModelConstraint {
 
-	private final ConstraintContext context;
 	private final Constraint constraint;
-	private final int code;
+	private final ConstraintContext constraintContext;
+	private final int statusCode;
 	
-	public EvlConstraintDescriptor(Constraint constraint, int code) {
+	public EvlEmfConstraint(Constraint constraint, int statusCode) {
 		super();
 		this.constraint = constraint;
-		this.context = constraint.getConstraintContext();
-		this.code = code;
+		this.constraintContext = constraint.getConstraintContext();
+		this.statusCode = statusCode;
+	}
+
+	@Override
+	public IStatus validate(IValidationContext ctx) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public String getName() {
-		return this.context.getName() + "." + this.getConstraint().getName();
+		return this.constraint.getName();
 	}
 
 	@Override
 	public String getId() {
-		return this.context.getName() + "." + this.getConstraint().getName();
+		// TODO: add category to this
+		return this.constraintContext.getName() + "." + this.constraint.getName();
 	}
 
 	@Override
 	public String getPluginId() {
-		return "TODO";
+		// FIXME
+		return "";
 	}
 
 	@Override
@@ -43,12 +56,13 @@ public class EvlConstraintDescriptor extends AbstractConstraintDescriptor {
 
 	@Override
 	public ConstraintSeverity getSeverity() {
-		return ConstraintSeverity.WARNING;
+		// FIXME
+		return ConstraintSeverity.ERROR;
 	}
 
 	@Override
 	public int getStatusCode() {
-		return this.code;
+		return this.statusCode;
 	}
 
 	@Override
@@ -58,12 +72,13 @@ public class EvlConstraintDescriptor extends AbstractConstraintDescriptor {
 
 	@Override
 	public boolean targetsTypeOf(EObject eObject) {
-		return true; // TODO
+		// FIXME should use the appliesTo method but does not currently know context when this is called
+		return true;
 	}
 
 	@Override
 	public boolean targetsEvent(Notification notification) {
-		return true; // TODO:
+		return true;
 	}
 
 	@Override
@@ -73,12 +88,7 @@ public class EvlConstraintDescriptor extends AbstractConstraintDescriptor {
 
 	@Override
 	public String getBody() {
-		// TODO Auto-generated method stub
 		return null;
-	}
-
-	public Constraint getConstraint() {
-		return constraint;
 	}
 
 }
