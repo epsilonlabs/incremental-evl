@@ -1,5 +1,6 @@
 package org.eclipse.epsilon.evl.incremental.dt;
 
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -13,6 +14,9 @@ public class Startup implements IStartup {
 		 this.setupEditorListener();
 	}
 
+	/**
+	 * Add listener to detect when an EMF {@link EditingDomain} is created.
+	 */
 	private void setupEditorListener() {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchPage page = null;
