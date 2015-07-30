@@ -48,27 +48,6 @@ public class TraceEvlModule extends EvlModule {
 	public TraceEvlModule(boolean persist) {
 		super();
 		this.persist = persist;
-		prepareContext(getContext());
-	}
-	
-	public Object execute(Resource resource, Constraint constraint, EObject obj) throws EolRuntimeException {
-		prepareContext(context);
-		context.setOperationFactory(new EvlOperationFactory());
-		context.getFrameStack().put(Variable.createReadOnlyVariable("thisModule", this));
-		
-		Set<String> keySet = resource.getResourceSet().getPackageRegistry().keySet();
-		Collection<String> keyset2 = EPackage.Registry.INSTANCE.keySet();
-
-		
-//		Collection<Object> values = resource.getResourceSet().getPackageRegistry().values();
-		Collection<Object> values = EPackage.Registry.INSTANCE.values();
-		List<EPackage> packages = new LinkedList<EPackage>((Collection<? extends EPackage>) values);
-		
-		context.getModelRepository().addModel(new InMemoryEmfModel("", resource, packages));
-		
-		boolean check = constraint.check(obj, context);
-		
-		return check;
 	}
 	
 	@Override
@@ -78,7 +57,7 @@ public class TraceEvlModule extends EvlModule {
 		prepareContext(context);
 		context.setOperationFactory(new EvlOperationFactory());
 		context.getFrameStack().put(Variable.createReadOnlyVariable("thisModule", this));
-
+		
 		// Perform evaluation
 		execute(getPre(), context);
 		for (ConstraintContext conCtx : getConstraintContexts()) { 
@@ -109,7 +88,10 @@ public class TraceEvlModule extends EvlModule {
 	}
 	
 	public TraceGraph<? extends Graph> getTraceGraph() {
-		return ((TraceEvlModule) this.context).getTraceGraph();
+		if (this.context instanceof TraceEvlContext) {
+			return ((TraceEvlModule) this.context).getTraceGraph();
+		}
+		return null;
 	}
 	
 	/**
