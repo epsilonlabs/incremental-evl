@@ -57,6 +57,7 @@ public class StaticEvlConstraintProvider extends AbstractConstraintProvider {
 				module.parse(evlFile);
 
 				if (!module.getParseProblems().isEmpty()) {
+					System.out.println("NO CONSTRAINTS PARSED");
 					continue;
 					// TODO: More robust error handling
 				}
