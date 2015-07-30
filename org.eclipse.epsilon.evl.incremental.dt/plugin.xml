@@ -11,8 +11,7 @@
          point="org.eclipse.emf.validation.constraintProviders">
       <constraintProvider
             cache="false"
-            class="org.eclipse.epsilon.evl.incremental.validation.StaticEvlConstraintProvider"
-            mode="Live">
+            class="org.eclipse.epsilon.evl.incremental.validation.StaticEvlConstraintProvider">
          <package
                namespaceUri="*">
          </package>
