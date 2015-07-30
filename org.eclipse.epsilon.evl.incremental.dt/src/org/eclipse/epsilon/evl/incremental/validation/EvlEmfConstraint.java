@@ -9,15 +9,19 @@ import org.eclipse.emf.validation.model.EvaluationMode;
 import org.eclipse.emf.validation.model.IModelConstraint;
 import org.eclipse.emf.validation.service.AbstractConstraintDescriptor;
 import org.eclipse.emf.validation.service.IConstraintDescriptor;
+import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
+import org.eclipse.epsilon.evl.incremental.TraceEvlContext;
 
 public class EvlEmfConstraint extends AbstractConstraintDescriptor implements
 		IConstraintDescriptor, IModelConstraint {
-
+	
 	private final Constraint constraint;
 	private final ConstraintContext constraintContext;
 	private final int statusCode;
+	
+	private TraceEvlContext evlContext;
 	
 	public EvlEmfConstraint(Constraint constraint, int statusCode) {
 		super();
@@ -28,8 +32,31 @@ public class EvlEmfConstraint extends AbstractConstraintDescriptor implements
 
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+		if (this.evlContext == null) {
+			return ctx.createFailureStatus("");
+		}
+		try {
+			boolean check = this.constraint.check(ctx.getTarget(), this.evlContext);
+			if (check) {
+				return ctx.createSuccessStatus();
+			} else {
+				return ctx.createFailureStatus("");
+			}
+ 		} catch (EolRuntimeException e) {
+			return ctx.createFailureStatus("");
+		}
+	}
+	
+	public void setCurrentEvlContext(final TraceEvlContext context) {
+		this.evlContext = context;
+	}
+	
+	public Constraint getConstraint() {
+		return this.constraint;
+	}
+
+	public ConstraintContext getConstraintContext() {
+		return this.constraintContext;
 	}
 
 	@Override
@@ -72,8 +99,14 @@ public class EvlEmfConstraint extends AbstractConstraintDescriptor implements
 
 	@Override
 	public boolean targetsTypeOf(EObject eObject) {
-		// FIXME should use the appliesTo method but does not currently know context when this is called
-		return true;
+		if (this.evlContext == null) {
+			return false;
+		}
+		try {
+			return this.constraint.appliesTo(eObject, this.evlContext);
+		} catch (EolRuntimeException e) {
+			return false;
+		}
 	}
 
 	@Override
