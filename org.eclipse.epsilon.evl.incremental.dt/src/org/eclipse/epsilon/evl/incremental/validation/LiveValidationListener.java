@@ -3,8 +3,6 @@ package org.eclipse.epsilon.evl.incremental.validation;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,7 +21,8 @@ import org.eclipse.emf.validation.service.IConstraintFilter;
 import org.eclipse.emf.validation.service.IValidator;
 import org.eclipse.emf.validation.service.ModelValidationService;
 import org.eclipse.epsilon.emc.emf.InMemoryEmfModel;
-import org.eclipse.epsilon.evl.incremental.TraceEvlModule;
+import org.eclipse.epsilon.eol.models.IModel;
+import org.eclipse.epsilon.evl.incremental.TraceEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.TProperty;
 import org.eclipse.epsilon.evl.incremental.trace.TScope;
 
@@ -35,8 +34,12 @@ public class LiveValidationListener extends EContentAdapter {
 	 */
 	private final Map<EObject, String> idMap = new HashMap<EObject, String>();
 	
+	/**
+	 * The {@link EditingDomain} that this listener has been attached to
+	 */
+	private final EditingDomain editingDomain;
+	private TraceEvlContext evlContext;
 	private boolean enabled;
-	private EditingDomain editingDomain;
 	
 	public LiveValidationListener(EditingDomain editingDomain) {
 		this(editingDomain, true);
@@ -46,6 +49,7 @@ public class LiveValidationListener extends EContentAdapter {
 		super();
 		this.enabled = isEnabled;
 		this.editingDomain = editingDomain;
+		this.evlContext = new TraceEvlContext();
 	}
 
 	@Override
@@ -60,43 +64,16 @@ public class LiveValidationListener extends EContentAdapter {
 		if (!(notification.getNotifier() instanceof EObject)) {
 			return;
 		}
-		
-		// Setup the context and get objects that need to be evaluated.
-		
-		
-		final TraceEvlModule module = new TraceEvlModule();
-		for (Resource r : editingDomain.getResourceSet().getResources()) {
-			module.getContext().getModelRepository().addModel(new InMemoryEmfModel(r));
-		}
-		final Set<String> ids = this.getIds(notification, module);
-		final Set<EObject> eobjects = new HashSet<EObject>();
+
+		final Set<EObject> objects = this.getIds(notification);
 		
 		IValidator<Notification> validator = ModelValidationService
 				.getInstance().newValidator(EvaluationMode.LIVE);
-	
-		validator.addConstraintFilter(new IConstraintFilter() {
-			@Override
-			public boolean accept(IConstraintDescriptor constraint, EObject target) {
-				if (!(constraint instanceof EvlEmfConstraint)) {
-					return false;
-				}
-				
-				if (ids.contains(module.getContext().getModelRepository()
-						.getOwningModel(target).getElementId(target))) {
-					eobjects.add(target);
-					return true;
-				}
-				
-				return false;
-			}
-		});
+		validator.addConstraintFilter(new EvlContextInjector(this.evlContext));
 		
-		final List<Notification> list = new LinkedList<Notification>();
-		for (EObject eObject : eobjects) {
-			list.add(new EvlModelConstraintNotification(notification, eObject));
+		for (EObject eObject : objects) {
+			validator.validate(new EvlModelConstraintNotification(notification, eObject));
 		}
-		
-		validator.validate(notification);
 	}
 	
 	public boolean isEnabled() {
@@ -105,10 +82,21 @@ public class LiveValidationListener extends EContentAdapter {
 	
 	public void enable() {
 		this.enabled = true;
+		
+		// Init the EvlContext and add all the Models
+		this.evlContext = new TraceEvlContext();
+		for (Resource resource : this.editingDomain.getResourceSet().getResources()) {
+			IModel model = new InMemoryEmfModel(resource);
+			this.evlContext.getModelRepository().addModel(model);
+		}
+		
 		IBatchValidator validator = ModelValidationService.getInstance()
 				.newValidator(EvaluationMode.BATCH);
-			// include live constraints, also, in batch validation
-			validator.setOption(IBatchValidator.OPTION_INCLUDE_LIVE_CONSTRAINTS, true);
+		validator.setOption(IBatchValidator.OPTION_INCLUDE_LIVE_CONSTRAINTS, true);
+		validator.addConstraintFilter(new EvlContextInjector(evlContext));
+		
+		// Iterator through all objects and evaluate
+		// TODO: Should we just use the EvlModule to do this?
 		for (Resource r : editingDomain.getResourceSet().getResources()) {
 			TreeIterator<EObject> it = r.getAllContents();
 			while (it.hasNext()) {
@@ -132,8 +120,14 @@ public class LiveValidationListener extends EContentAdapter {
 		super.setTarget(target);
 	}
 	
-	private Set<String> getIds(Notification notification, TraceEvlModule module) {
-		EObject object = (EObject) notification.getNotifier();
+	/**
+	 * 
+	 * @param notification
+	 * @param module
+	 * @return
+	 */
+	private Set<EObject> getIds(Notification notification) {
+		final EObject object = (EObject) notification.getNotifier();		
 		String id = null;
 		Iterable<TScope> scopes = null;
 		
@@ -145,18 +139,18 @@ public class LiveValidationListener extends EContentAdapter {
 			if (id == null) {
 				return Collections.emptySet();
 			}
-			scopes = module.getTraceGraph().getScopesPartOf(id);
-			module.getTraceGraph().removeElement(id);
+			scopes = this.evlContext.getTraceGraph().getScopesPartOf(id);
+			this.evlContext.getTraceGraph().removeElement(id);
 			break;
 			
 		// Something was changed
 		case Notification.SET:
 			id = object.eResource().getURIFragment(object);
 			EStructuralFeature feature = (EStructuralFeature) notification.getFeature();
-			TProperty property = module.getTraceGraph().getProperty(feature.getName(), id);
+			TProperty property = this.evlContext.getTraceGraph().getProperty(feature.getName(), id);
 			scopes = property.getScopes();
 			if (notification.wasSet() && !object.eIsSet(feature)) {
-				module.getTraceGraph().removeProperty(property);
+				this.evlContext.getTraceGraph().removeProperty(property);
 			}
 			break;
 			
@@ -164,14 +158,27 @@ public class LiveValidationListener extends EContentAdapter {
 			return Collections.emptySet();
 		}
 		
-		final Set<String> set = new HashSet<String>();
+		Set<EObject> eObjects = new HashSet<EObject>();
 		for (TScope s : scopes) {
-			set.add(s.getRootElement().getElementId());
+			String elementId = s.getRootElement().getElementId();
+			for (IModel model : this.evlContext.getModelRepository().getModels()) {
+				Object element = model.getElementById(elementId);
+				if (element != null) {
+					eObjects.add(object);
+					continue;
+				}
+			}
 		}
 		
-		return set;
+		return eObjects;
 	}
 	
+	/**
+	 * Wrapper to pass {@link EObject}s to validation framework
+	 * 
+	 * @author Jonathan Co
+	 *
+	 */
 	class EvlModelConstraintNotification extends NotificationImpl {
 		
 		private EObject eObject;
@@ -185,6 +192,35 @@ public class LiveValidationListener extends EContentAdapter {
 		public Object getNotifier() {
 			return this.eObject;
 		}
+	}
+	
+	/**
+	 * "Filter" for setting the current evl context for constraint checking
+	 * 
+	 * @author Jonathan Co
+	 *
+	 */
+	class EvlContextInjector implements IConstraintFilter {
+		
+		private TraceEvlContext evlContext;
+		
+		EvlContextInjector(TraceEvlContext evlContext) {
+			assert evlContext != null;
+			this.evlContext = evlContext;
+		}
+
+		@Override
+		public boolean accept(IConstraintDescriptor constraint, EObject target) {
+			if (!(constraint instanceof EvlEmfConstraint)) {
+				return false;
+			}
+			
+			final EvlEmfConstraint evlEmfCon = (EvlEmfConstraint) constraint;
+			evlEmfCon.setCurrentEvlContext(this.evlContext);
+			
+			return true;
+		}
+		
 	}
 
 }
