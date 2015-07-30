@@ -73,7 +73,7 @@ public class EvlEmfConstraint extends AbstractConstraintDescriptor implements
 	@Override
 	public String getPluginId() {
 		// FIXME
-		return "";
+		return "PluginID";
 	}
 
 	@Override
