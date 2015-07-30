@@ -99,14 +99,15 @@ public class EvlEmfConstraint extends AbstractConstraintDescriptor implements
 
 	@Override
 	public boolean targetsTypeOf(EObject eObject) {
-		if (this.evlContext == null) {
-			return false;
-		}
-		try {
-			return this.constraint.appliesTo(eObject, this.evlContext);
-		} catch (EolRuntimeException e) {
-			return false;
-		}
+		return true;
+//		if (this.evlContext == null) {
+//			return false;
+//		}
+//		try {
+//			return this.constraint.appliesTo(eObject, this.evlContext);
+//		} catch (EolRuntimeException e) {
+//			return false;
+//		}
 	}
 
 	@Override
