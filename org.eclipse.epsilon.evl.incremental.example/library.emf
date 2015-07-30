@@ -1,0 +1,61 @@
+@namespace(
+	uri="org.eclipse.epsilon.evl.incremental.example.library",
+	prefix="library")
+package library;
+
+class Library extends Addressable {
+	attr String name;
+	
+	// People
+	val Writer[*] writers;
+	val Employee[*] employees;
+	val Borrower[*] borrowers;
+	
+	// Stocks
+	val Item[*] stock;	
+}
+
+// ============================================================================
+// PEOPLE
+// ============================================================================
+class Person extends Addressable {
+	attr String firstName;
+	attr String lastName;
+}
+
+class Employee extends Person {}
+class Writer extends Person {
+    ref Book[*]#authors books;
+}
+
+class Borrower extends Person {
+	ref Lendable[*]#borrowers borrowing;
+}
+
+// ============================================================================
+// ITEMS
+// ============================================================================
+class Book extends CirculatingItem {
+	attr String title;
+	attr int pages;
+	ref Writer[+]#books authors;
+}
+
+abstract class CirculatingItem extends Item, Lendable {
+}
+
+abstract class Item {
+	attr Date publicationDate;
+}
+
+abstract interface Lendable {
+	attr int copies;
+	ref Borrower[*]#borrowing borrowers;
+}
+
+// ============================================================================
+// GENERAL
+// ============================================================================
+abstract interface Addressable {
+    attr String address;
+}
