@@ -84,7 +84,9 @@ public class EvlEmfConstraint extends AbstractConstraintDescriptor implements
 
 	@Override
 	public ConstraintSeverity getSeverity() {
-		// FIXME
+		if (this.constraint.isCritique()) {
+			return ConstraintSeverity.WARNING;
+		}
 		return ConstraintSeverity.ERROR;
 	}
 
