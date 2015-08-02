@@ -32,22 +32,23 @@ public class EvlEmfConstraint extends AbstractConstraintDescriptor implements
 
 	@Override
 	public IStatus validate(IValidationContext ctx) {
+		// Early return if the context isn't set for some reason
 		if (this.evlContext == null) {
 			return ctx.createFailureStatus(ctx.getTarget().toString());
 		}
+
 		try {
-			System.out.println(ctx.getTarget()); // SHOULD BE RUN WHEN THE ECLASS IS BOOK
 			boolean check = this.constraint.check(ctx.getTarget(), this.evlContext);
 			if (check) {
 				return ctx.createSuccessStatus();
 			} else {
 				return ctx.createFailureStatus(ctx.getTarget().toString());
 			}
- 		} catch (EolRuntimeException e) {
+		} catch (EolRuntimeException e) {
 			return ctx.createFailureStatus(ctx.getTarget().toString());
 		}
 	}
-	
+
 	public void setCurrentEvlContext(final TraceEvlContext context) {
 		this.evlContext = context;
 	}
