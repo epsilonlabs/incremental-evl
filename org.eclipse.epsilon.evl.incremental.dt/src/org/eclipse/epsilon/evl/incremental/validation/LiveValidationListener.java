@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.NotificationImpl;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -26,6 +27,7 @@ import org.eclipse.epsilon.evl.incremental.TraceEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.TProperty;
 import org.eclipse.epsilon.evl.incremental.trace.TScope;
 
+@SuppressWarnings("restriction")
 public class LiveValidationListener extends EContentAdapter {
 	
 	/**
@@ -85,11 +87,13 @@ public class LiveValidationListener extends EContentAdapter {
 		
 		// Init the EvlContext and add all the Models
 		this.evlContext = new TraceEvlContext();
-		for (Resource resource : this.editingDomain.getResourceSet().getResources()) {
-			IModel model = new InMemoryEmfModel(resource);
+		
+		final EList<Resource> resources = this.editingDomain.getResourceSet().getResources();
+		for (int i = 0; i < resources.size(); i++) {
+			IModel model = new InMemoryEmfModel(resources.get(i));
 			this.evlContext.getModelRepository().addModel(model);
 		}
-		
+
 		IBatchValidator validator = ModelValidationService.getInstance()
 				.newValidator(EvaluationMode.BATCH);
 		validator.setOption(IBatchValidator.OPTION_INCLUDE_LIVE_CONSTRAINTS, true);
