@@ -1,4 +1,4 @@
-context Book {
+context IncBook {
 
     constraint NumberOfCopiesValid {
         check: self.copies > -1

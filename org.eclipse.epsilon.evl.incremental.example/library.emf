@@ -25,7 +25,7 @@ class Person extends Addressable {
 
 class Employee extends Person {}
 class Writer extends Person {
-    ref Book[*]#authors books;
+    ref IncBook[*]#authors books;
 }
 
 class Borrower extends Person {
@@ -35,7 +35,7 @@ class Borrower extends Person {
 // ============================================================================
 // ITEMS
 // ============================================================================
-class Book extends CirculatingItem {
+class IncBook extends CirculatingItem {
 	attr String title;
 	attr int pages;
 	ref Writer[+]#books authors;
