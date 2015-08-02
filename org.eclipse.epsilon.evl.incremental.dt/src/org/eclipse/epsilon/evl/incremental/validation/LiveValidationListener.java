@@ -109,6 +109,7 @@ public class LiveValidationListener extends EContentAdapter {
 	
 	public void disable() {
 		this.enabled = false;
+		this.evlContext = null;
 	}
 	
 	/**
