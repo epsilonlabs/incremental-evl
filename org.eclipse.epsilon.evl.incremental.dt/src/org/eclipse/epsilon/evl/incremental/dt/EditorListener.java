@@ -54,7 +54,7 @@ public class EditorListener implements IPartListener2 {
 		final ResourceSet resourceSet = editingDomain.getResourceSet();
 		LiveValidationListener listener = this.listenerMap.get(resourceSet);
 		if (listener == null) {
-			listener = new LiveValidationListener();
+			listener = new LiveValidationListener(editingDomain);
 			resourceSet.eAdapters().add(listener);
 			this.listenerMap.put(resourceSet, listener);
 			this.modifyEcoreEditorMenu(partRef, listener);

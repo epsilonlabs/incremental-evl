@@ -1,23 +1,30 @@
 package org.eclipse.epsilon.evl.incremental;
 
-import java.io.File;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.emc.emf.AbstractEmfModel;
 import org.eclipse.epsilon.emc.emf.EmfModel;
+import org.eclipse.epsilon.emc.emf.InMemoryEmfModel;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.EvlModule;
+import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.dom.Fix;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.incremental.dom.TraceConstraint;
 import org.eclipse.epsilon.evl.incremental.trace.OrientTraceGraphFactory;
 import org.eclipse.epsilon.evl.incremental.trace.TraceGraph;
-import org.eclipse.epsilon.evl.incremental.trace.TraceGraphFactory;
 import org.eclipse.epsilon.evl.parse.EvlParser;
 
 import com.tinkerpop.blueprints.Graph;
@@ -39,6 +46,7 @@ public class TraceEvlModule extends EvlModule {
 	}
 	
 	public TraceEvlModule(boolean persist) {
+		super();
 		this.persist = persist;
 	}
 	
@@ -66,30 +74,24 @@ public class TraceEvlModule extends EvlModule {
 	
 	public String getTraceLocation() {
 		final StringBuilder sb = new StringBuilder();
-		if (persist) {
-			sb.append(System.getProperty("user.dir")).append("/");
-		}
-		sb.append(sourceFile.getName().split("\\.")[0]).append("-trace");
-		if (persist) {
-			File file = new File(sb.toString());
-			file.mkdirs();
-			return String.format(PERSIST_URL_FORMAT, file.toString());
-		}
+//		if (persist) {
+//			sb.append(System.getProperty("user.dir")).append("/");
+//		}
+		sb.append("file");
+//		sb.append(sourceFile.getName().split("\\.")[0]).append("-trace");
+//		if (persist) {
+//			File file = new File(sb.toString());
+//			file.mkdirs();
+//			return String.format(PERSIST_URL_FORMAT, file.toString());
+//		}
 		return String.format(MEMORY_URL_FORMAT, sb.toString());
 	}
 	
-	public void initTraceGraph() {
-		if (this.traceGraph == null || !this.traceGraph.isOpen()) {
-			TraceGraphFactory<? extends Graph> tgf = new OrientTraceGraphFactory(getTraceLocation(), USER, PASS);
-			this.traceGraph = tgf.getGraph();
-		}
-	}
-	
 	public TraceGraph<? extends Graph> getTraceGraph() {
-		if (this.traceGraph == null || !this.traceGraph.isOpen()) {
-			this.initTraceGraph();
+		if (this.context instanceof TraceEvlContext) {
+			return ((TraceEvlModule) this.context).getTraceGraph();
 		}
-		return this.traceGraph;
+		return null;
 	}
 	
 	/**
@@ -108,7 +110,6 @@ public class TraceEvlModule extends EvlModule {
 	@Override
 	protected void prepareContext(IEolContext context) {
 		super.prepareContext(context);
-		initTraceGraph();
 	}
 	
 	@Override
@@ -132,8 +133,8 @@ public class TraceEvlModule extends EvlModule {
 	@Override
 	public void reset() {
 		super.reset();	
-		if (this.traceGraph != null && this.traceGraph.isOpen()) {
-			this.traceGraph.shutdown();
+		if (this.getTraceGraph() != null) {
+			this.getTraceGraph().shutdown();
 		}
 		context = new TraceEvlContext();
 	}

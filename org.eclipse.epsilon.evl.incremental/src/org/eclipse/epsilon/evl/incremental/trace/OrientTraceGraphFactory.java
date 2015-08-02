@@ -21,6 +21,8 @@ public class OrientTraceGraphFactory implements TraceGraphFactory<OrientGraph> {
 
 	private final Map<String, String> config;
 	private OrientTraceGraph graphInstance = null;
+	
+	private static OrientTraceGraphFactory instance = new OrientTraceGraphFactory("memory:%s", "admin", "admin");
 
 	/**
 	 * Default Constructor
@@ -40,6 +42,10 @@ public class OrientTraceGraphFactory implements TraceGraphFactory<OrientGraph> {
 		this.config.put("blueprints.orientdb.password", pass);
 		this.config.put("log.console.level", "fine");
 		this.config.put("log.file.level", "fine");
+	}
+	
+	public static OrientTraceGraphFactory getInstance() {
+		return instance;
 	}
 
 	@Override

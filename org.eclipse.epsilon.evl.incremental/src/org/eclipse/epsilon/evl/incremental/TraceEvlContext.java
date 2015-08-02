@@ -1,6 +1,7 @@
 package org.eclipse.epsilon.evl.incremental;
 
 import org.eclipse.epsilon.evl.execute.context.EvlContext;
+import org.eclipse.epsilon.evl.incremental.trace.OrientTraceGraphFactory;
 import org.eclipse.epsilon.evl.incremental.trace.TraceGraph;
 import org.eclipse.epsilon.evl.trace.ConstraintTrace;
 
@@ -14,8 +15,14 @@ import com.tinkerpop.blueprints.Graph;
  */
 public class TraceEvlContext extends EvlContext {
 
+	private TraceGraph graph = null;
+	
 	public TraceGraph<? extends Graph> getTraceGraph() {
-		return ((TraceEvlModule) getModule()).getTraceGraph();
+		if (graph == null) {
+			this.graph = OrientTraceGraphFactory.getInstance().getGraph();
+		}
+
+		return this.graph;
 	}
 
 	/**
