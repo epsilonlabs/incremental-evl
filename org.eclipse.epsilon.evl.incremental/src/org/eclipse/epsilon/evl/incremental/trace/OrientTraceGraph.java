@@ -17,7 +17,7 @@ import com.tinkerpop.pipes.PipeFunction;
  * @author Jonathan Co
  *
  */
-public class OrientTraceGraph implements TraceGraph<OrientGraph> {
+public class OrientTraceGraph implements TraceGraph {
 
 	private final FramedGraph<OrientGraph> framedGraph;
 	private final OrientGraph baseGraph;
@@ -358,7 +358,6 @@ public class OrientTraceGraph implements TraceGraph<OrientGraph> {
 		this.removeProperty(this.getProperty(propertyName, element));
 	}
 
-	@Override
 	public OrientGraph getBaseGraph() {
 		return this.baseGraph;
 	}

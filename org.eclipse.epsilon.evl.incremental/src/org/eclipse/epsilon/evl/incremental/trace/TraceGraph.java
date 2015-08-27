@@ -1,7 +1,5 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
-import com.tinkerpop.blueprints.Graph;
-import com.tinkerpop.blueprints.util.wrappers.WrapperGraph;
 
 /**
  * An constraint evaluation trace represented in graph from.
@@ -11,7 +9,7 @@ import com.tinkerpop.blueprints.util.wrappers.WrapperGraph;
  * @param <T>
  *            The type of graph engine used by this {@link TraceGraph}s.
  */
-public interface TraceGraph<T extends Graph> extends WrapperGraph<T> {
+public interface TraceGraph {
 
 	/*
 	 * ========================================================================

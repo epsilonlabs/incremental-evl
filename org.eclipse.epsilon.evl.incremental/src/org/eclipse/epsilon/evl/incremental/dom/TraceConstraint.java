@@ -1,6 +1,7 @@
 package org.eclipse.epsilon.evl.incremental.dom;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.FrameType;
@@ -11,8 +12,8 @@ import org.eclipse.epsilon.evl.execute.FixInstance;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.incremental.TraceEvlContext;
-import org.eclipse.epsilon.evl.incremental.trace.ConstraintCheckListener;
-import org.eclipse.epsilon.evl.incremental.trace.Scope;
+import org.eclipse.epsilon.evl.incremental.trace.PropertyAccess;
+import org.eclipse.epsilon.evl.incremental.trace.PropertyAccessListener;
 import org.eclipse.epsilon.evl.incremental.trace.TConstraint;
 import org.eclipse.epsilon.evl.incremental.trace.TContext;
 import org.eclipse.epsilon.evl.incremental.trace.TElement;
@@ -21,8 +22,6 @@ import org.eclipse.epsilon.evl.incremental.trace.TScope;
 import org.eclipse.epsilon.evl.incremental.trace.TraceGraph;
 import org.eclipse.epsilon.evl.trace.ConstraintTrace;
 
-import com.tinkerpop.blueprints.Graph;
-
 /**
  * Subclass of {@link Constraint} for use with incremental evaluation and
  * traces. This bypasses the default checking of the {@link ConstraintTrace}'s.
@@ -30,7 +29,6 @@ import com.tinkerpop.blueprints.Graph;
  * @author Jonathan Co
  *
  */
-// TODO put trace back in remove only ones that do not need to be re-run
 public class TraceConstraint extends Constraint {
 
 	@Override
@@ -48,12 +46,11 @@ public class TraceConstraint extends Constraint {
 				Variable.createReadOnlyVariable("self", self));
 		
 		// Set a listener to trace property accesses
-		ConstraintCheckListener listener = new ConstraintCheckListener();
+		PropertyAccessListener listener = new PropertyAccessListener();
 		context.getExecutorFactory().addExecutionListener(listener);
 		
-		// Execute and add to trace
 		Boolean result = checkBlock.execute(context, false);
-		addToTrace(context, self, listener.getScopes());
+		addToTrace((TraceEvlContext) context, self, listener.getPropertyAccesses());
 
 		// Clean-up the listener
 		context.getExecutorFactory().removeExecutionListener(listener);
@@ -91,35 +88,68 @@ public class TraceConstraint extends Constraint {
 			context.getFrameStack().leaveLocal(checkBlock.getBody(), false);
 			return false;
 		} else {
+			Iterator<UnsatisfiedConstraint> it = context.getUnsatisfiedConstraints().iterator();
+			while(it.hasNext()) {
+				UnsatisfiedConstraint current = it.next();
+				if(current.getConstraint().equals(this) && current.getInstance().equals(self)) {
+					System.out.println("here");
+					it.remove();
+				}
+			}
+			
 			context.getFrameStack().leaveLocal(checkBlock.getBody());
 			return true;
 		}
 	}
 	
-	private void addToTrace(IEvlContext ctx, 
-			Object modelElement,
-			Collection<Scope> scopes) {
+	private void addToTrace(TraceEvlContext ctx, 
+			Object element,
+			Collection<PropertyAccess> accesses) {
 		
-		// FIXME: Check the cast
-		TraceGraph<? extends Graph> graph = ((TraceEvlContext) ctx).getTraceGraph();
-
-		final TContext tContext = graph.createContext(this.getName());
-		final TConstraint tConstraint = graph.createConstraint(this.getName(), tContext);
-		final TElement tElement = graph.createElement(
-				ctx.getModelRepository()
-				.getOwningModel(modelElement)
-				.getElementId(modelElement));
-		final TScope tScope = graph.createScope(tElement, tConstraint);
+		final TraceGraph trace = ctx.getTrace();
 		
-		for (Scope s : scopes) {
-			final TElement element = graph.createElement(s.getElementId());
-			final TProperty property = graph.createProperty(s.getPropertyName(), element);
+		final String contextName = this.getConstraintContext().getName();
+		final String constraintName = this.getName();
+		final String elementId = ctx.getModelRepository().getOwningModel(element).getElementId(element);
+	
+		// Clear any existing scope
+		trace.removeScope(elementId, constraintName, contextName);
+		
+		// Populate with new trace
+		final TContext tContext = trace.createContext(contextName);
+		final TConstraint tConstraint = trace.createConstraint(constraintName, tContext);
+		final TElement tElement = trace.createElement(elementId);
+		final TScope tScope = trace.createScope(tElement, tConstraint);
+		
+		for (PropertyAccess pa : accesses) {
+			final TElement currentElement = trace.createElement(pa.getElementId());
+			final TProperty property = trace.createProperty(pa.getPropertyName(), currentElement);
 			tScope.addProperty(property);
 		}
+
+		trace.commit();
+				
+		if (true){
+			logScope(tScope);
+		}
 		
-		// FIXME: Move to tracegraph itself
-		graph.commit();
 	}
 	
-
+	private void logScope(TScope scope) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		
+		sb.append("\"context\":\"").append(scope.getConstraint().getContext().getName()).append("\",");
+		sb.append("\"constraint\":\"").append(scope.getConstraint().getName()).append("\",");
+		sb.append("\"root\":\"").append(scope.getRootElement().getElementId()).append("\",");
+		sb.append("\"properties\":{");
+		for (TProperty property : scope.getProperties()) {
+			sb.append("\"").append(property.getName()).append("\",");
+		}
+		sb.append("}");
+		
+		sb.append("]");
+		
+		System.out.println(sb.toString());
+	}
 }

@@ -17,9 +17,9 @@ import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
  * @author Jonathan Co
  *
  */
-public class ConstraintCheckListener implements IExecutionListener {
+public class PropertyAccessListener implements IExecutionListener {
 
-	private Collection<Scope> scopes = new HashSet<Scope>();
+	private Collection<PropertyAccess> accesses = new HashSet<PropertyAccess>();
 	
 	// The last model element accessed
 	private EObject lastElement = null;
@@ -36,7 +36,7 @@ public class ConstraintCheckListener implements IExecutionListener {
 			String id = ctx.getModelRepository().getOwningModel(lastElement).getElementId(lastElement);
 			String prop = ((PropertyCallExpression) ast)
 					.getPropertyNameExpression().getName();
-			scopes.add(new Scope(id, prop));
+			accesses.add(new PropertyAccess(id, prop));
 		}
 		
 	}
@@ -52,8 +52,8 @@ public class ConstraintCheckListener implements IExecutionListener {
 		// Do nothing
 	}
 	
-	public Collection<Scope> getScopes() {
-		return scopes;
+	public Collection<PropertyAccess> getPropertyAccesses() {
+		return accesses;
 	}
 
 }

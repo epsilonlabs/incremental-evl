@@ -6,12 +6,12 @@ package org.eclipse.epsilon.evl.incremental.trace;
  * @author Jonathan Co
  *
  */
-public class Scope {
+public class PropertyAccess {
 
 	private String elementId;
 	private String propertyName;
 	
-	public Scope(String elementId, String propertyName) {
+	public PropertyAccess(String elementId, String propertyName) {
 		this.elementId = elementId;
 		this.propertyName = propertyName;
 	}
@@ -51,7 +51,7 @@ public class Scope {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Scope other = (Scope) obj;
+		PropertyAccess other = (PropertyAccess) obj;
 		if (elementId == null) {
 			if (other.elementId != null)
 				return false;

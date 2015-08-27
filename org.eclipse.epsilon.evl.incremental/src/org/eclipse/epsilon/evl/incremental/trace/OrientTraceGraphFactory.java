@@ -17,7 +17,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
  * @author Jonathan Co
  *
  */
-public class OrientTraceGraphFactory implements TraceGraphFactory<OrientGraph> {
+public class OrientTraceGraphFactory implements TraceGraphFactory {
 
 	private final Map<String, String> config;
 	private OrientTraceGraph graphInstance = null;
@@ -33,7 +33,6 @@ public class OrientTraceGraphFactory implements TraceGraphFactory<OrientGraph> {
 	 */
 	public OrientTraceGraphFactory(String url, String user, String pass) {
 		// Build configuration
-		// TODO: Make priv-sfs
 		this.config = new HashMap<String, String>(4);
 		this.config.put("blueprints.graph",
 				"com.tinkerpop.blueprints.impls.orient.OrientGraph");
@@ -49,9 +48,9 @@ public class OrientTraceGraphFactory implements TraceGraphFactory<OrientGraph> {
 	}
 
 	@Override
-	public OrientTraceGraph getGraph() {
+	public TraceGraph getGraph() {
 		// Init the graph if not already done so
-		if (graphInstance == null || graphInstance.isOpen()) {
+		if (graphInstance == null || !graphInstance.isOpen()) {
 			OrientGraph orientGraph = (OrientGraph) GraphFactory
 					.open(this.config);
 			this.setupClasses(orientGraph);

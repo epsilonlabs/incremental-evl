@@ -27,7 +27,7 @@ public class OrientTraceGraphTest extends AbstractOrientTraceGraphTest {
 				AbstractOrientTraceGraphTest.URL,
 				AbstractOrientTraceGraphTest.USER,
 				AbstractOrientTraceGraphTest.PASSWORD);
-		this.graph = this.factory.getGraph();
+		this.graph = (OrientTraceGraph) this.factory.getGraph();
 	}
 
 	@Override

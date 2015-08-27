@@ -41,8 +41,9 @@ public class OrientTraceGraphFactoryTest {
 
 	@After
 	public void tearDown() {
-		TraceGraph<OrientGraph> graph = factory.getGraph();
-		ODatabaseDocumentTx db = graph.getBaseGraph().getRawGraph();
+		TraceGraph graph = factory.getGraph();
+		ODatabaseDocumentTx db = ((OrientTraceGraph) graph).getBaseGraph()
+				.getRawGraph();
 		assertTrue(db.exists());
 		db.drop();
 		assertFalse(db.exists());
