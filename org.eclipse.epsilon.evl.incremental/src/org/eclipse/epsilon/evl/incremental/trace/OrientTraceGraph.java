@@ -40,7 +40,6 @@ public class OrientTraceGraph implements TraceGraph {
 		if (context == null) {
 			context = this.addVertex(TContext.TRACE_TYPE, TContext.class);
 			context.setName(contextName);
-			this.commit();
 		}
 		return context;
 	}
@@ -59,7 +58,6 @@ public class OrientTraceGraph implements TraceGraph {
 			constraint = this.addVertex(TConstraint.TRACE_TYPE, TConstraint.class);
 			constraint.setName(constraintName);
 			context.addConstraint(constraint);
-			this.commit();
 		}
 		return constraint;
 	}
@@ -70,7 +68,6 @@ public class OrientTraceGraph implements TraceGraph {
 		if (element == null) {
 			element = this.addVertex(TElement.TRACE_TYPE, TElement.class);
 			element.setElementId(elementId);
-			this.commit();
 		}
 		return element;
 	}
@@ -100,7 +97,6 @@ public class OrientTraceGraph implements TraceGraph {
 			scope = this.addVertex(TScope.TRACE_TYPE, TScope.class);
 			scope.setRootElement(element);
 			scope.setConstraint(constraint);
-			this.commit();
 		}
 		return scope;
 	}
@@ -119,7 +115,6 @@ public class OrientTraceGraph implements TraceGraph {
 			property = this.addVertex(TProperty.TRACE_TYPE, TProperty.class);
 			property.setOwner(element);
 			property.setName(propertyName);
-			this.commit();
 		}
 		return property;
 	}
@@ -274,7 +269,6 @@ public class OrientTraceGraph implements TraceGraph {
 	public void removeContext(TContext context) {
 		if (context != null) {
 			this.baseGraph.removeVertex(context.asVertex());
-			this.commit();
 		}
 	}
 
@@ -282,7 +276,6 @@ public class OrientTraceGraph implements TraceGraph {
 	public void removeConstraint(TConstraint constraint) {
 		if (constraint != null) {
 			this.baseGraph.removeVertex(constraint.asVertex());
-			this.commit();
 		}
 	}
 
@@ -301,7 +294,6 @@ public class OrientTraceGraph implements TraceGraph {
 	public void removeElement(TElement element) {
 		if (element != null) {
 			this.baseGraph.removeVertex(element.asVertex());
-			this.commit();
 		}
 	}
 
@@ -314,7 +306,6 @@ public class OrientTraceGraph implements TraceGraph {
 	public void removeScope(TScope scope) {
 		if (scope != null) {
 			this.baseGraph.removeVertex(scope.asVertex());
-			this.commit();
 		}
 	}
 
@@ -344,7 +335,6 @@ public class OrientTraceGraph implements TraceGraph {
 	public void removeProperty(TProperty property) {
 		if ( property != null) {
 			this.baseGraph.removeVertex( property.asVertex());
-			this.commit();
 		}
 	}
 
