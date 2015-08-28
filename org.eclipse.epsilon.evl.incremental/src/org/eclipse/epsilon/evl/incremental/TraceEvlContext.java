@@ -45,7 +45,6 @@ public class TraceEvlContext extends EvlContext {
 	
 	@Override
 	public TraceEvlModule getModule() {
-		// TODO Auto-generated method stub
 		return (TraceEvlModule) super.getModule();
 	}
 }
