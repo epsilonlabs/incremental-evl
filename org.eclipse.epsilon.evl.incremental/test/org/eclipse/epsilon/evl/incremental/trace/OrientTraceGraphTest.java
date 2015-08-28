@@ -23,10 +23,7 @@ public class OrientTraceGraphTest extends AbstractOrientTraceGraphTest {
 
 	@Before
 	public void setup() {
-		this.factory = new OrientTraceGraphFactory(
-				AbstractOrientTraceGraphTest.URL,
-				AbstractOrientTraceGraphTest.USER,
-				AbstractOrientTraceGraphTest.PASSWORD);
+		this.factory = OrientTraceGraphFactory.getInstance();
 		this.graph = (OrientTraceGraph) this.factory.getGraph();
 	}
 

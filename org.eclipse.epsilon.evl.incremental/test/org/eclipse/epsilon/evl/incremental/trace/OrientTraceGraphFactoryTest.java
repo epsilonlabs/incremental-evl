@@ -4,25 +4,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.epsilon.evl.incremental.trace.OrientTraceGraph;
-import org.eclipse.epsilon.evl.incremental.trace.OrientTraceGraphFactory;
-import org.eclipse.epsilon.evl.incremental.trace.TAccesses;
-import org.eclipse.epsilon.evl.incremental.trace.TConstraint;
-import org.eclipse.epsilon.evl.incremental.trace.TContext;
-import org.eclipse.epsilon.evl.incremental.trace.TElement;
-import org.eclipse.epsilon.evl.incremental.trace.TEvaluates;
-import org.eclipse.epsilon.evl.incremental.trace.TIn;
-import org.eclipse.epsilon.evl.incremental.trace.TOwns;
-import org.eclipse.epsilon.evl.incremental.trace.TProperty;
-import org.eclipse.epsilon.evl.incremental.trace.TRootOf;
-import org.eclipse.epsilon.evl.incremental.trace.TScope;
-import org.eclipse.epsilon.evl.incremental.trace.TraceGraph;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
-import com.tinkerpop.blueprints.impls.orient.OrientGraph;
+import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
 
 public class OrientTraceGraphFactoryTest {
@@ -36,7 +23,7 @@ public class OrientTraceGraphFactoryTest {
 
 	@Before
 	public void setup() {
-		factory = new OrientTraceGraphFactory(URL, USER, PASSWORD);
+		factory = OrientTraceGraphFactory.getInstance();
 	}
 
 	@After
@@ -54,7 +41,7 @@ public class OrientTraceGraphFactoryTest {
 	@Test
 	public void testVertexTypesCreated() {
 		final OrientTraceGraph graph = (OrientTraceGraph) factory.getGraph();
-		final OrientGraph baseGraph = graph.getBaseGraph();
+		final OrientBaseGraph baseGraph = graph.getBaseGraph();
 
 		// Context
 		OrientVertexType context = baseGraph.getVertexType(TContext.TRACE_TYPE);
@@ -86,7 +73,7 @@ public class OrientTraceGraphFactoryTest {
 	@Test
 	public void testEdgeTypesCreated() {
 		final OrientTraceGraph graph = (OrientTraceGraph) factory.getGraph();
-		final OrientGraph baseGraph = graph.getBaseGraph();
+		final OrientBaseGraph baseGraph = graph.getBaseGraph();
 
 		assertNotNull(baseGraph.getEdgeType(TAccesses.TRACE_TYPE));
 		assertNotNull(baseGraph.getEdgeType(TEvaluates.TRACE_TYPE));
