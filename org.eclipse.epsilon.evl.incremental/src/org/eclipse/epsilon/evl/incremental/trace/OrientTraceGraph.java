@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.impls.orient.OrientGraph;
+import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.FramedGraphFactory;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
@@ -19,8 +19,8 @@ import com.tinkerpop.pipes.PipeFunction;
  */
 public class OrientTraceGraph implements TraceGraph {
 
-	private final FramedGraph<OrientGraph> framedGraph;
-	private final OrientGraph baseGraph;
+	private final FramedGraph<OrientBaseGraph> framedGraph;
+	private final OrientBaseGraph baseGraph;
 
 	/**
 	 * Package private constructor - use {@link OrientTraceGraphFactory} to
@@ -28,7 +28,7 @@ public class OrientTraceGraph implements TraceGraph {
 	 * 
 	 * @param baseGraph
 	 */
-	OrientTraceGraph(OrientGraph baseGraph) {
+	OrientTraceGraph(OrientBaseGraph baseGraph) {
 		this.baseGraph = baseGraph;
 		FramedGraphFactory fgf = new FramedGraphFactory();
 		this.framedGraph = fgf.create(this.baseGraph);
@@ -348,7 +348,7 @@ public class OrientTraceGraph implements TraceGraph {
 		this.removeProperty(this.getProperty(propertyName, element));
 	}
 
-	public OrientGraph getBaseGraph() {
+	public OrientBaseGraph getBaseGraph() {
 		return this.baseGraph;
 	}
 

@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.orientechnologies.orient.core.metadata.schema.OType;
-import com.tinkerpop.blueprints.GraphFactory;
 import com.tinkerpop.blueprints.Parameter;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.impls.orient.OrientGraph;
+import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
+import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
 
 /**
@@ -31,7 +31,7 @@ public class OrientTraceGraphFactory implements TraceGraphFactory {
 	 * @param user
 	 * @param pass
 	 */
-	public OrientTraceGraphFactory(String url, String user, String pass) {
+	private OrientTraceGraphFactory(String url, String user, String pass) {
 		// Build configuration
 		this.config = new HashMap<String, String>(4);
 		this.config.put("blueprints.graph",
@@ -51,10 +51,11 @@ public class OrientTraceGraphFactory implements TraceGraphFactory {
 	public TraceGraph getGraph() {
 		// Init the graph if not already done so
 		if (graphInstance == null || !graphInstance.isOpen()) {
-			OrientGraph orientGraph = (OrientGraph) GraphFactory
-					.open(this.config);
-			this.setupClasses(orientGraph);
-			this.graphInstance = new OrientTraceGraph(orientGraph);
+//			OrientGraph orientGraph = (OrientGraph) GraphFactory.open(this.config);
+			OrientGraphNoTx graph = new OrientGraphNoTx("memory:EVLTrace");
+			
+			this.setupClasses(graph);
+			this.graphInstance = new OrientTraceGraph(graph);
 		}
 		return this.graphInstance;
 	}
@@ -65,7 +66,7 @@ public class OrientTraceGraphFactory implements TraceGraphFactory {
 	 * @param graph
 	 *            The graph to add vertex types to
 	 */
-	private void setupClasses(OrientGraph graph) {
+	private void setupClasses(OrientBaseGraph graph) {
 		
 		// Context
 		OrientVertexType context = graph.getVertexType(TContext.TRACE_TYPE);
@@ -123,7 +124,7 @@ public class OrientTraceGraphFactory implements TraceGraphFactory {
 		graph.commit();
 	}
 
-	private void setupEdgeType(OrientGraph graph, String... types) {
+	private void setupEdgeType(OrientBaseGraph graph, String... types) {
 		for (String type : types) {
 			if (graph.getEdgeType(type) == null) graph.createEdgeType(type);
 		}
