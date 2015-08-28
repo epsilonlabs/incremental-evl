@@ -2,6 +2,7 @@ package org.eclipse.epsilon.evl.incremental.trace;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
+import com.tinkerpop.frames.Property;
 
 /**
  * The {@link TScope} interface represents a constraint scope vertex in the
@@ -16,7 +17,15 @@ public interface TScope extends TraceGraphVertex {
 	 * Common name of this trace element
 	 */
 	String TRACE_TYPE = "scope";
+	
+	String RESULT = "result";
 
+	@Property(RESULT)
+	void setResult(boolean result);
+	
+	@Property(RESULT)
+	boolean getResult(boolean result);
+	
 	/**
 	 * Get the constraint that is used to evaluate this scope.
 	 * 
