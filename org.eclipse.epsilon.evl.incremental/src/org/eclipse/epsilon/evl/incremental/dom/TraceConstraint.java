@@ -30,7 +30,7 @@ import org.eclipse.epsilon.evl.trace.ConstraintTrace;
  *
  */
 public class TraceConstraint extends Constraint {
-
+		
 	@Override
 	public boolean check(Object self, IEvlContext context)
 			throws EolRuntimeException {
@@ -38,7 +38,7 @@ public class TraceConstraint extends Constraint {
 		// Return immediately if constraint does not apply
 		if (!appliesTo(self, context))
 			return false;
-
+		
 		// Build Frame
 		context.getFrameStack().enterLocal(FrameType.UNPROTECTED,
 				checkBlock.getBody());
@@ -50,7 +50,7 @@ public class TraceConstraint extends Constraint {
 		context.getExecutorFactory().addExecutionListener(listener);
 		
 		Boolean result = checkBlock.execute(context, false);
-		addToTrace((TraceEvlContext) context, self, listener.getPropertyAccesses());
+		addToTrace((TraceEvlContext) context, self, result, listener.getPropertyAccesses());
 
 		// Clean-up the listener
 		context.getExecutorFactory().removeExecutionListener(listener);
@@ -92,7 +92,6 @@ public class TraceConstraint extends Constraint {
 			while(it.hasNext()) {
 				UnsatisfiedConstraint current = it.next();
 				if(current.getConstraint().equals(this) && current.getInstance().equals(self)) {
-					System.out.println("here");
 					it.remove();
 				}
 			}
@@ -102,8 +101,10 @@ public class TraceConstraint extends Constraint {
 		}
 	}
 	
+	
 	private void addToTrace(TraceEvlContext ctx, 
 			Object element,
+			Boolean result,
 			Collection<PropertyAccess> accesses) {
 		
 		final TraceGraph trace = ctx.getTrace();
@@ -114,12 +115,14 @@ public class TraceConstraint extends Constraint {
 	
 		// Clear any existing scope
 		trace.removeScope(elementId, constraintName, contextName);
+		trace.commit();
 		
 		// Populate with new trace
 		final TContext tContext = trace.createContext(contextName);
 		final TConstraint tConstraint = trace.createConstraint(constraintName, tContext);
 		final TElement tElement = trace.createElement(elementId);
 		final TScope tScope = trace.createScope(tElement, tConstraint);
+		tScope.setResult(result);
 		
 		for (PropertyAccess pa : accesses) {
 			final TElement currentElement = trace.createElement(pa.getElementId());
@@ -127,29 +130,23 @@ public class TraceConstraint extends Constraint {
 			tScope.addProperty(property);
 		}
 
-		trace.commit();
-				
-		if (true){
-			logScope(tScope);
-		}
-		
+//		trace.commit();
 	}
 	
-	private void logScope(TScope scope) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("[");
-		
-		sb.append("\"context\":\"").append(scope.getConstraint().getContext().getName()).append("\",");
-		sb.append("\"constraint\":\"").append(scope.getConstraint().getName()).append("\",");
-		sb.append("\"root\":\"").append(scope.getRootElement().getElementId()).append("\",");
-		sb.append("\"properties\":{");
-		for (TProperty property : scope.getProperties()) {
-			sb.append("\"").append(property.getName()).append("\",");
-		}
-		sb.append("}");
-		
-		sb.append("]");
-		
-		System.out.println(sb.toString());
-	}
+//	private void logScope(TScope scope) {
+//		StringBuilder sb = new StringBuilder();
+//		sb.append("[");
+//		
+//		sb.append("\"context\":\"").append(scope.getConstraint().getContext().getName()).append("\",");
+//		sb.append("\"constraint\":\"").append(scope.getConstraint().getName()).append("\",");
+//		sb.append("\"root\":\"").append(scope.getRootElement().getElementId()).append("\",");
+//		sb.append("\"properties\":{");
+//		for (TProperty property : scope.getProperties()) {
+//			sb.append("\"").append(property.getName()).append("\",");
+//		}
+//		sb.append("}");
+//		
+//		sb.append("]");
+//		System.out.println(sb.toString());
+//	}
 }
