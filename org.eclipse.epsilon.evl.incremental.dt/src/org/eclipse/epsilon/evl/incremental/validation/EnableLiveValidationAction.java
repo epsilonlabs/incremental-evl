@@ -1,6 +1,5 @@
-package org.eclipse.epsilon.evl.incremental.dt.commands;
+package org.eclipse.epsilon.evl.incremental.validation;
 
-import org.eclipse.epsilon.evl.incremental.validation.LiveValidationListener;
 import org.eclipse.jface.action.Action;
 
 public class EnableLiveValidationAction extends Action {
@@ -10,7 +9,6 @@ public class EnableLiveValidationAction extends Action {
 	private final LiveValidationListener listener;
 
 	public EnableLiveValidationAction(LiveValidationListener listener) {
-		// TODO: Change to get from properties for localisation
 		super("Live Validation", Action.AS_CHECK_BOX);
 		this.setChecked(false);
 		this.setId(EnableLiveValidationAction.ID);

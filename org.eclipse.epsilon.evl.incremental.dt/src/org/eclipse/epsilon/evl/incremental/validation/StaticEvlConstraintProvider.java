@@ -53,7 +53,7 @@ public class StaticEvlConstraintProvider extends AbstractConstraintProvider {
 			// All required configuration elements present, parse file
 			try {
 				// Attempt to parse the file
-				TraceEvlModule module = new TraceEvlModule(false);
+				TraceEvlModule module = new TraceEvlModule();
 				module.parse(evlFile);
 
 				if (!module.getParseProblems().isEmpty()) {
@@ -120,25 +120,5 @@ public class StaticEvlConstraintProvider extends AbstractConstraintProvider {
 			return null;
 		}
 	}
-	
-	// TODO: Is this needed?
-//	private void createCategory(IConfigurationElement config,
-//			String propertyName, Object data) {
-//		// Create constraint category
-//		String categoryID = config.getDeclaringExtension()
-//				.getUniqueIdentifier();
-//		if (categoryID == null) {
-//			categoryID = "EvlConstraintProvider@"
-//					+ Long.toHexString(System.identityHashCode(this));
-//		}
-//		categoryID = "org.eclipse.epsilon.evl.incremental.validation.category";
-//
-//		Category category = CategoryManager.getInstance().getCategory(
-//				categoryID);
-//		category.setName(config.getAttribute("category"));
-//
-//		Bundle contributor = Platform.getBundle(config.getDeclaringExtension()
-//				.getNamespaceIdentifier());
-//	}
 	
 }

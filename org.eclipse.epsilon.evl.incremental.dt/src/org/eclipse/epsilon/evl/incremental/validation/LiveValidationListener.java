@@ -144,18 +144,18 @@ public class LiveValidationListener extends EContentAdapter {
 			if (id == null) {
 				return Collections.emptySet();
 			}
-			scopes = this.evlContext.getTraceGraph().getScopesPartOf(id);
-			this.evlContext.getTraceGraph().removeElement(id);
+			scopes = this.evlContext.getTrace().getScopesPartOf(id);
+			this.evlContext.getTrace().removeElement(id);
 			break;
 			
 		// Something was changed
 		case Notification.SET:
 			id = object.eResource().getURIFragment(object);
 			EStructuralFeature feature = (EStructuralFeature) notification.getFeature();
-			TProperty property = this.evlContext.getTraceGraph().getProperty(feature.getName(), id);
+			TProperty property = this.evlContext.getTrace().getProperty(feature.getName(), id);
 			scopes = property.getScopes();
 			if (notification.wasSet() && !object.eIsSet(feature)) {
-				this.evlContext.getTraceGraph().removeProperty(property);
+				this.evlContext.getTrace().removeProperty(property);
 			}
 			break;
 			
@@ -174,6 +174,8 @@ public class LiveValidationListener extends EContentAdapter {
 				}
 			}
 		}
+		
+		// TODO clear scopes
 		
 		return eObjects;
 	}
