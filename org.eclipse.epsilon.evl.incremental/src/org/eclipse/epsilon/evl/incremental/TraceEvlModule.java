@@ -16,18 +16,30 @@ public class TraceEvlModule extends EvlModule {
 	
 	@Override
 	public Object execute() throws EolRuntimeException {
+		if (this.getContext().hasTrace()) {
+			return null;
+		}
+		
+		
 		prepareContext(context);
 		context.setOperationFactory(new EvlOperationFactory());
 		context.getFrameStack().put(Variable.createReadOnlyVariable("thisModule", this));
 		
 		// Perform evaluation
+//		((OrientTraceGraph)this.getContext().getTrace()).getBaseGraph().declareIntent(new OIntentMassiveInsert());
 		execute(getPre(), context);
+		
 		for (ConstraintContext conCtx : getConstraintContexts()) { 
 			conCtx.checkAll(context);	
 		}		
 		if (fixer != null) fixer.fix(this);
+		
 		execute(getPost(), context);
-
+		
+		this.getContext().getTrace().commit();
+//		((OrientTraceGraph)this.getContext().getTrace()).getBaseGraph().declareIntent(null);
+		this.getContext().setHasTrace(true);
+		
 		return null;
 	} 
 	
