@@ -17,11 +17,21 @@ public class TraceEvlContext extends EvlContext {
 
 	private TraceGraph trace = null;
 	
+	private boolean hasTrace = false;
+	
 	public TraceGraph getTrace() {
 		if (trace == null) {
 			this.trace = OrientTraceGraphFactory.getInstance().getGraph();
 		}
 		return this.trace;
+	}
+	
+	public boolean hasTrace() {
+		return this.hasTrace;
+	}
+	
+	public void setHasTrace(boolean trace) {
+		this.hasTrace = true;
 	}
 
 	/**
