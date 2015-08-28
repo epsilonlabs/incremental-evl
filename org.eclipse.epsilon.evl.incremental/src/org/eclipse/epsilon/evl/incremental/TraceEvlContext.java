@@ -47,4 +47,10 @@ public class TraceEvlContext extends EvlContext {
 	public TraceEvlModule getModule() {
 		return (TraceEvlModule) super.getModule();
 	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		this.trace.shutdown();
+	}
 }
