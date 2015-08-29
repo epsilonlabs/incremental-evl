@@ -8,8 +8,9 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.epsilon.evl.engine,
  org.eclipse.emf.ecore,
  org.eclipse.epsilon.emc.emf,
- org.eclipse.epsilon.evl.incremental.dependencies,
- org.eclipse.epsilon.evl.emf.validation
+ org.eclipse.epsilon.evl.emf.validation,
+ org.eclipse.epsilon.evl.incremental.dependencies;bundle-version="1.0.0"
 Export-Package: org.eclipse.epsilon.evl.incremental,
  org.eclipse.epsilon.evl.incremental.dom,
+ org.eclipse.epsilon.evl.incremental.trace,
  org.eclipse.epsilon.evl.incremental.trace.orient
