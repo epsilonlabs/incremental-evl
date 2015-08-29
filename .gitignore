@@ -1,8 +1,13 @@
 # Ignore workspace settings
 .metadata
+.settings/
 
 # Built binaries
 bin/
 
-# Ignore Scratch files
-scratch/
+# Sonar files
+.sonar
+
+# Ignore examples
+*examples*
+org.eclipse.emf.validation

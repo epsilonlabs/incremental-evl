@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ASCII"?>
+<car:Parking xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:car="org.eclipse.epsilon.evl.incremental.car" xmi:id="_OXDyQEwxEeWCTquqlmo4Bw">
+  <cars xmi:id="_w2xHsEwxEeWCTquqlmo4Bw" name="valid">
+    <wheels xmi:id="_3gLrsEwxEeWCTquqlmo4Bw"/>
+    <wheels xmi:id="_3sd0MEwxEeWCTquqlmo4Bw"/>
+    <wheels xmi:id="_34AV0EwxEeWCTquqlmo4Bw"/>
+    <wheels xmi:id="_4DhCQEwxEeWCTquqlmo4Bw"/>
+  </cars>
+  <cars xmi:id="_0oxZsEwxEeWCTquqlmo4Bw" name="invalid">
+    <wheels xmi:id="_2L4LMEwxEeWCTquqlmo4Bw"/>
+    <wheels xmi:id="_2ZQf4EwxEeWCTquqlmo4Bw"/>
+    <wheels xmi:id="_2maLEEwxEeWCTquqlmo4Bw"/>
+    <wheels xmi:id="_25llwEwxEeWCTquqlmo4Bw"/>
+    <wheels xmi:id="_3RAnQEwxEeWCTquqlmo4Bw"/>
+  </cars>
+</car:Parking>
