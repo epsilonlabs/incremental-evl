@@ -3,7 +3,7 @@ package org.eclipse.epsilon.evl.incremental;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.epsilon.evl.incremental.trace.OrientTraceGraph;
+import org.eclipse.epsilon.evl.incremental.trace.orient.OrientPropertyAccessTrace;
 
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 
@@ -13,19 +13,19 @@ import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
  * @author Jonathan Co
  *
  */
-public abstract class AbstractOrientTraceGraphTest extends
-		AbstractTraceGraphTest<OrientTraceGraph> {
+public abstract class AbstractOrientPropertyAccessTraceTest extends
+		AbstractPropertyAccessTraceTest<OrientPropertyAccessTrace> {
 
 	public static final String URL = "memory:test";
 	public static final String USER = "admin";
 	public static final String PASSWORD = "admin";
 //	private static final String URL = "remote:localhost/test";
 
-	protected abstract OrientTraceGraph getGraph();
+	protected abstract OrientPropertyAccessTrace getGraph();
 
 	@Override
 	protected void dropGraph() {
-		OrientTraceGraph graph = this.getGraph();
+		OrientPropertyAccessTrace graph = this.getGraph();
 		ODatabaseDocumentTx db = graph.getBaseGraph().getRawGraph();
 		assertTrue(db.exists());
 		db.drop();

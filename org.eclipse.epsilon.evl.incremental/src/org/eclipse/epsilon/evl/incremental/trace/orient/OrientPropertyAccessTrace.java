@@ -1,7 +1,19 @@
-package org.eclipse.epsilon.evl.incremental.trace;
+package org.eclipse.epsilon.evl.incremental.trace.orient;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
+import org.eclipse.epsilon.evl.incremental.trace.TAccesses;
+import org.eclipse.epsilon.evl.incremental.trace.TConstraint;
+import org.eclipse.epsilon.evl.incremental.trace.TContext;
+import org.eclipse.epsilon.evl.incremental.trace.TElement;
+import org.eclipse.epsilon.evl.incremental.trace.TEvaluates;
+import org.eclipse.epsilon.evl.incremental.trace.TIn;
+import org.eclipse.epsilon.evl.incremental.trace.TOwns;
+import org.eclipse.epsilon.evl.incremental.trace.TProperty;
+import org.eclipse.epsilon.evl.incremental.trace.TRootOf;
+import org.eclipse.epsilon.evl.incremental.trace.TScope;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
@@ -11,24 +23,24 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 
 /**
- * Implementation of {@link TraceGraph} that uses Orient DB as its underlying
+ * Implementation of {@link IPropertyAccessTrace} that uses Orient DB as its underlying
  * database.
  * 
  * @author Jonathan Co
  *
  */
-public class OrientTraceGraph implements TraceGraph {
+public class OrientPropertyAccessTrace implements IPropertyAccessTrace {
 
 	private final FramedGraph<OrientBaseGraph> framedGraph;
 	private final OrientBaseGraph baseGraph;
 
 	/**
-	 * Package private constructor - use {@link OrientTraceGraphFactory} to
+	 * Package private constructor - use {@link OrientPropertyAccessTraceFactory} to
 	 * create.
 	 * 
 	 * @param baseGraph
 	 */
-	OrientTraceGraph(OrientBaseGraph baseGraph) {
+	OrientPropertyAccessTrace(OrientBaseGraph baseGraph) {
 		this.baseGraph = baseGraph;
 		FramedGraphFactory fgf = new FramedGraphFactory();
 		this.framedGraph = fgf.create(this.baseGraph);

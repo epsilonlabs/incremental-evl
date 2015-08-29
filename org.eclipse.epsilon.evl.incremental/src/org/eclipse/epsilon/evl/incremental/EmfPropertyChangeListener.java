@@ -18,13 +18,13 @@ import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.incremental.trace.TElement;
 import org.eclipse.epsilon.evl.incremental.trace.TProperty;
 import org.eclipse.epsilon.evl.incremental.trace.TScope;
-import org.eclipse.epsilon.evl.incremental.trace.TraceGraph;
+import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
 
-public class EmfPropertyChangeListener extends EContentAdapter implements PropertyChangeListener {
+public class EmfPropertyChangeListener extends EContentAdapter implements IPropertyChangeListener {
 	
 	private IModel model;
 	private TraceEvlContext context;
-	private TraceGraph trace;
+	private IPropertyAccessTrace trace;
 	
 	private Map<EObject, String> idMap = new HashMap<EObject, String>();
 

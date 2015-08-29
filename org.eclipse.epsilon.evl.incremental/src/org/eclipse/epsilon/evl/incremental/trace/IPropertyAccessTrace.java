@@ -7,9 +7,9 @@ package org.eclipse.epsilon.evl.incremental.trace;
  * @author Jonathan Co
  *
  * @param <T>
- *            The type of graph engine used by this {@link TraceGraph}s.
+ *            The type of graph engine used by this {@link IPropertyAccessTrace}s.
  */
-public interface TraceGraph {
+public interface IPropertyAccessTrace {
 
 	/*
 	 * ========================================================================

@@ -1,30 +1,30 @@
-package org.eclipse.epsilon.evl.incremental.trace;
+package org.eclipse.epsilon.evl.incremental.trace.orient;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
-import org.eclipse.epsilon.evl.incremental.AbstractOrientTraceGraphTest;
-import org.eclipse.epsilon.evl.incremental.trace.OrientTraceGraph;
-import org.eclipse.epsilon.evl.incremental.trace.OrientTraceGraphFactory;
+import org.eclipse.epsilon.evl.incremental.AbstractOrientPropertyAccessTraceTest;
 import org.eclipse.epsilon.evl.incremental.trace.TConstraint;
 import org.eclipse.epsilon.evl.incremental.trace.TContext;
 import org.eclipse.epsilon.evl.incremental.trace.TElement;
 import org.eclipse.epsilon.evl.incremental.trace.TProperty;
 import org.eclipse.epsilon.evl.incremental.trace.TScope;
+import org.eclipse.epsilon.evl.incremental.trace.orient.OrientPropertyAccessTrace;
+import org.eclipse.epsilon.evl.incremental.trace.orient.OrientPropertyAccessTraceFactory;
 import org.junit.Before;
 import org.junit.Test;
 
-public class OrientTraceGraphTest extends AbstractOrientTraceGraphTest {
+public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessTraceTest {
 
-	private OrientTraceGraphFactory factory = null;
-	private OrientTraceGraph graph;
+	private OrientPropertyAccessTraceFactory factory = null;
+	private OrientPropertyAccessTrace graph;
 
 	@Before
 	public void setup() {
-		this.factory = OrientTraceGraphFactory.getInstance();
-		this.graph = (OrientTraceGraph) this.factory.getGraph();
+		this.factory = OrientPropertyAccessTraceFactory.getInstance();
+		this.graph = (OrientPropertyAccessTrace) this.factory.getTrace();
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class OrientTraceGraphTest extends AbstractOrientTraceGraphTest {
 	}
 	
 	@Override
-	protected OrientTraceGraph getGraph() {
+	protected OrientPropertyAccessTrace getGraph() {
 		return this.graph;
 	}
 

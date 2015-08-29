@@ -13,14 +13,14 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.emc.emf.EmfModelFactory;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
-import org.eclipse.epsilon.evl.incremental.trace.OrientTraceGraph;
 import org.eclipse.epsilon.evl.incremental.trace.TElement;
-import org.eclipse.epsilon.evl.incremental.trace.TraceGraph;
+import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
+import org.eclipse.epsilon.evl.incremental.trace.orient.OrientPropertyAccessTrace;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TraceEvlChangeListenerTest extends AbstractOrientTraceGraphTest {
+public class EmfPropertyChangeListenerTest extends AbstractOrientPropertyAccessTraceTest {
 
 	private static File modelFile = null;
 	private static File metaFile = null;
@@ -28,7 +28,7 @@ public class TraceEvlChangeListenerTest extends AbstractOrientTraceGraphTest {
 
 	private TraceEvlModule module = null;
 	private EmfModel model = null;
-	private TraceGraph trace = null;
+	private IPropertyAccessTrace trace = null;
 
 	@BeforeClass
 	public static void setupClass() throws Exception {
@@ -67,8 +67,8 @@ public class TraceEvlChangeListenerTest extends AbstractOrientTraceGraphTest {
 	}
 
 	@Override
-	protected OrientTraceGraph getGraph() {
-		return (OrientTraceGraph) this.trace;
+	protected OrientPropertyAccessTrace getGraph() {
+		return (OrientPropertyAccessTrace) this.trace;
 	}
 	
 	@Test

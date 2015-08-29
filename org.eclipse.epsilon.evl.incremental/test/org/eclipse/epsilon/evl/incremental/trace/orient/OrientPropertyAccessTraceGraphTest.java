@@ -1,9 +1,22 @@
-package org.eclipse.epsilon.evl.incremental.trace;
+package org.eclipse.epsilon.evl.incremental.trace.orient;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
+import org.eclipse.epsilon.evl.incremental.trace.TAccesses;
+import org.eclipse.epsilon.evl.incremental.trace.TConstraint;
+import org.eclipse.epsilon.evl.incremental.trace.TContext;
+import org.eclipse.epsilon.evl.incremental.trace.TElement;
+import org.eclipse.epsilon.evl.incremental.trace.TEvaluates;
+import org.eclipse.epsilon.evl.incremental.trace.TIn;
+import org.eclipse.epsilon.evl.incremental.trace.TOwns;
+import org.eclipse.epsilon.evl.incremental.trace.TProperty;
+import org.eclipse.epsilon.evl.incremental.trace.TRootOf;
+import org.eclipse.epsilon.evl.incremental.trace.TScope;
+import org.eclipse.epsilon.evl.incremental.trace.orient.OrientPropertyAccessTrace;
+import org.eclipse.epsilon.evl.incremental.trace.orient.OrientPropertyAccessTraceFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,24 +25,24 @@ import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
 
-public class OrientTraceGraphFactoryTest {
+public class OrientPropertyAccessTraceGraphTest {
 
 	 private static final String URL = "memory:test";
 //	private static final String URL = "remote:localhost/test";
 	private static final String USER = "admin";
 	private static final String PASSWORD = "admin";
 
-	private OrientTraceGraphFactory factory = null;
+	private OrientPropertyAccessTraceFactory factory = null;
 
 	@Before
 	public void setup() {
-		factory = OrientTraceGraphFactory.getInstance();
+		factory = OrientPropertyAccessTraceFactory.getInstance();
 	}
 
 	@After
 	public void tearDown() {
-		TraceGraph graph = factory.getGraph();
-		ODatabaseDocumentTx db = ((OrientTraceGraph) graph).getBaseGraph()
+		IPropertyAccessTrace graph = factory.getTrace();
+		ODatabaseDocumentTx db = ((OrientPropertyAccessTrace) graph).getBaseGraph()
 				.getRawGraph();
 		assertTrue(db.exists());
 		db.drop();
@@ -40,7 +53,7 @@ public class OrientTraceGraphFactoryTest {
 	
 	@Test
 	public void testVertexTypesCreated() {
-		final OrientTraceGraph graph = (OrientTraceGraph) factory.getGraph();
+		final OrientPropertyAccessTrace graph = (OrientPropertyAccessTrace) factory.getTrace();
 		final OrientBaseGraph baseGraph = graph.getBaseGraph();
 
 		// Context
@@ -72,7 +85,7 @@ public class OrientTraceGraphFactoryTest {
 
 	@Test
 	public void testEdgeTypesCreated() {
-		final OrientTraceGraph graph = (OrientTraceGraph) factory.getGraph();
+		final OrientPropertyAccessTrace graph = (OrientPropertyAccessTrace) factory.getTrace();
 		final OrientBaseGraph baseGraph = graph.getBaseGraph();
 
 		assertNotNull(baseGraph.getEdgeType(TAccesses.TRACE_TYPE));

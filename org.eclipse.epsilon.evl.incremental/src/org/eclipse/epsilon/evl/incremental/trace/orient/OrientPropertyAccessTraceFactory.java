@@ -1,7 +1,20 @@
-package org.eclipse.epsilon.evl.incremental.trace;
+package org.eclipse.epsilon.evl.incremental.trace.orient;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTraceFactory;
+import org.eclipse.epsilon.evl.incremental.trace.TAccesses;
+import org.eclipse.epsilon.evl.incremental.trace.TConstraint;
+import org.eclipse.epsilon.evl.incremental.trace.TContext;
+import org.eclipse.epsilon.evl.incremental.trace.TElement;
+import org.eclipse.epsilon.evl.incremental.trace.TEvaluates;
+import org.eclipse.epsilon.evl.incremental.trace.TIn;
+import org.eclipse.epsilon.evl.incremental.trace.TOwns;
+import org.eclipse.epsilon.evl.incremental.trace.TProperty;
+import org.eclipse.epsilon.evl.incremental.trace.TRootOf;
+import org.eclipse.epsilon.evl.incremental.trace.TScope;
 
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.tinkerpop.blueprints.Parameter;
@@ -11,18 +24,18 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
 
 /**
- * Implementation of {@link TraceGraphFactory} that uses Orient-DB as its
+ * Implementation of {@link IPropertyAccessTraceFactory} that uses Orient-DB as its
  * underlying database engine.
  * 
  * @author Jonathan Co
  *
  */
-public class OrientTraceGraphFactory implements TraceGraphFactory {
+public class OrientPropertyAccessTraceFactory implements IPropertyAccessTraceFactory {
 
 	private final Map<String, String> config;
-	private OrientTraceGraph graphInstance = null;
+	private OrientPropertyAccessTrace graphInstance = null;
 	
-	private static OrientTraceGraphFactory instance = new OrientTraceGraphFactory("memory:%s", "admin", "admin");
+	private static OrientPropertyAccessTraceFactory instance = new OrientPropertyAccessTraceFactory("memory:%s", "admin", "admin");
 
 	/**
 	 * Default Constructor
@@ -31,7 +44,7 @@ public class OrientTraceGraphFactory implements TraceGraphFactory {
 	 * @param user
 	 * @param pass
 	 */
-	private OrientTraceGraphFactory(String url, String user, String pass) {
+	private OrientPropertyAccessTraceFactory(String url, String user, String pass) {
 		// Build configuration
 		this.config = new HashMap<String, String>(4);
 		this.config.put("blueprints.graph",
@@ -43,19 +56,20 @@ public class OrientTraceGraphFactory implements TraceGraphFactory {
 		this.config.put("log.file.level", "fine");
 	}
 	
-	public static OrientTraceGraphFactory getInstance() {
+	public static OrientPropertyAccessTraceFactory getInstance() {
 		return instance;
 	}
 
 	@Override
-	public TraceGraph getGraph() {
+	public IPropertyAccessTrace getTrace() {
 		// Init the graph if not already done so
 		if (graphInstance == null || !graphInstance.isOpen()) {
 //			OrientGraph orientGraph = (OrientGraph) GraphFactory.open(this.config);
+			
 			OrientGraphNoTx graph = new OrientGraphNoTx("memory:EVLTrace");
 			
 			this.setupClasses(graph);
-			this.graphInstance = new OrientTraceGraph(graph);
+			this.graphInstance = new OrientPropertyAccessTrace(graph);
 		}
 		return this.graphInstance;
 	}

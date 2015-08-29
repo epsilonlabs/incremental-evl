@@ -3,8 +3,8 @@ package org.eclipse.epsilon.evl.incremental;
 import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.execute.context.EvlContext;
-import org.eclipse.epsilon.evl.incremental.trace.OrientTraceGraphFactory;
-import org.eclipse.epsilon.evl.incremental.trace.TraceGraph;
+import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
+import org.eclipse.epsilon.evl.incremental.trace.orient.OrientPropertyAccessTraceFactory;
 import org.eclipse.epsilon.evl.trace.ConstraintTrace;
 
 /**
@@ -15,13 +15,13 @@ import org.eclipse.epsilon.evl.trace.ConstraintTrace;
  */
 public class TraceEvlContext extends EvlContext {
 
-	private TraceGraph trace = null;
+	private IPropertyAccessTrace trace = null;
 	
 	private boolean hasTrace = false;
 	
-	public TraceGraph getTrace() {
+	public IPropertyAccessTrace getTrace() {
 		if (trace == null) {
-			this.trace = OrientTraceGraphFactory.getInstance().getGraph();
+			this.trace = OrientPropertyAccessTraceFactory.getInstance().getTrace();
 		}
 		return this.trace;
 	}

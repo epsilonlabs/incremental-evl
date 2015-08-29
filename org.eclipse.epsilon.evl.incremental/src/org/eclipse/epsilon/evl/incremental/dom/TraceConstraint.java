@@ -19,7 +19,7 @@ import org.eclipse.epsilon.evl.incremental.trace.TContext;
 import org.eclipse.epsilon.evl.incremental.trace.TElement;
 import org.eclipse.epsilon.evl.incremental.trace.TProperty;
 import org.eclipse.epsilon.evl.incremental.trace.TScope;
-import org.eclipse.epsilon.evl.incremental.trace.TraceGraph;
+import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
 import org.eclipse.epsilon.evl.trace.ConstraintTrace;
 
 /**
@@ -107,7 +107,7 @@ public class TraceConstraint extends Constraint {
 			Boolean result,
 			Collection<PropertyAccess> accesses) {
 		
-		final TraceGraph trace = ctx.getTrace();
+		final IPropertyAccessTrace trace = ctx.getTrace();
 		
 		final String contextName = this.getConstraintContext().getName();
 		final String constraintName = this.getName();

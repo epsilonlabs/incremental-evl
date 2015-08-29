@@ -4,10 +4,10 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.eclipse.epsilon.evl.incremental.trace.TraceGraph;
+import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
 import org.junit.After;
 
-public abstract class AbstractTraceGraphTest<T extends TraceGraph> {
+public abstract class AbstractPropertyAccessTraceTest<T extends IPropertyAccessTrace> {
 	
 	protected abstract T getGraph();
 	
@@ -24,7 +24,7 @@ public abstract class AbstractTraceGraphTest<T extends TraceGraph> {
 	}
 	
 	protected static File getFile(String filename) throws URISyntaxException {
-		URI binUri = AbstractTraceGraphTest.class.getResource(filename)
+		URI binUri = AbstractPropertyAccessTraceTest.class.getResource(filename)
 				.toURI();
 		URI uri = null;
 

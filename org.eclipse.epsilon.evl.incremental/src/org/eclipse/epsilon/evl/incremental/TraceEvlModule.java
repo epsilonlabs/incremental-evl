@@ -39,7 +39,7 @@ public class TraceEvlModule extends EvlModule {
 		this.getContext().getTrace().commit();
 //		((OrientTraceGraph)this.getContext().getTrace()).getBaseGraph().declareIntent(null);
 		this.getContext().setHasTrace(true);
-		
+				
 		return null;
 	} 
 	
