@@ -12,6 +12,7 @@ import org.eclipse.epsilon.evl.execute.FixInstance;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.incremental.TraceEvlContext;
+import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
 import org.eclipse.epsilon.evl.incremental.trace.PropertyAccess;
 import org.eclipse.epsilon.evl.incremental.trace.PropertyAccessListener;
 import org.eclipse.epsilon.evl.incremental.trace.TConstraint;
@@ -19,7 +20,6 @@ import org.eclipse.epsilon.evl.incremental.trace.TContext;
 import org.eclipse.epsilon.evl.incremental.trace.TElement;
 import org.eclipse.epsilon.evl.incremental.trace.TProperty;
 import org.eclipse.epsilon.evl.incremental.trace.TScope;
-import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
 import org.eclipse.epsilon.evl.trace.ConstraintTrace;
 
 /**
@@ -39,12 +39,12 @@ public class TraceConstraint extends Constraint {
 		if (!appliesTo(self, context))
 			return false;
 		
-		// Build Frame
-		context.getFrameStack().enterLocal(FrameType.UNPROTECTED,
-				checkBlock.getBody());
-		context.getFrameStack().put(
-				Variable.createReadOnlyVariable("self", self));
+		UnsatisfiedConstraint unsatisfiedConstraint = new UnsatisfiedConstraint();
 		
+		context.getFrameStack().enterLocal(FrameType.UNPROTECTED, checkBlock.getBody());
+		context.getFrameStack().put(Variable.createReadOnlyVariable("self", self));
+		context.getFrameStack().put(Variable.createReadOnlyVariable("extras", unsatisfiedConstraint.getExtras()));
+				
 		// Set a listener to trace property accesses
 		PropertyAccessListener listener = new PropertyAccessListener();
 		context.getExecutorFactory().addExecutionListener(listener);
@@ -54,13 +54,11 @@ public class TraceConstraint extends Constraint {
 
 		// Clean-up the listener
 		context.getExecutorFactory().removeExecutionListener(listener);
-		
+
 		// Do rest of processing
 		if (!result) {
-			UnsatisfiedConstraint unsatisfiedConstraint = new UnsatisfiedConstraint();
 			unsatisfiedConstraint.setInstance(self);
 			unsatisfiedConstraint.setConstraint(this);
-
 			for (Fix fix : fixes) {
 				if (!fix.appliesTo(self, context))
 					continue;
