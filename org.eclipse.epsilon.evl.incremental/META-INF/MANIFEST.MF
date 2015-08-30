@@ -14,3 +14,4 @@ Export-Package: org.eclipse.epsilon.evl.incremental,
  org.eclipse.epsilon.evl.incremental.dom,
  org.eclipse.epsilon.evl.incremental.trace,
  org.eclipse.epsilon.evl.incremental.trace.orient
+Import-Package: org.eclipse.epsilon.evl.incremental.trace.orient
