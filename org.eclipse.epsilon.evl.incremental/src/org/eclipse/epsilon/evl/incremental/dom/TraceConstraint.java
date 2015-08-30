@@ -39,6 +39,7 @@ public class TraceConstraint extends Constraint {
 		if (!appliesTo(self, context))
 			return false;
 		
+		removeOldUnsatisfiedConstraint(self, context);
 		UnsatisfiedConstraint unsatisfiedConstraint = new UnsatisfiedConstraint();
 		
 		context.getFrameStack().enterLocal(FrameType.UNPROTECTED, checkBlock.getBody());
@@ -86,19 +87,20 @@ public class TraceConstraint extends Constraint {
 			context.getFrameStack().leaveLocal(checkBlock.getBody(), false);
 			return false;
 		} else {
-			Iterator<UnsatisfiedConstraint> it = context.getUnsatisfiedConstraints().iterator();
-			while(it.hasNext()) {
-				UnsatisfiedConstraint current = it.next();
-				if(current.getConstraint().equals(this) && current.getInstance().equals(self)) {
-					it.remove();
-				}
-			}
-			
 			context.getFrameStack().leaveLocal(checkBlock.getBody());
 			return true;
 		}
 	}
 	
+	private void removeOldUnsatisfiedConstraint(Object self, IEvlContext context) {
+		Iterator<UnsatisfiedConstraint> it = context.getUnsatisfiedConstraints().iterator();
+		while(it.hasNext()) {
+			UnsatisfiedConstraint current = it.next();
+			if(current.getConstraint().equals(this) && current.getInstance().equals(self)) {
+				it.remove();
+			}
+		}
+	}
 	
 	private void addToTrace(TraceEvlContext ctx, 
 			Object element,
