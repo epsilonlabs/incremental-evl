@@ -124,7 +124,8 @@ public class OrientPropertyAccessTraceFactory implements IPropertyAccessTraceFac
 		// Scope
 		OrientVertexType scope = graph.getVertexType(TScope.TRACE_TYPE);
 		if (scope == null) {
-			graph.createVertexType(TScope.TRACE_TYPE);
+			scope = graph.createVertexType(TScope.TRACE_TYPE);
+			scope.createProperty(TScope.RESULT, OType.BOOLEAN);
 		}
 		
 		// Edges
