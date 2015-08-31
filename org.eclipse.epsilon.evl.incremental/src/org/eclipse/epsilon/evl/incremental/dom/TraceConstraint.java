@@ -39,7 +39,7 @@ public class TraceConstraint extends Constraint {
 		if (!appliesTo(self, context))
 			return false;
 		
-		removeOldUnsatisfiedConstraint(self, context);
+		removeUnsatisfiedConstraint(self, context);
 		UnsatisfiedConstraint unsatisfiedConstraint = new UnsatisfiedConstraint();
 		
 		context.getFrameStack().enterLocal(FrameType.UNPROTECTED, checkBlock.getBody());
@@ -102,7 +102,7 @@ public class TraceConstraint extends Constraint {
 		}
 	}
 	
-	private void addToTrace(TraceEvlContext ctx, 
+	public void addToTrace(TraceEvlContext ctx, 
 			Object element,
 			Boolean result,
 			Collection<PropertyAccess> accesses) {
