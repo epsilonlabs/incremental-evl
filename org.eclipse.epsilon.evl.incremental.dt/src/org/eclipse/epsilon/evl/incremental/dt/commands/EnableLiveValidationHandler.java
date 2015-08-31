@@ -1,23 +1,17 @@
 package org.eclipse.epsilon.evl.incremental.dt.commands;
 
-import java.io.File;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
-import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.emc.emf.InMemoryEmfModel;
 import org.eclipse.epsilon.eol.models.ModelRepository;
 import org.eclipse.epsilon.evl.incremental.TraceEvlModule;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 public class EnableLiveValidationHandler extends AbstractHandler {
@@ -29,37 +23,31 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 		boolean oldState = HandlerUtil.toggleCommandState(command);
 		
 		try {
-			if (oldState) {
-
-			} else {
-				attach(event);
+			IEditingDomainProvider edp = getCurrentEDP(event);
+			if (edp == null) {
+				return null;
 			}
-
-			System.out.println(oldState);
+			
+			if (oldState) {
+				detach(edp, event);
+			} else {
+				attach(edp, event);
+			}
 		} catch (Exception e) {
 			throw new ExecutionException("", e);
 		}
 		return null;
 	}
+	
+	public void detach(IEditingDomainProvider edp, ExecutionEvent event) throws Exception {
+		final TraceEvlModule module = EditorRegistry.REGISTRY.remove(edp);
+		module.reset();
+	}
 
-	private void attach(ExecutionEvent event) throws Exception {
-		// Retrieve the current window
-		final IWorkbenchWindow window = HandlerUtil
-				.getActiveWorkbenchWindow(event);
-		if (window == null) {
-			return;
-		}
+	public void attach(IEditingDomainProvider edp, ExecutionEvent event) throws Exception {
 
-		// Get the current editor part
-		final IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
-		if (!(editorPart instanceof IEditingDomainProvider)) {
-			return;
-		}
-
-		// Select the evl file to use
-		final IEditingDomainProvider edp = (IEditingDomainProvider) editorPart;
 		final EvlSelectionDialog dialog = new EvlSelectionDialog(
-				window.getShell());
+				HandlerUtil.getActiveWorkbenchWindow(event).getShell());
 
 		IFile evlFile = null;
 		if (dialog.open() == Window.OK) {
@@ -78,16 +66,8 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 				.getModelRepository();
 
 		for (Resource resource : edp.getEditingDomain().getResourceSet()
-				.getResources()) {			
-//			final EPackage ePackage = ((EClassifier)resource.getContents().get(0).eClass()).getEPackage();			
+				.getResources()) {						
 			InMemoryEmfModel inMemoryEmfModel = new InMemoryEmfModel(resource);
-//			final EmfModel emfModel = new EmfModel();
-//			System.out.println(resource.getURI().);
-//			File f = new File(resource.getURI().toFileString());
-//			EmfModel emfModel = EmfModelFactory.getInstance().createEmfModel(resource.getURI().toString(), f, ePackage);
-
-//			emfModel.setResource(resource);
-			
 			modelRepository.addModel(inMemoryEmfModel);
 		}
 
@@ -95,5 +75,14 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 		module.getContext().attachChangeListeners();
 
 		EditorRegistry.REGISTRY.put(edp, module);
+	}
+	
+	public IEditingDomainProvider getCurrentEDP(ExecutionEvent event) {
+		final IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
+		if (!(editorPart instanceof IEditingDomainProvider)) {
+			return null;
+		}
+
+		return (IEditingDomainProvider) editorPart;
 	}
 }
