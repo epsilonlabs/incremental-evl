@@ -2,6 +2,7 @@ package org.eclipse.epsilon.evl.incremental.validation;
 
 import org.eclipse.jface.action.Action;
 
+@Deprecated
 public class EnableLiveValidationAction extends Action {
 
 	public static final String ID = "org.eclipse.epsilon.evl.incremental.dt.commands.enableLiveValidation";

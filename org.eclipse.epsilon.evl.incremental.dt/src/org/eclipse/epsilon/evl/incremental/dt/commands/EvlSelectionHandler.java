@@ -11,6 +11,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+@Deprecated
 public class EvlSelectionHandler extends AbstractHandler {
 
 	@Override

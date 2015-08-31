@@ -7,6 +7,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
+@Deprecated
 public class EvlRegistry extends HashMap<ResourceSet, Set<IFile>> {
 	
 	public static final EvlRegistry REGISTRY = new EvlRegistry(); 

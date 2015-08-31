@@ -23,6 +23,7 @@ import org.eclipse.epsilon.evl.incremental.TraceEvlModule;
  * @author Jonathan Co
  *
  */
+@Deprecated
 public class StaticEvlConstraintProvider extends AbstractConstraintProvider {
 
 	private static final String VALIDATION_EXT_POINT = "org.eclipse.epsilon.evl.emf.validation";

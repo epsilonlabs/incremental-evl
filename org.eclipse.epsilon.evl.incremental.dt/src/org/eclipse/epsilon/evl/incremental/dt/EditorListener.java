@@ -26,6 +26,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
  * @author Jonathan Co
  *
  */
+@Deprecated
 public class EditorListener implements IPartListener2 {
 	
 	private final Map<Notifier, LiveValidationListener> listenerMap = new HashMap<Notifier, LiveValidationListener>();

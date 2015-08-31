@@ -14,6 +14,7 @@ import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.incremental.TraceEvlContext;
 
+@Deprecated
 public class EvlEmfConstraint extends AbstractConstraintDescriptor implements
 		IConstraintDescriptor, IModelConstraint {
 	

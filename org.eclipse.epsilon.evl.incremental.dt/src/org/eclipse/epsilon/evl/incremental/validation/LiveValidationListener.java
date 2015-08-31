@@ -26,7 +26,7 @@ import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.incremental.TraceEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.TProperty;
 import org.eclipse.epsilon.evl.incremental.trace.TScope;
-
+@Deprecated
 @SuppressWarnings("restriction")
 public class LiveValidationListener extends EContentAdapter {
 	
