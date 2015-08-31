@@ -10,5 +10,5 @@ public interface IPropertyChangeListener  {
 	public Collection<TScope> onChange(Notification notice);
 	public Collection<TScope> onDelete(Notification notice);
 	public void validateScopes(Collection<TScope> scopes);
-
+	public void onCreate(Notification notice);
 }

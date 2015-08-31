@@ -3,6 +3,7 @@ package org.eclipse.epsilon.evl.incremental.trace;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.VertexFrame;
 
 /**
  * The {@link TScope} interface represents a constraint scope vertex in the
@@ -11,7 +12,7 @@ import com.tinkerpop.frames.Property;
  * @author Jonathan Co
  *
  */
-public interface TScope extends TraceGraphVertex {
+public interface TScope extends TraceComponent, VertexFrame {
 
 	/**
 	 * Common name of this trace element

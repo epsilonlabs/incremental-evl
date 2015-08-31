@@ -253,7 +253,7 @@ public class OrientPropertyAccessTrace implements IPropertyAccessTrace {
 	}
 
 	@Override
-	public Iterable<TScope> getScopesPartOf(TElement element) {
+	public Iterable<TScope> getScopesOf(TElement element) {
 		if (element == null) {
 			return new LinkedList<TScope>();
 		}
@@ -268,8 +268,8 @@ public class OrientPropertyAccessTrace implements IPropertyAccessTrace {
 	}
 
 	@Override
-	public Iterable<TScope> getScopesPartOf(String elementId) {
-		return this.getScopesPartOf(this.getElement(elementId));
+	public Iterable<TScope> getScopesOfId(String elementId) {
+		return this.getScopesOf(this.getElement(elementId));
 	}
 
 	@Override

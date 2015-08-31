@@ -3,6 +3,7 @@ package org.eclipse.epsilon.evl.incremental.trace;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.VertexFrame;
 
 /**
  * The {@link TConstraint} interface represents a constraint vertex in the trace
@@ -12,7 +13,7 @@ import com.tinkerpop.frames.Property;
  *
  */
 // TODO: Split name and add in a TClass or TContext vertex
-public interface TConstraint extends TraceGraphVertex {
+public interface TConstraint extends TraceComponent, VertexFrame {
 
 	/**
 	 * Common name of this trace element

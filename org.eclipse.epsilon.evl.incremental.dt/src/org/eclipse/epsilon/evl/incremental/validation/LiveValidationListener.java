@@ -144,7 +144,7 @@ public class LiveValidationListener extends EContentAdapter {
 			if (id == null) {
 				return Collections.emptySet();
 			}
-			scopes = this.evlContext.getTrace().getScopesPartOf(id);
+			scopes = this.evlContext.getTrace().getScopesOfId(id);
 			this.evlContext.getTrace().removeElement(id);
 			break;
 			

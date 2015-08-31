@@ -3,8 +3,9 @@ package org.eclipse.epsilon.evl.incremental.trace;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.VertexFrame;
 
-public interface TContext extends TraceGraphVertex {
+public interface TContext extends TraceComponent, VertexFrame {
 
 	/**
 	 * Common name of this trace element

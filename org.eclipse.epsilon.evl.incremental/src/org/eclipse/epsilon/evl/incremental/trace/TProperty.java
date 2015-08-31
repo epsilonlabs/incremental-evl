@@ -3,6 +3,7 @@ package org.eclipse.epsilon.evl.incremental.trace;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.VertexFrame;
 
 /**
  * The {@link TProperty} interface represents a model element property vertex
@@ -11,7 +12,7 @@ import com.tinkerpop.frames.Property;
  * @author Jonathan Co
  *
  */
-public interface TProperty extends TraceGraphVertex {
+public interface TProperty extends TraceComponent, VertexFrame {
 
 	/**
 	 * Common name of this trace element

@@ -111,8 +111,8 @@ public interface IPropertyAccessTrace {
 
 	void removeProperty(String propertyName, TElement element);
 	
-	Iterable<TScope> getScopesPartOf(TElement element);
-	Iterable<TScope> getScopesPartOf(String elementId);
+	Iterable<TScope> getScopesOf(TElement element);
+	Iterable<TScope> getScopesOfId(String elementId);
 
 
 	/**

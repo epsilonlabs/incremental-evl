@@ -10,23 +10,28 @@ import java.util.Map;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
+import org.eclipse.epsilon.evl.dom.ConstraintContext;
+import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
 import org.eclipse.epsilon.evl.incremental.trace.TElement;
 import org.eclipse.epsilon.evl.incremental.trace.TProperty;
 import org.eclipse.epsilon.evl.incremental.trace.TScope;
-import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
 
 public class EmfPropertyChangeListener extends EContentAdapter implements IPropertyChangeListener {
+	
+	private boolean checkNew = false;
 	
 	private IModel model;
 	private TraceEvlContext context;
 	private IPropertyAccessTrace trace;
 	
 	private Map<EObject, String> idMap = new HashMap<EObject, String>();
+	private Map<EObject, String> newIdMap = new HashMap<EObject, String>();
 
 	public EmfPropertyChangeListener(EmfModel model, TraceEvlContext context) {
 		this.model = model;
@@ -34,6 +39,22 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 		this.trace = context.getTrace();
 	}
 
+	@Override
+	public void onCreate(Notification notice) {
+		final EObject notifier = this.getEObject(notice);
+		 for (ConstraintContext conCtx : this.context.getModule().getConstraintContexts()) {
+			 try {
+				if (conCtx.appliesTo(notifier, this.context)) {
+					 for (Constraint constraint : conCtx.getConstraints()) {
+						constraint.check(notifier, this.context);
+					}
+				 }
+			} catch (EolRuntimeException e) {
+				e.printStackTrace();
+			}
+		}	
+	}
+	
 	@Override
 	public Collection<TScope> onChange(Notification notice) {
 		final EObject notifier = this.getEObject(notice);
@@ -110,6 +131,15 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 	protected void setTarget(EObject target) {		
 		this.idMap.put(target, model.getElementId(target));
 		super.setTarget(target);
+		if (checkNew) {
+			this.newIdMap.put(target, model.getElementId(target));
+		}
+	}
+	
+	@Override
+	protected void setTarget(Resource target) {
+		super.setTarget(target);
+		this.checkNew = true;
 	}
 	
 	@Override
@@ -125,6 +155,7 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 		switch (notice.getEventType()) {
 		case Notification.SET:
 		case Notification.ADD:
+		case Notification.MOVE:
 		case Notification.ADD_MANY:
 			scopes = this.onChange(notice);
 			break;
@@ -137,6 +168,10 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 		}
 		
 		this.validateScopes(scopes);
+		
+		if (!this.newIdMap.isEmpty()) {
+			this.onCreate(notice);
+		}
 	}
 
 	public EObject getEObject(Notification notice) {
