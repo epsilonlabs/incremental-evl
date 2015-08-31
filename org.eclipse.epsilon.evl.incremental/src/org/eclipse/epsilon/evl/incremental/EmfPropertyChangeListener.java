@@ -2,10 +2,12 @@ package org.eclipse.epsilon.evl.incremental;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
@@ -31,7 +33,6 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 	private IPropertyAccessTrace trace;
 	
 	private Map<EObject, String> idMap = new HashMap<EObject, String>();
-	private Map<EObject, String> newIdMap = new HashMap<EObject, String>();
 
 	public EmfPropertyChangeListener(EmfModel model, TraceEvlContext context) {
 		this.model = model;
@@ -40,8 +41,7 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 	}
 
 	@Override
-	public void onCreate(Notification notice) {
-		final EObject notifier = this.getEObject(notice);
+	public void onCreate(EObject notifier) {
 		 for (ConstraintContext conCtx : this.context.getModule().getConstraintContexts()) {
 			 try {
 				if (conCtx.appliesTo(notifier, this.context)) {
@@ -56,10 +56,7 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 	}
 	
 	@Override
-	public Collection<TScope> onChange(Notification notice) {
-		final EObject notifier = this.getEObject(notice);
-		final EStructuralFeature feature = this.getFeature(notice);
-		
+	public Collection<TScope> onChange(EObject notifier, EStructuralFeature feature) {
 		if (notifier == null || feature == null) {
 			return null;
 		}
@@ -78,14 +75,12 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 	}
 
 	@Override
-	public Collection<TScope> onDelete(Notification notice) {
-		final EObject notifier = this.getEObject(notice);
-
+	public Collection<TScope> onDelete(EObject notifier, EStructuralFeature feature) {
 		String elementId = null;
 		if (notifier.eResource() == null) {
 			elementId = this.idMap.remove(notifier);
 		} else {
-			elementId = this.idMap.get(notifier);
+			return this.onChange(notifier, feature);
 		}
 		if (elementId == null) {
 			return null;
@@ -96,13 +91,14 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 			return null;
 		}
 		
-		Iterable<TScope> scopes = element.getScopes();
-		List<TScope> scopeList = new LinkedList<TScope>();
-		Iterator<TScope> it = scopes.iterator();
-		while (it.hasNext()) {
-			scopeList.add(it.next());
+		Set<TScope> scopes = new HashSet<TScope>();
+		for (TProperty p :  element.getProperties()) {
+			for (TScope scope : p.getScopes()) {
+				scopes.add(scope);
+			}
 		}
-		return scopeList;
+		
+		return scopes;
 	}
 
 	@Override
@@ -131,8 +127,8 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 	protected void setTarget(EObject target) {		
 		this.idMap.put(target, model.getElementId(target));
 		super.setTarget(target);
-		if (checkNew) {
-			this.newIdMap.put(target, model.getElementId(target));
+		if (checkNew && !this.idMap.containsKey(target)) {
+			this.onCreate(target);
 		}
 	}
 	
@@ -150,6 +146,9 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 			return;
 		}
 		
+		final EObject notifier = this.getEObject(notice);		
+		final EStructuralFeature feature = this.getFeature(notice);
+		
 		Collection<TScope> scopes = null;
 		
 		switch (notice.getEventType()) {
@@ -157,21 +156,17 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 		case Notification.ADD:
 		case Notification.MOVE:
 		case Notification.ADD_MANY:
-			scopes = this.onChange(notice);
+			scopes = this.onChange(notifier, feature);
 			break;
 		case Notification.REMOVING_ADAPTER:
 		case Notification.REMOVE:
 		case Notification.REMOVE_MANY:
 		case Notification.UNSET:
-			scopes = this.onDelete(notice);
+			scopes = this.onDelete(notifier, feature);
 			break;
 		}
 		
 		this.validateScopes(scopes);
-		
-		if (!this.newIdMap.isEmpty()) {
-			this.onCreate(notice);
-		}
 	}
 
 	public EObject getEObject(Notification notice) {
