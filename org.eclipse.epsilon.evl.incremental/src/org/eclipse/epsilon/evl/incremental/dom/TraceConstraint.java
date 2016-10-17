@@ -39,7 +39,7 @@ public class TraceConstraint extends Constraint {
 		if (!appliesTo(self, context))
 			return false;
 		
-		removeUnsatisfiedConstraint(self, context);
+		removeOldUnsatisfiedConstraint(self, context);
 		UnsatisfiedConstraint unsatisfiedConstraint = new UnsatisfiedConstraint();
 		
 		context.getFrameStack().enterLocal(FrameType.UNPROTECTED, checkBlock.getBody());
@@ -102,14 +102,11 @@ public class TraceConstraint extends Constraint {
 		}
 	}
 	
-	public void addToTrace(TraceEvlContext ctx, 
-			Object element,
-			Boolean result,
-			Collection<PropertyAccess> accesses) {
+	public void addToTrace(TraceEvlContext ctx, Object element, Boolean result, Collection<PropertyAccess> accesses) {
 		
 		final IPropertyAccessTrace trace = ctx.getTrace();
 		
-		final String contextName = this.getConstraintContext().getName();
+		final String contextName = this.getConstraintContext().getTypeName();
 		final String constraintName = this.getName();
 		final String elementId = ctx.getModelRepository().getOwningModel(element).getElementId(element);
 	
@@ -132,6 +129,7 @@ public class TraceConstraint extends Constraint {
 
 //		trace.commit();
 	}
+
 	
 //	private void logScope(TScope scope) {
 //		StringBuilder sb = new StringBuilder();

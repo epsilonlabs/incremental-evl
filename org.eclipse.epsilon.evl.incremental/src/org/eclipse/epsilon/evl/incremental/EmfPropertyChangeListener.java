@@ -24,6 +24,15 @@ import org.eclipse.epsilon.evl.incremental.trace.TElement;
 import org.eclipse.epsilon.evl.incremental.trace.TProperty;
 import org.eclipse.epsilon.evl.incremental.trace.TScope;
 
+/**
+ *  the live EVL validation is to be performed.
+ * The SET, MOVE, ADD and ADDMANY events trigger the invocation of the {@link #onChange(EObject, EStructuralFeature)}
+ * method. The REMOVING_ADAPTER, REMOVE, REMOVE_MANY and UNSET events trigger the {@link #onChange(EObject, EStructuralFeature)}
+ * method. The {@link #onCreate(EObject)}
+ * @author Jonathan Co
+ * @author Horacio Hoyos
+ *
+ */
 public class EmfPropertyChangeListener extends EContentAdapter implements IPropertyChangeListener {
 	
 	private boolean checkNew = false;

@@ -70,7 +70,7 @@ public class EvlEmfConstraint extends AbstractConstraintDescriptor implements
 	@Override
 	public String getId() {
 		// TODO: add category to this
-		return this.constraintContext.getName() + "." + this.constraint.getName();
+		return this.constraintContext.getTypeName() + "." + this.constraint.getName();
 	}
 
 	@Override

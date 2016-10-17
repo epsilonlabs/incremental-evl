@@ -8,7 +8,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.epsilon.emc.emf.InMemoryEmfModel;
+import org.eclipse.epsilon.eol.exceptions.EolInternalException;
+import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.ModelRepository;
+import org.eclipse.epsilon.evl.dt.views.ValidationViewFixer;
 import org.eclipse.epsilon.evl.incremental.TraceEvlModule;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorPart;
@@ -22,7 +25,7 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 		Command command = event.getCommand();
 		boolean oldState = HandlerUtil.toggleCommandState(command);
 		
-		try {
+//		try {
 			IEditingDomainProvider edp = getCurrentEDP(event);
 			if (edp == null) {
 				return null;
@@ -31,20 +34,24 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 			if (oldState) {
 				detach(edp, event);
 			} else {
-				attach(edp, event);
+				try {
+					attach(edp, event);
+				} catch (EolRuntimeException e) {
+					throw new ExecutionException(e.getMessage());
+				}
 			}
-		} catch (Exception e) {
-			throw new ExecutionException("", e);
-		}
+//		} catch (Exception e) {
+//			throw new ExecutionException("", e);
+//		}
 		return null;
 	}
 	
-	public void detach(IEditingDomainProvider edp, ExecutionEvent event) throws Exception {
+	public void detach(IEditingDomainProvider edp, ExecutionEvent event) {
 		final TraceEvlModule module = EditorRegistry.REGISTRY.remove(edp);
 		module.reset();
 	}
 
-	public void attach(IEditingDomainProvider edp, ExecutionEvent event) throws Exception {
+	public void attach(IEditingDomainProvider edp, ExecutionEvent event) throws EolRuntimeException {
 
 		final EvlSelectionDialog dialog = new EvlSelectionDialog(
 				HandlerUtil.getActiveWorkbenchWindow(event).getShell());
@@ -59,8 +66,14 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 		}
 
 		final TraceEvlModule module = new TraceEvlModule();
+		// View not working
+		//module.setUnsatisfiedConstraintFixer(new ValidationViewFixer(null));
 		module.reset();
-		module.parse(evlFile.getLocationURI());
+		try {
+			module.parse(evlFile.getLocationURI());
+		} catch (Exception e) {
+			throw new EolInternalException(e);
+		}
 
 		final ModelRepository modelRepository = module.getContext()
 				.getModelRepository();
