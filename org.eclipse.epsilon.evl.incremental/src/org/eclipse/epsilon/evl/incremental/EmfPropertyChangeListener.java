@@ -19,6 +19,7 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
+import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
 import org.eclipse.epsilon.evl.incremental.trace.TElement;
 import org.eclipse.epsilon.evl.incremental.trace.TProperty;
@@ -129,6 +130,9 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 				// TODO: Log exception
 				continue;
 			}
+		}
+		for (UnsatisfiedConstraint uc : context.getUnsatisfiedConstraints()) {
+			System.out.println(uc.getMessage());
 		}
 	}
 

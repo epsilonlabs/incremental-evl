@@ -1,5 +1,7 @@
 package org.eclipse.epsilon.evl.incremental;
 
+import java.util.List;
+
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
@@ -9,6 +11,7 @@ import org.eclipse.epsilon.evl.EvlModule;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.dom.Fix;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
+import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TraceConstraint;
 import org.eclipse.epsilon.evl.parse.EvlParser;
 
@@ -37,7 +40,10 @@ public class TraceEvlModule extends EvlModule {
 		
 		this.getContext().getTrace().commit();
 		this.getContext().setHasTrace(true);
-				
+		for (UnsatisfiedConstraint uc : context.getUnsatisfiedConstraints()) {
+			System.out.println(uc.getMessage());
+		}
+		
 		return null;
 	} 
 	
@@ -56,7 +62,7 @@ public class TraceEvlModule extends EvlModule {
 			case EvlParser.CONSTRAINT: return new TraceConstraint();
 			case EvlParser.CRITIQUE: return new TraceConstraint();
 			// ----
-			//case EvlParser.CONTEXT: return new ConstraintContext();
+			case EvlParser.CONTEXT: return new ConstraintContext();
 		}
 		return super.adapt(cst, parentAst);
 	}
