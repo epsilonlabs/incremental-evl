@@ -23,7 +23,7 @@ import org.eclipse.emf.validation.service.IValidator;
 import org.eclipse.emf.validation.service.ModelValidationService;
 import org.eclipse.epsilon.emc.emf.InMemoryEmfModel;
 import org.eclipse.epsilon.eol.models.IModel;
-import org.eclipse.epsilon.evl.incremental.TraceEvlContext;
+import org.eclipse.epsilon.evl.incremental.execute.context.TraceEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.TProperty;
 import org.eclipse.epsilon.evl.incremental.trace.TScope;
 @Deprecated

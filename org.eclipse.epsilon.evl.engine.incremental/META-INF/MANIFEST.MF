@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Epsilon Validation Language Incremental Engine
-Bundle-SymbolicName: org.eclipse.epsilon.evl.incremental
+Bundle-SymbolicName: org.eclipse.epsilon.evl.engine.incremental
 Bundle-Version: 1.0.0
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -13,6 +13,7 @@ Require-Bundle: org.eclipse.epsilon.evl.engine,
  org.eclipse.epsilon.common
 Export-Package: org.eclipse.epsilon.evl.incremental,
  org.eclipse.epsilon.evl.incremental.dom,
+ org.eclipse.epsilon.evl.incremental.execute.context,
  org.eclipse.epsilon.evl.incremental.trace,
  org.eclipse.epsilon.evl.incremental.trace.orient
 Import-Package: org.eclipse.epsilon.evl.incremental.trace.orient

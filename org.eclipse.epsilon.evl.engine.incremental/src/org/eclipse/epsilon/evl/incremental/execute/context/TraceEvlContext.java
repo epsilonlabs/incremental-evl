@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.evl.incremental;
+package org.eclipse.epsilon.evl.incremental.execute.context;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +9,9 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.execute.context.EvlContext;
+import org.eclipse.epsilon.evl.incremental.EmfPropertyChangeListener;
+import org.eclipse.epsilon.evl.incremental.IPropertyChangeListener;
+import org.eclipse.epsilon.evl.incremental.TraceEvlModule;
 import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
 import org.eclipse.epsilon.evl.incremental.trace.orient.OrientPropertyAccessTraceFactory;
 import org.eclipse.epsilon.evl.trace.ConstraintTrace;

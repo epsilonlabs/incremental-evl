@@ -11,7 +11,7 @@ import org.eclipse.epsilon.evl.dom.Fix;
 import org.eclipse.epsilon.evl.execute.FixInstance;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
-import org.eclipse.epsilon.evl.incremental.TraceEvlContext;
+import org.eclipse.epsilon.evl.incremental.execute.context.TraceEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
 import org.eclipse.epsilon.evl.incremental.trace.PropertyAccess;
 import org.eclipse.epsilon.evl.incremental.trace.PropertyAccessListener;

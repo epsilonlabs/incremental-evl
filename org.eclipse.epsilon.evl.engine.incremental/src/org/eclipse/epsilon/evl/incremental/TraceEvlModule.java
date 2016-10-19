@@ -13,6 +13,7 @@ import org.eclipse.epsilon.evl.dom.Fix;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TraceConstraint;
+import org.eclipse.epsilon.evl.incremental.execute.context.TraceEvlContext;
 import org.eclipse.epsilon.evl.parse.EvlParser;
 
 

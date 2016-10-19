@@ -11,7 +11,6 @@ import org.eclipse.epsilon.emc.emf.InMemoryEmfModel;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.ModelRepository;
-import org.eclipse.epsilon.evl.dt.views.ValidationViewFixer;
 import org.eclipse.epsilon.evl.incremental.TraceEvlModule;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorPart;

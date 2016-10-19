@@ -12,7 +12,7 @@ import org.eclipse.emf.validation.service.IConstraintDescriptor;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
-import org.eclipse.epsilon.evl.incremental.TraceEvlContext;
+import org.eclipse.epsilon.evl.incremental.execute.context.TraceEvlContext;
 
 @Deprecated
 public class EvlEmfConstraint extends AbstractConstraintDescriptor implements

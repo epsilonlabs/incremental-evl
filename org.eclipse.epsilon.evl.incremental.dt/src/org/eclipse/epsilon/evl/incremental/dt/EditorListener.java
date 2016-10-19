@@ -8,8 +8,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.emf.edit.ui.provider.DiagnosticDecorator.LiveValidator.LiveValidationAction;
-import org.eclipse.epsilon.evl.incremental.TraceEvlContext;
-import org.eclipse.epsilon.evl.incremental.TraceEvlModule;
 import org.eclipse.epsilon.evl.incremental.validation.EnableLiveValidationAction;
 import org.eclipse.epsilon.evl.incremental.validation.LiveValidationListener;
 import org.eclipse.jface.action.ActionContributionItem;
