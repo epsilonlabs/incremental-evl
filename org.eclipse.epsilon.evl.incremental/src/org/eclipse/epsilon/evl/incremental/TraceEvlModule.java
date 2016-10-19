@@ -1,5 +1,8 @@
 package org.eclipse.epsilon.evl.incremental;
 
+import java.util.List;
+
+import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -8,6 +11,7 @@ import org.eclipse.epsilon.evl.EvlModule;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.dom.Fix;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
+import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TraceConstraint;
 import org.eclipse.epsilon.evl.parse.EvlParser;
 
@@ -29,17 +33,22 @@ public class TraceEvlModule extends EvlModule {
 		for (ConstraintContext conCtx : getConstraintContexts()) { 
 			conCtx.checkAll(context);	
 		}		
-		if (fixer != null) fixer.fix(this);
+		if (fixer != null) {
+			fixer.fix(this);
+		}
 		execute(getPost(), context);
 		
 		this.getContext().getTrace().commit();
 		this.getContext().setHasTrace(true);
-				
+		for (UnsatisfiedConstraint uc : context.getUnsatisfiedConstraints()) {
+			System.out.println(uc.getMessage());
+		}
+		
 		return null;
 	} 
 	
 	@Override
-	public AST adapt(AST cst, AST parentAst) {
+	public ModuleElement adapt(AST cst, ModuleElement parentAst) {
 		switch (cst.getType()) {
 			case EvlParser.FIX: return new Fix();
 			case EvlParser.DO: return new ExecutableBlock<Void>(Void.class);
@@ -47,11 +56,12 @@ public class TraceEvlModule extends EvlModule {
 			case EvlParser.MESSAGE: return new ExecutableBlock<String>(String.class);
 			case EvlParser.CHECK: return new ExecutableBlock<Boolean>(Boolean.class);
 			case EvlParser.GUARD: return new ExecutableBlock<Boolean>(Boolean.class);
-			
+//			case EvlParser.CONSTRAINT: return new Constraint();
+//			case EvlParser.CRITIQUE: return new Constraint();
 			// Modified to return the appropriate subclasses of Constraint
 			case EvlParser.CONSTRAINT: return new TraceConstraint();
-			
 			case EvlParser.CRITIQUE: return new TraceConstraint();
+			// ----
 			case EvlParser.CONTEXT: return new ConstraintContext();
 		}
 		return super.adapt(cst, parentAst);

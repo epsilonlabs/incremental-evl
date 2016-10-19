@@ -24,7 +24,7 @@ public class TraceEvlContext extends EvlContext {
 	private IPropertyAccessTrace trace = null;
 	private boolean hasTrace = false;
 
-	private Map<IModel, IPropertyChangeListener> listenerMap = new HashMap();
+	private Map<IModel, IPropertyChangeListener> listenerMap = new HashMap<IModel, IPropertyChangeListener>();
 
 	public IPropertyAccessTrace getTrace() {
 		if (trace == null) {
@@ -48,7 +48,7 @@ public class TraceEvlContext extends EvlContext {
 	 */
 	@Override
 	public ConstraintTrace getConstraintTrace() {
-		throw new UnsupportedOperationException();
+		return super.getConstraintTrace();
 	}
 
 	public void attachChangeListeners() {

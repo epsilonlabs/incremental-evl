@@ -19,11 +19,21 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
+import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
 import org.eclipse.epsilon.evl.incremental.trace.TElement;
 import org.eclipse.epsilon.evl.incremental.trace.TProperty;
 import org.eclipse.epsilon.evl.incremental.trace.TScope;
 
+/**
+ *  the live EVL validation is to be performed.
+ * The SET, MOVE, ADD and ADDMANY events trigger the invocation of the {@link #onChange(EObject, EStructuralFeature)}
+ * method. The REMOVING_ADAPTER, REMOVE, REMOVE_MANY and UNSET events trigger the {@link #onChange(EObject, EStructuralFeature)}
+ * method. The {@link #onCreate(EObject)}
+ * @author Jonathan Co
+ * @author Horacio Hoyos
+ *
+ */
 public class EmfPropertyChangeListener extends EContentAdapter implements IPropertyChangeListener {
 	
 	private boolean checkNew = false;
@@ -120,6 +130,9 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 				// TODO: Log exception
 				continue;
 			}
+		}
+		for (UnsatisfiedConstraint uc : context.getUnsatisfiedConstraints()) {
+			System.out.println(uc.getMessage());
 		}
 	}
 
