@@ -11,7 +11,7 @@ import org.eclipse.epsilon.emc.emf.InMemoryEmfModel;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.ModelRepository;
-import org.eclipse.epsilon.evl.incremental.TraceEvlModule;
+import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -46,7 +46,7 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 	}
 	
 	public void detach(IEditingDomainProvider edp, ExecutionEvent event) {
-		final TraceEvlModule module = EditorRegistry.REGISTRY.remove(edp);
+		final IncrementalEvlModule module = EditorRegistry.REGISTRY.remove(edp);
 		module.reset();
 	}
 
@@ -64,7 +64,7 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 			}
 		}
 
-		final TraceEvlModule module = new TraceEvlModule();
+		final IncrementalEvlModule module = new IncrementalEvlModule();
 		// View not working
 		//module.setUnsatisfiedConstraintFixer(new ValidationViewFixer(null));
 		module.reset();
@@ -84,7 +84,7 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 		}
 
 		module.execute();
-		module.getContext().attachChangeListeners();
+		module.attachChangeListeners();
 
 		EditorRegistry.REGISTRY.put(edp, module);
 	}

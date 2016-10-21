@@ -14,7 +14,7 @@ import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.emc.emf.EmfModelFactory;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.incremental.trace.TElement;
-import org.eclipse.epsilon.evl.incremental.TraceEvlModule;
+import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
 import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
 import org.eclipse.epsilon.evl.incremental.trace.orient.OrientPropertyAccessTrace;
 import org.junit.Before;
@@ -27,7 +27,7 @@ public class EmfPropertyChangeListenerTest extends AbstractOrientPropertyAccessT
 	private static File metaFile = null;
 	private static File evlFile = null;
 
-	private TraceEvlModule module = null;
+	private IncrementalEvlModule module = null;
 	private EmfModel model = null;
 	private IPropertyAccessTrace trace = null;
 
@@ -41,7 +41,7 @@ public class EmfPropertyChangeListenerTest extends AbstractOrientPropertyAccessT
 	@Before
 	public void setup() throws Exception {
 		// Setup module
-		this.module = new TraceEvlModule();
+		this.module = new IncrementalEvlModule();
 		this.module.parse(evlFile);
 		assertTrue(this.module.getParseProblems().isEmpty());
 

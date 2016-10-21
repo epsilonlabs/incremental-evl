@@ -20,7 +20,6 @@ import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
-import org.eclipse.epsilon.evl.incremental.execute.context.TraceEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
 import org.eclipse.epsilon.evl.incremental.trace.TElement;
 import org.eclipse.epsilon.evl.incremental.trace.TProperty;
@@ -40,24 +39,24 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 	private boolean checkNew = false;
 	
 	private IModel model;
-	private TraceEvlContext context;
+	private IncrementalEvlModule module;
 	private IPropertyAccessTrace trace;
 	
 	private Map<EObject, String> idMap = new HashMap<EObject, String>();
 
-	public EmfPropertyChangeListener(EmfModel model, TraceEvlContext context) {
+	public EmfPropertyChangeListener(EmfModel model, IncrementalEvlModule context) {
 		this.model = model;
-		this.context = context;
+		this.module = context;
 		this.trace = context.getTrace();
 	}
 
 	@Override
 	public void onCreate(EObject notifier) {
-		 for (ConstraintContext conCtx : this.context.getModule().getConstraintContexts()) {
+		 for (ConstraintContext conCtx : module.getConstraintContexts()) {
 			 try {
-				if (conCtx.appliesTo(notifier, this.context)) {
+				if (conCtx.appliesTo(notifier, module.getContext())) {
 					 for (Constraint constraint : conCtx.getConstraints()) {
-						constraint.check(notifier, this.context);
+						constraint.check(notifier, module.getContext());
 					}
 				 }
 			} catch (EolRuntimeException e) {
@@ -126,13 +125,13 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 			}
 
 			try {
-				constraint.check(target, this.context);
+				constraint.check(target, module.getContext());
 			} catch (EolRuntimeException e) {
 				// TODO: Log exception
 				continue;
 			}
 		}
-		for (UnsatisfiedConstraint uc : context.getUnsatisfiedConstraints()) {
+		for (UnsatisfiedConstraint uc : module.getContext().getUnsatisfiedConstraints()) {
 			System.out.println(uc.getMessage());
 		}
 	}
@@ -205,7 +204,7 @@ public class EmfPropertyChangeListener extends EContentAdapter implements IPrope
 		
 		String name = scope.getConstraint().getName();
 		try {
-			return this.context.getModule().getConstraints().getConstraint(name, element, this.context);
+			return module.getConstraints().getConstraint(name, element, this.module.getContext());
 		} catch (EolRuntimeException e) {
 			return null;
 		}

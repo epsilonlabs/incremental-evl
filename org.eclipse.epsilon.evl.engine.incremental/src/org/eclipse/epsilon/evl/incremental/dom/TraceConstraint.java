@@ -4,14 +4,10 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
-import org.eclipse.epsilon.eol.execute.context.FrameType;
-import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.evl.dom.Constraint;
-import org.eclipse.epsilon.evl.dom.Fix;
-import org.eclipse.epsilon.evl.execute.FixInstance;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
-import org.eclipse.epsilon.evl.incremental.execute.context.TraceEvlContext;
+import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
 import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
 import org.eclipse.epsilon.evl.incremental.trace.PropertyAccess;
 import org.eclipse.epsilon.evl.incremental.trace.PropertyAccessListener;
@@ -50,7 +46,7 @@ public class TraceConstraint extends Constraint {
 		context.getExecutorFactory().addExecutionListener(listener);
 		
 		Boolean result = checkBlock.execute(context, false);
-		addToTrace((TraceEvlContext) context, self, result, listener.getPropertyAccesses());
+		addToTrace((IncrementalEvlModule) getModule(), self, result, listener.getPropertyAccesses());
 
 		// Clean-up the listener
 		context.getExecutorFactory().removeExecutionListener(listener);
@@ -68,13 +64,13 @@ public class TraceConstraint extends Constraint {
 		}
 	}
 	
-	public void addToTrace(TraceEvlContext ctx, Object element, Boolean result, Collection<PropertyAccess> accesses) {
+	public void addToTrace(IncrementalEvlModule ctx, Object element, Boolean result, Collection<PropertyAccess> accesses) {
 		
 		final IPropertyAccessTrace trace = ctx.getTrace();
 		
 		final String contextName = this.getConstraintContext().getTypeName();
 		final String constraintName = this.getName();
-		final String elementId = ctx.getModelRepository().getOwningModel(element).getElementId(element);
+		final String elementId = ctx.getContext().getModelRepository().getOwningModel(element).getElementId(element);
 	
 		// Clear any existing scope
 		trace.removeScope(elementId, constraintName, contextName);

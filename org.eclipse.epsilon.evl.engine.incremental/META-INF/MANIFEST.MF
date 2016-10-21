@@ -13,7 +13,6 @@ Require-Bundle: org.eclipse.epsilon.evl.engine,
  org.eclipse.epsilon.common
 Export-Package: org.eclipse.epsilon.evl.incremental,
  org.eclipse.epsilon.evl.incremental.dom,
- org.eclipse.epsilon.evl.incremental.execute.context,
  org.eclipse.epsilon.evl.incremental.trace,
  org.eclipse.epsilon.evl.incremental.trace.orient
 Import-Package: org.eclipse.epsilon.evl.incremental.trace.orient

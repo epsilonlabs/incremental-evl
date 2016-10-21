@@ -3,9 +3,9 @@ package org.eclipse.epsilon.evl.incremental.dt.commands;
 import java.util.HashMap;
 
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
-import org.eclipse.epsilon.evl.incremental.TraceEvlModule;
+import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
 
-public class EditorRegistry extends HashMap<IEditingDomainProvider, TraceEvlModule>{
+public class EditorRegistry extends HashMap<IEditingDomainProvider, IncrementalEvlModule>{
 	
 	public static final EditorRegistry REGISTRY = new EditorRegistry(); 
 
