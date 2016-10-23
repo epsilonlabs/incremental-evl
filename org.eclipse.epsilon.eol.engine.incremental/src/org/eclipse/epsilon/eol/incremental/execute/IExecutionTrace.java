@@ -14,7 +14,9 @@ import java.util.Collection;
 
 
 /**
- * The Interface IExecutionTrace.
+ * The Interface IExecutionTrace defines de API for tracing execution to be used in incremental evaluation. The API
+ * has methods for adding traces to the tracing model and for retrieving trace information. Trace information can be
+ * retrieved for single elements, or for single properties of an specific element.
  */
 public interface IExecutionTrace {
 	

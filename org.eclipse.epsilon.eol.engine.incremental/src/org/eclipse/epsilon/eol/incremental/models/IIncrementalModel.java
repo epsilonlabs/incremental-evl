@@ -49,7 +49,7 @@ public interface IIncrementalModel {
 	public void addListener(IIncrementalModule moduleElement);
 	
 	/**
-	 * Gets the property value for an element with the given id. 
+	 * Gets the property value for an element (identified by the id). 
 	 *
 	 * @param elementId the element id
 	 * @param propertyName the property name
