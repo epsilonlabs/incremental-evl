@@ -76,7 +76,8 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 
 		final ModelRepository modelRepository = module.getContext()
 				.getModelRepository();
-
+		
+		// FIXME I think we only want to attach to the model opened in the editor
 		for (Resource resource : edp.getEditingDomain().getResourceSet()
 				.getResources()) {						
 			InMemoryEmfModel inMemoryEmfModel = new InMemoryEmfModel(resource);

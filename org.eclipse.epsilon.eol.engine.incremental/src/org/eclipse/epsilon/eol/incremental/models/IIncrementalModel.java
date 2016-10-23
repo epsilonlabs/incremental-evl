@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.models;
 
-import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModuleElement;
+import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
 
 
 /**
@@ -46,7 +46,7 @@ public interface IIncrementalModel {
 	 *
 	 * @param moduleElement the module element
 	 */
-	public void addListener(IIncrementalModuleElement moduleElement);
+	public void addListener(IIncrementalModule moduleElement);
 	
 	/**
 	 * Gets the property value for an element with the given id. 

@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.epsilon.evl.engine,
  org.eclipse.epsilon.emc.emf,
  org.eclipse.epsilon.evl.emf.validation,
  org.eclipse.epsilon.evl.incremental.dependencies;bundle-version="1.0.0",
- org.eclipse.epsilon.common
+ org.eclipse.epsilon.common,
+ org.eclipse.epsilon.eol.engine.incremental
 Export-Package: org.eclipse.epsilon.evl.incremental,
  org.eclipse.epsilon.evl.incremental.dom,
  org.eclipse.epsilon.evl.incremental.trace,
