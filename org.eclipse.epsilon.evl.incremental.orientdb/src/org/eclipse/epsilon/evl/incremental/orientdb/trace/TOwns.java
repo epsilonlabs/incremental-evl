@@ -1,5 +1,9 @@
 package org.eclipse.epsilon.evl.incremental.orientdb.trace;
 
+import org.eclipse.epsilon.eol.incremental.trace.IElementOwnsProperty;
+import org.eclipse.epsilon.eol.incremental.trace.IElementProperty;
+import org.eclipse.epsilon.eol.incremental.trace.IModelElement;
+
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
@@ -11,7 +15,7 @@ import com.tinkerpop.frames.OutVertex;
  * @author Jonathan Co
  *
  */
-public interface TOwns extends TraceComponent, EdgeFrame {
+public interface TOwns extends IElementOwnsProperty, EdgeFrame {
 
 	/**
 	 * Common name of this trace element
@@ -23,13 +27,13 @@ public interface TOwns extends TraceComponent, EdgeFrame {
 	 *         {@link #getElement()} .
 	 */
 	@InVertex
-	TProperty getProperty();
+	IElementProperty getProperty();
 
 	/**
 	 * @return The element that is owned by the property at
 	 *         {@link #getProperty()}.
 	 */
 	@OutVertex
-	TElement getElement();
+	IModelElement getElement();
 
 }

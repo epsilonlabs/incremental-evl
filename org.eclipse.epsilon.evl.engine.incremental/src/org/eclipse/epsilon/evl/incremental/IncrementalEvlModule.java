@@ -25,6 +25,10 @@ import org.eclipse.epsilon.eol.dom.ExecutableBlock;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
+import org.eclipse.epsilon.eol.incremental.trace.IElementProperty;
+import org.eclipse.epsilon.eol.incremental.trace.IIncrementalTraceManager;
+import org.eclipse.epsilon.eol.incremental.trace.IModelElement;
+import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.EvlModule;
 import org.eclipse.epsilon.evl.dom.Constraint;
@@ -33,10 +37,7 @@ import org.eclipse.epsilon.evl.dom.Fix;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TraceConstraint;
-import org.eclipse.epsilon.evl.incremental.trace.IIncrementalTraceManager;
-import org.eclipse.epsilon.evl.incremental.trace.IModelElement;
-import org.eclipse.epsilon.evl.incremental.trace.IElementProperty;
-import org.eclipse.epsilon.evl.incremental.trace.ITraceScope;
+import org.eclipse.epsilon.evl.incremental.orientdb.OrientPropertyAccessTraceFactory;
 import org.eclipse.epsilon.evl.parse.EvlParser;
 
 

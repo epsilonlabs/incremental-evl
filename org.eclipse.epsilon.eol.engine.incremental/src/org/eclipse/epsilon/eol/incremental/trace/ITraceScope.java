@@ -9,7 +9,7 @@
  *     Jonathan Co - Initial API and implementation
  *     Horacio Hoyos - Refactoring and decoupling
  *******************************************************************************/
-package org.eclipse.epsilon.evl.incremental.trace;
+package org.eclipse.epsilon.eol.incremental.trace;
 
 /**
  * The TraceScope is a relation between the a ModuleElement, a ModelElement, the

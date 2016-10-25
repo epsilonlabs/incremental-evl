@@ -1,5 +1,9 @@
 package org.eclipse.epsilon.evl.incremental.orientdb.trace;
 
+import org.eclipse.epsilon.eol.incremental.trace.IConstraintTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
@@ -13,7 +17,7 @@ import com.tinkerpop.frames.VertexFrame;
  *
  */
 // TODO: Split name and add in a TClass or TContext vertex
-public interface TConstraint extends TraceComponent, VertexFrame {
+public interface TConstraint extends IConstraintTrace, VertexFrame {
 
 	/**
 	 * Common name of this trace element
@@ -46,7 +50,7 @@ public interface TConstraint extends TraceComponent, VertexFrame {
 	 * @return An {@link Iterable} containing all the relevant scopes.
 	 */
 	@Adjacency(label = TEvaluates.TRACE_TYPE, direction = Direction.OUT)
-	Iterable<TScope> getScopes();
+	Iterable<ITraceScope> getScopes();
 
 	/**
 	 * Add a scope that is evaluated by this constraint.
@@ -56,7 +60,7 @@ public interface TConstraint extends TraceComponent, VertexFrame {
 	 * @return the original scope parameter but linked to this constraint.
 	 */
 	@Adjacency(label = TEvaluates.TRACE_TYPE, direction = Direction.OUT)
-	TScope addScope(TScope scope);
+	ITraceScope addScope(ITraceScope scope);
 
 	/**
 	 * Remove a scope that is evaluated by this constraint.
@@ -65,12 +69,12 @@ public interface TConstraint extends TraceComponent, VertexFrame {
 	 *            The scope to remove.
 	 */
 	@Adjacency(label = TEvaluates.TRACE_TYPE, direction = Direction.OUT)
-	void removeScope(TScope scope);
+	void removeScope(ITraceScope scope);
 	
 	@Adjacency(label = TIn.TRACE_TYPE, direction = Direction.OUT)
-	TContext getContext();
+	IContextTrace getContext();
 	
 	@Adjacency(label = TIn.TRACE_TYPE, direction = Direction.OUT)
-	TContext addContext(TContext context);
+	IContextTrace addContext(IContextTrace context);
 
 }

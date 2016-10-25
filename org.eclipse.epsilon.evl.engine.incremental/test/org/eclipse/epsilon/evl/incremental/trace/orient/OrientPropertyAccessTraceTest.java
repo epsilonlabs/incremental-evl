@@ -5,14 +5,14 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
+import org.eclipse.epsilon.eol.incremental.trace.IConstraintTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IElementProperty;
+import org.eclipse.epsilon.eol.incremental.trace.IModelElement;
+import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
 import org.eclipse.epsilon.evl.incremental.AbstractOrientPropertyAccessTraceTest;
 import org.eclipse.epsilon.evl.incremental.orientdb.OrientPropertyAccessTrace;
 import org.eclipse.epsilon.evl.incremental.orientdb.OrientPropertyAccessTraceFactory;
-import org.eclipse.epsilon.evl.incremental.trace.IConstraintTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IModelElement;
-import org.eclipse.epsilon.evl.incremental.trace.IElementProperty;
-import org.eclipse.epsilon.evl.incremental.trace.ITraceScope;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,11 +1,14 @@
 package org.eclipse.epsilon.evl.incremental.orientdb.trace;
 
+import org.eclipse.epsilon.eol.incremental.trace.IConstraintTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IContextTrace;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.VertexFrame;
 
-public interface TContext extends TraceComponent, VertexFrame {
+public interface TContext extends IContextTrace, VertexFrame {
 
 	/**
 	 * Common name of this trace element
@@ -33,11 +36,11 @@ public interface TContext extends TraceComponent, VertexFrame {
 	void setName(String name);
 
 	@Adjacency(label = TIn.TRACE_TYPE, direction = Direction.IN)
-	Iterable<TConstraint> getConstraints();
+	Iterable<IConstraintTrace> getConstraints();
 
 	@Adjacency(label = TIn.TRACE_TYPE, direction = Direction.IN)
-	TConstraint addConstraint(TConstraint constraint);
+	IConstraintTrace addConstraint(IConstraintTrace constraint);
 
 	@Adjacency(label = TIn.TRACE_TYPE, direction = Direction.IN)
-	void removeConstraint(TConstraint constraint);
+	void removeConstraint(IConstraintTrace constraint);
 }

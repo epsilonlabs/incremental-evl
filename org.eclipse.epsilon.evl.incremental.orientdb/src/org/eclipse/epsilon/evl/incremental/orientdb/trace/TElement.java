@@ -1,5 +1,9 @@
 package org.eclipse.epsilon.evl.incremental.orientdb.trace;
 
+import org.eclipse.epsilon.eol.incremental.trace.IElementProperty;
+import org.eclipse.epsilon.eol.incremental.trace.IModelElement;
+import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
@@ -12,7 +16,7 @@ import com.tinkerpop.frames.VertexFrame;
  * @author Jonathan Co
  *
  */
-public interface TElement extends TraceComponent, VertexFrame {
+public interface TElement extends IModelElement, VertexFrame {
 
 	/**
 	 * Common name of this trace element
@@ -45,7 +49,7 @@ public interface TElement extends TraceComponent, VertexFrame {
 	 * @return An {@link Iterable} containing all the relevant scopes.
 	 */
 	@Adjacency(label = TRootOf.TRACE_TYPE, direction = Direction.OUT)
-	Iterable<TScope> getScopes();
+	Iterable<ITraceScope> getScopes();
 
 	/**
 	 * Add a scope that uses this model element as its root.
@@ -72,7 +76,7 @@ public interface TElement extends TraceComponent, VertexFrame {
 	 * @return An {@link Iterable} containing all the relevant properties.
 	 */
 	@Adjacency(label = TOwns.TRACE_TYPE, direction = Direction.OUT)
-	Iterable<TProperty> getProperties();
+	Iterable<IElementProperty> getProperties();
 
 	/**
 	 * Add a property that is owned by this model element as its root.
@@ -82,7 +86,7 @@ public interface TElement extends TraceComponent, VertexFrame {
 	 * @return the original property parameter but linked to this element.
 	 */
 	@Adjacency(label = TOwns.TRACE_TYPE, direction = Direction.OUT)
-	TProperty addProperty(TProperty property);
+	IElementProperty addProperty(IElementProperty property);
 
 	/**
 	 * Remove a property that is owned by this model element as its root.
@@ -91,6 +95,6 @@ public interface TElement extends TraceComponent, VertexFrame {
 	 *            The property to remove.
 	 */
 	@Adjacency(label = TOwns.TRACE_TYPE, direction = Direction.OUT)
-	void removeProperty(TProperty property);
+	void removeProperty(IElementProperty property);
 
 }

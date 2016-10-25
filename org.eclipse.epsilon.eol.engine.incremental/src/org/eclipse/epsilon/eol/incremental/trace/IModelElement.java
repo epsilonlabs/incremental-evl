@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.evl.incremental.trace;
+package org.eclipse.epsilon.eol.incremental.trace;
 
 /**
  * The {@link IModelElement} interface represents a model element vertex in the

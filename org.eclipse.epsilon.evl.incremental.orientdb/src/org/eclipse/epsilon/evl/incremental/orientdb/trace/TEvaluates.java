@@ -1,5 +1,9 @@
 package org.eclipse.epsilon.evl.incremental.orientdb.trace;
 
+import org.eclipse.epsilon.eol.incremental.trace.IConstraintTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IScopeConstraintTrace;
+import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
+
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
@@ -11,7 +15,7 @@ import com.tinkerpop.frames.OutVertex;
  * @author Jonathan Co
  *
  */
-public interface TEvaluates extends TraceComponent, EdgeFrame {
+public interface TEvaluates extends IScopeConstraintTrace, EdgeFrame {
 
 	/**
 	 * Common name of this trace element
@@ -23,13 +27,13 @@ public interface TEvaluates extends TraceComponent, EdgeFrame {
 	 *         {@link #getConstraint()}.
 	 */
 	@InVertex
-	TScope getScope();
+	ITraceScope getScope();
 
 	/**
 	 * @return The constraint that is used to evaluate the scope at
 	 *         {@link #getScope()}.
 	 */
 	@OutVertex
-	TConstraint getConstraint();
+	IConstraintTrace getConstraint();
 
 }

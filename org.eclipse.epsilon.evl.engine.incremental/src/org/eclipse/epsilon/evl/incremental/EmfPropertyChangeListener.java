@@ -10,9 +10,9 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
-import org.eclipse.epsilon.evl.incremental.trace.ITraceScope;
 
 /**
  *  the live EVL validation is to be performed.

@@ -1,5 +1,9 @@
 package org.eclipse.epsilon.evl.incremental.orientdb.trace;
 
+import org.eclipse.epsilon.eol.incremental.trace.IElementProperty;
+import org.eclipse.epsilon.eol.incremental.trace.IScopePropertyAccess;
+import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
+
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
@@ -11,7 +15,7 @@ import com.tinkerpop.frames.OutVertex;
  * @author Jonathan Co
  *
  */
-public interface TAccesses extends TraceComponent, EdgeFrame {
+public interface TAccesses extends IScopePropertyAccess, EdgeFrame {
 
 	/**
 	 * Common name of this trace element
@@ -23,12 +27,12 @@ public interface TAccesses extends TraceComponent, EdgeFrame {
 	 *         {@link #getProperty()}.
 	 */
 	@OutVertex
-	TScope getScope();
+	ITraceScope getScope();
 
 	/**
 	 * @return The property that has been accessed at {@link #getScope()}.
 	 */
 	@InVertex
-	TProperty getProperty();
+	IElementProperty getProperty();
 	
 }

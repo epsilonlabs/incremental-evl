@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.evl.incremental.trace;
+package org.eclipse.epsilon.eol.incremental.trace;
 
 /**
  * The {@link IElementOwnsProperty} interface represents an edge between an element and a

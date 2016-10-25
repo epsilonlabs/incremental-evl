@@ -1,5 +1,9 @@
 package org.eclipse.epsilon.evl.incremental.orientdb.trace;
 
+import org.eclipse.epsilon.eol.incremental.trace.IElementProperty;
+import org.eclipse.epsilon.eol.incremental.trace.IModelElement;
+import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
@@ -12,7 +16,7 @@ import com.tinkerpop.frames.VertexFrame;
  * @author Jonathan Co
  *
  */
-public interface TProperty extends TraceComponent, VertexFrame {
+public interface TProperty extends IElementProperty, VertexFrame {
 
 	/**
 	 * Common name of this trace element
@@ -45,7 +49,7 @@ public interface TProperty extends TraceComponent, VertexFrame {
 	 * @return The owning model element.
 	 */
 	@Adjacency(label = TOwns.TRACE_TYPE, direction = Direction.IN)
-	TElement getOwner();
+	IModelElement getOwner();
 
 	/**
 	 * Set the model element that owns this property.
@@ -54,7 +58,7 @@ public interface TProperty extends TraceComponent, VertexFrame {
 	 *            The new model element that owns this property.
 	 */
 	@Adjacency(label = TOwns.TRACE_TYPE, direction = Direction.IN)
-	TElement setOwner(TElement element);
+	IModelElement setOwner(IModelElement element);
 
 	/**
 	 * Get the scopes that access this property
@@ -62,7 +66,7 @@ public interface TProperty extends TraceComponent, VertexFrame {
 	 * @return An {@link Iterable} containing all the relevant scopes.
 	 */
 	@Adjacency(label = TAccesses.TRACE_TYPE, direction = Direction.IN)
-	Iterable<TScope> getScopes();
+	Iterable<ITraceScope> getScopes();
 
 	/**
 	 * Add a scope that accesses this property.
@@ -72,7 +76,7 @@ public interface TProperty extends TraceComponent, VertexFrame {
 	 * @return the original scope parameter but linked to this property.
 	 */
 	@Adjacency(label = TAccesses.TRACE_TYPE, direction = Direction.IN)
-	TScope addScope(TScope scope);
+	ITraceScope addScope(ITraceScope scope);
 
 	/**
 	 * Remove a scope that accesses this property.
@@ -81,6 +85,6 @@ public interface TProperty extends TraceComponent, VertexFrame {
 	 *            The scope to remove.
 	 */
 	@Adjacency(label = TAccesses.TRACE_TYPE, direction = Direction.IN)
-	void removeScope(TScope scope);
+	void removeScope(ITraceScope scope);
 
 }

@@ -1,5 +1,9 @@
 package org.eclipse.epsilon.evl.incremental.orientdb.trace;
 
+import org.eclipse.epsilon.eol.incremental.trace.IElementRootOfScope;
+import org.eclipse.epsilon.eol.incremental.trace.IModelElement;
+import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
+
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
@@ -11,7 +15,7 @@ import com.tinkerpop.frames.OutVertex;
  * @author Jonathan Co
  *
  */
-public interface TRootOf extends TraceComponent, EdgeFrame {
+public interface TRootOf extends IElementRootOfScope, EdgeFrame {
 
 	/**
 	 * Common name of this trace element
@@ -23,13 +27,13 @@ public interface TRootOf extends TraceComponent, EdgeFrame {
 	 *         as its root.
 	 */
 	@InVertex
-	TScope getScope();
+	ITraceScope getScope();
 
 	/**
 	 * @return The model element used as the root of the scope at
 	 *         {@link #getScope()}.
 	 */
 	@OutVertex
-	TElement getElement();
+	IModelElement getElement();
 
 }

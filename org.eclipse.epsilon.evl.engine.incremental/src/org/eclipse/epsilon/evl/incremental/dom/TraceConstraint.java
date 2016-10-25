@@ -4,18 +4,18 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.eol.incremental.trace.IConstraintTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IElementProperty;
+import org.eclipse.epsilon.eol.incremental.trace.IIncrementalTraceManager;
+import org.eclipse.epsilon.eol.incremental.trace.IModelElement;
+import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
+import org.eclipse.epsilon.eol.incremental.trace.PropertyAccess;
+import org.eclipse.epsilon.eol.incremental.trace.PropertyAccessListener;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
-import org.eclipse.epsilon.evl.incremental.trace.IIncrementalTraceManager;
-import org.eclipse.epsilon.evl.incremental.trace.PropertyAccess;
-import org.eclipse.epsilon.evl.incremental.trace.PropertyAccessListener;
-import org.eclipse.epsilon.evl.incremental.trace.IConstraintTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IModelElement;
-import org.eclipse.epsilon.evl.incremental.trace.IElementProperty;
-import org.eclipse.epsilon.evl.incremental.trace.ITraceScope;
 import org.eclipse.epsilon.evl.trace.ConstraintTrace;
 
 /**
