@@ -1,33 +1,28 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.VertexFrame;
-
 /**
- * The {@link TProperty} interface represents a model element property vertex
+ * The {@link IElementProperty} interface represents a model element property vertex
  * in the trace graph.
  * 
  * @author Jonathan Co
  *
  */
-public interface TProperty extends TraceComponent, VertexFrame {
+public interface IElementProperty extends TraceComponent { //, VertexFrame {
 
 	/**
 	 * Common name of this trace element
 	 */
-	String TRACE_TYPE = "property";
+//	String TRACE_TYPE = "property";
 
 	/**
 	 * Key to the 'name' property of this property
 	 */
-	String NAME = "name";
+//	String NAME = "name";
 
 	/**
 	 * @return The name of this property
 	 */
-	@Property(TProperty.NAME)
+//	@Property(IElementProperty.NAME)
 	String getName();
 
 	/**
@@ -36,7 +31,7 @@ public interface TProperty extends TraceComponent, VertexFrame {
 	 * @param name
 	 *            The new name of this property
 	 */
-	@Property(TProperty.NAME)
+//	@Property(IElementProperty.NAME)
 	void setName(String name);
 
 	/**
@@ -44,8 +39,8 @@ public interface TProperty extends TraceComponent, VertexFrame {
 	 * 
 	 * @return The owning model element.
 	 */
-	@Adjacency(label = TOwns.TRACE_TYPE, direction = Direction.IN)
-	TElement getOwner();
+//	@Adjacency(label = IElementOwnsProperty.TRACE_TYPE, direction = Direction.IN)
+	IModelElement getOwner();
 
 	/**
 	 * Set the model element that owns this property.
@@ -53,16 +48,16 @@ public interface TProperty extends TraceComponent, VertexFrame {
 	 * @param element
 	 *            The new model element that owns this property.
 	 */
-	@Adjacency(label = TOwns.TRACE_TYPE, direction = Direction.IN)
-	TElement setOwner(TElement element);
+//	@Adjacency(label = IElementOwnsProperty.TRACE_TYPE, direction = Direction.IN)
+	IModelElement setOwner(IModelElement element);
 
 	/**
 	 * Get the scopes that access this property
 	 * 
 	 * @return An {@link Iterable} containing all the relevant scopes.
 	 */
-	@Adjacency(label = TAccesses.TRACE_TYPE, direction = Direction.IN)
-	Iterable<TScope> getScopes();
+//	@Adjacency(label = TAccesses.TRACE_TYPE, direction = Direction.IN)
+	Iterable<ITraceScope> getScopes();
 
 	/**
 	 * Add a scope that accesses this property.
@@ -71,8 +66,8 @@ public interface TProperty extends TraceComponent, VertexFrame {
 	 *            The scope to add.
 	 * @return the original scope parameter but linked to this property.
 	 */
-	@Adjacency(label = TAccesses.TRACE_TYPE, direction = Direction.IN)
-	TScope addScope(TScope scope);
+//	@Adjacency(label = TAccesses.TRACE_TYPE, direction = Direction.IN)
+	ITraceScope addScope(ITraceScope scope);
 
 	/**
 	 * Remove a scope that accesses this property.
@@ -80,7 +75,7 @@ public interface TProperty extends TraceComponent, VertexFrame {
 	 * @param scope
 	 *            The scope to remove.
 	 */
-	@Adjacency(label = TAccesses.TRACE_TYPE, direction = Direction.IN)
-	void removeScope(TScope scope);
+//	@Adjacency(label = TAccesses.TRACE_TYPE, direction = Direction.IN)
+	void removeScope(ITraceScope scope);
 
 }

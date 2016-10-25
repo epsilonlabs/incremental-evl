@@ -12,7 +12,7 @@ import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
-import org.eclipse.epsilon.evl.incremental.trace.TScope;
+import org.eclipse.epsilon.evl.incremental.trace.ITraceScope;
 
 /**
  *  the live EVL validation is to be performed.
@@ -110,11 +110,11 @@ public class EmfPropertyChangeListener extends EContentAdapter {
 		return (EStructuralFeature) (feature instanceof EStructuralFeature ? feature : null);
 	}
 	
-	public EObject getElement(TScope scope) {
+	public EObject getElement(ITraceScope scope) {
 		return (EObject) this.model.getElementById(scope.getRootElement().getElementId());
 	}
 	
-	public Constraint getConstraint(TScope scope) {
+	public Constraint getConstraint(ITraceScope scope) {
 		EObject element = this.getElement(scope);
 		if (element == null) {
 			return null;

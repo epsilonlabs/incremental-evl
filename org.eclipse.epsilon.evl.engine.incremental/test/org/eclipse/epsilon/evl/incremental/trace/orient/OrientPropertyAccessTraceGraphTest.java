@@ -4,19 +4,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
+import org.eclipse.epsilon.evl.incremental.orientdb.OrientPropertyAccessTrace;
+import org.eclipse.epsilon.evl.incremental.orientdb.OrientPropertyAccessTraceFactory;
+import org.eclipse.epsilon.evl.incremental.trace.IIncrementalTraceManager;
 import org.eclipse.epsilon.evl.incremental.trace.TAccesses;
-import org.eclipse.epsilon.evl.incremental.trace.TConstraint;
-import org.eclipse.epsilon.evl.incremental.trace.TContext;
-import org.eclipse.epsilon.evl.incremental.trace.TElement;
-import org.eclipse.epsilon.evl.incremental.trace.TEvaluates;
-import org.eclipse.epsilon.evl.incremental.trace.TIn;
-import org.eclipse.epsilon.evl.incremental.trace.TOwns;
-import org.eclipse.epsilon.evl.incremental.trace.TProperty;
-import org.eclipse.epsilon.evl.incremental.trace.TRootOf;
-import org.eclipse.epsilon.evl.incremental.trace.TScope;
-import org.eclipse.epsilon.evl.incremental.trace.orient.OrientPropertyAccessTrace;
-import org.eclipse.epsilon.evl.incremental.trace.orient.OrientPropertyAccessTraceFactory;
+import org.eclipse.epsilon.evl.incremental.trace.IConstraintTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IModelElement;
+import org.eclipse.epsilon.evl.incremental.trace.IScopeConstraintTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IConstraintInContext;
+import org.eclipse.epsilon.evl.incremental.trace.IElementOwnsProperty;
+import org.eclipse.epsilon.evl.incremental.trace.IElementProperty;
+import org.eclipse.epsilon.evl.incremental.trace.IElementRootOfScope;
+import org.eclipse.epsilon.evl.incremental.trace.ITraceScope;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +41,7 @@ public class OrientPropertyAccessTraceGraphTest {
 
 	@After
 	public void tearDown() {
-		IPropertyAccessTrace graph = factory.getTrace();
+		IIncrementalTraceManager graph = factory.getTrace();
 		ODatabaseDocumentTx db = ((OrientPropertyAccessTrace) graph).getBaseGraph()
 				.getRawGraph();
 		assertTrue(db.exists());
@@ -57,29 +57,29 @@ public class OrientPropertyAccessTraceGraphTest {
 		final OrientBaseGraph baseGraph = graph.getBaseGraph();
 
 		// Context
-		OrientVertexType context = baseGraph.getVertexType(TContext.TRACE_TYPE);
+		OrientVertexType context = baseGraph.getVertexType(IContextTrace.TRACE_TYPE);
 		assertNotNull(context);
-		assertNotNull(context.getProperty(TContext.NAME));
+		assertNotNull(context.getProperty(IContextTrace.NAME));
 
 		// Constraint
 		OrientVertexType constraint = baseGraph
-				.getVertexType(TConstraint.TRACE_TYPE);
+				.getVertexType(IConstraintTrace.TRACE_TYPE);
 		assertNotNull(constraint);
-		assertNotNull(constraint.getProperty(TConstraint.NAME));
+		assertNotNull(constraint.getProperty(IConstraintTrace.NAME));
 
 		// Element
-		OrientVertexType element = baseGraph.getVertexType(TElement.TRACE_TYPE);
+		OrientVertexType element = baseGraph.getVertexType(IModelElement.TRACE_TYPE);
 		assertNotNull(element);
-		assertNotNull(element.getProperty(TElement.ELEMENT_ID));
+		assertNotNull(element.getProperty(IModelElement.ELEMENT_ID));
 
 		// Property
 		OrientVertexType property = baseGraph
-				.getVertexType(TProperty.TRACE_TYPE);
+				.getVertexType(IElementProperty.TRACE_TYPE);
 		assertNotNull(property);
-		assertNotNull(property.getProperty(TProperty.NAME));
+		assertNotNull(property.getProperty(IElementProperty.NAME));
 
 		// Scope
-		OrientVertexType scope = baseGraph.getVertexType(TScope.TRACE_TYPE);
+		OrientVertexType scope = baseGraph.getVertexType(ITraceScope.TRACE_TYPE);
 		assertNotNull(scope);
 	}
 
@@ -89,10 +89,10 @@ public class OrientPropertyAccessTraceGraphTest {
 		final OrientBaseGraph baseGraph = graph.getBaseGraph();
 
 		assertNotNull(baseGraph.getEdgeType(TAccesses.TRACE_TYPE));
-		assertNotNull(baseGraph.getEdgeType(TEvaluates.TRACE_TYPE));
-		assertNotNull(baseGraph.getEdgeType(TIn.TRACE_TYPE));
-		assertNotNull(baseGraph.getEdgeType(TOwns.TRACE_TYPE));
-		assertNotNull(baseGraph.getEdgeType(TRootOf.TRACE_TYPE));
+		assertNotNull(baseGraph.getEdgeType(IScopeConstraintTrace.TRACE_TYPE));
+		assertNotNull(baseGraph.getEdgeType(IConstraintInContext.TRACE_TYPE));
+		assertNotNull(baseGraph.getEdgeType(IElementOwnsProperty.TRACE_TYPE));
+		assertNotNull(baseGraph.getEdgeType(IElementRootOfScope.TRACE_TYPE));
 	}
 
 }

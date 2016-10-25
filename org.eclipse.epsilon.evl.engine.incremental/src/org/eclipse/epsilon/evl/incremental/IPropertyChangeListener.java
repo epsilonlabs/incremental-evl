@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.epsilon.evl.incremental.trace.TScope;
+import org.eclipse.epsilon.evl.incremental.trace.ITraceScope;
 
 /**
  * The IPropertyChangeListener defines the methods used to respond to changes in a model. 
@@ -30,7 +30,7 @@ public interface IPropertyChangeListener  {
 	 * @param feature The name of the property that changed. 
 	 * @return
 	 */
-	public Collection<TScope> onChange(EObject notifier, EStructuralFeature feature);
+	public Collection<ITraceScope> onChange(EObject notifier, EStructuralFeature feature);
 	
 	/**
 	 * This method is invoked when an element is deleted from the model? This method
@@ -42,13 +42,13 @@ public interface IPropertyChangeListener  {
 	 * @param feature
 	 * @return
 	 */
-	public Collection<TScope> onDelete(EObject notifier, EStructuralFeature feature);
+	public Collection<ITraceScope> onDelete(EObject notifier, EStructuralFeature feature);
 	
 	/**
 	 * This method is invoked to execute the appropriate E*L module sections/scopes.
 	 * @param scopes
 	 */
-	public void validateScopes(Collection<TScope> scopes);
+	public void validateScopes(Collection<ITraceScope> scopes);
 	
 	/**
 	 * This method is invoked when an element is created in the model. Note that element

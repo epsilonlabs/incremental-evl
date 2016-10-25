@@ -1,33 +1,28 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.VertexFrame;
-
 /**
- * The {@link TElement} interface represents a model element vertex in the
+ * The {@link IModelElement} interface represents a model element vertex in the
  * trace graph.
  * 
  * @author Jonathan Co
  *
  */
-public interface TElement extends TraceComponent, VertexFrame {
+public interface IModelElement extends TraceComponent { //, VertexFrame {
 
 	/**
 	 * Common name of this trace element
 	 */
-	String TRACE_TYPE = "element";
+//	String TRACE_TYPE = "element";
 
 	/**
 	 * Key to the 'element_id' property of this constraint
 	 */
-	String ELEMENT_ID = "element_id";
+//	String ELEMENT_ID = "element_id";
 
 	/**
 	 * @return The id of this model element
 	 */
-	@Property(ELEMENT_ID)
+//	@Property(ELEMENT_ID)
 	String getElementId();
 
 	/**
@@ -36,7 +31,7 @@ public interface TElement extends TraceComponent, VertexFrame {
 	 * @param elementId
 	 *            The new id
 	 */
-	@Property(ELEMENT_ID)
+//	@Property(ELEMENT_ID)
 	void setElementId(String elementId);
 
 	/**
@@ -44,8 +39,8 @@ public interface TElement extends TraceComponent, VertexFrame {
 	 * 
 	 * @return An {@link Iterable} containing all the relevant scopes.
 	 */
-	@Adjacency(label = TRootOf.TRACE_TYPE, direction = Direction.OUT)
-	Iterable<TScope> getScopes();
+//	@Adjacency(label = TRootOf.TRACE_TYPE, direction = Direction.OUT)
+	Iterable<ITraceScope> getScopes();
 
 	/**
 	 * Add a scope that uses this model element as its root.
@@ -54,8 +49,8 @@ public interface TElement extends TraceComponent, VertexFrame {
 	 *            The scope to add.
 	 * @return the original scope parameter but linked to this element.
 	 */
-	@Adjacency(label = TRootOf.TRACE_TYPE, direction = Direction.OUT)
-	TScope addScope(TScope scope);
+//	@Adjacency(label = TRootOf.TRACE_TYPE, direction = Direction.OUT)
+	ITraceScope addScope(ITraceScope scope);
 
 	/**
 	 * Remove a scope that uses this model element as its root.
@@ -63,16 +58,16 @@ public interface TElement extends TraceComponent, VertexFrame {
 	 * @param scope
 	 *            The scope to remove.
 	 */
-	@Adjacency(label = TRootOf.TRACE_TYPE, direction = Direction.OUT)
-	void removeScope(TScope scope);
+//	@Adjacency(label = TRootOf.TRACE_TYPE, direction = Direction.OUT)
+	void removeScope(ITraceScope scope);
 
 	/**
 	 * Get the properties that are owned by this model element.
 	 * 
 	 * @return An {@link Iterable} containing all the relevant properties.
 	 */
-	@Adjacency(label = TOwns.TRACE_TYPE, direction = Direction.OUT)
-	Iterable<TProperty> getProperties();
+//	@Adjacency(label = TOwns.TRACE_TYPE, direction = Direction.OUT)
+	Iterable<IElementProperty> getProperties();
 
 	/**
 	 * Add a property that is owned by this model element as its root.
@@ -81,8 +76,8 @@ public interface TElement extends TraceComponent, VertexFrame {
 	 *            The property to add.
 	 * @return the original property parameter but linked to this element.
 	 */
-	@Adjacency(label = TOwns.TRACE_TYPE, direction = Direction.OUT)
-	TProperty addProperty(TProperty property);
+//	@Adjacency(label = TOwns.TRACE_TYPE, direction = Direction.OUT)
+	IElementProperty addProperty(IElementProperty property);
 
 	/**
 	 * Remove a property that is owned by this model element as its root.
@@ -90,7 +85,7 @@ public interface TElement extends TraceComponent, VertexFrame {
 	 * @param property
 	 *            The property to remove.
 	 */
-	@Adjacency(label = TOwns.TRACE_TYPE, direction = Direction.OUT)
-	void removeProperty(TProperty property);
+//	@Adjacency(label = TOwns.TRACE_TYPE, direction = Direction.OUT)
+	void removeProperty(IElementProperty property);
 
 }

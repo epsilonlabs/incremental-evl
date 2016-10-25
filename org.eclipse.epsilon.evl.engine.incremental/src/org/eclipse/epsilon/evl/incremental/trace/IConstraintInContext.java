@@ -4,13 +4,14 @@ import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
 
-public interface TIn extends TraceComponent, EdgeFrame {
+// FIXME This might be only specific to OrientDB
+public interface IConstraintInContext extends TraceComponent, EdgeFrame {
 	
 	String TRACE_TYPE = "in";
 
 	@InVertex
-	TContext getContext();
+	IContextTrace getContext();
 	
 	@OutVertex
-	TConstraint getConstraint();
+	IConstraintTrace getConstraint();
 }

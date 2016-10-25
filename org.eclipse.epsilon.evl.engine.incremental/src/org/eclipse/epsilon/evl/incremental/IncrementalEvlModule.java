@@ -33,11 +33,10 @@ import org.eclipse.epsilon.evl.dom.Fix;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TraceConstraint;
-import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
-import org.eclipse.epsilon.evl.incremental.trace.TElement;
-import org.eclipse.epsilon.evl.incremental.trace.TProperty;
-import org.eclipse.epsilon.evl.incremental.trace.TScope;
-import org.eclipse.epsilon.evl.incremental.trace.orient.OrientPropertyAccessTraceFactory;
+import org.eclipse.epsilon.evl.incremental.trace.IIncrementalTraceManager;
+import org.eclipse.epsilon.evl.incremental.trace.IModelElement;
+import org.eclipse.epsilon.evl.incremental.trace.IElementProperty;
+import org.eclipse.epsilon.evl.incremental.trace.ITraceScope;
 import org.eclipse.epsilon.evl.parse.EvlParser;
 
 
@@ -109,10 +108,10 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	
 	// ======================== From Trace Evl Context
 	
-	private IPropertyAccessTrace trace = null;
+	private IIncrementalTraceManager trace = null;
 	private boolean hasTrace = false;
 
-	public IPropertyAccessTrace getTrace() {
+	public IIncrementalTraceManager getTrace() {
 		if (trace == null) {
 			this.trace = OrientPropertyAccessTraceFactory.getInstance()
 					.getTrace();
@@ -148,11 +147,11 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 //			return null;
 //		}
 				
-		TProperty property = this.trace.getProperty(propertyName, elementId);
+		IElementProperty property = this.trace.getProperty(propertyName, elementId);
 		if (property != null) {
 		
-			List<TScope> scopeList = new LinkedList<TScope>();
-			Iterator<TScope> it = property.getScopes().iterator();
+			List<ITraceScope> scopeList = new LinkedList<ITraceScope>();
+			Iterator<ITraceScope> it = property.getScopes().iterator();
 			while (it.hasNext()) {
 				scopeList.add(it.next());
 			}
@@ -185,11 +184,11 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 			//onChange(elementId, propertyName);
 //		}
 		
-		final TElement telement = trace.getElement(elementId);
+		final IModelElement telement = trace.getElement(elementId);
 		if (telement != null) {
-			Set<TScope> scopes = new HashSet<TScope>();
-			for (TProperty p :  telement.getProperties()) {
-				for (TScope scope : p.getScopes()) {
+			Set<ITraceScope> scopes = new HashSet<ITraceScope>();
+			for (IElementProperty p :  telement.getProperties()) {
+				for (ITraceScope scope : p.getScopes()) {
 					scopes.add(scope);
 				}
 			}
@@ -197,11 +196,11 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 		}
 	}
 	
-	public void validateScopes(Collection<TScope> scopes, Object element) {
+	public void validateScopes(Collection<ITraceScope> scopes, Object element) {
 		if (scopes == null || scopes.isEmpty()) {
 			return;
 		}
-		for (TScope scope : scopes) {
+		for (ITraceScope scope : scopes) {
 			//final EObject target = this.getElement(scope);
 			final Constraint constraint;// = this.getConstraint(scope);
 			String name = scope.getConstraint().getName();

@@ -4,10 +4,10 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IIncrementalTraceManager;
 import org.junit.After;
 
-public abstract class AbstractPropertyAccessTraceTest<T extends IPropertyAccessTrace> {
+public abstract class AbstractPropertyAccessTraceTest<T extends IIncrementalTraceManager> {
 	
 	protected abstract T getGraph();
 	

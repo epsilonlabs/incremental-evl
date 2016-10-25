@@ -1,34 +1,29 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.VertexFrame;
-
 /**
- * The {@link TConstraint} interface represents a constraint vertex in the trace
+ * The {@link IConstraintTrace} interface represents a constraint vertex in the trace
  * graph.
  * 
  * @author Jonathan Co
  *
  */
 // TODO: Split name and add in a TClass or TContext vertex
-public interface TConstraint extends TraceComponent, VertexFrame {
+public interface IConstraintTrace extends TraceComponent {
 
 	/**
 	 * Common name of this trace element
 	 */
-	String TRACE_TYPE = "constraint";
+//	String TRACE_TYPE = "constraint";
 
 	/**
 	 * Key to the 'name' property of this constraint
 	 */
-	String NAME = "name";
+//	String NAME = "name";
 
 	/**
 	 * @return The name of this constraint
 	 */
-	@Property(NAME)
+//	@Property(NAME)
 	String getName();
 
 	/**
@@ -37,7 +32,7 @@ public interface TConstraint extends TraceComponent, VertexFrame {
 	 * @param name
 	 *            The new name of this constraint
 	 */
-	@Property(NAME)
+//	@Property(NAME)
 	void setName(String name);
 
 	/**
@@ -45,8 +40,8 @@ public interface TConstraint extends TraceComponent, VertexFrame {
 	 * 
 	 * @return An {@link Iterable} containing all the relevant scopes.
 	 */
-	@Adjacency(label = TEvaluates.TRACE_TYPE, direction = Direction.OUT)
-	Iterable<TScope> getScopes();
+//	@Adjacency(label = TEvaluates.TRACE_TYPE, direction = Direction.OUT)
+	Iterable<ITraceScope> getScopes();
 
 	/**
 	 * Add a scope that is evaluated by this constraint.
@@ -55,8 +50,8 @@ public interface TConstraint extends TraceComponent, VertexFrame {
 	 *            The scope to add.
 	 * @return the original scope parameter but linked to this constraint.
 	 */
-	@Adjacency(label = TEvaluates.TRACE_TYPE, direction = Direction.OUT)
-	TScope addScope(TScope scope);
+//	@Adjacency(label = TEvaluates.TRACE_TYPE, direction = Direction.OUT)
+	ITraceScope addScope(ITraceScope scope);
 
 	/**
 	 * Remove a scope that is evaluated by this constraint.
@@ -64,13 +59,13 @@ public interface TConstraint extends TraceComponent, VertexFrame {
 	 * @param scope
 	 *            The scope to remove.
 	 */
-	@Adjacency(label = TEvaluates.TRACE_TYPE, direction = Direction.OUT)
-	void removeScope(TScope scope);
+//	@Adjacency(label = TEvaluates.TRACE_TYPE, direction = Direction.OUT)
+	void removeScope(ITraceScope scope);
 	
-	@Adjacency(label = TIn.TRACE_TYPE, direction = Direction.OUT)
-	TContext getContext();
+//	@Adjacency(label = TIn.TRACE_TYPE, direction = Direction.OUT)
+	IContextTrace getContext();
 	
-	@Adjacency(label = TIn.TRACE_TYPE, direction = Direction.OUT)
-	TContext addContext(TContext context);
+//	@Adjacency(label = TIn.TRACE_TYPE, direction = Direction.OUT)
+	IContextTrace addContext(IContextTrace context);
 
 }

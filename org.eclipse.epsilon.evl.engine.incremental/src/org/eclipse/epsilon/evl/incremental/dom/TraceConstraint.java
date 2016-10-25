@@ -8,14 +8,14 @@ import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
-import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IIncrementalTraceManager;
 import org.eclipse.epsilon.evl.incremental.trace.PropertyAccess;
 import org.eclipse.epsilon.evl.incremental.trace.PropertyAccessListener;
-import org.eclipse.epsilon.evl.incremental.trace.TConstraint;
-import org.eclipse.epsilon.evl.incremental.trace.TContext;
-import org.eclipse.epsilon.evl.incremental.trace.TElement;
-import org.eclipse.epsilon.evl.incremental.trace.TProperty;
-import org.eclipse.epsilon.evl.incremental.trace.TScope;
+import org.eclipse.epsilon.evl.incremental.trace.IConstraintTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IModelElement;
+import org.eclipse.epsilon.evl.incremental.trace.IElementProperty;
+import org.eclipse.epsilon.evl.incremental.trace.ITraceScope;
 import org.eclipse.epsilon.evl.trace.ConstraintTrace;
 
 /**
@@ -66,7 +66,7 @@ public class TraceConstraint extends Constraint {
 	
 	public void addToTrace(IncrementalEvlModule ctx, Object element, Boolean result, Collection<PropertyAccess> accesses) {
 		
-		final IPropertyAccessTrace trace = ctx.getTrace();
+		final IIncrementalTraceManager trace = ctx.getTrace();
 		
 		final String contextName = this.getConstraintContext().getTypeName();
 		final String constraintName = this.getName();
@@ -77,15 +77,15 @@ public class TraceConstraint extends Constraint {
 		trace.commit();
 		
 		// Populate with new trace
-		final TContext tContext = trace.createContext(contextName);
-		final TConstraint tConstraint = trace.createConstraint(constraintName, tContext);
-		final TElement tElement = trace.createElement(elementId);
-		final TScope tScope = trace.createScope(tElement, tConstraint);
+		final IContextTrace tContext = trace.createContext(contextName);
+		final IConstraintTrace tConstraint = trace.createConstraint(constraintName, tContext);
+		final IModelElement tElement = trace.createElement(elementId);
+		final ITraceScope tScope = trace.createScope(tElement, tConstraint);
 		tScope.setResult(result);
 		
 		for (PropertyAccess pa : accesses) {
-			final TElement currentElement = trace.createElement(pa.getElementId());
-			final TProperty property = trace.createProperty(pa.getPropertyName(), currentElement);
+			final IModelElement currentElement = trace.createElement(pa.getElementId());
+			final IElementProperty property = trace.createProperty(pa.getPropertyName(), currentElement);
 			tScope.addProperty(property);
 		}
 
