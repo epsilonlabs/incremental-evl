@@ -5,14 +5,14 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
+import org.eclipse.epsilon.eol.incremental.trace.IConstraintTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IElementProperty;
+import org.eclipse.epsilon.eol.incremental.trace.IModelElement;
+import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
 import org.eclipse.epsilon.evl.incremental.AbstractOrientPropertyAccessTraceTest;
-import org.eclipse.epsilon.evl.incremental.trace.TConstraint;
-import org.eclipse.epsilon.evl.incremental.trace.TContext;
-import org.eclipse.epsilon.evl.incremental.trace.TElement;
-import org.eclipse.epsilon.evl.incremental.trace.TProperty;
-import org.eclipse.epsilon.evl.incremental.trace.TScope;
-import org.eclipse.epsilon.evl.incremental.trace.orient.OrientPropertyAccessTrace;
-import org.eclipse.epsilon.evl.incremental.trace.orient.OrientPropertyAccessTraceFactory;
+import org.eclipse.epsilon.evl.incremental.orientdb.OrientPropertyAccessTrace;
+import org.eclipse.epsilon.evl.incremental.orientdb.OrientPropertyAccessTraceFactory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,7 +44,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		
 		assertNull(this.graph.getContext(contextName));
 		
-		final TContext create = this.graph.createContext(contextName);
+		final IContextTrace create = this.graph.createContext(contextName);
 		assertNotNull(create);
 		assertEquals(contextName, create.getName());
 	}
@@ -54,12 +54,12 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String contextName = "context-testCreateContextDuplicate";
 		assertNull(this.graph.getContext(contextName));
 		
-		final TContext first = this.graph.createContext(contextName);
+		final IContextTrace first = this.graph.createContext(contextName);
 		final Object id = first.asVertex().getId();
 		assertNotNull(first);
 		assertEquals(contextName, first.getName());
 		
-		final TContext second = this.graph.createContext(contextName);
+		final IContextTrace second = this.graph.createContext(contextName);
 		assertNotNull(second);
 		assertEquals(contextName, first.getName());
 		assertEquals(id, second.asVertex().getId());
@@ -73,12 +73,12 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		assertNull(this.graph.getContext(contextName));
 		assertNull(this.graph.getConstraint(constraintName, contextName));
 		
-		final TContext context = this.graph.createContext(contextName);
+		final IContextTrace context = this.graph.createContext(contextName);
 		assertNotNull(context);
 		assertEquals(contextName, context.getName());
 		final Object contextId = context.asVertex().getId();
 
-		final TConstraint constraint = this.graph.createConstraint(constraintName, context);
+		final IConstraintTrace constraint = this.graph.createConstraint(constraintName, context);
 		assertNotNull(constraint);
 		assertEquals(constraintName, constraint.getName());
 		assertEquals(context, constraint.getContext());
@@ -94,7 +94,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		assertNull(this.graph.getContext(contextName));
 		assertNull(this.graph.getConstraint(constraintName, contextName));
 		
-		final TConstraint constraint = this.graph.createConstraint(constraintName, contextName);
+		final IConstraintTrace constraint = this.graph.createConstraint(constraintName, contextName);
 		assertNotNull(constraint);
 		assertEquals(constraintName, constraint.getName());
 		assertEquals(contextName, constraint.getContext().getName());
@@ -107,14 +107,14 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		
 		assertNull(this.graph.getConstraint(constraintName, contextName));
 		
-		final TConstraint first = this.graph.createConstraint(constraintName, contextName);
+		final IConstraintTrace first = this.graph.createConstraint(constraintName, contextName);
 		assertNotNull(first);
 		assertEquals(contextName, first.getContext().getName());
 		assertEquals(constraintName, first.getName());
 		final Object contextRID = first.getContext().asVertex().getId();
 		final Object constraintRID = first.asVertex().getId();
 		
-		final TConstraint second = this.graph.createConstraint(constraintName, contextName);
+		final IConstraintTrace second = this.graph.createConstraint(constraintName, contextName);
 		assertNotNull(second);
 		assertEquals(contextName, second.getContext().getName());
 		assertEquals(constraintName, second.getName());
@@ -128,7 +128,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		
 		assertNull(this.graph.getElement(elementId));
 		
-		final TElement element = this.graph.createElement(elementId);
+		final IModelElement element = this.graph.createElement(elementId);
 		assertNotNull(element);
 		assertEquals(elementId, element.getElementId());
 	}
@@ -139,12 +139,12 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		
 		assertNull(this.graph.getElement(elementId));
 		
-		final TElement first = this.graph.createElement(elementId);
+		final IModelElement first = this.graph.createElement(elementId);
 		assertNotNull(first);
 		assertEquals(elementId, first.getElementId());
 		final Object elementRID = first.asVertex().getId();
 		
-		final TElement second = this.graph.createElement(elementId);
+		final IModelElement second = this.graph.createElement(elementId);
 		assertNotNull(second);
 		assertEquals(elementId, second.getElementId());
 		assertEquals(elementRID, second.asVertex().getId());
@@ -161,13 +161,13 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		assertNull(this.graph.getElement(elementId));
 		assertNull(this.graph.getScope(elementId, constraintName, contextName));
 		
-		final TContext context = this.graph.createContext(contextName);
-		final TConstraint constraint = this.graph.createConstraint(constraintName, context);
-		final TElement element = this.graph.createElement(elementId);
+		final IContextTrace context = this.graph.createContext(contextName);
+		final IConstraintTrace constraint = this.graph.createConstraint(constraintName, context);
+		final IModelElement element = this.graph.createElement(elementId);
 		final Object constraintRID = constraint.asVertex().getId();
 		final Object elementRID = element.asVertex().getId();
 
-		final TScope scope = this.graph.createScope(element, constraint);
+		final ITraceScope scope = this.graph.createScope(element, constraint);
 		assertNotNull(scope);
 		assertEquals(constraint, scope.getConstraint());
 		assertEquals(element, scope.getRootElement());
@@ -186,7 +186,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		assertNull(this.graph.getElement(elementId));
 		assertNull(this.graph.getScope(elementId, constraintName, contextName));
 		
-		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		final ITraceScope scope = this.graph.createScope(elementId, constraintName, contextName);
 		assertNotNull(scope);
 		assertEquals(contextName, scope.getConstraint().getContext().getName());
 		assertEquals(constraintName, scope.getConstraint().getName());
@@ -204,11 +204,11 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		assertNull(this.graph.getElement(elementId));
 		assertNull(this.graph.getScope(elementId, constraintName, contextName));
 
-		final TContext context = this.graph.createContext(contextName);
-		final TConstraint constraint = this.graph.createConstraint(constraintName, context);
+		final IContextTrace context = this.graph.createContext(contextName);
+		final IConstraintTrace constraint = this.graph.createConstraint(constraintName, context);
 		final Object constraintRID = constraint.asVertex().getId();
 		
-		final TScope scope = this.graph.createScope(elementId, constraint);
+		final ITraceScope scope = this.graph.createScope(elementId, constraint);
 		assertNotNull(scope);
 		assertEquals(constraint, scope.getConstraint());
 		assertEquals(constraintRID, scope.getConstraint().asVertex().getId());
@@ -226,10 +226,10 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		assertNull(this.graph.getElement(elementId));
 		assertNull(this.graph.getScope(elementId, constraintName, contextName));
 		
-		final TElement element = this.graph.createElement(elementId);
+		final IModelElement element = this.graph.createElement(elementId);
 		final Object elementRID = element.asVertex().getId();
 		
-		final TScope scope = this.graph.createScope(element, constraintName, contextName);
+		final ITraceScope scope = this.graph.createScope(element, constraintName, contextName);
 		assertNotNull(scope);
 		assertEquals(constraintName, scope.getConstraint().getName());
 		assertEquals(contextName, scope.getConstraint().getContext().getName());
@@ -245,14 +245,14 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		
 		assertNull(this.graph.getScope(elementId, constraintName, contextName));
 		
-		final TScope first = this.graph.createScope(elementId, constraintName, contextName);
+		final ITraceScope first = this.graph.createScope(elementId, constraintName, contextName);
 		assertNotNull(first);
 		assertEquals(elementId, first.getRootElement().getElementId());
 		assertEquals(constraintName, first.getConstraint().getName());
 		assertEquals(contextName, first.getConstraint().getContext().getName());
 		final Object scopeRID = first.asVertex().getId();
 		
-		final TScope second = this.graph.createScope(elementId, constraintName, contextName);
+		final ITraceScope second = this.graph.createScope(elementId, constraintName, contextName);
 		assertNotNull(second);
 		assertEquals(elementId, second.getRootElement().getElementId());
 		assertEquals(constraintName, second.getConstraint().getName());
@@ -268,7 +268,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		assertNull(this.graph.getElement(elementId));
 		assertNull(this.graph.getProperty(propertyName, elementId));
 		
-		final TProperty property = this.graph.createProperty(propertyName, elementId);
+		final IElementProperty property = this.graph.createProperty(propertyName, elementId);
 		assertNotNull(property);
 		assertEquals(elementId, property.getOwner().getElementId());
 		assertEquals(propertyName, property.getName());
@@ -282,10 +282,10 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		assertNull(this.graph.getElement(elementId));
 		assertNull(this.graph.getProperty(propertyName, elementId));
 		
-		final TElement element = this.graph.createElement(elementId);
+		final IModelElement element = this.graph.createElement(elementId);
 		final Object elementRID = element.asVertex().getId();
 		
-		final TProperty property = this.graph.createProperty(propertyName, element);
+		final IElementProperty property = this.graph.createProperty(propertyName, element);
 		assertNotNull(property);
 		assertEquals(element, property.getOwner());
 		assertEquals(elementRID, property.getOwner().asVertex().getId());
@@ -300,13 +300,13 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		assertNull(this.graph.getElement(elementId));
 		assertNull(this.graph.getProperty(propertyName, elementId));
 		
-		final TProperty first = this.graph.createProperty(propertyName, elementId);
+		final IElementProperty first = this.graph.createProperty(propertyName, elementId);
 		assertNotNull(first);
 		assertEquals(elementId, first.getOwner().getElementId());
 		assertEquals(propertyName, first.getName());
 		final Object propertyRID = first.asVertex().getId();
 		
-		final TProperty second = this.graph.createProperty(propertyName, elementId);
+		final IElementProperty second = this.graph.createProperty(propertyName, elementId);
 		assertNotNull(second);
 		assertEquals(elementId, second.getOwner().getElementId());
 		assertEquals(propertyName, second.getName());
@@ -319,7 +319,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		assertNull(this.graph.getContext(contextName));
 		
 		this.graph.createContext(contextName);
-		final TContext get = this.graph.getContext(contextName);
+		final IContextTrace get = this.graph.getContext(contextName);
 		
 		assertNotNull(get);
 		assertEquals(contextName, get.getName());
@@ -338,13 +338,13 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		
 		assertNull(this.graph.getConstraint(constraintName, contextName));
 		
-		final TConstraint constraint = this.graph.createConstraint(constraintName, contextName);
+		final IConstraintTrace constraint = this.graph.createConstraint(constraintName, contextName);
 		assertNotNull(constraint);
 		assertEquals(contextName, constraint.getContext().getName());
 		assertEquals(constraintName, constraint.getName());
 		final Object constraintRID = constraint.asVertex().getId();
 		
-		final TConstraint get = this.graph.getConstraint(constraintName, contextName);
+		final IConstraintTrace get = this.graph.getConstraint(constraintName, contextName);
 		assertNotNull(get);
 		assertEquals(constraintRID, get.asVertex().getId());
 	}
@@ -354,18 +354,18 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String contextName = "context-testGetConstraintStringTContext";
 		final String constraintName = "constraint-testGetConstraintStringTContext";
 		
-		final TContext context = this.getGraph().createContext(contextName);
+		final IContextTrace context = this.getGraph().createContext(contextName);
 		assertNotNull(context);
 		assertEquals(contextName, context.getName());
 		assertNull(this.graph.getConstraint(constraintName, context));
 		final Object contextRID = context.asVertex().getId();
 		
-		final TConstraint constraint = this.graph.createConstraint(constraintName, context);
+		final IConstraintTrace constraint = this.graph.createConstraint(constraintName, context);
 		assertNotNull(constraint);
 		assertEquals(constraintName, constraint.getName());
 		final Object constraintRID = constraint.asVertex().getId();
 		
-		final TConstraint get = this.graph.getConstraint(constraintName, context);
+		final IConstraintTrace get = this.graph.getConstraint(constraintName, context);
 		assertNotNull(get);
 		assertEquals(constraintName, constraint.getName());
 		assertEquals(constraintRID, get.asVertex().getId());
@@ -377,7 +377,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String contextName = "context-getConstraintDoesNotExist";
 		final String constraintName = "constraint-getConstraintDoesNotExist";
 		
-		final TContext context = this.graph.createContext(contextName);
+		final IContextTrace context = this.graph.createContext(contextName);
 		assertNotNull(context);
 		
 		assertNull(this.graph.getConstraint(constraintName, context));
@@ -389,12 +389,12 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		
 		assertNull(this.graph.getElement(elementId));
 		
-		final TElement create = this.graph.createElement(elementId);
+		final IModelElement create = this.graph.createElement(elementId);
 		assertNotNull(create);
 		assertEquals(elementId, create.getElementId());
 		final Object rid = create.asVertex().getId();
 		
-		final TElement get = this.graph.getElement(elementId);
+		final IModelElement get = this.graph.getElement(elementId);
 		assertNotNull(get);
 		assertEquals(elementId, get.getElementId());
 		assertEquals(rid, get.asVertex().getId());
@@ -414,11 +414,11 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		
 		assertNull(this.getGraph().getScope(elementId, constraintName, contextName));
 		
-		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		final ITraceScope scope = this.graph.createScope(elementId, constraintName, contextName);
 		assertNotNull(scope);
 		final Object rid = scope.asVertex().getId();
 		
-		final TScope get = this.graph.getScope(elementId, constraintName, contextName);
+		final ITraceScope get = this.graph.getScope(elementId, constraintName, contextName);
 		assertEquals(rid, get.asVertex().getId());
 	}
 
@@ -428,15 +428,15 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String constraintName = "constraint-testGetScopeStringTConstraint";
 		final String elementId = "element-testGetScopeStringTConstraint";
 		
-		final TConstraint constraint = this.graph.createConstraint(constraintName, contextName);
+		final IConstraintTrace constraint = this.graph.createConstraint(constraintName, contextName);
 		assertNotNull(constraint);
 		assertNull(this.getGraph().getScope(elementId, constraint));
 		
-		final TScope scope = this.graph.createScope(elementId, constraint);
+		final ITraceScope scope = this.graph.createScope(elementId, constraint);
 		assertNotNull(scope);
 		final Object rid = scope.asVertex().getId();
 		
-		final TScope get = this.graph.getScope(elementId, constraint);
+		final ITraceScope get = this.graph.getScope(elementId, constraint);
 		assertEquals(rid, get.asVertex().getId());
 	}
 
@@ -446,17 +446,17 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String constraintName = "constraint-testGetScopeTElementStringString";
 		final String elementId = "element-testGetScopeTElementStringString";
 		
-		final TElement element = this.graph.createElement(elementId);
-		final TConstraint constraint = this.graph.createConstraint(constraintName, contextName);
+		final IModelElement element = this.graph.createElement(elementId);
+		final IConstraintTrace constraint = this.graph.createConstraint(constraintName, contextName);
 		assertNotNull(element);
 		assertNotNull(constraint);
 		assertNull(this.getGraph().getScope(element, constraint));
 
-		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		final ITraceScope scope = this.graph.createScope(elementId, constraintName, contextName);
 		assertNotNull(scope);
 		final Object rid = scope.asVertex().getId();
 		
-		final TScope get = this.graph.getScope(element, constraint);
+		final ITraceScope get = this.graph.getScope(element, constraint);
 		assertEquals(rid, get.asVertex().getId());
 	}
 
@@ -466,15 +466,15 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String constraintName = "constraint-testGetScopeTElementTConstraint";
 		final String elementId = "element-testGetScopeTElementTConstraint";
 		
-		final TElement element = this.graph.createElement(elementId);
+		final IModelElement element = this.graph.createElement(elementId);
 		assertNotNull(element);
 		assertNull(this.getGraph().getScope(element, constraintName, contextName));
 		
-		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		final ITraceScope scope = this.graph.createScope(elementId, constraintName, contextName);
 		assertNotNull(scope);
 		final Object rid = scope.asVertex().getId();
 		
-		final TScope get = this.graph.getScope(elementId, constraintName, contextName);
+		final ITraceScope get = this.graph.getScope(elementId, constraintName, contextName);
 		assertEquals(rid, get.asVertex().getId());
 	}
 	
@@ -484,8 +484,8 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String constraintName = "constraint-testGetScopeDoesNotExist";
 		final String elementId = "element-testGetScopeDoesNotExist";
 		
-		final TConstraint constraint = this.graph.createConstraint(constraintName, contextName);
-		final TElement element = this.graph.createElement(elementId);
+		final IConstraintTrace constraint = this.graph.createConstraint(constraintName, contextName);
+		final IModelElement element = this.graph.createElement(elementId);
 		
 		assertNull(this.graph.getScope(element, constraint));
 	}
@@ -497,12 +497,12 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		
 		assertNull(this.graph.getProperty(propertyName, elementId));
 		
-		final TProperty property = this.graph.createProperty(propertyName, elementId);
+		final IElementProperty property = this.graph.createProperty(propertyName, elementId);
 		assertNotNull(property);
 		assertEquals(propertyName, property.getName());
 		final Object rid = property.asVertex().getId();
 		
-		final TProperty get = this.graph.getProperty(propertyName, elementId);
+		final IElementProperty get = this.graph.getProperty(propertyName, elementId);
 		assertNotNull(get);
 		assertEquals(propertyName, get.getName());
 		assertEquals(rid, get.asVertex().getId());
@@ -513,17 +513,17 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String propertyName = "property-testGetPropertyStringTElement";
 		final String elementId = "element-testGetPropertyStringTElement";
 		
-		final TElement element = this.graph.createElement(elementId);
+		final IModelElement element = this.graph.createElement(elementId);
 		assertNotNull(element);
 		assertEquals(elementId, element.getElementId());
 		assertNull(this.graph.getProperty(propertyName, element));
 		
-		final TProperty create = this.graph.createProperty(propertyName, element);
+		final IElementProperty create = this.graph.createProperty(propertyName, element);
 		assertNotNull(create);
 		assertEquals(propertyName, create.getName());
 		final Object rid = create.asVertex().getId();
 		
-		final TProperty get = this.graph.getProperty(propertyName, element);
+		final IElementProperty get = this.graph.getProperty(propertyName, element);
 		assertNotNull(get);
 		assertEquals(propertyName, get.getName());
 		assertEquals(rid, get.asVertex().getId());
@@ -534,7 +534,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String propertyName = "property-testGetPropertyDoesNotExist";
 		final String elementId = "element-testGetPropertyDoesNotExist";
 		
-		final TElement element = this.graph.createElement(elementId);
+		final IModelElement element = this.graph.createElement(elementId);
 		assertNotNull(element);
 		
 		assertNull(this.graph.getProperty(propertyName, element));
@@ -555,7 +555,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		}
 		
 		int count = 0;
-		for (TContext context : this.graph.getAllContexts()) {
+		for (IContextTrace context : this.graph.getAllContexts()) {
 			count++;
 			assertThat(Arrays.asList(contextNames), hasItem(context.getName()));
 		}
@@ -573,13 +573,13 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 				"constraint-testGetAllConstraints-5"
 		};
 		
-		final TContext context = this.graph.createContext(contextName);
+		final IContextTrace context = this.graph.createContext(contextName);
 		for (String s : constraintNames) {
 			this.graph.createConstraint(s, context);
 		}
 		
 		int count = 0;
-		for (TConstraint constraint : this.graph.getAllConstraints()) {
+		for (IConstraintTrace constraint : this.graph.getAllConstraints()) {
 			count++;
 			assertThat(Arrays.asList(constraintNames), hasItem(constraint.getName()));
 		}
@@ -601,7 +601,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		}
 		
 		int count = 0;
-		for (TElement element : this.graph.getAllElements()) {
+		for (IModelElement element : this.graph.getAllElements()) {
 			count++;
 			assertThat(Arrays.asList(elementIds), hasItem(element.getElementId()));
 		}
@@ -625,7 +625,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		}
 		
 		int count = 0;
-		for (TScope scope : this.graph.getAllScopes()) {
+		for (ITraceScope scope : this.graph.getAllScopes()) {
 			count++;
 			assertEquals(contextName, scope.getConstraint().getContext().getName());
 			assertEquals(constraintName, scope.getConstraint().getName());;
@@ -650,7 +650,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		}
 		
 		int count = 0;
-		for (TProperty property : this.graph.getAllProperties()) {
+		for (IElementProperty property : this.graph.getAllProperties()) {
 			count++;
 			assertEquals(elementId, property.getOwner().getElementId());
 			assertThat(Arrays.asList(propertyNames), hasItem(property.getName()));
@@ -672,7 +672,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 	public void testRemoveContextString() {
 		final String contextName = "context-testRemoveContextString";
 		
-		final TContext create = this.graph.createContext(contextName);
+		final IContextTrace create = this.graph.createContext(contextName);
 		assertNotNull(create);
 		assertEquals(contextName, create.getName());
 		
@@ -685,7 +685,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 	public void testRemoveContextTContext() {
 		final String contextName = "context-testRemoveContextTContext";
 		
-		final TContext create = this.graph.createContext(contextName);
+		final IContextTrace create = this.graph.createContext(contextName);
 		assertNotNull(create);
 		assertEquals(contextName, create.getName());
 		
@@ -699,7 +699,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String contextName = "context-testRemoveContextTContext";
 		final String constraintName = "constraint-testRemoveContextTContext";
 		
-		final TConstraint create = this.graph.createConstraint(constraintName, contextName);
+		final IConstraintTrace create = this.graph.createConstraint(constraintName, contextName);
 		assertNotNull(create);
 		assertEquals(contextName, create.getContext().getName());
 		assertEquals(constraintName, create.getName());
@@ -714,7 +714,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String contextName = "context-testRemoveConstraintStringString";
 		final String constraintName = "constraint-testRemoveConstraintStringString";
 		
-		final TConstraint create = this.graph.createConstraint(constraintName, contextName);
+		final IConstraintTrace create = this.graph.createConstraint(constraintName, contextName);
 		assertNotNull(create);
 		assertEquals(contextName, create.getContext().getName());
 		assertEquals(constraintName, create.getName());
@@ -729,11 +729,11 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String contextName = "context-testRemoveConstraintStringTContext";
 		final String constraintName = "constraint-testRemoveConstraintStringTContext";
 		
-		final TContext context = this.graph.createContext(contextName);
+		final IContextTrace context = this.graph.createContext(contextName);
 		assertNotNull(context);
 		assertEquals(contextName, context.getName());
 		
-		final TConstraint create = this.graph.createConstraint(constraintName, contextName);
+		final IConstraintTrace create = this.graph.createConstraint(constraintName, contextName);
 		assertNotNull(create);
 		assertEquals(contextName, create.getContext().getName());
 		assertEquals(constraintName, create.getName());
@@ -747,7 +747,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 	public void testRemoveElementTElement() {
 		final String elementId = "element-testRemoveElementTElement";
 		
-		final TElement create = this.graph.createElement(elementId);
+		final IModelElement create = this.graph.createElement(elementId);
 		assertNotNull(create);
 		assertEquals(elementId, create.getElementId());
 		
@@ -760,7 +760,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 	public void testRemoveElementString() {
 		final String elementId = "element-testRemoveElementString";
 		
-		final TElement create = this.graph.createElement(elementId);
+		final IModelElement create = this.graph.createElement(elementId);
 		assertNotNull(create);
 		assertEquals(elementId, create.getElementId());
 		
@@ -775,7 +775,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String constraintName = "constraint-testRemoveScopeTScope";
 		final String elementId = "element-testRemoveScopeTScope";
 		
-		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		final ITraceScope scope = this.graph.createScope(elementId, constraintName, contextName);
 		assertNotNull(scope);
 		
 		assertNotNull(this.graph.getScope(elementId, constraintName, contextName));
@@ -789,7 +789,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String constraintName = "constraint-testRemoveScopeStringStringString";
 		final String elementId = "element-testRemoveScopeStringStringString";
 		
-		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		final ITraceScope scope = this.graph.createScope(elementId, constraintName, contextName);
 		assertNotNull(scope);
 		
 		assertNotNull(this.graph.getScope(elementId, constraintName, contextName));
@@ -803,8 +803,8 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String constraintName = "constraint-testRemoveScopeStringTConstraint";
 		final String elementId = "element-testRemoveScopeStringTConstraint";
 		
-		final TConstraint constraint = this.graph.createConstraint(constraintName, contextName);
-		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		final IConstraintTrace constraint = this.graph.createConstraint(constraintName, contextName);
+		final ITraceScope scope = this.graph.createScope(elementId, constraintName, contextName);
 		assertNotNull(constraint);
 		assertNotNull(scope);
 		
@@ -819,8 +819,8 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String constraintName = "constraint-testRemoveScopeTElementStringString";
 		final String elementId = "element-testRemoveScopeTElementStringString";
 		
-		final TElement element = this.graph.createElement(elementId);
-		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		final IModelElement element = this.graph.createElement(elementId);
+		final ITraceScope scope = this.graph.createScope(elementId, constraintName, contextName);
 		assertNotNull(element);
 		assertNotNull(scope);
 		
@@ -835,9 +835,9 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String constraintName = "constraint-testRemoveScopeTElementTConstraint";
 		final String elementId = "element-testRemoveScopeTElementTConstraint";
 		
-		final TElement element = this.graph.createElement(elementId);
-		final TConstraint constraint = this.graph.createConstraint(constraintName, contextName);
-		final TScope scope = this.graph.createScope(elementId, constraintName, contextName);
+		final IModelElement element = this.graph.createElement(elementId);
+		final IConstraintTrace constraint = this.graph.createConstraint(constraintName, contextName);
+		final ITraceScope scope = this.graph.createScope(elementId, constraintName, contextName);
 		assertNotNull(element);
 		assertNotNull(constraint);
 		assertNotNull(scope);
@@ -852,7 +852,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String propertyName = "property-testRemovePropertyTProperty";
 		final String elementId = "element-testRemovePropertyTProperty";
 		
-		final TProperty property = this.graph.createProperty(propertyName, elementId);
+		final IElementProperty property = this.graph.createProperty(propertyName, elementId);
 		assertNotNull(property);
 		
 		assertNotNull(this.graph.getProperty(propertyName, elementId));
@@ -865,7 +865,7 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String propertyName = "property-testRemovePropertyStringString";
 		final String elementId = "element-testRemovePropertyStringString";
 		
-		final TProperty property = this.graph.createProperty(propertyName, elementId);
+		final IElementProperty property = this.graph.createProperty(propertyName, elementId);
 		assertNotNull(property);
 		
 		assertNotNull(this.graph.getProperty(propertyName, elementId));
@@ -878,8 +878,8 @@ public class OrientPropertyAccessTraceTest extends AbstractOrientPropertyAccessT
 		final String propertyName = "property-testRemovePropertyStringTElement";
 		final String elementId = "element-testRemovePropertyStringTElement";
 		
-		final TElement element = this.graph.createElement(elementId);
-		final TProperty property = this.graph.createProperty(propertyName, elementId);
+		final IModelElement element = this.graph.createElement(elementId);
+		final IElementProperty property = this.graph.createProperty(propertyName, elementId);
 		assertNotNull(element);
 		assertNotNull(property);
 		

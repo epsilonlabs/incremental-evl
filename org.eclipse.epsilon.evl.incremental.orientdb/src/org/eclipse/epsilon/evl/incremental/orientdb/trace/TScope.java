@@ -1,10 +1,23 @@
-package org.eclipse.epsilon.evl.incremental.trace;
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Thanos Zolotas - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.epsilon.evl.incremental.orientdb.trace;
+
+import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.VertexFrame;
 
+// TODO: Auto-generated Javadoc
 /**
  * The {@link TScope} interface represents a constraint scope vertex in the
  * trace graph.
@@ -14,16 +27,26 @@ import com.tinkerpop.frames.VertexFrame;
  */
 public interface TScope extends TraceComponent, VertexFrame {
 
-	/**
-	 * Common name of this trace element
-	 */
+	/** Common name of this trace element. */
 	String TRACE_TYPE = "scope";
 	
+	/** The result. */
 	String RESULT = "result";
 
+	/**
+	 * Sets the result.
+	 *
+	 * @param result the new result
+	 */
 	@Property(RESULT)
 	void setResult(boolean result);
 	
+	/**
+	 * Gets the result.
+	 *
+	 * @param result the result
+	 * @return the result
+	 */
 	@Property(RESULT)
 	boolean getResult(boolean result);
 	
@@ -45,18 +68,17 @@ public interface TScope extends TraceComponent, VertexFrame {
 	void setConstraint(TConstraint constraint);
 
 	/**
-	 * Get the model element that is used as the root of this scope
-	 * 
+	 * Get the model element that is used as the root of this scope.
+	 *
 	 * @return The model element.
 	 */
 	@Adjacency(label = TRootOf.TRACE_TYPE, direction = Direction.IN)
 	TElement getRootElement();
 
 	/**
-	 * Set the model element that is used as the root of this scope
-	 * 
-	 * @param element
-	 *            the new model element
+	 * Set the model element that is used as the root of this scope.
+	 *
+	 * @param element            the new model element
 	 */
 	@Adjacency(label = TRootOf.TRACE_TYPE, direction = Direction.IN)
 	void setRootElement(TElement element);

@@ -1,4 +1,14 @@
-package org.eclipse.epsilon.evl.incremental.trace;
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Thanos Zolotas - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.epsilon.eol.incremental.trace;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -10,6 +20,7 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 
+// TODO: Auto-generated Javadoc
 /**
  * Implementation of {@link IExecutionListener} that logs property accesses
  * during evaluation of an EOL statement.
@@ -22,11 +33,16 @@ import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 // over all the ast again. 
 public class PropertyAccessListener implements IExecutionListener {
 
+	/** The accesses. */
 	private Collection<PropertyAccess> accesses = new HashSet<PropertyAccess>();
 	
+	/** The last element. */
 	// The last model element accessed
 	private EObject lastElement = null;
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.eol.execute.control.IExecutionListener#finishedExecuting(org.eclipse.epsilon.common.module.ModuleElement, java.lang.Object, org.eclipse.epsilon.eol.execute.context.IEolContext)
+	 */
 	@Override
 	public void finishedExecuting(ModuleElement ast, Object result, IEolContext ctx) {
 		
@@ -44,17 +60,28 @@ public class PropertyAccessListener implements IExecutionListener {
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.eol.execute.control.IExecutionListener#aboutToExecute(org.eclipse.epsilon.common.module.ModuleElement, org.eclipse.epsilon.eol.execute.context.IEolContext)
+	 */
 	@Override
 	public void aboutToExecute(ModuleElement ast, IEolContext context) {
 		// Do nothing
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.eol.execute.control.IExecutionListener#finishedExecutingWithException(org.eclipse.epsilon.common.module.ModuleElement, org.eclipse.epsilon.eol.exceptions.EolRuntimeException, org.eclipse.epsilon.eol.execute.context.IEolContext)
+	 */
 	@Override
 	public void finishedExecutingWithException(ModuleElement ast,
 			EolRuntimeException exception, IEolContext context) {
 		// Do nothing
 	}
 	
+	/**
+	 * Gets the property accesses.
+	 *
+	 * @return the property accesses
+	 */
 	public Collection<PropertyAccess> getPropertyAccesses() {
 		return accesses;
 	}

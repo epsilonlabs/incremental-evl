@@ -12,11 +12,11 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.emc.emf.EmfModelFactory;
+import org.eclipse.epsilon.eol.incremental.trace.IIncrementalTraceManager;
+import org.eclipse.epsilon.eol.incremental.trace.IModelElement;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
-import org.eclipse.epsilon.evl.incremental.trace.TElement;
 import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
-import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
-import org.eclipse.epsilon.evl.incremental.trace.orient.OrientPropertyAccessTrace;
+import org.eclipse.epsilon.evl.incremental.orientdb.OrientPropertyAccessTrace;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class EmfPropertyChangeListenerTest extends AbstractOrientPropertyAccessT
 
 	private IncrementalEvlModule module = null;
 	private EmfModel model = null;
-	private IPropertyAccessTrace trace = null;
+	private IIncrementalTraceManager trace = null;
 
 	@BeforeClass
 	public static void setupClass() throws Exception {
@@ -77,7 +77,7 @@ public class EmfPropertyChangeListenerTest extends AbstractOrientPropertyAccessT
 		final String id = "_0oxZsEwxEeWCTquqlmo4Bw";
 		
 		// Assert is in the trace and is not satisifed
-		TElement beforeElement = this.trace.getElement(id);
+		IModelElement beforeElement = this.trace.getElement(id);
 		assertNotNull(beforeElement);
 		
 		for (UnsatisfiedConstraint unsatisfiedConstraint : module.getContext().getUnsatisfiedConstraints()) {

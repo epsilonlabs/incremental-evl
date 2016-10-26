@@ -3,7 +3,7 @@ package org.eclipse.epsilon.evl.incremental;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.epsilon.evl.incremental.trace.orient.OrientPropertyAccessTrace;
+import org.eclipse.epsilon.evl.incremental.orientdb.OrientPropertyAccessTrace;
 
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 

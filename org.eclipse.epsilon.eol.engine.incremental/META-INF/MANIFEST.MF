@@ -6,4 +6,7 @@ Bundle-Version: 0.0.1.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.epsilon.eol.incremental.dom,
  org.eclipse.epsilon.eol.incremental.execute,
- org.eclipse.epsilon.eol.incremental.models
+ org.eclipse.epsilon.eol.incremental.models,
+ org.eclipse.epsilon.eol.incremental.trace
+Require-Bundle: org.eclipse.epsilon.eol.engine,
+ org.eclipse.emf.ecore

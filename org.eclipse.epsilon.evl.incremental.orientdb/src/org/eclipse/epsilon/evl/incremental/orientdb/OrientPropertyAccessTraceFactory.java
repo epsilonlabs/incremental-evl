@@ -1,20 +1,30 @@
-package org.eclipse.epsilon.evl.incremental.trace.orient;
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Thanos Zolotas - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.epsilon.evl.incremental.orientdb;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IPropertyAccessTraceFactory;
-import org.eclipse.epsilon.evl.incremental.trace.TAccesses;
-import org.eclipse.epsilon.evl.incremental.trace.TConstraint;
-import org.eclipse.epsilon.evl.incremental.trace.TContext;
-import org.eclipse.epsilon.evl.incremental.trace.TElement;
-import org.eclipse.epsilon.evl.incremental.trace.TEvaluates;
-import org.eclipse.epsilon.evl.incremental.trace.TIn;
-import org.eclipse.epsilon.evl.incremental.trace.TOwns;
-import org.eclipse.epsilon.evl.incremental.trace.TProperty;
-import org.eclipse.epsilon.evl.incremental.trace.TRootOf;
-import org.eclipse.epsilon.evl.incremental.trace.TScope;
+import org.eclipse.epsilon.eol.incremental.trace.IIncrementalTraceManager;
+import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccessTraceFactory;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.TAccesses;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.TConstraint;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.TContext;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.TElement;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.TEvaluates;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.TIn;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.TOwns;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.TProperty;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.TRootOf;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.TScope;
 
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.tinkerpop.blueprints.Parameter;
@@ -23,6 +33,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
 
+// TODO: Auto-generated Javadoc
 /**
  * Implementation of {@link IPropertyAccessTraceFactory} that uses Orient-DB as its
  * underlying database engine.
@@ -32,17 +43,21 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
  */
 public class OrientPropertyAccessTraceFactory implements IPropertyAccessTraceFactory {
 
+	/** The config. */
 	private final Map<String, String> config;
-	private OrientPropertyAccessTrace graphInstance = null;
 	
+	/** The graph instance. */
+	private OrientTraceManager graphInstance = null;
+	
+	/** The instance. */
 	private static OrientPropertyAccessTraceFactory instance = new OrientPropertyAccessTraceFactory("memory:%s", "admin", "admin");
 
 	/**
-	 * Default Constructor
+	 * Default Constructor.
 	 *
-	 * @param url
-	 * @param user
-	 * @param pass
+	 * @param url the url
+	 * @param user the user
+	 * @param pass the pass
 	 */
 	private OrientPropertyAccessTraceFactory(String url, String user, String pass) {
 		// Build configuration
@@ -56,12 +71,20 @@ public class OrientPropertyAccessTraceFactory implements IPropertyAccessTraceFac
 		this.config.put("log.file.level", "fine");
 	}
 	
+	/**
+	 * Gets the single instance of OrientPropertyAccessTraceFactory.
+	 *
+	 * @return single instance of OrientPropertyAccessTraceFactory
+	 */
 	public static OrientPropertyAccessTraceFactory getInstance() {
 		return instance;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.epsilon.eol.incremental.trace.IPropertyAccessTraceFactory#getTrace()
+	 */
 	@Override
-	public IPropertyAccessTrace getTrace() {
+	public IIncrementalTraceManager getTrace() {
 		// Init the graph if not already done so
 		if (graphInstance == null || !graphInstance.isOpen()) {
 //			OrientGraph orientGraph = (OrientGraph) GraphFactory.open(this.config);
@@ -69,7 +92,7 @@ public class OrientPropertyAccessTraceFactory implements IPropertyAccessTraceFac
 			OrientGraphNoTx graph = new OrientGraphNoTx("memory:EVLTrace");
 			
 			this.setupClasses(graph);
-			this.graphInstance = new OrientPropertyAccessTrace(graph);
+			this.graphInstance = new OrientTraceManager(graph);
 		}
 		return this.graphInstance;
 	}
@@ -139,6 +162,12 @@ public class OrientPropertyAccessTraceFactory implements IPropertyAccessTraceFac
 		graph.commit();
 	}
 
+	/**
+	 * Setup edge type.
+	 *
+	 * @param graph the graph
+	 * @param types the types
+	 */
 	private void setupEdgeType(OrientBaseGraph graph, String... types) {
 		for (String type : types) {
 			if (graph.getEdgeType(type) == null) graph.createEdgeType(type);
