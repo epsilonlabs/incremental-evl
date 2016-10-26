@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Thanos Zolotas - Initial API and implementation
+ *******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.orientdb.trace;
 
 import com.tinkerpop.blueprints.Direction;
@@ -5,6 +15,7 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.VertexFrame;
 
+// TODO: Auto-generated Javadoc
 /**
  * The {@link TProperty} interface represents a model element property vertex
  * in the trace graph.
@@ -14,27 +25,24 @@ import com.tinkerpop.frames.VertexFrame;
  */
 public interface TProperty extends TraceComponent, VertexFrame {
 
-	/**
-	 * Common name of this trace element
-	 */
+	/** Common name of this trace element. */
 	String TRACE_TYPE = "property";
 
-	/**
-	 * Key to the 'name' property of this property
-	 */
+	/** Key to the 'name' property of this property. */
 	String NAME = "name";
 
 	/**
+	 * Gets the name.
+	 *
 	 * @return The name of this property
 	 */
 	@Property(TProperty.NAME)
 	String getName();
 
 	/**
-	 * Set the name of this property
-	 * 
-	 * @param name
-	 *            The new name of this property
+	 * Set the name of this property.
+	 *
+	 * @param name            The new name of this property
 	 */
 	@Property(TProperty.NAME)
 	void setName(String name);
@@ -49,16 +57,16 @@ public interface TProperty extends TraceComponent, VertexFrame {
 
 	/**
 	 * Set the model element that owns this property.
-	 * 
-	 * @param element
-	 *            The new model element that owns this property.
+	 *
+	 * @param element            The new model element that owns this property.
+	 * @return the t element
 	 */
 	@Adjacency(label = TOwns.TRACE_TYPE, direction = Direction.IN)
 	TElement setOwner(TElement element);
 
 	/**
-	 * Get the scopes that access this property
-	 * 
+	 * Get the scopes that access this property.
+	 *
 	 * @return An {@link Iterable} containing all the relevant scopes.
 	 */
 	@Adjacency(label = TAccesses.TRACE_TYPE, direction = Direction.IN)

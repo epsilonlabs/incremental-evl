@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Thanos Zolotas - Initial API and implementation
+ *******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.orientdb.trace;
 
 import com.tinkerpop.blueprints.Direction;
@@ -5,6 +15,7 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.VertexFrame;
 
+// TODO: Auto-generated Javadoc
 /**
  * The {@link TElement} interface represents a model element vertex in the
  * trace graph.
@@ -14,27 +25,24 @@ import com.tinkerpop.frames.VertexFrame;
  */
 public interface TElement extends TraceComponent, VertexFrame {
 
-	/**
-	 * Common name of this trace element
-	 */
+	/** Common name of this trace element. */
 	String TRACE_TYPE = "element";
 
-	/**
-	 * Key to the 'element_id' property of this constraint
-	 */
+	/** Key to the 'element_id' property of this constraint. */
 	String ELEMENT_ID = "element_id";
 
 	/**
+	 * Gets the element id.
+	 *
 	 * @return The id of this model element
 	 */
 	@Property(ELEMENT_ID)
 	String getElementId();
 
 	/**
-	 * Set the id of this model element
-	 * 
-	 * @param elementId
-	 *            The new id
+	 * Set the id of this model element.
+	 *
+	 * @param elementId            The new id
 	 */
 	@Property(ELEMENT_ID)
 	void setElementId(String elementId);

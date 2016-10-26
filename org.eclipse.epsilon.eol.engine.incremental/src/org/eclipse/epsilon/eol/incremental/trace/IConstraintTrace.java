@@ -1,5 +1,16 @@
-package org.eclipse.epsilon.evl.incremental.trace;
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Thanos Zolotas - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.epsilon.eol.incremental.trace;
 
+// TODO: Auto-generated Javadoc
 /**
  * The {@link IConstraintTrace} interface represents a constraint vertex in the trace
  * graph.
@@ -11,28 +22,17 @@ package org.eclipse.epsilon.evl.incremental.trace;
 public interface IConstraintTrace extends TraceComponent {
 
 	/**
-	 * Common name of this trace element
-	 */
-//	String TRACE_TYPE = "constraint";
-
-	/**
-	 * Key to the 'name' property of this constraint
-	 */
-//	String NAME = "name";
-
-	/**
+	 * Gets the name.
+	 *
 	 * @return The name of this constraint
 	 */
-//	@Property(NAME)
 	String getName();
 
 	/**
-	 * Set the name of this constraint
-	 * 
-	 * @param name
-	 *            The new name of this constraint
+	 * Set the name of this constraint.
+	 *
+	 * @param name            The new name of this constraint
 	 */
-//	@Property(NAME)
 	void setName(String name);
 
 	/**
@@ -40,7 +40,6 @@ public interface IConstraintTrace extends TraceComponent {
 	 * 
 	 * @return An {@link Iterable} containing all the relevant scopes.
 	 */
-//	@Adjacency(label = TEvaluates.TRACE_TYPE, direction = Direction.OUT)
 	Iterable<ITraceScope> getScopes();
 
 	/**
@@ -50,7 +49,6 @@ public interface IConstraintTrace extends TraceComponent {
 	 *            The scope to add.
 	 * @return the original scope parameter but linked to this constraint.
 	 */
-//	@Adjacency(label = TEvaluates.TRACE_TYPE, direction = Direction.OUT)
 	ITraceScope addScope(ITraceScope scope);
 
 	/**
@@ -59,13 +57,21 @@ public interface IConstraintTrace extends TraceComponent {
 	 * @param scope
 	 *            The scope to remove.
 	 */
-//	@Adjacency(label = TEvaluates.TRACE_TYPE, direction = Direction.OUT)
 	void removeScope(ITraceScope scope);
 	
-//	@Adjacency(label = TIn.TRACE_TYPE, direction = Direction.OUT)
+	/**
+	 * Gets the context.
+	 *
+	 * @return the context
+	 */
 	IContextTrace getContext();
 	
-//	@Adjacency(label = TIn.TRACE_TYPE, direction = Direction.OUT)
+	/**
+	 * Adds the context.
+	 *
+	 * @param context the context
+	 * @return the i context trace
+	 */
 	IContextTrace addContext(IContextTrace context);
 
 }

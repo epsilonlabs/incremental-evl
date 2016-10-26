@@ -8,31 +8,19 @@
  * Contributors:
  *     Thanos Zolotas - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.evl.incremental.orientdb.trace;
-
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.VertexFrame;
+package org.eclipse.epsilon.eol.incremental.trace;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Interface TContext.
+ * The Interface IContextTrace.
  */
-public interface TContext extends TraceComponent, VertexFrame {
-
-	/** Common name of this trace element. */
-	String TRACE_TYPE = "context";
-
-	/** Key to the 'name' property of this constraint. */
-	String NAME = "name";
+public interface IContextTrace extends TraceComponent { //, VertexFrame {
 
 	/**
-	 * Gets the name.
-	 *
-	 * @return The name of this context
-	 */
-	@Property(NAME)
+  * Gets the name.
+  *
+  * @return The name of this context
+  */
 	String getName();
 
 	/**
@@ -40,7 +28,6 @@ public interface TContext extends TraceComponent, VertexFrame {
 	 *
 	 * @param name            The new name of this context
 	 */
-	@Property(NAME)
 	void setName(String name);
 
 	/**
@@ -48,23 +35,20 @@ public interface TContext extends TraceComponent, VertexFrame {
 	 *
 	 * @return the constraints
 	 */
-	@Adjacency(label = TIn.TRACE_TYPE, direction = Direction.IN)
-	Iterable<TConstraint> getConstraints();
+	Iterable<IConstraintTrace> getConstraints();
 
 	/**
 	 * Adds the constraint.
 	 *
 	 * @param constraint the constraint
-	 * @return the t constraint
+	 * @return the i constraint trace
 	 */
-	@Adjacency(label = TIn.TRACE_TYPE, direction = Direction.IN)
-	TConstraint addConstraint(TConstraint constraint);
+	IConstraintTrace addConstraint(IConstraintTrace constraint);
 
 	/**
 	 * Removes the constraint.
 	 *
 	 * @param constraint the constraint
 	 */
-	@Adjacency(label = TIn.TRACE_TYPE, direction = Direction.IN)
-	void removeConstraint(TConstraint constraint);
+	void removeConstraint(IConstraintTrace constraint);
 }

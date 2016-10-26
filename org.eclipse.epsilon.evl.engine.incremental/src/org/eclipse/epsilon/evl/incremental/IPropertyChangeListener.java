@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.epsilon.evl.incremental.trace.ITraceScope;
+import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
 
 /**
  * The IPropertyChangeListener defines the methods used to respond to changes in a model. 

@@ -9,8 +9,9 @@
  *     Jonathan Co - Initial API and implementation
  *     Horacio Hoyos - Refactoring and decoupling
  *******************************************************************************/
-package org.eclipse.epsilon.evl.incremental.trace;
+package org.eclipse.epsilon.eol.incremental.trace;
 
+// TODO: Auto-generated Javadoc
 /**
  * The TraceScope is a relation between the a ModuleElement, a ModelElement, the
  * ElementProperties accessed and the result of the execution of the ModuleElement.
@@ -21,7 +22,6 @@ package org.eclipse.epsilon.evl.incremental.trace;
  */
 public interface ITraceScope extends TraceComponent {
 
-	
 	/**
 	 * Sets the result.
 	 *

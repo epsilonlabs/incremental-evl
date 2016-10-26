@@ -1,5 +1,16 @@
-package org.eclipse.epsilon.evl.incremental.trace;
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Thanos Zolotas - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.epsilon.eol.incremental.trace;
 
+// TODO: Auto-generated Javadoc
 /**
  * POJO to hold a Scope.
  * 
@@ -8,30 +19,62 @@ package org.eclipse.epsilon.evl.incremental.trace;
  */
 public class PropertyAccess {
 
+	/** The element id. */
 	private String elementId;
+	
+	/** The property name. */
 	private String propertyName;
 	
+	/**
+	 * Instantiates a new property access.
+	 *
+	 * @param elementId the element id
+	 * @param propertyName the property name
+	 */
 	public PropertyAccess(String elementId, String propertyName) {
 		this.elementId = elementId;
 		this.propertyName = propertyName;
 	}
 
+	/**
+	 * Gets the element id.
+	 *
+	 * @return the element id
+	 */
 	public String getElementId() {
 		return elementId;
 	}
 
+	/**
+	 * Sets the element id.
+	 *
+	 * @param elementId the new element id
+	 */
 	public void setElementId(String elementId) {
 		this.elementId = elementId;
 	}
 
+	/**
+	 * Gets the property name.
+	 *
+	 * @return the property name
+	 */
 	public String getPropertyName() {
 		return propertyName;
 	}
 
+	/**
+	 * Sets the property name.
+	 *
+	 * @param propertyName the new property name
+	 */
 	public void setPropertyName(String propertyName) {
 		this.propertyName = propertyName;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -43,6 +86,9 @@ public class PropertyAccess {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

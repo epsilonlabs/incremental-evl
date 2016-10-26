@@ -8,34 +8,22 @@
  * Contributors:
  *     Thanos Zolotas - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.evl.incremental.orientdb.trace;
+package org.eclipse.epsilon.eol.incremental.trace;
 
-import com.tinkerpop.frames.EdgeFrame;
-import com.tinkerpop.frames.InVertex;
-import com.tinkerpop.frames.OutVertex;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Interface TIn.
+ * Interface specifying common methods for a factory for {@link IIncrementalTraceManager}s.
+ *
+ * @author Jonathan Co
  */
-public interface TIn extends TraceComponent, EdgeFrame {
-	
-	/** The trace type. */
-	String TRACE_TYPE = "in";
+public interface IPropertyAccessTraceFactory {
 
 	/**
-	 * Gets the context.
+	 * Gets the trace.
 	 *
-	 * @return the context
+	 * @return An instance of the {@link IIncrementalTraceManager}.
 	 */
-	@InVertex
-	TContext getContext();
+	IIncrementalTraceManager getTrace();
 	
-	/**
-	 * Gets the constraint.
-	 *
-	 * @return the constraint
-	 */
-	@OutVertex
-	TConstraint getConstraint();
 }

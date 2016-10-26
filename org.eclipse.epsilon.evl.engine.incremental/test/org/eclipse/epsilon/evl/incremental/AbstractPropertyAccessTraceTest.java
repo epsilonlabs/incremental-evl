@@ -4,7 +4,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.eclipse.epsilon.evl.incremental.trace.IIncrementalTraceManager;
+import org.eclipse.epsilon.eol.incremental.trace.IIncrementalTraceManager;
 import org.junit.After;
 
 public abstract class AbstractPropertyAccessTraceTest<T extends IIncrementalTraceManager> {
