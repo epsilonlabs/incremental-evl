@@ -21,10 +21,10 @@ package org.eclipse.epsilon.eol.incremental.trace;
 public interface IModelElement extends TraceComponent { //, VertexFrame {
 
 	/**
-  * Gets the element id.
-  *
-  * @return The id of this model element
-  */
+	 * Gets the element id.
+	 *
+	 * @return The id of this model element
+	 */
 	String getElementId();
 
 	/**

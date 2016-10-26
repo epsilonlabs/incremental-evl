@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.dom;
 
+import org.eclipse.epsilon.common.module.ModuleElement;
+import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+
 /**
  * The Interface IIncrementalModuleElement. Incremental Modules can be attached to IIncrementalModel in order to be
  * notified of changes in the model and execute specific elements/sections of the module that are related to the object
@@ -45,4 +48,18 @@ public interface IIncrementalModule {
 	 */
 	public void onDelete(String elementId, Object element, String propertyName);
 
+	/**
+	 * Create an ID for a module element
+	 * @param moduleElement
+	 * @return The ID
+	 * @throws EolRuntimeException 
+	 */
+	public String getModuleElementId(ModuleElement moduleElement) throws EolRuntimeException;
+
+	/**
+	 * Get a module element by ID
+	 * @param moduleElementId
+	 * @return The module element
+	 */
+	public ModuleElement getModuleElementById(String moduleElementId);
 }

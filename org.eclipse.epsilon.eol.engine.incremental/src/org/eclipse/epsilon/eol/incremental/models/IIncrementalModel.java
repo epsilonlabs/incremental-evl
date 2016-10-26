@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.models;
 
-import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
+import org.eclipse.emf.ecore.resource.Resource;
 
 
 /**
@@ -40,14 +40,7 @@ public interface IIncrementalModel {
 	 * @return true, if successful
 	 */
 	public boolean disableNotifications();
-	
-	/**
-	 * Adds a listener to the list of listeners of the model.
-	 *
-	 * @param moduleElement the module element
-	 */
-	public void addListener(IIncrementalModule moduleElement);
-	
+		
 	/**
 	 * Gets the property value for an element (identified by the id). 
 	 *
@@ -56,5 +49,7 @@ public interface IIncrementalModel {
 	 * @return the property value
 	 */
 	public Object getPropertyValue(String elementId, String propertyName); 
+	
+	public Resource getResource();
 
 }

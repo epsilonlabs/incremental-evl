@@ -7,9 +7,10 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
-import org.eclipse.epsilon.emc.emf.InMemoryEmfModel;
+import org.eclipse.epsilon.emc.emf.incremental.IncrementalInMemoryEmfModel2;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.models.ModelRepository;
 import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
 import org.eclipse.jface.window.Window;
@@ -80,8 +81,8 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 		// FIXME I think we only want to attach to the model opened in the editor
 		for (Resource resource : edp.getEditingDomain().getResourceSet()
 				.getResources()) {						
-			InMemoryEmfModel inMemoryEmfModel = new InMemoryEmfModel(resource);
-			modelRepository.addModel(inMemoryEmfModel);
+			IModel inMemoryEmfModel = new IncrementalInMemoryEmfModel2();
+			//modelRepository.addModel(inMemoryEmfModel );
 		}
 
 		module.execute();

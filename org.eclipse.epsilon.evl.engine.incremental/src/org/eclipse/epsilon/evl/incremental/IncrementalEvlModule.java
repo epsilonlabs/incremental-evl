@@ -21,6 +21,7 @@ import java.util.Set;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.emc.emf.EmfModel;
+import org.eclipse.epsilon.emc.emf.incremental.EmfPropertyChangeListener;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
@@ -225,6 +226,34 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 			System.out.println(uc.getMessage());
 		}
 	}
-	
-	
+
+	/**
+	 * In EVL the module element ID is formed by joining the Context name and the Constraint name. 
+	 * <contextName>.<constraintName>
+	 */
+	@Override
+	public String getModuleElementId(ModuleElement moduleElement) throws EolRuntimeException {
+		if (!(moduleElement instanceof Constraint)) {
+			throw new EolRuntimeException("Can not create ids for module elements that are not Constraints.");
+		}
+		Constraint constraint = (Constraint) moduleElement;
+		String constraintName = constraint.getName();
+		String contextName = constraint.getConstraintContext().getTypeName();
+		// TODO Check if the getTypeName() returns the model name too
+		return contextName + "." + constraintName;
+	}
+
+	@Override
+	public ModuleElement getModuleElementById(String moduleElementId) {
+		String[] names = moduleElementId.split(".");
+		ModuleElement result = null;
+		for (Constraint constraint : getConstraints()) {
+			if (constraint.getName().equals(names[1])
+					&& constraint.getConstraintContext().getTypeName().equals(names[0])) {
+				result = constraint;
+				break;
+			}
+		}
+		return result;
+	}
 }
