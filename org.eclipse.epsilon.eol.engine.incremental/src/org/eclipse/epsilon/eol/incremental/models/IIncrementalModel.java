@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.models;
 
-import org.eclipse.emf.ecore.resource.Resource;
-
 
 /**
  * The Interface IIncrementalModel defines the API for models that support incremental execution, both on-line and 
@@ -50,6 +48,4 @@ public interface IIncrementalModel {
 	 */
 	public Object getPropertyValue(String elementId, String propertyName); 
 	
-	public Resource getResource();
-
 }

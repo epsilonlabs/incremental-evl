@@ -1,9 +1,11 @@
-package org.eclipse.epsilon.emc.emf.incremental;
+package thanos;
 
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.epsilon.common.util.StringProperties;
+import org.eclipse.epsilon.emc.emf.InMemoryEmfModel;
 import org.eclipse.epsilon.eol.compile.m3.Metamodel;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundException;
@@ -16,243 +18,172 @@ import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 import org.eclipse.epsilon.eol.models.transactions.IModelTransactionSupport;
 
-public class IncrementalInMemoryEmfModel2 implements IModel {
+public class IncrementalInMemoryEmfModel extends AbstractIncrementalEMFModel implements IModel {
 
-	@Override
 	public void load(StringProperties properties) throws EolModelLoadingException {
-		// TODO Auto-generated method stub
-		
+		delegate.load(properties);
 	}
 
-	@Override
 	public void load(StringProperties properties, String basePath) throws EolModelLoadingException {
-		// TODO Auto-generated method stub
-		
+		delegate.load(properties, basePath);
 	}
 
-	@Override
 	public void load(StringProperties properties, IRelativePathResolver relativePathResolver)
 			throws EolModelLoadingException {
-		// TODO Auto-generated method stub
-		
+		delegate.load(properties, relativePathResolver);
 	}
 
-	@Override
 	public void load() throws EolModelLoadingException {
-		// TODO Auto-generated method stub
-		
+		delegate.load();
 	}
 
-	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate.getName();
 	}
 
-	@Override
 	public void setName(String name) {
-		// TODO Auto-generated method stub
-		
+		delegate.setName(name);
 	}
 
-	@Override
 	public List<String> getAliases() {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate.getAliases();
 	}
 
-	@Override
 	public Object getEnumerationValue(String enumeration, String label) throws EolEnumerationValueNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate.getEnumerationValue(enumeration, label);
 	}
 
-	@Override
 	public Collection<?> allContents() {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate.allContents();
 	}
 
-	@Override
 	public Collection<?> getAllOfType(String type) throws EolModelElementTypeNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate.getAllOfType(type);
 	}
 
-	@Override
 	public Collection<?> getAllOfKind(String type) throws EolModelElementTypeNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate.getAllOfKind(type);
 	}
 
-	@Override
 	public Object getTypeOf(Object instance) {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate.getTypeOf(instance);
 	}
 
-	@Override
 	public String getTypeNameOf(Object instance) {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate.getTypeNameOf(instance);
 	}
 
-	@Override
 	public String getFullyQualifiedTypeNameOf(Object instance) {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate.getFullyQualifiedTypeNameOf(instance);
 	}
 
-	@Override
 	public Object createInstance(String type)
 			throws EolModelElementTypeNotFoundException, EolNotInstantiableModelElementTypeException {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate.createInstance(type);
 	}
 
-	@Override
 	public Object createInstance(String type, Collection<Object> parameters)
 			throws EolModelElementTypeNotFoundException, EolNotInstantiableModelElementTypeException {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate.createInstance(type, parameters);
 	}
 
-	@Override
 	public Object getElementById(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate.getElementById(id);
 	}
 
-	@Override
 	public String getElementId(Object instance) {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate.getElementId(instance);
 	}
 
-	@Override
 	public void setElementId(Object instance, String newId) {
-		// TODO Auto-generated method stub
-		
+		delegate.setElementId(instance, newId);
 	}
 
-	@Override
 	public void deleteElement(Object instance) throws EolRuntimeException {
-		// TODO Auto-generated method stub
-		
+		delegate.deleteElement(instance);
 	}
 
-	@Override
 	public boolean isOfKind(Object instance, String type) throws EolModelElementTypeNotFoundException {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate.isOfKind(instance, type);
 	}
 
-	@Override
 	public boolean isOfType(Object instance, String type) throws EolModelElementTypeNotFoundException {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate.isOfType(instance, type);
 	}
 
-	@Override
 	public boolean owns(Object instance) {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate.owns(instance);
 	}
 
-	@Override
 	public boolean knowsAboutProperty(Object instance, String property) {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate.knowsAboutProperty(instance, property);
 	}
 
-	@Override
 	public boolean isPropertySet(Object instance, String property) throws EolRuntimeException {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate.isPropertySet(instance, property);
 	}
 
-	@Override
 	public boolean isInstantiable(String type) {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate.isInstantiable(type);
 	}
 
-	@Override
 	public boolean isModelElement(Object instance) {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate.isModelElement(instance);
 	}
 
-	@Override
 	public boolean hasType(String type) {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate.hasType(type);
 	}
 
-	@Override
 	public boolean store(String location) {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate.store(location);
 	}
 
-	@Override
 	public boolean store() {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate.store();
 	}
 
-	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-		
+		delegate.dispose();
 	}
 
-	@Override
 	public IPropertyGetter getPropertyGetter() {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate.getPropertyGetter();
 	}
 
-	@Override
 	public IPropertySetter getPropertySetter() {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate.getPropertySetter();
 	}
 
-	@Override
 	public boolean isStoredOnDisposal() {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate.isStoredOnDisposal();
 	}
 
-	@Override
 	public void setStoredOnDisposal(boolean storedOnDisposal) {
-		// TODO Auto-generated method stub
-		
+		delegate.setStoredOnDisposal(storedOnDisposal);
 	}
 
-	@Override
 	public boolean isReadOnLoad() {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate.isReadOnLoad();
 	}
 
-	@Override
 	public void setReadOnLoad(boolean readOnLoad) {
-		// TODO Auto-generated method stub
-		
+		delegate.setReadOnLoad(readOnLoad);
 	}
 
-	@Override
 	public IModelTransactionSupport getTransactionSupport() {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate.getTransactionSupport();
+	}
+
+	public Metamodel getMetamodel(StringProperties properties, IRelativePathResolver resolver) {
+		return delegate.getMetamodel(properties, resolver);
 	}
 
 	@Override
-	public Metamodel getMetamodel(StringProperties properties, IRelativePathResolver resolver) {
-		// TODO Auto-generated method stub
-		return null;
+	public Resource getResource() {
+		return ((InMemoryEmfModel)delegate).getResource();
 	}
+	
+	
 
 }

@@ -1,22 +1,24 @@
-package org.eclipse.epsilon.emc.emf.incremental;
-
+package thanos;
 
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.epsilon.emc.emf.AbstractEmfModel;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
 import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
+import org.eclipse.epsilon.eol.models.IModel;
 
-public class BaseIncrementalEMFModel implements IIncrementalModel {
-
-	private IIncrementalModule module;
+public abstract class AbstractIncrementalEMFModel implements IIncrementalModel {
+	
+	protected IModel delegate;
+	protected IIncrementalModule module;
 	private EmfPropertyChangeListener emfPCL;
-	private AbstractEmfModel owner;
+	
+	abstract public Resource getResource();
 
-	/**
-	 * @param owner
-	 */
-	public BaseIncrementalEMFModel(AbstractEmfModel owner) {
-		this.owner = owner;
+	public IModel getDelegate() {
+		return delegate;
+	}
+
+	public void setDelegate(IModel delegate) {
+		this.delegate = delegate;
 	}
 
 	public IIncrementalModule getModule() {
@@ -26,6 +28,8 @@ public class BaseIncrementalEMFModel implements IIncrementalModel {
 	public void setModule(IIncrementalModule module) {
 		this.module = module;
 	}
+	
+	
 
 	@Override
 	public boolean supportsNotifications() {
@@ -37,7 +41,7 @@ public class BaseIncrementalEMFModel implements IIncrementalModel {
 		if (module == null) {
 			return false;
 		}
-		emfPCL = new EmfPropertyChangeListener(owner, module);
+		emfPCL = new EmfPropertyChangeListener(delegate, module);
 		this.getResource().eAdapters().add(emfPCL);
 		return true;
 	}
@@ -51,10 +55,7 @@ public class BaseIncrementalEMFModel implements IIncrementalModel {
 	public Object getPropertyValue(String elementId, String propertyName) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
+	
 
-	@Override
-	public Resource getResource() {
-		return owner.getResource();
-	}
 
 }

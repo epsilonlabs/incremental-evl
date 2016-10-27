@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.emc.emf.incremental;
+package thanos;
 
 import java.util.HashMap;
 import java.util.Map;

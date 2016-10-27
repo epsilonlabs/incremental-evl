@@ -21,11 +21,11 @@ import java.util.Set;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.emc.emf.EmfModel;
-import org.eclipse.epsilon.emc.emf.incremental.EmfPropertyChangeListener;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
+import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.eol.incremental.trace.IElementProperty;
 import org.eclipse.epsilon.eol.incremental.trace.IIncrementalTraceManager;
 import org.eclipse.epsilon.eol.incremental.trace.IModelElement;
@@ -134,11 +134,11 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 		// FIXME I think we only want to attach to the model opened in the editor
 		for (IModel model : this.getContext().getModelRepository().getModels()) {
 			// FIXME We need to decouple this from the Model
-			if (model instanceof EmfModel) {
-				EmfModel emfModel = (EmfModel) model;
-				EmfPropertyChangeListener listener = new EmfPropertyChangeListener(
-						emfModel, this);
-				((EmfModel) model).getResource().eAdapters().add(listener);
+			if (model instanceof IIncrementalModel) {
+				IIncrementalModel incrementalModel = (IIncrementalModel) model;
+				if (incrementalModel.supportsNotifications()) {
+					incrementalModel.enableNotifications();
+				}
 			}
 		}
 	}

@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Incremental
-Bundle-SymbolicName: org.eclipse.epsilon.emc.emf.incremental
+Bundle-Name: Incremental EMF EMC
+Bundle-SymbolicName: emf.incremental
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.epsilon.eol.engine,
  org.eclipse.epsilon.eol.engine.incremental,
  org.eclipse.emf.ecore,
- org.eclipse.epsilon.emc.emf;bundle-version="1.4.0"
-Export-Package: org.eclipse.epsilon.emc.emf.incremental
+ org.eclipse.epsilon.emc.emf
+Export-Package: thanos
