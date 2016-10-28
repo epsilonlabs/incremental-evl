@@ -13,12 +13,12 @@ package org.eclipse.epsilon.eol.incremental.trace;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
+import org.eclipse.epsilon.eol.models.IModel;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -38,7 +38,7 @@ public class PropertyAccessListener implements IExecutionListener {
 	
 	/** The last element. */
 	// The last model element accessed
-	private EObject lastElement = null;
+	private Object lastElement = null;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.execute.control.IExecutionListener#finishedExecuting(org.eclipse.epsilon.common.module.ModuleElement, java.lang.Object, org.eclipse.epsilon.eol.execute.context.IEolContext)
@@ -46,10 +46,19 @@ public class PropertyAccessListener implements IExecutionListener {
 	@Override
 	public void finishedExecuting(ModuleElement ast, Object result, IEolContext ctx) {
 		
-		if (result instanceof EObject) {
-			this.lastElement = (EObject) result;
+		// For EMF it is easy to track model elements as we only need to test if the result was an EObject, to support
+		// a more generalised EMC approach tracking of the accessed element has to be done more intelligently
+		// For the time being we can 1. Find the owning model of the result, if if exists then we can save the
+		// reference. However, this seems fragile because if the result of the evaluation is another EOBject, then
+		// it will break.
+		// The lastElementshould be set not based on the result of execution, but before execution of the ast, or before
+		// execution of the ModuleElement (i.e. block of code).
+		IModel om = ctx.getModelRepository().getOwningModel(result);
+		if (om != null) {
+//		if (result instanceof EObject) {
+			this.lastElement = result;
+//		}
 		}
-		
 		// Log the name of the property accessed in the model element
 		if (ast instanceof PropertyCallExpression) {
 			String id = ctx.getModelRepository().getOwningModel(lastElement).getElementId(lastElement);

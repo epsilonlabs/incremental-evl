@@ -1,5 +1,0 @@
-context Car {
-    constraint Has4Wheels {
-        check: self.wheels.size > 0 and self.wheels.size < 5
-    }
-}

@@ -1,17 +1,5 @@
 
-context m1!IncBook {
-
-    constraint NumberOfCopiesValid { //IncBook.NumberOfCopiesValid
-        check: self.copies > -1
-    }
-
-    constraint NumberOfBorrowersValid {
-        check: self.copies >= self.borrowers.size
-        message : "Only " + self.copies + " of " + self.`title` + " available. " + self.borrowers.size + " have been lent out."
-    }
-}
-
-context m2!IncBook {
+context IncBook {
 
     constraint NumberOfCopiesValid { //IncBook.NumberOfCopiesValid
         check: self.copies > -1

@@ -5,15 +5,9 @@ Bundle-SymbolicName: org.eclipse.epsilon.evl.engine.incremental
 Bundle-Version: 1.0.0
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.eclipse.emf.ecore,
- org.eclipse.epsilon.common;bundle-version="1.4.0",
- org.eclipse.epsilon.emc.emf;bundle-version="1.4.0",
- org.eclipse.epsilon.evl.engine;bundle-version="1.4.0",
- org.eclipse.epsilon.evl.emf.validation;bundle-version="1.4.0",
- org.eclipse.epsilon.eol.engine.incremental,
+Require-Bundle: org.eclipse.epsilon.evl.engine;visibility:=reexport,
+ org.eclipse.epsilon.eol.engine.incremental;visibility:=reexport,
  org.eclipse.epsilon.evl.incremental.orientdb,
- org.eclipse.epsilon.evl.incremental.dependencies;bundle-version="1.0.0"
+ org.eclipse.epsilon.evl.incremental.dependencies
 Export-Package: org.eclipse.epsilon.evl.incremental,
- org.eclipse.epsilon.evl.incremental.dom,
- org.eclipse.epsilon.evl.incremental.trace.orient
-Import-Package: org.eclipse.epsilon.evl.incremental.trace.orient
+ org.eclipse.epsilon.evl.incremental.dom
