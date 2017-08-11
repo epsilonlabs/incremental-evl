@@ -12,7 +12,6 @@
 package org.eclipse.epsilon.eol.incremental.trace;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * A trace manager provides the API for managing traces in the trace model. This includes creation, query and deletion
  * of trace information. There are 4 basic elements used for storing trace information:

@@ -48,7 +48,7 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 	
 	public void detach(IEditingDomainProvider edp, ExecutionEvent event) {
 		final IncrementalEvlModule module = EditorRegistry.REGISTRY.remove(edp);
-		module.reset();
+		//module.reset();
 	}
 
 	public void attach(IEditingDomainProvider edp, ExecutionEvent event) throws EolRuntimeException {
@@ -68,7 +68,7 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 		final IncrementalEvlModule module = new IncrementalEvlModule();
 		// View not working
 		//module.setUnsatisfiedConstraintFixer(new ValidationViewFixer(null));
-		module.reset();
+		//module.reset();
 		try {
 			module.parse(evlFile.getLocationURI());
 		} catch (Exception e) {

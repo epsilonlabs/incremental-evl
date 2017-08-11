@@ -44,7 +44,7 @@ import org.eclipse.epsilon.evl.parse.EvlParser;
 /**
  * The Class IncrementalEvlModule.
  */
-// FIXME This changes should be merged into EVL Moudle and use the incremental execution flag
+// FIXME This changes should be merged into EVL Module and use the incremental execution flag
 // to enable the incremental behaviour
 // FIXME Some of this API should belong to the base Eol Module (e.g. the trace model API can be shared by all languages
 public class IncrementalEvlModule extends EvlModule implements IIncrementalModule {
@@ -143,12 +143,10 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	}
 
 	@Override
-	public void onChange(String elementId, Object element, String propertyName) {
-//		if (notifier == null || feature == null) {
-//			return null;
-//		}
-				
-		IElementProperty property = this.trace.getProperty(propertyName, elementId);
+	public void onChange(String objectId, Object object, String propertyName) {
+		
+		System.out.println("On Change: " + objectId);
+		IElementProperty property = this.trace.getProperty(propertyName, objectId);
 		if (property != null) {
 		
 			List<ITraceScope> scopeList = new LinkedList<ITraceScope>();
@@ -156,12 +154,13 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 			while (it.hasNext()) {
 				scopeList.add(it.next());
 			}
-			validateScopes(scopeList, element);
+			validateScopes(scopeList, object);
 		}
 	}
 
 	@Override
 	public void onCreate(Object newElement) {
+		System.out.println("On Create: " + newElement);
 		for (ConstraintContext conCtx : getConstraintContexts()) {
 			 try {
 				if (conCtx.appliesTo(newElement, getContext())) {
@@ -177,7 +176,7 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	}
 
 	@Override
-	public void onDelete(String elementId, Object element, String propertyName) {
+	public void onDelete(String objectId, Object object) {
 		// FIXME This thest should be done in the model listener
 //		if (notifier.eResource() == null) {
 //			elementId = this.idMap.remove(notifier);
@@ -185,7 +184,8 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 			//onChange(elementId, propertyName);
 //		}
 		
-		final IModelElement telement = trace.getElement(elementId);
+		System.out.println("On Delete: " + objectId);
+		final IModelElement telement = trace.getElement(objectId);
 		if (telement != null) {
 			Set<ITraceScope> scopes = new HashSet<ITraceScope>();
 			for (IElementProperty p :  telement.getProperties()) {
@@ -193,11 +193,11 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 					scopes.add(scope);
 				}
 			}
-			validateScopes(scopes, element);
+			validateScopes(scopes, object);
 		}
 	}
 	
-	public void validateScopes(Collection<ITraceScope> scopes, Object element) {
+	private void validateScopes(Collection<ITraceScope> scopes, Object element) {
 		if (scopes == null || scopes.isEmpty()) {
 			return;
 		}

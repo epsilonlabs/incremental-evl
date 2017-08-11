@@ -43,7 +43,6 @@ import com.tinkerpop.frames.FramedGraphFactory;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 
-// TODO: Auto-generated Javadoc
 /**
  * Implementation of {@link IIncrementalTraceManager} that uses Orient DB as its underlying
  * database.

@@ -54,8 +54,8 @@ public class EmfPropertyChangeListener extends EContentAdapter {
 			return;
 		}
 		String elementId = model.getElementId(notifier);
-		String propertyName = feature.getName();
-		module.onDelete(elementId, notifier, propertyName);
+		//String propertyName = feature.getName();
+		module.onDelete(elementId, notifier);
 	}
 
 	@Override

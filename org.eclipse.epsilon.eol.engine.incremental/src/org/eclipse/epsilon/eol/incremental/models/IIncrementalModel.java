@@ -15,6 +15,7 @@ package org.eclipse.epsilon.eol.incremental.models;
  * The Interface IIncrementalModel defines the API for models that support incremental execution, both on-line and 
  * off-line modes. 
  * 
+ * @author Horacio Hoyos
  */
 public interface IIncrementalModel {
 	
@@ -46,6 +47,7 @@ public interface IIncrementalModel {
 	 * @param propertyName the property name
 	 * @return the property value
 	 */
+	// FIXME is this part of the basic model? Should we use the default getPropertyGetter and then use that?
 	public Object getPropertyValue(String elementId, String propertyName); 
 	
 }
