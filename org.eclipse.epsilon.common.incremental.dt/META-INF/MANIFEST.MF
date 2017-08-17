@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Dt
+Bundle-SymbolicName: org.eclipse.epsilon.common.incremental.dt;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.eclipse.epsilon.common.incremental.dt.launching.dialogs,
+ org.eclipse.epsilon.common.incremental.dt.launching.extensions
+Require-Bundle: org.eclipse.jface,
+ org.eclipse.ui.workbench,
+ org.eclipse.core.runtime,
+ org.eclipse.swt,
+ org.eclipse.epsilon.common.dt,
+ org.eclipse.epsilon.eol.engine.incremental
