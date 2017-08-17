@@ -8,23 +8,23 @@
  * Contributors:
  *     Thanos Zolotas - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.evl.incremental.orientdb;
+package org.eclipse.epsilon.evl.incremental.orientdb.execute;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.epsilon.eol.incremental.trace.IIncrementalTraceManager;
-import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccessTraceFactory;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.TAccesses;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.TConstraint;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.TContext;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.TElement;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.TEvaluates;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.TIn;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.TOwns;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.TProperty;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.TRootOf;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.TScope;
+import org.eclipse.epsilon.eol.incremental.old.IIncrementalTraceManager;
+import org.eclipse.epsilon.eol.incremental.old.IPropertyAccessTraceFactory;
+import org.eclipse.epsilon.evl.incremental.orientdb.execute.trace.NElementProperty;
+import org.eclipse.epsilon.evl.incremental.orientdb.execute.trace.NExecutionTrace;
+import org.eclipse.epsilon.evl.incremental.orientdb.execute.trace.NModelElement;
+import org.eclipse.epsilon.evl.incremental.orientdb.execute.trace.NModuleElement;
+import org.eclipse.epsilon.evl.incremental.orientdb.execute.trace.TContext;
+import org.eclipse.epsilon.evl.incremental.orientdb.execute.trace.TOwns;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.EAccesses;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.ETraces;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.EFor;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.EReaches;
 
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.tinkerpop.blueprints.Parameter;
@@ -33,7 +33,6 @@ import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
 
-// TODO: Auto-generated Javadoc
 /**
  * Implementation of {@link IPropertyAccessTraceFactory} that uses Orient-DB as its
  * underlying database engine.
@@ -116,10 +115,10 @@ public class OrientPropertyAccessTraceFactory implements IPropertyAccessTraceFac
 		}
 		
 		// Constraint
-		OrientVertexType constraint = graph.getVertexType(TConstraint.TRACE_TYPE);
+		OrientVertexType constraint = graph.getVertexType(NModuleElement.TRACE_TYPE);
 		if (constraint == null) {
-			constraint = graph.createVertexType(TConstraint.TRACE_TYPE);
-			constraint.createProperty(TConstraint.NAME, OType.STRING);
+			constraint = graph.createVertexType(NModuleElement.TRACE_TYPE);
+			constraint.createProperty(NModuleElement.ID, OType.STRING);
 			// FIXME: Currently uses traversal, faster to use the index and iterate?
 //			graph.createKeyIndex(TConstraint.NAME, Vertex.class,
 //					new Parameter<String, String>("type", "NOTUNIQUE_HASH_INDEX"),
@@ -128,36 +127,36 @@ public class OrientPropertyAccessTraceFactory implements IPropertyAccessTraceFac
 		}
 		
 		// Element
-		OrientVertexType element = graph.getVertexType(TElement.TRACE_TYPE);
+		OrientVertexType element = graph.getVertexType(NModelElement.TRACE_TYPE);
 		if (element == null) {
-			element = graph.createVertexType(TElement.TRACE_TYPE);
-			element.createProperty(TElement.ELEMENT_ID, OType.STRING);
-			graph.createKeyIndex(TElement.ELEMENT_ID, Vertex.class,
+			element = graph.createVertexType(NModelElement.TRACE_TYPE);
+			element.createProperty(NModelElement.ID, OType.STRING);
+			graph.createKeyIndex(NModelElement.ID, Vertex.class,
 					new Parameter<String, String>("type", "UNIQUE_HASH_INDEX"),
-					new Parameter<String, String>("class", TElement.TRACE_TYPE));
+					new Parameter<String, String>("class", NModelElement.TRACE_TYPE));
 		}
 		
 		// Property
-		OrientVertexType property = graph.getVertexType(TProperty.TRACE_TYPE);
+		OrientVertexType property = graph.getVertexType(NElementProperty.TRACE_TYPE);
 		if (property == null) {
-			property = graph.createVertexType(TProperty.TRACE_TYPE);
-			property.createProperty(TProperty.NAME, OType.STRING);
+			property = graph.createVertexType(NElementProperty.TRACE_TYPE);
+			property.createProperty(NElementProperty.NAME, OType.STRING);
 		}
 		
 		// Scope
-		OrientVertexType scope = graph.getVertexType(TScope.TRACE_TYPE);
+		OrientVertexType scope = graph.getVertexType(NExecutionTrace.TRACE_TYPE);
 		if (scope == null) {
-			scope = graph.createVertexType(TScope.TRACE_TYPE);
-			scope.createProperty(TScope.RESULT, OType.BOOLEAN);
+			scope = graph.createVertexType(NExecutionTrace.TRACE_TYPE);
+			scope.createProperty(NExecutionTrace.RESULT, OType.BOOLEAN);
 		}
 		
 		// Edges
 		setupEdgeType(graph, 
-				TEvaluates.TRACE_TYPE,
+				ETraces.TRACE_TYPE,
 				TOwns.TRACE_TYPE,
-				TRootOf.TRACE_TYPE,
-				TAccesses.TRACE_TYPE,
-				TIn.TRACE_TYPE);
+				EReaches.TRACE_TYPE,
+				EAccesses.TRACE_TYPE,
+				EFor.TRACE_TYPE);
 		
 		graph.commit();
 	}

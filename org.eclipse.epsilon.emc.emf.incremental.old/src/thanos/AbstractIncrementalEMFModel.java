@@ -37,7 +37,7 @@ public abstract class AbstractIncrementalEMFModel implements IIncrementalModel {
 	}
 
 	@Override
-	public boolean enableNotifications() {
+	public void enableNotifications() {
 		if (module == null) {
 			return false;
 		}

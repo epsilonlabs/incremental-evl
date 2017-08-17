@@ -6,43 +6,44 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Thanos Zolotas - Initial API and implementation
+ *     Jonathan Co - Initial API and implementation
+ *     Horacio Hoyos - API extension
  *******************************************************************************/
-package org.eclipse.epsilon.evl.incremental.orientdb.trace;
+package org.eclipse.epsilon.evl.incremental.orientdb.trace.old;
 
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
 
-// TODO: Auto-generated Javadoc
 /**
- * The {@link TOwns} interface represents an edge between an element and a
- * property owned by that element.
+ * The {@link EReaches} interface represents an edge between a scope and its root
+ * model element.
  * 
  * @author Jonathan Co
+ * @author Horacio Hoyos Rodriguez
  *
  */
-public interface TOwns extends TraceComponent, EdgeFrame {
+public interface EReaches extends TraceComponent, EdgeFrame {
 
 	/** Common name of this trace element. */
-	String TRACE_TYPE = "owns";
+	String TRACE_TYPE = "reaches";
 
 	/**
-	 * Gets the property.
+	 * Gets the scope.
 	 *
-	 * @return The property that is owned by the element at
-	 *         {@link #getElement()} .
+	 * @return The execution trace that reaches the model element at {@link #getModelElement()}.
+	 *         
 	 */
 	@InVertex
-	TProperty getProperty();
+	NExecutionTrace getExecutionTrace();
 
 	/**
 	 * Gets the element.
 	 *
-	 * @return The element that is owned by the property at
-	 *         {@link #getProperty()}.
+	 * @return The model element that is reached by the execution trace at
+	 *         {@link #getExecutionTrace()}.
 	 */
 	@OutVertex
-	TElement getElement();
+	NModelElement getModelElement();
 
 }

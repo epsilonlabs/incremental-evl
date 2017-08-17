@@ -8,7 +8,7 @@
  * Contributors:
  *     Thanos Zolotas - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.eol.incremental.trace;
+package org.eclipse.epsilon.evl.incremental.orientdb.trace.old;
 
 
 /**

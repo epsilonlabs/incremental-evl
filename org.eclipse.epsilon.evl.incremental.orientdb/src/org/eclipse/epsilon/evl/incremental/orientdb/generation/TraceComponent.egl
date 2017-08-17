@@ -1,3 +1,5 @@
+[%import "EcoreHelper.eol";
+%]
 /*******************************************************************************
  * Copyright (c) 2016 University of York
  * All rights reserved. This program and the accompanying materials
@@ -6,9 +8,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Thanos Zolotas - Initial API and implementation
+ *     Jonathan Co - Initial API and implementation
+ *     Horacio Hoyos - API extension
  *******************************************************************************/
-package org.eclipse.epsilon.evl.incremental.orientdb.trace;
+ package [%=qp%];
+
+/*******************************************************************************
+ ** [%=eRef.getName()%] OrientDB Node Interface automatically generated
+ ** on [%=today%].
+ ** Do not modify this file.
+ *******************************************************************************/
 
 
 /**

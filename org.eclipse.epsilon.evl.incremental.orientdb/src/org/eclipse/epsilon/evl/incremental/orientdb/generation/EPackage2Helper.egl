@@ -1,0 +1,91 @@
+[%
+import "CommonTemplates.egl";
+%]
+
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Jonathan Co - Initial API and implementation
+ *     Horacio Hoyos - API extension
+ *******************************************************************************/
+
+/*******************************************************************************
+ ** [%=p.getName()%] OrientDB Node Interface automatically generated
+ ** on [%=today%].
+ ** Do not modify this file.
+ *******************************************************************************/
+package [%=qp%].execute;
+
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.*;
+
+import com.orientechnologies.orient.core.metadata.schema.OType;
+import com.tinkerpop.blueprints.Parameter;
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
+import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
+
+
+
+public class OrientDbHelper  {
+
+	//***************************
+	//*******  DB Setup  ********
+	//***************************
+	
+	/**
+	 * Add vertex types to OrientDB, define keys and setup node properties
+	 *
+	 * @param graph
+	 *            The graph to add vertex types to
+	 */
+	public static void setupSchema(OrientBaseGraph g) {
+		
+		[%for (c in p.getEClassifiers().select(ec | ec.isTypeOf(ecore!EClass))) {
+		    var cName = c.getJavaTypeName("V", "");
+		    var cType = c.getName().firstToLowerCase() + "Type";%]  
+		OrientVertexType [%=cType%] = g.getVertexType([%=cName%].TRACE_TYPE);
+		if ([%=cType%]  == null) {
+			[%=cType%]  = g.createVertexType([%=cName%].TRACE_TYPE);
+			[%for (a in c.getEAttributes()) {
+			      var oType = "STRING";
+			      if (a.isMany()) oType = "EMBEDDEDLIST";%]	    
+			[%=cType%] .createProperty([%=cName%].[%=a.getName().toUpperCase()%], OType.[%=oType%]);[%}
+			var idAttr = c.getEAttributes.selectOne(ea | ea.isId());
+			if (idAttr <> null) {%]
+			
+			g.createKeyIndex([%=cName%].[%=idAttr.getName().toUpperCase()%], Vertex.class,
+					new Parameter<String, String>("type", "UNIQUE_HASH_INDEX"),
+					new Parameter<String, String>("class", [%=cName%].TRACE_TYPE));
+			[%}%]
+		}
+		
+		[%}%]
+		[%var edges = p.getEClassifiers()
+				.collect(c:ecore!EClass | c.getEReferences())
+				.flatten()
+				.select(r | r.isEdge())
+				.collect(r | r.getJavaTypeName("E", "") + ".TRACE_TYPE");%]
+		setupEdgeTypes(g, [%=edges.concat(", ")%]);
+		
+		g.commit();
+	}
+	
+	/**
+	 * Setup edge types
+	 *
+	 * @param graph the graph
+	 * @param types the types
+	 */
+	public static void setupEdgeTypes(OrientBaseGraph g, String... types) {
+		for (String type : types) {
+			if (g.getEdgeType(type) == null) g.createEdgeType(type);
+		}
+		
+	}
+
+}

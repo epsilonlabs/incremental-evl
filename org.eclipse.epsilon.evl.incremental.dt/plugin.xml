@@ -25,8 +25,18 @@
             id="org.eclipse.epsilon.evl.incremental.dt.commands.evlEnable"
             name="Incremental Validation">
          <state
-               class="org.eclipse.ui.handlers.RegistryToggleState:true"
                id="org.eclipse.ui.commands.toggleState">
+            <class
+                  class="org.eclipse.ui.handlers.RegistryToggleState">
+               <parameter
+                     name="default"
+                     value="false">
+               </parameter>
+               <parameter
+                     name="persisted"
+                     value="false">
+               </parameter>
+            </class>
          </state>
       </command>
    </extension>

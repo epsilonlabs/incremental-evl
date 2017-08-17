@@ -1,6 +1,14 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	   Jonathan Co   - Initial API and implementation
+ *     Horacio Hoyos - Decoupling and abstraction
+ *******************************************************************************/
 package org.eclipse.epsilon.emc.emf.incremental;
 
 import java.util.Collection;
@@ -161,7 +169,7 @@ public class IncrementalEmfModel extends AbstractIncrementalEMFModel implements 
 	}
 
 	public IPropertyGetter getPropertyGetter() {
-		return delegate.getPropertyGetter();
+		return new TracingEmfPropertyGetter(this);
 	}
 
 	public IPropertySetter getPropertySetter() {
@@ -191,7 +199,6 @@ public class IncrementalEmfModel extends AbstractIncrementalEMFModel implements 
 	public Metamodel getMetamodel(StringProperties properties, IRelativePathResolver resolver) {
 		return delegate.getMetamodel(properties, resolver);
 	}
-
 
 
 }

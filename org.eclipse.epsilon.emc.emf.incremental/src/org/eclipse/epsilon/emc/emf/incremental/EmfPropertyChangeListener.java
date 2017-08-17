@@ -1,7 +1,9 @@
 package org.eclipse.epsilon.emc.emf.incremental;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
@@ -10,7 +12,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
-import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
+import org.eclipse.epsilon.eol.incremental.old.IExecutionTrace;
 import org.eclipse.epsilon.eol.models.IModel;
 
 /**
@@ -109,27 +111,33 @@ public class EmfPropertyChangeListener extends EContentAdapter {
 		return (EStructuralFeature) (feature instanceof EStructuralFeature ? feature : null);
 	}
 	
-	public EObject getElement(ITraceScope scope) {
-		return (EObject) this.model.getElementById(scope.getRootElement().getElementId());
+	public List<EObject> getElements(IExecutionTrace executionTrace) {
+		
+		List<EObject> result = executionTrace.getModelElements().stream()
+			.map(me -> me.getElementId())
+			.map(id -> this.model.getElementById(id))
+			.map(EObject.class::cast)
+			.collect(Collectors.toList());
+		return result;
 	}
 	
-	public ModuleElement getConstraint(ITraceScope scope) {
-//		EObject element = this.getElement(scope);
-//		if (element == null) {
-//			return null;
-//		}
-		
-		String constraintName = scope.getConstraint().getName();
-		String contextName = scope.getConstraint().getContext().getName();
-		// FIXME Trace Metamodel needs:
-		//	String moduleElementId = scope.getModuleElement().getId(); 
-		String moduleElementId = contextName + "." + constraintName;
- 		//try {
-			return module.getModuleElementById(moduleElementId);
-			//return module.getConstraints().getConstraint(name, element, this.module.getContext());
-		//} catch (EolRuntimeException e) {
-		//	return null;
-		//}
-	}
+//	public ModuleElement getConstraint(IExecutionTrace scope) {
+////		EObject element = this.getElement(scope);
+////		if (element == null) {
+////			return null;
+////		}
+//		
+//		String constraintName = scope.getConstraint().getName();
+//		String contextName = scope.getConstraint().getContext().getName();
+//		// FIXME Trace Metamodel needs:
+//		//	String moduleElementId = scope.getModuleElement().getId(); 
+//		String moduleElementId = contextName + "." + constraintName;
+// 		//try {
+//			return module.getModuleElementById(moduleElementId);
+//			//return module.getConstraints().getConstraint(name, element, this.module.getContext());
+//		//} catch (EolRuntimeException e) {
+//		//	return null;
+//		//}
+//	}
 	
 }

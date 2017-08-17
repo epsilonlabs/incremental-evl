@@ -11,3 +11,8 @@ bin/
 # Ignore examples
 *examples*
 org.eclipse.emf.validation
+
+# Generated files
+*/*-gen
+
+\.DS_Store

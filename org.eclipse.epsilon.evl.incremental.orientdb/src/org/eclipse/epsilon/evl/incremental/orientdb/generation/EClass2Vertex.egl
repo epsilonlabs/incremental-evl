@@ -1,0 +1,100 @@
+[%
+import "CommonTemplates.egl";
+%]
+
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Jonathan Co - Initial API and implementation
+ *     Horacio Hoyos - API extension
+ *******************************************************************************/
+
+/*******************************************************************************
+ ** [%=eClass.getName()%] OrientDB Vertex Interface automatically generated
+ ** on [%=today%].
+ ** Do not modify this file.
+ *******************************************************************************/
+package [%=qp%].trace;
+
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.Adjacency;
+import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.VertexFrame;
+
+/**
+ * The {@link [%=eClass.getJavaTypeName(typePrefix, typeSufix)%] } interface represents a [%=eClass.getName()%] as a
+ * vertex in the graph.
+ * 
+ * @author Jonathan Co
+ * @author Horacio Hoyos Rodriguez
+ *
+ */
+public interface [%=eClass.getJavaTypeName(typePrefix, typeSufix)%] extends VertexFrame {
+	
+	/** Common name of this trace element. */
+	static String TRACE_TYPE = "[%=eClass.getName().toLowerCase()%]";
+[%for (p in eClass.getEAttributes()) {%]	
+	/** Key to the '[%=p.getName()%]' property of this vertex. */
+	static String [%=p.getName().toUpperCase()%] = "[%=p.getName().toLowerCase()%]";
+[%}%]	
+[%for (p in eClass.getEAttributes()) {%]	
+	[%=p.makeGetterDoc()%]
+	@Property([%=eClass.getJavaTypeName(typePrefix, typeSufix)%].[%=p.getName().toUpperCase()%])
+	[%=p.makeGetterSignature("Iterable")%];
+	
+[%  if (not p.isMany()) {%]
+	[%=p.makeSetterDoc()%]
+	@Property([%=eClass.getJavaTypeName(typePrefix, typeSufix)%].[%=p.getName().toUpperCase()%])
+	[%=p.makeSetterSignature()%];
+[%  }
+}%]
+
+[%for (r in eClass.getEReferences()) {
+    var op = not r.isEdge();
+    var adj_ref;
+    if (op) {
+    	adj_ref = r.getEOpposite();
+    }
+    else {
+    	adj_ref = r;
+    }
+	if(r.isMany()){%]
+   	[%=r.makeGetterDoc()%]
+	@Adjacency(label = [%=adj_ref.getJavaTypeName("E", "")%].TRACE_TYPE, direction = Direction.[%if(op){%]IN[%}else{%]OUT[%}%])
+	[%=r.makeGetterSignature("Iterable", typePrefix, typeSufix)%];
+	
+	/**
+	 * Add a [%=r.getEReferenceType().getName()%] to the [%=r.getName()%].
+	 *
+	 * @param [%=r.getEReferenceType().getName().firstToLowerCase()%] The [%=r.getEReferenceType().getName()%] to add.
+	 * @return the added [%=r.getEReferenceType().getName().firstToLowerCase()%] but linked to this [%=eClass.getJavaTypeName(typePrefix, typeSufix)%].
+	 */
+	@Adjacency(label = [%=adj_ref.getJavaTypeName("E", "")%].TRACE_TYPE, direction = Direction.[%if(op){%]IN[%}else{%]OUT[%}%])
+	[%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix)%] add[%=r.getEReferenceType().getName()%]([%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix)%] [%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix).firstToLowerCase()%]);
+	
+	/**
+	 * Remove a [%=r.getEReferenceType().getName()%] from the [%=r.getName()%].
+	 *
+	 * @param [%=r.getEReferenceType().getName().firstToLowerCase()%] The [%=r.getEReferenceType().getName()%] to remove.
+	 */
+	@Adjacency(label = [%=adj_ref.getJavaTypeName("E", "")%].TRACE_TYPE, direction = Direction.[%if(op){%]IN[%}else{%]OUT[%}%])
+	void remove[%=r.getEReferenceType().getName()%]([%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix)%] [%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix).firstToLowerCase()%]);
+[%  }
+    else {%]
+    
+    [%=r.makeGetterDoc()%]
+	@Adjacency(label = [%=adj_ref.getJavaTypeName("E", "")%].TRACE_TYPE, direction = Direction.[%if(op){%]IN[%}else{%]OUT[%}%])
+	[%=r.makeGetterSignature("Iterable", typePrefix, typeSufix)%];
+    
+    [%=r.makeSetterDoc()%]
+	@Adjacency(label = [%=adj_ref.getJavaTypeName("E", "")%].TRACE_TYPE, direction = Direction.[%if(op){%]IN[%}else{%]OUT[%}%])
+	[%=r.makeSetterSignature(typePrefix, typeSufix)%];
+	
+[%  }%]
+[%}%]	
+}

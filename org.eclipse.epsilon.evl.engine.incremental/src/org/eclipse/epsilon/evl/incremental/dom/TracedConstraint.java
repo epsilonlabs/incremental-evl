@@ -1,17 +1,29 @@
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	   Jonathan Co   - Initial API and implementation
+ *     Horacio Hoyos - Decoupling and abstraction
+ *******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.dom;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
-import org.eclipse.epsilon.eol.incremental.trace.IConstraintTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IElementProperty;
-import org.eclipse.epsilon.eol.incremental.trace.IIncrementalTraceManager;
-import org.eclipse.epsilon.eol.incremental.trace.IModelElement;
-import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
-import org.eclipse.epsilon.eol.incremental.trace.PropertyAccess;
-import org.eclipse.epsilon.eol.incremental.trace.PropertyAccessListener;
+import org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter;
+import org.eclipse.epsilon.eol.incremental.execute.IExecutionTraceManager;
+import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
+import org.eclipse.epsilon.eol.incremental.models.ITracingPropertyGetter;
+import org.eclipse.epsilon.eol.incremental.old.IElementProperty;
+import org.eclipse.epsilon.eol.incremental.old.IExecutionTrace;
+import org.eclipse.epsilon.eol.incremental.old.IModelElement;
+import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
@@ -25,8 +37,25 @@ import org.eclipse.epsilon.evl.trace.ConstraintTrace;
  * @author Jonathan Co
  *
  */
-public class TraceConstraint extends Constraint {
-		
+// FIXME this could be merged with the Constraint and use a flag
+public class TracedConstraint extends Constraint {
+	
+	private List<IModel> models;
+
+
+	public TracedConstraint(IncrementalEvlModule incrementalEvlModule) {
+		setModule(incrementalEvlModule);
+		this.models = incrementalEvlModule.getContext().getModelRepository().getModels();
+		for (IModel model : models) {
+			IPropertyGetter pg = model.getPropertyGetter();
+			if (pg instanceof ITracingPropertyGetter) {
+				ITracingPropertyGetter ipg = (ITracingPropertyGetter) pg;
+				ipg.setDeliver(true);
+			}
+		}
+	}
+
+
 	@Override
 	public boolean check(Object self, IEvlContext context, boolean checkType) throws EolRuntimeException {
 		
@@ -40,17 +69,23 @@ public class TraceConstraint extends Constraint {
 		
 		removeOldUnsatisfiedConstraint(self, context);
 		final UnsatisfiedConstraint unsatisfiedConstraint = preprocessCheck(self, context);
-				
-		// Set a listener to trace property accesses
-		PropertyAccessListener listener = new PropertyAccessListener();
-		context.getExecutorFactory().addExecutionListener(listener);
-		
+		// Traces are added via notifications
+		enableManagerNotifications(true);
 		Boolean result = checkBlock.execute(context, false);
-		addToTrace((IncrementalEvlModule) getModule(), self, result, listener.getPropertyAccesses());
+		enableManagerNotifications(false);
 
-		// Clean-up the listener
-		context.getExecutorFactory().removeExecutionListener(listener);
 		return postprocessCheck(self, context, unsatisfiedConstraint, result);
+	}
+
+
+	private void enableManagerNotifications(boolean deliver) {
+		for (IModel model : models) {
+			IPropertyGetter pg = model.getPropertyGetter();
+			if (pg instanceof ITracingPropertyGetter) {
+				ITracingPropertyGetter ipg = (ITracingPropertyGetter) pg;
+				ipg.setDeliver(deliver, this);
+			}
+		}
 	}
 
 	
@@ -62,34 +97,6 @@ public class TraceConstraint extends Constraint {
 				it.remove();
 			}
 		}
-	}
-	
-	public void addToTrace(IncrementalEvlModule ctx, Object element, Boolean result, Collection<PropertyAccess> accesses) {
-		
-		final IIncrementalTraceManager trace = ctx.getTrace();
-		
-		final String contextName = this.getConstraintContext().getTypeName();
-		final String constraintName = this.getName();
-		final String elementId = ctx.getContext().getModelRepository().getOwningModel(element).getElementId(element);
-	
-		// Clear any existing scope
-		trace.removeScope(elementId, constraintName, contextName);
-		trace.commit();
-		
-		// Populate with new trace
-		final IContextTrace tContext = trace.createContext(contextName);
-		final IConstraintTrace tConstraint = trace.createConstraint(constraintName, tContext);
-		final IModelElement tElement = trace.createElement(elementId);
-		final ITraceScope tScope = trace.createScope(tElement, tConstraint);
-		tScope.setResult(result);
-		
-		for (PropertyAccess pa : accesses) {
-			final IModelElement currentElement = trace.createElement(pa.getElementId());
-			final IElementProperty property = trace.createProperty(pa.getPropertyName(), currentElement);
-			tScope.addProperty(property);
-		}
-
-//		trace.commit();
 	}
 
 	

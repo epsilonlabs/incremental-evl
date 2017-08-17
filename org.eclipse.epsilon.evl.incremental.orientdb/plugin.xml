@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.epsilon.common.incremental.dt.executionTraceManager">
+      <executionTraceManager
+            class="org.eclipse.epsilon.evl.incremental.orientdb.execute.IncrementalExecutionTraceManager1"
+            dialog="org.eclipse.epsilon.evl.incremental.orientdb.dialog.OrientDBManagerConfiguration"
+            icon="icons/orientdb.png"
+            label="org.eclipse.epsilon.evl.incremental.orientdb.executionTraceManager1">
+      </executionTraceManager>
+   </extension>
+
+</plugin>

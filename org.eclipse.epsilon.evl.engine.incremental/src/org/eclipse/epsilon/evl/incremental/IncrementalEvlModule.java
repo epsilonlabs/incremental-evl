@@ -13,10 +13,9 @@ package org.eclipse.epsilon.evl.incremental;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
@@ -24,11 +23,9 @@ import org.eclipse.epsilon.eol.dom.ExecutableBlock;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
+import org.eclipse.epsilon.eol.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
-import org.eclipse.epsilon.eol.incremental.trace.IElementProperty;
-import org.eclipse.epsilon.eol.incremental.trace.IIncrementalTraceManager;
-import org.eclipse.epsilon.eol.incremental.trace.IModelElement;
-import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
+import org.eclipse.epsilon.eol.incremental.old.IExecutionTrace;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.EvlModule;
 import org.eclipse.epsilon.evl.dom.Constraint;
@@ -36,37 +33,48 @@ import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.dom.Fix;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
-import org.eclipse.epsilon.evl.incremental.dom.TraceConstraint;
-import org.eclipse.epsilon.evl.incremental.orientdb.OrientPropertyAccessTraceFactory;
+import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.parse.EvlParser;
 
 
 /**
- * The Class IncrementalEvlModule.
+ * AnIncrementalEvlModule.
  */
 // FIXME This changes should be merged into EVL Module and use the incremental execution flag
 // to enable the incremental behaviour
 // FIXME Some of this API should belong to the base Eol Module (e.g. the trace model API can be shared by all languages
 public class IncrementalEvlModule extends EvlModule implements IIncrementalModule {
 	
+	/**
+	 * Flag to indicate incremental execution.
+	 */
 	private boolean incrementalMode = true;
 	
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.evl.EvlModule#execute()
+	/**
+	 * The trace manager associated to this module.
 	 */
+	private IExecutionTraceManager etManager = null;
+	
+	/**
+	 * The set of models which the module receives notification.
+	 */
+	Set<IIncrementalModel> targets;
+	
 	@Override
 	public Object execute() throws EolRuntimeException {
 		if (!incrementalMode) {
 			return super.execute();
 		}
-		if (hasTrace()) {
-			return null;
-		}
+
 		prepareContext(context);
 		context.setOperationFactory(new EvlOperationFactory());
 		context.getFrameStack().put(Variable.createReadOnlyVariable("thisModule", this));
-		
+		List<String> modelIds = this.getContext().getModelRepository().getModels().stream()
+				.map(IIncrementalModel.class::cast)
+				.map(m -> m.getModelId())
+				.collect(Collectors.toList());
+		getExecutionTraceManager().setExecutionContext(this.getSourceUri().toString(), modelIds);
+		getExecutionTraceManager().executionStarted();
 		// Perform evaluation
 		execute(getPre(), context);
 		for (ConstraintContext conCtx : getConstraintContexts()) { 
@@ -76,8 +84,7 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 			fixer.fix(this);
 		}
 		execute(getPost(), context);
-		getTrace().commit();
-		setHasTrace(true);
+		getExecutionTraceManager().executionFinished();
 		for (UnsatisfiedConstraint uc : context.getUnsatisfiedConstraints()) {
 			System.out.println(uc.getMessage());
 		}
@@ -96,39 +103,28 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 			case EvlParser.MESSAGE: return new ExecutableBlock<String>(String.class);
 			case EvlParser.CHECK: return new ExecutableBlock<Boolean>(Boolean.class);
 			case EvlParser.GUARD: return new ExecutableBlock<Boolean>(Boolean.class);
-//			case EvlParser.CONSTRAINT: return new Constraint();
-//			case EvlParser.CRITIQUE: return new Constraint();
-			// Modified to return the appropriate subclasses of Constraint
-			case EvlParser.CONSTRAINT: return new TraceConstraint();
-			case EvlParser.CRITIQUE: return new TraceConstraint();
-			// ----
+			case EvlParser.CONSTRAINT:
+				if (incrementalMode) {
+					return new TracedConstraint(this);
+				}
+				else {
+					return new Constraint();
+				}
+				
+			case EvlParser.CRITIQUE:
+				if (incrementalMode) {
+					return new TracedConstraint(this);
+				}
+				else {
+					return new Constraint();
+				}
 			case EvlParser.CONTEXT: return new ConstraintContext();
 		}
 		return super.adapt(cst, parentAst);
 	}
 	
-	// ======================== From Trace Evl Context
-	
-	private IIncrementalTraceManager trace = null;
-	private boolean hasTrace = false;
-
-	public IIncrementalTraceManager getTrace() {
-		if (trace == null) {
-			this.trace = OrientPropertyAccessTraceFactory.getInstance()
-					.getTrace();
-		}
-		return this.trace;
-	}
-
-	public boolean hasTrace() {
-		return this.hasTrace;
-	}
-
-	public void setHasTrace(boolean trace) {
-		this.hasTrace = trace;
-	}
-	
-	public void attachChangeListeners() {
+	@Override
+	public void listenToModelChanges(boolean listen) {
 		// Attach change listeners to models
 		// FIXME I think we only want to attach to the model opened in the editor
 		for (IModel model : this.getContext().getModelRepository().getModels()) {
@@ -136,7 +132,16 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 			if (model instanceof IIncrementalModel) {
 				IIncrementalModel incrementalModel = (IIncrementalModel) model;
 				if (incrementalModel.supportsNotifications()) {
-					incrementalModel.enableNotifications();
+					if (listen) {
+						incrementalModel.getModules().add(this);
+						incrementalModel.setDeliver(true);
+						getTargets().add(incrementalModel);
+					}
+					else {
+						incrementalModel.getModules().remove(this);
+						// incrementalModel.setDeliver(false);  DO NO disable notifications unless you are 100% no one else is listening
+						getTargets().remove(incrementalModel);
+					}
 				}
 			}
 		}
@@ -146,15 +151,9 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	public void onChange(String objectId, Object object, String propertyName) {
 		
 		System.out.println("On Change: " + objectId);
-		IElementProperty property = this.trace.getProperty(propertyName, objectId);
-		if (property != null) {
-		
-			List<ITraceScope> scopeList = new LinkedList<ITraceScope>();
-			Iterator<ITraceScope> it = property.getScopes().iterator();
-			while (it.hasNext()) {
-				scopeList.add(it.next());
-			}
-			validateScopes(scopeList, object);
+		Collection<IExecutionTrace> traces = etManager.getTraces(objectId, propertyName);
+		if (traces != null) {
+			validateScopes(traces, object);
 		}
 	}
 
@@ -177,45 +176,28 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 
 	@Override
 	public void onDelete(String objectId, Object object) {
-		// FIXME This thest should be done in the model listener
-//		if (notifier.eResource() == null) {
-//			elementId = this.idMap.remove(notifier);
-//		} else {		
-			//onChange(elementId, propertyName);
-//		}
-		
 		System.out.println("On Delete: " + objectId);
-		final IModelElement telement = trace.getElement(objectId);
-		if (telement != null) {
-			Set<ITraceScope> scopes = new HashSet<ITraceScope>();
-			for (IElementProperty p :  telement.getProperties()) {
-				for (ITraceScope scope : p.getScopes()) {
-					scopes.add(scope);
-				}
-			}
-			validateScopes(scopes, object);
+		Collection<IExecutionTrace> traces = etManager.getTraces(objectId);
+		if (traces != null) {
+			validateScopes(traces, object);
 		}
 	}
 	
-	private void validateScopes(Collection<ITraceScope> scopes, Object element) {
+	private void validateScopes(Collection<IExecutionTrace> scopes, Object modelObject) {
 		if (scopes == null || scopes.isEmpty()) {
 			return;
 		}
-		for (ITraceScope scope : scopes) {
-			//final EObject target = this.getElement(scope);
-			final Constraint constraint;// = this.getConstraint(scope);
-			String name = scope.getConstraint().getName();
+		for (IExecutionTrace scope : scopes) {
+			
+			String constraintName = scope.getModuleElement().getId();
+			final Constraint constraint;
 			try {
-				constraint = getConstraints().getConstraint(name, element, getContext());
+				constraint = getConstraints().getConstraint(constraintName, modelObject, getContext());
 			} catch (EolRuntimeException e) {
 				return;
 			}
-//			if (target == null || constraint == null) {
-//				continue; //
-//			}
-
 			try {
-				constraint.check(element, getContext());
+				constraint.check(modelObject, getContext());
 			} catch (EolRuntimeException e) {
 				// TODO: Log exception
 				continue;
@@ -255,4 +237,24 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 		}
 		return result;
 	}
+
+	@Override
+	public void setExecutionTraceManager(IExecutionTraceManager manager) {
+		this.etManager = manager;
+		
+	}
+
+	@Override
+	public IExecutionTraceManager getExecutionTraceManager() {
+		return etManager;
+	}
+
+	@Override
+	public Set<IIncrementalModel> getTargets() {
+		if (targets == null) {
+			targets = new HashSet<>();
+		}
+		return targets;
+	}
+	
 }

@@ -1,0 +1,56 @@
+[%import "EcoreHelper.eol";
+%]
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Jonathan Co - Initial API and implementation
+ *     Horacio Hoyos - API extension
+ *******************************************************************************/
+/*******************************************************************************
+ ** [%=eRef.getName()%] OrientDB Edge Interface automatically generated
+ ** on [%=today%].
+ ** Do not modify this file.
+ *******************************************************************************/
+package [%=qp%].trace;
+
+import com.tinkerpop.frames.EdgeFrame;
+import com.tinkerpop.frames.InVertex;
+import com.tinkerpop.frames.OutVertex;
+
+/**
+ * The {@link [%=eRef.getJavaTypeName(typePrefix, typeSufix)%] } interface represents an edge between a scope and a
+ * single property accessed by that scope in the trace graph.
+ * 
+ * @author Jonathan Co
+ * @author Horacio Hoyos Rodriguez
+ *
+ */
+public interface [%=eRef.getJavaTypeName(typePrefix, typeSufix)%] extends EdgeFrame {
+
+	/** Common name of this trace element. */
+	String TRACE_TYPE = "[%=eRef.getName().toLowerCase()%]";
+	
+	/**
+	 * Gets the [%=eRef.getEContainingClass().getName()%].
+	 *
+	 * @return The [%=eRef.getEContainingClass().getName()%] that is accessing the property at
+	 * {@link #get[%=eRef.getEReferenceType().getName()%]()}.
+	 */
+	@InVertex
+	[%=eRef.getEContainingClass().getJavaTypeName("V", "")%] get[%=eRef.getEContainingClass().getName()%]();
+
+	/**
+	 * Gets the [%=eRef.getEReferenceType().getName()%].
+	 *
+	 * @return The [%=eRef.getEReferenceType().getName()%] that has been accessed at
+	 * {@link #get[%=eRef.getEContainingClass().getName()%]()}.
+	 */
+	@OutVertex
+	[%=eRef.getEReferenceType().getJavaTypeName("V", "")%] get[%=eRef.getEReferenceType().getName()%]();
+	
+}

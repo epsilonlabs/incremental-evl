@@ -11,31 +11,30 @@
 package org.eclipse.epsilon.evl.incremental.orientdb.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.epsilon.eol.incremental.trace.IElementProperty;
-import org.eclipse.epsilon.eol.incremental.trace.IModelElement;
-import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.TElement;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.TProperty;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.TScope;
+import org.eclipse.epsilon.eol.incremental.old.IExecutionTrace;
+import org.eclipse.epsilon.eol.incremental.old.IModelElement;
+import org.eclipse.epsilon.evl.incremental.orientdb.execute.trace.NExecutionTrace;
+import org.eclipse.epsilon.evl.incremental.orientdb.execute.trace.NModelElement;
 
 import com.tinkerpop.blueprints.Vertex;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Class ModelElementOrientDBImpl.
  */
 public class ModelElementOrientDBImpl implements IModelElement {
 
 	/** The delegate. */
-	final private TElement delegate;
+	final private NModelElement delegate;
 
 	/**
 	 * Instantiates a new model element orient DB impl.
 	 *
 	 * @param delegate the delegate
 	 */
-	public ModelElementOrientDBImpl(TElement delegate) {
+	public ModelElementOrientDBImpl(NModelElement delegate) {
 		this.delegate = delegate;
 	}
 
@@ -44,74 +43,10 @@ public class ModelElementOrientDBImpl implements IModelElement {
 	 *
 	 * @return the delegate
 	 */
-	public TElement getDelegate() {
+	public NModelElement getDelegate() {
 		return delegate;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.eol.incremental.trace.IModelElement#getElementId()
-	 */
-	public String getElementId() {
-		return delegate.getElementId();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.eol.incremental.trace.IModelElement#setElementId(java.lang.String)
-	 */
-	public void setElementId(String elementId) {
-		delegate.setElementId(elementId);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.eol.incremental.trace.IModelElement#getScopes()
-	 */
-	public Iterable<ITraceScope> getScopes() {
-		ArrayList<ITraceScope> myTraceScope = new ArrayList<ITraceScope>();
-		for (TScope tSc : delegate.getScopes()){
-			TraceScopeOrientDBImpl tTraceScopeImpl = new TraceScopeOrientDBImpl(tSc);
-			myTraceScope.add(tTraceScopeImpl);
-		}
-		return myTraceScope;
-	}
-
-/* (non-Javadoc)
- * @see org.eclipse.epsilon.eol.incremental.trace.IModelElement#addScope(org.eclipse.epsilon.eol.incremental.trace.ITraceScope)
- */
-public ITraceScope addScope(ITraceScope scope) {
-		
-		TScope tScope = ((TraceScopeOrientDBImpl) scope).getDelegate();
-		TScope flow = delegate.addScope(tScope);
-		return new TraceScopeOrientDBImpl(flow);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.eol.incremental.trace.IModelElement#removeScope(org.eclipse.epsilon.eol.incremental.trace.ITraceScope)
-	 */
-	public void removeScope(ITraceScope scope) {
-		TScope tScope = ((TraceScopeOrientDBImpl) scope).getDelegate();
-		delegate.removeScope(tScope);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.eol.incremental.trace.IModelElement#getProperties()
-	 */
-	public Iterable<IElementProperty> getProperties() {
-		ArrayList<IElementProperty> myElementProperty = new ArrayList<IElementProperty>();
-		for (TProperty tEl : delegate.getProperties()){
-			ElementPropertyOrientDBImpl tElementPropertyImpl = new ElementPropertyOrientDBImpl(tEl);
-			myElementProperty.add(tElementPropertyImpl);
-		}
-		return myElementProperty;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.eol.incremental.trace.IModelElement#addProperty(org.eclipse.epsilon.eol.incremental.trace.IElementProperty)
-	 */
-	public IElementProperty addProperty(IElementProperty property) {
-		TProperty tProperty = ((ElementPropertyOrientDBImpl) property).getDelegate();
-		TProperty flow = delegate.addProperty(tProperty);
-		return new ElementPropertyOrientDBImpl(flow);	}
-
 	/**
 	 * As vertex.
 	 *
@@ -120,12 +55,38 @@ public ITraceScope addScope(ITraceScope scope) {
 	public Vertex asVertex() {
 		return delegate.asVertex();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.eol.incremental.trace.IModelElement#removeProperty(org.eclipse.epsilon.eol.incremental.trace.IElementProperty)
-	 */
-	public void removeProperty(IElementProperty property) {
-		TProperty tProperty = ((ElementPropertyOrientDBImpl) property).getDelegate();
-		delegate.removeProperty(tProperty);
+	
+	@Override
+	public String getElementId() {
+		return delegate.getElementId();
 	}
+
+	@Override
+	public void setElementId(String elementId) {
+		delegate.setElementId(elementId);
+	}
+
+	@Override
+	public List<IExecutionTrace> getExecutionTraces() {
+		ArrayList<IExecutionTrace> result = new ArrayList<IExecutionTrace>();
+		for (NExecutionTrace tExex : delegate.getExecutionTraces()){
+			ExecutionTraceOrientDBImpl tTraceScopeImpl = new ExecutionTraceOrientDBImpl(tExex);
+			result.add(tTraceScopeImpl);
+		}
+		return result;
+	}
+
+	@Override
+	public IExecutionTrace addExecutionTrace(IExecutionTrace executionTrace) {
+		NExecutionTrace tScope = ((ExecutionTraceOrientDBImpl) executionTrace).getDelegate();
+		NExecutionTrace flow = delegate.addExecutionTrace(tScope);
+		return new ExecutionTraceOrientDBImpl(flow);
+	}
+
+	@Override
+	public void removeExecutionTrace(IExecutionTrace executionTrace) {
+		NExecutionTrace tScope = ((ExecutionTraceOrientDBImpl) executionTrace).getDelegate();
+		delegate.removeExecutionTrace(tScope);
+	}
+	
 }

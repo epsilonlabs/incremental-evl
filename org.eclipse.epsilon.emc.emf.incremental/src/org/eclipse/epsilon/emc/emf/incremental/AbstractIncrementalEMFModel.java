@@ -1,4 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	   Jonathan Co   - Initial API and implementation
+ *     Horacio Hoyos - Decoupling and abstraction
+ *******************************************************************************/
 package org.eclipse.epsilon.emc.emf.incremental;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
@@ -8,8 +22,8 @@ import org.eclipse.epsilon.eol.models.IModel;
 public abstract class AbstractIncrementalEMFModel implements IIncrementalModel {
 	
 	protected IModel delegate;
-	private IIncrementalModule module;
-	private EmfPropertyChangeListener emfPCL;
+	private List<IIncrementalModule> modules;
+	private boolean deliver;
 	
 	abstract Resource getResource();
 	
@@ -21,39 +35,45 @@ public abstract class AbstractIncrementalEMFModel implements IIncrementalModel {
 		this.delegate = delegate;
 	}
 
-	public IIncrementalModule getModule() {
-		return module;
-	}
-
-	public void setModule(IIncrementalModule module) {
-		this.module = module;
-	}
-
 	@Override
 	public boolean supportsNotifications() {
 		return true;
 	}
+	
+	@Override
+	public String getModelId() {
+		return getResource().getURI().toString();
+	}
 
 	@Override
-	public boolean enableNotifications() {
-		if (module == null) {
-			return false;
+	public void setDeliver(boolean deliver) {
+		if (deliver != this.deliver) {
+			if (deliver) {
+				for (IIncrementalModule module : getModules()) {
+					EmfPropertyChangeListener emfPCL = new EmfPropertyChangeListener(delegate, module);
+					this.getResource().eAdapters().add(emfPCL);
+				}
+			}
+			else {
+				this.getResource().eAdapters().clear();
+			}
 		}
-		emfPCL = new EmfPropertyChangeListener(delegate, module);
-		this.getResource().eAdapters().add(emfPCL);
-		return true;
+		this.deliver = deliver;
 	}
 
 	@Override
-	public boolean disableNotifications() {
-		return this.getResource().eAdapters().remove(emfPCL);
+	public boolean isDelivering() {
+
+		return deliver;
 	}
 
 	@Override
-	public Object getPropertyValue(String elementId, String propertyName) {
-		throw new UnsupportedOperationException("Not implemented");
+	public List<IIncrementalModule> getModules() {
+		if (modules == null) {
+			modules = new ArrayList<>();
+		}
+		return modules;
 	}
-	
-	
+
 
 }

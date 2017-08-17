@@ -1,0 +1,102 @@
+import 'EcoreHelper.eol';
+
+pre {
+	var now  = new Native("java.util.Date");
+	var path_prefix = "../../../../../../../../src-gen/org/eclipse/epsilon/evl/incremental/orientdb/";
+	var qualified_package = "org.eclipse.epsilon.evl.incremental.orientdb";
+}
+
+
+rule EPackage2Helper
+  transform p : EPackage {
+  
+  parameters {
+    var params : new Map;
+    params.put("today", now.toString());
+    params.put("qp", qualified_package);
+    return params;
+  }
+  
+  // The EGL template to be invoked
+  template : "EPackage2Helper.egl"
+
+  // Output file
+  target : path_prefix + "execute/OrientDbHelper.java"
+  
+}
+
+rule EClass2OrientDbVertex
+  transform eClass : EClass {
+
+  parameters {
+    // These parameters will be made available
+    // to the invoked template as variables
+    var params : new Map;
+    params.put("today", now.toString());
+    params.put("qp", qualified_package);
+    // Allow flexibility for persistance classes to use the same base name as the model classes
+    params.put("typePrefix", "V");
+    params.put("typeSufix", "");
+    return params;
+  }
+
+  // The EGL template to be invoked
+  template : "EClass2Vertex.egl"
+
+  // Output file
+  target : path_prefix + "trace/" + eClass.getJavaTypeName("V", "") + ".java"
+
+}
+
+rule EClass2OrientDbImpl
+  transform eClass : EClass {
+
+  parameters {
+    // These parameters will be made available
+    // to the invoked template as variables
+    var params : new Map;
+    params.put("today", now.toString());
+    params.put("qp", qualified_package);
+    // Allow flexibility for persistance classes to use the same base name as the model classes
+    params.put("typePrefix", "");
+    params.put("typeSufix", "");
+    return params;
+  }
+
+  // The EGL template to be invoked
+  template : "EClass2OrientImpl.egl"
+
+  // Output file
+  target : path_prefix + "trace/impl/" + eClass.getName() + "OrientDBImpl.java"
+
+}
+
+
+rule EReferece2OrientDbEdge
+  transform eRef : EReference {
+
+  guard : eRef.isEdge()
+
+  parameters {
+    // These parameters will be made available
+    // to the invoked template as variables
+    var params : new Map;
+    params.put("today", now.toString());
+    params.put("qp", qualified_package);
+    // Allow flexibility for persistance classes to use the same base name as the model classes
+    params.put("typePrefix", "E");
+    params.put("typeSufix", "");
+    return params;
+  }
+
+  // The EGL template to be invoked
+  template : "EReference2Edge.egl"
+
+  // Output file
+  target : path_prefix + "trace/" + eRef.getJavaTypeName("E", "") + ".java"
+
+}
+
+post{
+ "GenDone".println();
+}

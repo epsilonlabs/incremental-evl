@@ -10,7 +10,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
-import org.eclipse.epsilon.eol.incremental.trace.ITraceScope;
+import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;
 import org.eclipse.epsilon.eol.models.IModel;
 
 /**
@@ -109,11 +109,11 @@ public class EmfPropertyChangeListener extends EContentAdapter {
 		return (EStructuralFeature) (feature instanceof EStructuralFeature ? feature : null);
 	}
 	
-	public EObject getElement(ITraceScope scope) {
-		return (EObject) this.model.getElementById(scope.getRootElement().getElementId());
+	public EObject getElement(IExecutionTrace scope) {
+		return (EObject) this.model.getElementById(scope.getModelElement().getElementId());
 	}
 	
-	public ModuleElement getConstraint(ITraceScope scope) {
+	public ModuleElement getConstraint(IExecutionTrace scope) {
 //		EObject element = this.getElement(scope);
 //		if (element == null) {
 //			return null;

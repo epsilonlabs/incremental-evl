@@ -11,6 +11,7 @@ import org.eclipse.ui.dialogs.SearchPattern;
  * @author Jonathan Co
  *
  */
+// FIXME this should be an abstract class that can be extended for each ExL type
 public class EvlSelectionDialog extends FilteredResourcesSelectionDialog {
 
 	public EvlSelectionDialog(Shell shell) {

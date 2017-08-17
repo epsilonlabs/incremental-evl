@@ -6,22 +6,24 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Thanos Zolotas - Initial API and implementation
+ *     Horacio Hoyos - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.evl.incremental.orientdb.trace;
+package org.eclipse.epsilon.evl.incremental.orientdb.trace.old;
 
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface TIn.
+ * The Interface TFor represents an edge between an execution trace and the
+ * execution context in which the trace was created.
+ * 
+ * @author Horacio Hoyos Rodriguez
  */
-public interface TIn extends TraceComponent, EdgeFrame {
+public interface EFor extends TraceComponent, EdgeFrame {
 	
 	/** The trace type. */
-	String TRACE_TYPE = "in";
+	String TRACE_TYPE = "for";
 
 	/**
 	 * Gets the context.
@@ -29,7 +31,7 @@ public interface TIn extends TraceComponent, EdgeFrame {
 	 * @return the context
 	 */
 	@InVertex
-	TContext getContext();
+	NExecutionContext getExecutionContext();
 	
 	/**
 	 * Gets the constraint.
@@ -37,5 +39,5 @@ public interface TIn extends TraceComponent, EdgeFrame {
 	 * @return the constraint
 	 */
 	@OutVertex
-	TConstraint getConstraint();
+	NModuleElement getModuleElement();
 }

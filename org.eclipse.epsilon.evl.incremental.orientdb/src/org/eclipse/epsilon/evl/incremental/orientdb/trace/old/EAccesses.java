@@ -6,9 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Thanos Zolotas - Initial API and implementation
+ *     Jonathan Co - Initial API and implementation
+ *     Horacio Hoyos - API extension
  *******************************************************************************/
-package org.eclipse.epsilon.evl.incremental.orientdb.trace;
+package org.eclipse.epsilon.evl.incremental.orientdb.trace.old;
 
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.InVertex;
@@ -16,33 +17,33 @@ import com.tinkerpop.frames.OutVertex;
 
 // TODO: Auto-generated Javadoc
 /**
- * The {@link TRootOf} interface represents an edge between a scope and its root
- * model element.
+ * The {@link EAccesses} interface represents an edge between a scope and a
+ * single property accessed by that scope in the trace graph.
  * 
  * @author Jonathan Co
+ * @author Horacio Hoyos Rodriguez
  *
  */
-public interface TRootOf extends TraceComponent, EdgeFrame {
+public interface EAccesses extends TraceComponent, EdgeFrame {
 
 	/** Common name of this trace element. */
-	String TRACE_TYPE = "root_of";
+	String TRACE_TYPE = "accesses";
 
 	/**
 	 * Gets the scope.
 	 *
-	 * @return The scope that uses the model element at {@link #getProperty()}
-	 *         as its root.
+	 * @return The scope that is accessing the property at
+	 *         {@link #getProperty()}.
 	 */
 	@InVertex
-	TScope getScope();
+	NExecutionTrace getExecutionTrace();
 
 	/**
-	 * Gets the element.
+	 * Gets the property.
 	 *
-	 * @return The model element used as the root of the scope at
-	 *         {@link #getScope()}.
+	 * @return The property that has been accessed at {@link #getExecutionTrace()}.
 	 */
 	@OutVertex
-	TElement getElement();
-
+	NElementProperty getProperty();
+	
 }

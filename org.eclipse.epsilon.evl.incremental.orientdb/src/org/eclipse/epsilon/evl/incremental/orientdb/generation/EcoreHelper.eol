@@ -1,0 +1,29 @@
+operation EClass getJavaTypeName(typePrefix, typeSufix) {
+	
+	return typePrefix + self.getName() + typeSufix;
+}
+
+operation EReference getJavaTypeName(typePrefix, typeSufix) {
+	
+	return typePrefix + self.getName().firstToUpperCase() + typeSufix;
+}
+
+
+@cahced
+operation EReference isEdge() : Boolean {
+    var annot = self.getEAnnotation("https://eclipse.org/epsilon/incremental/orientdb");
+    if (annot.isUndefined()) {
+        return false;
+    }
+    var details = annot.getDetails();
+    if (details.containsKey('edge')) {
+        var isEdge = details.get('edge');
+        return isEdge == 'true';
+    }
+    return false;
+}
+
+operation String splitCamelCase() : String {
+	var sp = self.split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
+	return sp.concat(" ").firstToUpperCase();
+}
