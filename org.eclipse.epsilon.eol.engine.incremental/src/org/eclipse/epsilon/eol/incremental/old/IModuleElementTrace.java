@@ -1,5 +1,6 @@
-package org.eclipse.epsilon.eol.incremental.trace;
+package org.eclipse.epsilon.eol.incremental.old;
 
+@Deprecated
 public interface IModuleElementTrace {
 	
 	/**

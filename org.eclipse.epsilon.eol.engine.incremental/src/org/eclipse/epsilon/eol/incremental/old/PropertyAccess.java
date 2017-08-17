@@ -8,7 +8,7 @@
  * Contributors:
  *     Thanos Zolotas - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.eol.incremental.trace;
+package org.eclipse.epsilon.eol.incremental.old;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -17,6 +17,7 @@ package org.eclipse.epsilon.eol.incremental.trace;
  * @author Jonathan Co
  *
  */
+@Deprecated
 public class PropertyAccess {
 
 	/** The element id. */

@@ -8,7 +8,7 @@
  * Contributors:
  *     Thanos Zolotas - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.eol.incremental.trace;
+package org.eclipse.epsilon.eol.incremental.old;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,7 +20,6 @@ import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.eol.models.IModel;
 
-// TODO: Auto-generated Javadoc
 /**
  * Implementation of {@link IExecutionListener} that logs property accesses
  * during evaluation of an EOL statement.

@@ -10,35 +10,52 @@
  *******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.models;
 
+import java.util.List;
+
+import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
 
 /**
  * The Interface IIncrementalModel defines the API for models that support incremental execution, both on-line and 
  * off-line modes. 
+ * 
+ * FIXME This probably just should be added to the IModel interface
  * 
  * @author Horacio Hoyos
  */
 public interface IIncrementalModel {
 	
 	/**
+	 * Get the model Id. Id's are required to properly identify traces.
+	 */
+	String getModelId();
+	
+	/**
 	 * Supports notifications.
 	 *
-	 * @return true, if the model can notify of changes
+	 * @return true, if the model can notify of changes.
 	 */
-	public boolean supportsNotifications();
+	boolean supportsNotifications();
 	
 	/**
-	 * Enable notifications. Registered listeners will receive notifications of any changes in the model. 
-	 *
-	 * @return true, if successful
+	 * Sets whether this model will deliver notifications to the modules.
 	 */
-	public boolean enableNotifications();
+	void setDeliver(boolean deliver);
 	
 	/**
-	 * Disable notifications. Registered listeners will stop receiving notifications of any changes in the model. 
+	 * Returns whether this model will deliver notifications to the modules.
 	 *
-	 * @return true, if successful
+	 * @return true, if notifications are being delivered.
 	 */
-	public boolean disableNotifications();
+	boolean isDelivering();
+	
+	/**
+	 * Returns list of the modules associated with this model. The associated modules will receive notifications of
+	 * changes in the model.
+	 * 
+	 * @return
+	 */
+	List<IIncrementalModule> getModules();
+	
 		
 	/**
 	 * Gets the property value for an element (identified by the id). 
@@ -48,6 +65,6 @@ public interface IIncrementalModel {
 	 * @return the property value
 	 */
 	// FIXME is this part of the basic model? Should we use the default getPropertyGetter and then use that?
-	public Object getPropertyValue(String elementId, String propertyName); 
+	//public Object getPropertyValue(String elementId, String propertyName); 
 	
 }

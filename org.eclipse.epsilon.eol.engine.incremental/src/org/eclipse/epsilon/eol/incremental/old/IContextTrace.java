@@ -8,13 +8,14 @@
  * Contributors:
  *     Thanos Zolotas - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.eol.incremental.trace;
+package org.eclipse.epsilon.eol.incremental.old;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface IContextTrace.
  */
-public interface IContextTrace extends TraceComponent { //, VertexFrame {
+@Deprecated
+public interface IContextTrace extends ITraceComponent { //, VertexFrame {
 
 	/**
   * Gets the name.

@@ -9,8 +9,7 @@
  * 	   Jonathan Co - Initial API and implementation
  *     Horacio Hoyos - Refactoring and decoupling
  *******************************************************************************/
-package org.eclipse.epsilon.eol.incremental.trace;
-
+package org.eclipse.epsilon.eol.incremental.old;
 
 /**
  * A trace manager provides the API for managing traces in the trace model. This includes creation, query and deletion
@@ -29,6 +28,7 @@ package org.eclipse.epsilon.eol.incremental.trace;
  * @author Horacio Hoyos
  *
  */
+@Deprecated
 public interface IIncrementalTraceManager {
 
 
@@ -97,7 +97,7 @@ public interface IIncrementalTraceManager {
 	 * @param contextName the context name
 	 * @return the i trace scope
 	 */
-	ITraceScope createScope(String elementId, String constraintName, String contextName);
+	IExecutionTrace createScope(String elementId, String constraintName, String contextName);
 
 	/**
 	 * Creates the scope.
@@ -106,7 +106,7 @@ public interface IIncrementalTraceManager {
 	 * @param constraint the constraint
 	 * @return the i trace scope
 	 */
-	ITraceScope createScope(String elementId, IConstraintTrace constraint);
+	IExecutionTrace createScope(String elementId, IConstraintTrace constraint);
 
 	/**
 	 * Creates the scope.
@@ -116,7 +116,7 @@ public interface IIncrementalTraceManager {
 	 * @param contextName the context name
 	 * @return the i trace scope
 	 */
-	ITraceScope createScope(IModelElement element, String constraintName, String contextName);
+	IExecutionTrace createScope(IModelElement element, String constraintName, String contextName);
 
 
 	/**
@@ -126,7 +126,7 @@ public interface IIncrementalTraceManager {
 	 * @param constraint the constraint
 	 * @return the i trace scope
 	 */
-	ITraceScope createScope(IModelElement element, IConstraintTrace constraint);
+	IExecutionTrace createScope(IModelElement element, IConstraintTrace constraint);
 
 	/**
 	 * Gets the all constraints.
@@ -161,7 +161,7 @@ public interface IIncrementalTraceManager {
 	 *
 	 * @return the all scopes
 	 */
-	Iterable<ITraceScope> getAllScopes();
+	Iterable<IExecutionTrace> getAllScopes();
 
 	/**
 	 * Gets the constraint.
@@ -224,7 +224,7 @@ public interface IIncrementalTraceManager {
 	 * @param contextName the context name
 	 * @return the scope
 	 */
-	ITraceScope getScope(String elementId, String constraintName, String contextName);
+	IExecutionTrace getScope(String elementId, String constraintName, String contextName);
 
 	/**
 	 * Gets the scope.
@@ -233,7 +233,7 @@ public interface IIncrementalTraceManager {
 	 * @param constraint the constraint
 	 * @return the scope
 	 */
-	ITraceScope getScope(String elementId, IConstraintTrace constraint);
+	IExecutionTrace getScope(String elementId, IConstraintTrace constraint);
 
 	/**
 	 * Gets the scope.
@@ -243,7 +243,7 @@ public interface IIncrementalTraceManager {
 	 * @param contextName the context name
 	 * @return the scope
 	 */
-	ITraceScope getScope(IModelElement element, String constraintName, String contextName);
+	IExecutionTrace getScope(IModelElement element, String constraintName, String contextName);
 
 
 	/**
@@ -253,7 +253,7 @@ public interface IIncrementalTraceManager {
 	 * @param constraint the constraint
 	 * @return the scope
 	 */
-	ITraceScope getScope(IModelElement element, IConstraintTrace constraint);
+	IExecutionTrace getScope(IModelElement element, IConstraintTrace constraint);
 
 	/**
 	 * Gets the scopes of.
@@ -261,7 +261,7 @@ public interface IIncrementalTraceManager {
 	 * @param element the element
 	 * @return the scopes of
 	 */
-	Iterable<ITraceScope> getScopesOf(IModelElement element);
+	Iterable<IExecutionTrace> getScopesOf(IModelElement element);
 
 	/**
 	 * Gets the scopes of id.
@@ -269,7 +269,7 @@ public interface IIncrementalTraceManager {
 	 * @param elementId the element id
 	 * @return the scopes of id
 	 */
-	Iterable<ITraceScope> getScopesOfId(String elementId);
+	Iterable<IExecutionTrace> getScopesOfId(String elementId);
 
 	/**
 	 * Checks if is open.
@@ -393,7 +393,7 @@ public interface IIncrementalTraceManager {
 	 *
 	 * @param scope the scope
 	 */
-	void removeScope(ITraceScope scope);
+	void removeScope(IExecutionTrace scope);
 
 	/**
 	 * Shutdown the underlying database.

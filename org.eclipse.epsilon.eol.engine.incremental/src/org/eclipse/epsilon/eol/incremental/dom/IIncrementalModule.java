@@ -10,15 +10,27 @@
  *******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.dom;
 
+import java.util.Set;
+
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.eol.incremental.execute.IExecutionTraceManager;
+import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
 
 /**
  * Incremental Modules can be attached to incremental models (models that implement IIncrementalModel) in order to be
  * notified of changes in the model and execute specific elements/sections of the module that are related to the
- * objects that changed and their changes. 
+ * objects that changed and their changes.
  * 
- * @author Horacio Hoyos
+ * Implementations need to create an instance of an {@link IExecutionTraceManager} that will be used to manage
+ * the execution traces for the module.
+ * 
+ * An Incremental Module should not be executed completely all the time. Instead it should be executed completely once
+ * in order to create all the trace information. After that, the module should only respond to the changes in the
+ * models associated with the initial execution. For this, the module should attach itself as a listener to all the
+ * models used during execution. 
+ * 
+ * @author Horacio Hoyos Rodriguez
  */
 public interface IIncrementalModule {
 	
@@ -55,6 +67,8 @@ public interface IIncrementalModule {
 	/**
 	 * Create an ID for a module element
 	 * 
+	 * For example, in EVL this id could be &lt;context&gt;:&lt;constraint&gt; and in ETL &lt;context&gt;:&lt;ruleName&gt;
+	 * 
 	 * @param moduleElement the ModuleElement for which an id must be created 
 	 * @return The ID for the module
 	 * @throws EolRuntimeException if the specific type of the ModuleElement is not supported by this module
@@ -67,4 +81,29 @@ public interface IIncrementalModule {
 	 * @return The module element, null if the ID is not known to this module.
 	 */
 	public ModuleElement getModuleElementById(String moduleElementId);
+	
+	/**
+	 * Returns the set of models from which the module receives notification.
+	 * @return
+	 */
+	public Set<IIncrementalModel> getTargets();
+	
+	/**
+	 * Set the execution trace manager for this module.
+	 * @param manager
+	 */
+	public void setExecutionTraceManager(IExecutionTraceManager manager);
+	
+	/**
+	 * Get the execution trace manager associated to this module.
+	 * @return
+	 */
+	public IExecutionTraceManager getExecutionTraceManager();	
+
+	/**
+	 * Set a flag to listen or not to model changes.
+	 */
+	public void listenToModelChanges(boolean listen);
+	
 }
+

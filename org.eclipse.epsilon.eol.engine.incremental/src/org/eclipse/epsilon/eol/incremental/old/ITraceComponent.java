@@ -6,24 +6,20 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Thanos Zolotas - Initial API and implementation
+ *     Jonathan Co - Initial API and implementation
+ *     Horacio Hoyos - Refactoring and Consolidation
+ *     
  *******************************************************************************/
-package org.eclipse.epsilon.eol.incremental.trace;
+package org.eclipse.epsilon.eol.incremental.old;
 
 
-// TODO: Auto-generated Javadoc
 /**
- * Interface specifying common methods for a factory for {@link IIncrementalTraceManager}s.
- *
+ * The {@link ITraceComponent} interface is the base class for all components of the trace model. It is intended to be
+ * used by persistence methods that require all persisted elements to share a common supertype.
+ * 
  * @author Jonathan Co
+ *
  */
-public interface IPropertyAccessTraceFactory {
+public interface ITraceComponent {
 
-	/**
-	 * Gets the trace.
-	 *
-	 * @return An instance of the {@link IIncrementalTraceManager}.
-	 */
-	IIncrementalTraceManager getTrace();
-	
 }

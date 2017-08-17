@@ -8,7 +8,7 @@
  * Contributors:
  *     Thanos Zolotas - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.epsilon.eol.incremental.trace;
+package org.eclipse.epsilon.eol.incremental.old;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -19,7 +19,8 @@ package org.eclipse.epsilon.eol.incremental.trace;
  *
  */
 // TODO: Split name and add in a TClass or TContext vertex
-public interface IConstraintTrace extends TraceComponent {
+@Deprecated
+public interface IConstraintTrace extends ITraceComponent {
 
 	/**
 	 * Gets the name.
@@ -40,7 +41,7 @@ public interface IConstraintTrace extends TraceComponent {
 	 * 
 	 * @return An {@link Iterable} containing all the relevant scopes.
 	 */
-	Iterable<ITraceScope> getScopes();
+	Iterable<IExecutionTrace> getScopes();
 
 	/**
 	 * Add a scope that is evaluated by this constraint.
@@ -49,7 +50,7 @@ public interface IConstraintTrace extends TraceComponent {
 	 *            The scope to add.
 	 * @return the original scope parameter but linked to this constraint.
 	 */
-	ITraceScope addScope(ITraceScope scope);
+	IExecutionTrace addScope(IExecutionTrace scope);
 
 	/**
 	 * Remove a scope that is evaluated by this constraint.
@@ -57,7 +58,7 @@ public interface IConstraintTrace extends TraceComponent {
 	 * @param scope
 	 *            The scope to remove.
 	 */
-	void removeScope(ITraceScope scope);
+	void removeScope(IExecutionTrace scope);
 	
 	/**
 	 * Gets the context.
