@@ -1,5 +1,6 @@
 package org.eclipse.epsilon.common.incremental.dt.launching.dialogs;
 
+import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -10,7 +11,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.PlatformUI;
 
 public abstract class AbstractTraceManagerConfigurationDialog extends TitleAreaDialog {
-
+	
+	protected StringProperties properties;
 	
 	protected static Composite createGroupContainer(Composite parent, String text, int columns) {
 		final Group group = new Group(parent, SWT.FILL);
@@ -57,15 +59,28 @@ public abstract class AbstractTraceManagerConfigurationDialog extends TitleAreaD
 	}
 
 	abstract protected void loadProperties();
+	
+	abstract protected void storeProperties();
 
 	abstract protected void createGroups(Composite control);
 
 	abstract protected  String getExecutionTraceManagerName();
 	
-	/**
-	 * Get the configuration parameters entered in the dialog.
-	 * @return
-	 */
-	abstract public String[] getConfigurationParameters();
+	public StringProperties getProperties(){
+		return properties;
+	}
+	
+	public void setProperties(StringProperties properties){
+		this.properties = properties;
+	}
+	
+	@Override
+	protected void okPressed() {
+		storeProperties();
+		super.okPressed();
+	}
+	
+	
+
 
 }

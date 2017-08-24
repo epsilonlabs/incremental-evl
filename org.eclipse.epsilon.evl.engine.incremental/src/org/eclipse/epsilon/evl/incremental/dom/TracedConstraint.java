@@ -11,18 +11,12 @@
  *******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.dom;
 
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
+import org.eclipse.epsilon.eol.engine.incremental.EOLIncrementalExecutionException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
-import org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter;
-import org.eclipse.epsilon.eol.incremental.execute.IExecutionTraceManager;
-import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
-import org.eclipse.epsilon.eol.incremental.models.ITracingPropertyGetter;
-import org.eclipse.epsilon.eol.incremental.old.IElementProperty;
-import org.eclipse.epsilon.eol.incremental.old.IExecutionTrace;
-import org.eclipse.epsilon.eol.incremental.old.IModelElement;
+import org.eclipse.epsilon.eol.execute.introspection.recording.IPropertyAccess;
+import org.eclipse.epsilon.eol.execute.introspection.recording.PropertyAccessRecorder;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
@@ -40,19 +34,15 @@ import org.eclipse.epsilon.evl.trace.ConstraintTrace;
 // FIXME this could be merged with the Constraint and use a flag
 public class TracedConstraint extends Constraint {
 	
-	private List<IModel> models;
+	//private List<IModel> models;
+	
+	private final PropertyAccessRecorder recorder;
 
 
-	public TracedConstraint(IncrementalEvlModule incrementalEvlModule) {
+	public TracedConstraint(IncrementalEvlModule incrementalEvlModule, PropertyAccessRecorder recorder) {
 		setModule(incrementalEvlModule);
-		this.models = incrementalEvlModule.getContext().getModelRepository().getModels();
-		for (IModel model : models) {
-			IPropertyGetter pg = model.getPropertyGetter();
-			if (pg instanceof ITracingPropertyGetter) {
-				ITracingPropertyGetter ipg = (ITracingPropertyGetter) pg;
-				ipg.setDeliver(true);
-			}
-		}
+		//this.models = incrementalEvlModule.getContext().getModelRepository().getModels();
+		this.recorder = recorder;
 	}
 
 
@@ -70,22 +60,31 @@ public class TracedConstraint extends Constraint {
 		removeOldUnsatisfiedConstraint(self, context);
 		final UnsatisfiedConstraint unsatisfiedConstraint = preprocessCheck(self, context);
 		// Traces are added via notifications
-		enableManagerNotifications(true);
+		recorder.startRecording();
 		Boolean result = checkBlock.execute(context, false);
-		enableManagerNotifications(false);
-
-		return postprocessCheck(self, context, unsatisfiedConstraint, result);
-	}
-
-
-	private void enableManagerNotifications(boolean deliver) {
-		for (IModel model : models) {
-			IPropertyGetter pg = model.getPropertyGetter();
-			if (pg instanceof ITracingPropertyGetter) {
-				ITracingPropertyGetter ipg = (ITracingPropertyGetter) pg;
-				ipg.setDeliver(deliver, this);
+		recorder.stopRecording();
+		String moduleElementId = null;
+		try {
+			moduleElementId = ((IncrementalEvlModule) module).getModuleElementId(this);
+			for (IPropertyAccess pa : recorder.getPropertyAccesses().unique()) {
+				String elementId = null;
+				// FIXME The IntrospectionManager should return model, object and property!!
+				for (IModel model : context.getModelRepository().getModels()) {
+					if (model.knowsAboutProperty(pa.getModelElement(), pa.getPropertyName())) {
+						elementId = model.getElementId(pa.getModelElement());
+						break;
+					}
+				}
+				try {
+					((IncrementalEvlModule) module).getExecutionTraceManager().createExecutionTrace(moduleElementId, elementId, pa.getPropertyName());
+				} catch (EOLIncrementalExecutionException e) {
+					throw new EolRuntimeException("Error creating execution traces: " + e.getMessage(), this);
+				}
 			}
+		} catch (EolRuntimeException e) {
+			throw new EolRuntimeException("Error getting module Id", this);
 		}
+		return postprocessCheck(self, context, unsatisfiedConstraint, result);
 	}
 
 	
@@ -98,22 +97,4 @@ public class TracedConstraint extends Constraint {
 			}
 		}
 	}
-
-	
-//	private void logScope(TScope scope) {
-//		StringBuilder sb = new StringBuilder();
-//		sb.append("[");
-//		
-//		sb.append("\"context\":\"").append(scope.getConstraint().getContext().getName()).append("\",");
-//		sb.append("\"constraint\":\"").append(scope.getConstraint().getName()).append("\",");
-//		sb.append("\"root\":\"").append(scope.getRootElement().getElementId()).append("\",");
-//		sb.append("\"properties\":{");
-//		for (TProperty property : scope.getProperties()) {
-//			sb.append("\"").append(property.getName()).append("\",");
-//		}
-//		sb.append("}");
-//		
-//		sb.append("]");
-//		System.out.println(sb.toString());
-//	}
 }

@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.execute;
 
-import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
-import org.eclipse.epsilon.eol.incremental.old.IExecutionContext;
-import org.eclipse.epsilon.eol.incremental.old.IExecutionTrace;
+import org.eclipse.epsilon.common.util.StringProperties;
+import org.eclipse.epsilon.eol.engine.incremental.EOLIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.trace.ExecutionContext;
+import org.eclipse.epsilon.eol.incremental.trace.Trace;
 
 
 /**
@@ -41,6 +41,12 @@ public interface IExecutionTraceManager {
 	public void executionStarted();
 	
 	/**
+	 * After the initial traces have been created this methods prepares the trace model for access. This method allows
+	 * fine grained control over when the trace model is loaded.
+	 */
+	void incrementalExecutionStarted();
+	
+	/**
 	 * Called to inform the manager that an ExL module has finished executing.
 	 */
 	public void executionFinished();
@@ -50,10 +56,10 @@ public interface IExecutionTraceManager {
 	 * Set the execution context for this manager.
 	 * @param scriptId the id of the ExL Script
 	 * @param models the list of models involved in the execution
-	 * @return An IExecutionContext that represents this context.
+	 * 
+	 * @throws EOLIncrementalExecutionException If there is an exception adding the context to the trace model.
 	 */
-	public IExecutionContext setExecutionContext(String scriptId, List<String> models);
-	
+	public void setExecutionContext(String scriptId, List<String> models) throws EOLIncrementalExecutionException;
 	
 	/**
 	 * Creates traces for the properties accessed on a specific model element during the execution of a Epsilon module
@@ -63,10 +69,9 @@ public interface IExecutionTraceManager {
 	 * @param moduleElementId the module element id
 	 * @param elementId the element id
 	 * @param properties the properties' name of properties accessed during execution
-	 * @param result True if the traces where added
 	 * @return true, if successful
 	 */
-	public boolean createTraces(String moduleElementId, String elementId, List<String> properties);
+	public boolean createExecutionTraces(String moduleElementId, String elementId, List<String> properties) throws EOLIncrementalExecutionException;
 	
 	/**
 	 * Creates a trace for the property accessed on a specific model element during the execution of a Epsilon module
@@ -76,11 +81,10 @@ public interface IExecutionTraceManager {
 	 * @param moduleElementId the module element id
 	 * @param elementId the element id
 	 * @param properties the properties' name of properties accessed during execution
-	 * @param result True if the traces where added
-	 * @return true, if successful
+	 * @return true, if successful. False if a trace for the given property already exists.
+	 * @throws EOLIncrementalExecutionException 
 	 */
-	public boolean createTrace(String moduleElementId, String elementId, String propertyName);
-	
+	public boolean createExecutionTrace(String moduleElementId, String elementId, String propertyName) throws EOLIncrementalExecutionException;
 	
 	/**
 	 * Gets the property trace for the given property and element. This allows fine grained incremental execution for
@@ -90,9 +94,9 @@ public interface IExecutionTraceManager {
 	 * @param propertyName the property name
 	 *
 	 * @return the property
+	 * @throws EOLIncrementalExecutionException 
 	 */
-	public List<IExecutionTrace> getTraces(String objectId, String propertyName);
-	
+	public List<Trace> findExecutionTraces(String objectId, String propertyName) throws EOLIncrementalExecutionException;
 	
 	/**
 	 * Gets the execution traces related to this element. This allows coarse grained incremental execution for
@@ -101,7 +105,7 @@ public interface IExecutionTraceManager {
 	 * @param objectId the model object id
 	 * @return the element trace
 	 */
-	public List<IExecutionTrace> getTraces(String objectId);
+	public List<Trace> findExecutionTraces(String objectId) throws EOLIncrementalExecutionException;
 
 	/**
 	 * Since the configuration parameters are unique for each possible trace manager, the configuration parameters
@@ -113,8 +117,9 @@ public interface IExecutionTraceManager {
 	 * This should be the first method invoked in the manager as it opens the db connection, loads the Resource, opens
 	 * the text file, etc. 
 	 * 
-	 * @param configParameters an array of values to configure the manager.
+	 * @param properties an array of values to configure the manager.
 	 */
-	public void configure(String[] configParameters);
+	public void configure(StringProperties properties);
+
 
 }

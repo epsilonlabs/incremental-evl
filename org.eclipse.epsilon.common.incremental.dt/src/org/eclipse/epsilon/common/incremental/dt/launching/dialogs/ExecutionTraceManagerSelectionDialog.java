@@ -160,7 +160,7 @@ public class ExecutionTraceManagerSelectionDialog extends TitleAreaDialog implem
 		traceManagers = new ArrayList<ExecutionTraceManagerExtension>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		
-		IExtensionPoint extensionPoint = registry.getExtensionPoint("org.eclipse.epsilon.common.dt.modelType");
+		IExtensionPoint extensionPoint = registry.getExtensionPoint("org.eclipse.epsilon.common.incremental.dt.executionTraceManager");
 		IConfigurationElement[] configurationElements =  extensionPoint.getConfigurationElements();
 		
 		try {

@@ -11,13 +11,12 @@ import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.epsilon.common.incremental.dt.launching.dialogs.AbstractTraceManagerConfigurationDialog;
 import org.eclipse.epsilon.common.incremental.dt.launching.dialogs.ExecutionTraceManagerSelectionDialog;
 import org.eclipse.epsilon.common.incremental.dt.launching.extensions.ExecutionTraceManagerExtension;
+import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.emf.InMemoryEmfModel;
 import org.eclipse.epsilon.emc.emf.incremental.IncrementalInMemoryEmfModel;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.incremental.execute.IExecutionTraceManager;
-import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
-import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.models.ModelRepository;
 import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
 import org.eclipse.jface.window.Window;
@@ -30,20 +29,20 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
 		Command command = event.getCommand();
+		IEditingDomainProvider edp = getCurrentEDP(event);
+		if (edp == null) {
+			return null;
+		}
 		boolean oldState = HandlerUtil.toggleCommandState(command);
 		
 //		try {
-			IEditingDomainProvider edp = getCurrentEDP(event);
-			if (edp == null) {
-				return null;
-			}
-			
 			if (oldState) {
 				detach(edp, event);
 			} else {
 				try {
 					attach(edp, event);
 				} catch (EolRuntimeException e) {
+					HandlerUtil.toggleCommandState(command);
 					throw new ExecutionException(e.getMessage());
 				}
 			}
@@ -55,13 +54,8 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 	
 	public void detach(IEditingDomainProvider edp, ExecutionEvent event) {
 		final IncrementalEvlModule module = EditorRegistry.REGISTRY.remove(edp);
-		final ModelRepository modelRepository = module.getContext()
-				.getModelRepository();
-		for (IModel m : modelRepository.getModels()) {
-			if (m instanceof IIncrementalModel) {
-				((IIncrementalModel) m).setDeliver(false);
-			}
-		}
+		module.listenToModelChanges(false);
+		module.getExecutionTraceManager().executionFinished();
 	}
 
 	public void attach(IEditingDomainProvider edp, ExecutionEvent event) throws EolRuntimeException {
@@ -88,20 +82,23 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 			// Raise exception, we can not run without a trace manager
 		}
 		// Configure the manager
-		AbstractTraceManagerConfigurationDialog configDialog = null;
+		AbstractTraceManagerConfigurationDialog managerConfigurationDialog = null;
 		try {
-			configDialog = managerExtension.createConfigurationDialog();
+			managerConfigurationDialog = managerExtension.createConfigurationDialog();
 		} catch (CoreException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		if (configDialog.open() == Window.OK) {
-			// No info to get from this dialog
+		managerConfigurationDialog.setBlockOnOpen(true);
+		managerConfigurationDialog.open();
+		managerConfigurationDialog.close();
+		StringProperties properties = null;
+		if (managerConfigurationDialog.getReturnCode() == Window.OK){
+			properties = managerConfigurationDialog.getProperties();
 		}
 		else {
 			// Raise exception, we can not run without a trace manager configuration
 		}
-		
 		final IncrementalEvlModule module = new IncrementalEvlModule();
 		
 		IExecutionTraceManager traceManager = null;
@@ -111,7 +108,7 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		traceManager.configure(configDialog.getConfigurationParameters());
+		traceManager.configure(properties);
 		module.setExecutionTraceManager(traceManager);
 		
 		// View not working
@@ -137,12 +134,6 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 		}
 
 		module.execute();
-		// Enable notifications after the initial execution
-		for (IModel m : modelRepository.getModels()) {
-			if (m instanceof IIncrementalModel) {
-				((IIncrementalModel) m).setDeliver(true);
-			}
-		}
 		EditorRegistry.REGISTRY.put(edp, module);
 	}
 	

@@ -6,8 +6,6 @@ Bundle-Version: 1.0.0
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.epsilon.evl.engine;visibility:=reexport,
- org.eclipse.epsilon.eol.engine.incremental;visibility:=reexport,
- org.eclipse.epsilon.evl.incremental.orientdb,
- org.eclipse.epsilon.evl.incremental.dependencies
+ org.eclipse.epsilon.eol.engine.incremental;visibility:=reexport
 Export-Package: org.eclipse.epsilon.evl.incremental,
  org.eclipse.epsilon.evl.incremental.dom

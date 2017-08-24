@@ -13,6 +13,8 @@ package org.eclipse.epsilon.eol.incremental.models;
 import java.util.List;
 
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
+import org.eclipse.epsilon.eol.models.IModel;
+
 
 /**
  * The Interface IIncrementalModel defines the API for models that support incremental execution, both on-line and 
@@ -22,7 +24,7 @@ import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
  * 
  * @author Horacio Hoyos
  */
-public interface IIncrementalModel {
+public interface IIncrementalModel extends IModel {
 	
 	/**
 	 * Get the model Id. Id's are required to properly identify traces.
@@ -37,7 +39,8 @@ public interface IIncrementalModel {
 	boolean supportsNotifications();
 	
 	/**
-	 * Sets whether this model will deliver notifications to the modules.
+	 * Sets whether this model will deliver notifications to the modules. The notifications are usually enabled after
+	 * the intial traces have been executed (e.g. first execution of the ExL script).
 	 */
 	void setDeliver(boolean deliver);
 	
@@ -55,16 +58,5 @@ public interface IIncrementalModel {
 	 * @return
 	 */
 	List<IIncrementalModule> getModules();
-	
-		
-	/**
-	 * Gets the property value for an element (identified by the id). 
-	 *
-	 * @param elementId the element id
-	 * @param propertyName the property name
-	 * @return the property value
-	 */
-	// FIXME is this part of the basic model? Should we use the default getPropertyGetter and then use that?
-	//public Object getPropertyValue(String elementId, String propertyName); 
 	
 }

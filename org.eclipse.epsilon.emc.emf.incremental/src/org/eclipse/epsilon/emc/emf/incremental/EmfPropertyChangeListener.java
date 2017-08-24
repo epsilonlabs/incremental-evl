@@ -10,9 +10,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentAdapter;
-import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
-import org.eclipse.epsilon.eol.incremental.old.IExecutionTrace;
+import org.eclipse.epsilon.eol.incremental.trace.Trace;
 import org.eclipse.epsilon.eol.models.IModel;
 
 /**
@@ -111,10 +110,10 @@ public class EmfPropertyChangeListener extends EContentAdapter {
 		return (EStructuralFeature) (feature instanceof EStructuralFeature ? feature : null);
 	}
 	
-	public List<EObject> getElements(IExecutionTrace executionTrace) {
+	public List<EObject> getElements(Trace executionTrace) {
 		
-		List<EObject> result = executionTrace.getModelElements().stream()
-			.map(me -> me.getElementId())
+		List<EObject> result = executionTrace.getReaches().stream()
+			.map(me -> me.getElement_id())
 			.map(id -> this.model.getElementById(id))
 			.map(EObject.class::cast)
 			.collect(Collectors.toList());

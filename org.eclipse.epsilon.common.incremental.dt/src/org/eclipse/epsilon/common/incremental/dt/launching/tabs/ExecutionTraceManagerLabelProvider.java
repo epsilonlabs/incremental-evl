@@ -2,11 +2,11 @@ package org.eclipse.epsilon.common.incremental.dt.launching.tabs;
 
 
 import org.eclipse.epsilon.common.incremental.dt.launching.extensions.ExecutionTraceManagerExtension;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
-public class ExecutionTraceManagerLabelProvider implements IBaseLabelProvider {
+public class ExecutionTraceManagerLabelProvider implements ILabelProvider {
 
 	@Override
 	public void addListener(ILabelProviderListener listener) {
