@@ -6,8 +6,8 @@ pre {
 	var qualified_package = "org.eclipse.epsilon.evl.incremental.orientdb";
 }
 
-
-rule EPackage2Helper
+/*
+rule EPackage2Uril
   transform p : EPackage {
   
   parameters {
@@ -18,16 +18,36 @@ rule EPackage2Helper
   }
   
   // The EGL template to be invoked
-  template : "EPackage2Helper.egl"
+  template : "EPackage2OrientDbUtil.egl"
 
   // Output file
-  target : path_prefix + "execute/OrientDbHelper.java"
+  target : path_prefix + "execute/" + p.getName().firstToUpperCase() + "OrientDbUtil.java"
+  
+}
+*/
+rule EPackage2DAO
+  transform p : EPackage {
+  
+  parameters {
+    var params : new Map;
+    params.put("today", now.toString());
+    params.put("qp", qualified_package);
+    return params;
+  }
+  
+  // The EGL template to be invoked
+  template : "EPackage2OrientDbDAO.egl"
+
+  // Output file
+  target : path_prefix + "execute/" + p.getName().firstToUpperCase() + "OrientDbDAO.java"
   
 }
 
 rule EClass2OrientDbVertex
   transform eClass : EClass {
-
+  
+  guard : not eClass.isInterface()
+  
   parameters {
     // These parameters will be made available
     // to the invoked template as variables
@@ -50,6 +70,8 @@ rule EClass2OrientDbVertex
 
 rule EClass2OrientDbImpl
   transform eClass : EClass {
+  
+  guard : not eClass.isInterface()
 
   parameters {
     // These parameters will be made available
@@ -67,7 +89,7 @@ rule EClass2OrientDbImpl
   template : "EClass2OrientImpl.egl"
 
   // Output file
-  target : path_prefix + "trace/impl/" + eClass.getName() + "OrientDBImpl.java"
+  target : path_prefix + "trace/impl/" + eClass.getName() + "OrientDbImpl.java"
 
 }
 

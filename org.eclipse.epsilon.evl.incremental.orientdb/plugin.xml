@@ -4,10 +4,10 @@
    <extension
          point="org.eclipse.epsilon.common.incremental.dt.executionTraceManager">
       <executionTraceManager
-            class="org.eclipse.epsilon.evl.incremental.orientdb.execute.IncrementalExecutionTraceManager1"
+            class="org.eclipse.epsilon.evl.incremental.orientdb.execute.OrientDbTraceManager"
             dialog="org.eclipse.epsilon.evl.incremental.orientdb.dialog.OrientDBManagerConfiguration"
             icon="icons/orientdb.png"
-            label="org.eclipse.epsilon.evl.incremental.orientdb.executionTraceManager1">
+            label="OrientDb Trace Manager">
       </executionTraceManager>
    </extension>
 

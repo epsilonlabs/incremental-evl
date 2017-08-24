@@ -5,7 +5,7 @@ import "EcoreHelper.eol";
 operation EStructuralFeature makeGetterDoc() {%]
 /**
  * Returns the value of the '<em><b>[%=self.getName().splitCamelCase()%]</b></em>' attribute.
- [%=out.startPreserve("* <!--", "-->", "user-doc", true)%]
+ [%=out.startPreserve("* <!--", "-->", self.getName()+"-getter-doc", true)%]
  * <p>
  * If the meaning of the '<em>[%=self.getName().splitCamelCase()%]</em>' attribute isn't clear,
  * there really should be more of a description here...
@@ -19,7 +19,7 @@ operation EStructuralFeature makeGetterDoc() {%]
 operation EStructuralFeature makeSetterDoc() {%]
 /**
  * Sets the value of the '{@link [%=self.getEContainingClass.getName()%]#[%=self.getName().firstToUpperCase()%] <em>[%=self.getName().splitCamelCase()%]</em>}' attribute.
- [%=out.startPreserve("* <!--", "-->", "user-doc", true)%]
+ [%=out.startPreserve("* <!--", "-->", self.getName()+"-setter-doc", true)%]
  [%=out.stopPreserve()%] 
  * @param value the new value of the '<em>[%=self.getName().splitCamelCase()%]/em>' attribute.
  * @see #get[%=self.getName().firstToUpperCase()%]()
@@ -49,8 +49,8 @@ operation EAttribute getGetterReturnType(multiType : String) {if (self.isMany())
 
 
 @template
-operation EAttribute makeSetterSignature() {%]
-[%=self.getSetterReturnType()%] [%=self.getSetterMethodName()%]([%=self.getSetterParamterType()%] [%=self.getSetterParamterName()%])
+operation EAttribute makeSetterSignature(multiType : String) {%]
+[%=self.getSetterReturnType()%] [%=self.getSetterMethodName()%]([%=self.getSetterParamterType(multiType)%] [%=self.getSetterParamterName()%])
 [%}
 
 @template
@@ -59,9 +59,10 @@ void
 [%}
 
 @template
-operation EAttribute getSetterParamterType() {%]
-[%=self.getEAttributeType().getInstanceTypeName()%]
-[%}
+operation EAttribute getSetterParamterType(multiType : String) {if (self.isMany()) {%]
+[%=multiType%]<[%=self.getEAttributeType().getInstanceTypeName()%]>    
+[%  } else {%][%=self.getEAttributeType().getInstanceTypeName()%][% }
+}
 
 @template
 // self.getEAttributeType().getName().firstToLowerCase()?

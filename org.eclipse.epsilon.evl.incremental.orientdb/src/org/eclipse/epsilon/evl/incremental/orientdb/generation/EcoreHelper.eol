@@ -8,10 +8,50 @@ operation EReference getJavaTypeName(typePrefix, typeSufix) {
 	return typePrefix + self.getName().firstToUpperCase() + typeSufix;
 }
 
+/**
+ * Get the select methods information. If available, returns a Bag containing two Sequences. The 
+ * first is the list of types in the path, the second is the list of attributes/references to match.
+ */
+@cached 
+operation EClass getSelect() : Sequence {
+    var annot = self.getEAnnotation("https://eclipse.org/epsilon/incremental/OrientDbSelect");
+    var result : Bag;
+    if (annot.isUndefined()) {
+        return result;
+    }
+    result.add(annot.getReferences());
+    var details = annot.getDetails();
+    if (details.containsKey('match')) {
+        result.add(details.get('match').split(','));
+    }
+    return result;
+}
+
+/**
+ * Get the index information. If available, returns a Sequence containing the EAttribute static 
+ * identifier (same used when creating the vertex class) and the index type.
+ */
+@cached 
+operation EClass getIndex() : Sequence {
+	var annot = self.getEAnnotation("https://eclipse.org/epsilon/incremental/OrientDbIndex");
+    if (annot.isUndefined()) {
+        return null;
+    }
+    var details = annot.getDetails();
+    if (details.containsKey('type')) {
+        var attr = annot.getReferences().first().getName().splitCamelCase("_").toUpperCase();
+        var type = details.get('type');
+        var res : Sequence();
+        res.add(attr);
+        res.add(type);
+        return res;
+    }
+    return null;
+}
 
 @cahced
 operation EReference isEdge() : Boolean {
-    var annot = self.getEAnnotation("https://eclipse.org/epsilon/incremental/orientdb");
+    var annot = self.getEAnnotation("https://eclipse.org/epsilon/incremental/OrientDbGraph");
     if (annot.isUndefined()) {
         return false;
     }
@@ -24,6 +64,10 @@ operation EReference isEdge() : Boolean {
 }
 
 operation String splitCamelCase() : String {
+	return self.splitCamelCase(" ");
+}
+
+operation String splitCamelCase(char : String) : String {
 	var sp = self.split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
-	return sp.concat(" ").firstToUpperCase();
+	return sp.concat(char).firstToUpperCase();
 }

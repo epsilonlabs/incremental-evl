@@ -23,8 +23,9 @@ import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
 
 /**
- * The {@link [%=eRef.getJavaTypeName(typePrefix, typeSufix)%] } interface represents an edge between a scope and a
- * single property accessed by that scope in the trace graph.
+ * The [%=eRef.getJavaTypeName(typePrefix, typeSufix)%] interface represents an edge
+ * between a vertex of type [%=eRef.getEContainingClass().getName()%] and a vertex of type
+ * [%=eRef.getEReferenceType().getName()%].
  * 
  * @author Jonathan Co
  * @author Horacio Hoyos Rodriguez
@@ -41,7 +42,7 @@ public interface [%=eRef.getJavaTypeName(typePrefix, typeSufix)%] extends EdgeFr
 	 * @return The [%=eRef.getEContainingClass().getName()%] that is accessing the property at
 	 * {@link #get[%=eRef.getEReferenceType().getName()%]()}.
 	 */
-	@InVertex
+	@OutVertex
 	[%=eRef.getEContainingClass().getJavaTypeName("V", "")%] get[%=eRef.getEContainingClass().getName()%]();
 
 	/**
@@ -50,7 +51,7 @@ public interface [%=eRef.getJavaTypeName(typePrefix, typeSufix)%] extends EdgeFr
 	 * @return The [%=eRef.getEReferenceType().getName()%] that has been accessed at
 	 * {@link #get[%=eRef.getEContainingClass().getName()%]()}.
 	 */
-	@OutVertex
+	@InVertex
 	[%=eRef.getEReferenceType().getJavaTypeName("V", "")%] get[%=eRef.getEReferenceType().getName()%]();
 	
 }
