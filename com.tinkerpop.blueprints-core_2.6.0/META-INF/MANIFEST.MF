@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tinkerpop Blueprints
+Bundle-SymbolicName: com.tinkerpop.blueprints-core_2.6.0
+Bundle-Version: 2.6.0
+Bundle-Vendor: Tinkerpop
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: com.tinkerpop.blueprints,
+ com.tinkerpop.blueprints.impls.tg,
+ com.tinkerpop.blueprints.util,
+ com.tinkerpop.blueprints.util.io,
+ com.tinkerpop.blueprints.util.io.gml,
+ com.tinkerpop.blueprints.util.io.graphml,
+ com.tinkerpop.blueprints.util.io.graphson,
+ com.tinkerpop.blueprints.util.wrappers,
+ com.tinkerpop.blueprints.util.wrappers.batch,
+ com.tinkerpop.blueprints.util.wrappers.batch.cache,
+ com.tinkerpop.blueprints.util.wrappers.event,
+ com.tinkerpop.blueprints.util.wrappers.event.listener,
+ com.tinkerpop.blueprints.util.wrappers.id,
+ com.tinkerpop.blueprints.util.wrappers.partition,
+ com.tinkerpop.blueprints.util.wrappers.readonly,
+ com.tinkerpop.blueprints.util.wrappers.wrapped

@@ -1,0 +1,35 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Jackson Core
+Bundle-SymbolicName: com.fasterxml.jackson.core_2.6.0
+Bundle-Version: 2.6.0
+Bundle-Vendor: FasterXML
+Export-Package: com.fasterxml.jackson.core;version="2.6.0",
+ com.fasterxml.jackson.core.base;version="2.6.0",
+ com.fasterxml.jackson.core.filter;version="2.6.0",
+ com.fasterxml.jackson.core.format;version="2.6.0",
+ com.fasterxml.jackson.core.io;version="2.6.0",
+ com.fasterxml.jackson.core.json;version="2.6.0",
+ com.fasterxml.jackson.core.sym;version="2.6.0",
+ com.fasterxml.jackson.core.type;version="2.6.0",
+ com.fasterxml.jackson.core.util;version="2.6.0"
+Bundle-Description: Core Jackson abstractions, basic JSON streaming API implementation
+Build-Jdk: 1.7.0_67
+Specification-Version: 2.6.0
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Implementation-Title: Jackson-core
+Tool: Bnd-2.3.0.201405100607
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
+Implementation-Vendor: FasterXML
+Specification-Vendor: FasterXML
+X-Compile-Target-JDK: 1.6
+X-Compile-Source-JDK: 1.6
+Implementation-Build-Date: 2015-07-17 00:13:38+0000
+Bundle-DocURL: https://github.com/FasterXML/jackson-core
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.6))"
+Bnd-LastModified: 1437092027577
+Built-By: tatu
+Implementation-Vendor-Id: com.fasterxml.jackson.core
+Created-By: Apache Maven Bundle Plugin
+Specification-Title: Jackson-core
+Implementation-Version: 2.6.0
