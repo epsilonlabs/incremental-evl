@@ -20,8 +20,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 public class OrientDbUtil {
 	
 	/**
-	 * Creates a new In-Memory database, no user or password. The {@link OrientDbUtil#setupSchema()} method is
-	 * called after creation to populate the DB schema. 
+	 * Creates a new In-Memory database, no user or password.
 	 * 
 	 * @param name
 	 * @return

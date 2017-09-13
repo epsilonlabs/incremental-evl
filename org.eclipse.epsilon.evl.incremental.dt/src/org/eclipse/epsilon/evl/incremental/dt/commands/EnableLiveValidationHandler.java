@@ -1,9 +1,12 @@
 package org.eclipse.epsilon.evl.incremental.dt.commands;
 
+import java.util.Map;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.State;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -16,49 +19,74 @@ import org.eclipse.epsilon.emc.emf.InMemoryEmfModel;
 import org.eclipse.epsilon.emc.emf.incremental.IncrementalInMemoryEmfModel;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
 import org.eclipse.epsilon.eol.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.eol.models.ModelRepository;
+import org.eclipse.epsilon.evl.dt.views.ValidationViewFixer;
 import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.menus.UIElement;
 
-public class EnableLiveValidationHandler extends AbstractHandler {
+/**
+ * Handle the Toggle menu, based on https://eclipsesource.com/blogs/2009/01/15/toggling-a-command-contribution/
+ * 
+ * @author Horacio Hoyos
+ *
+ */
+public class EnableLiveValidationHandler extends AbstractHandler implements IElementUpdater {
+	
+	/**
+	 * The id of the state element of the EVL command in the extension point.
+	 */
+    private static final String LIVE_TOGGLE = "org.eclipse.epsilon.evl.incremental.dt.live";
+    
+	private String commandId;
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+//FIXME We have to be more carefull with exceptions and make sure the db connection is correctly closed
+        Command command = event.getCommand();
+        this.commandId = event.getCommand().getId();
+        IEditingDomainProvider edp = getCurrentEDP(event);
+        if (edp == null) {
+            return null;
+        }
+        State state = event.getCommand().getState(LIVE_TOGGLE);
+        if (state == null)
+            throw new ExecutionException("The command does not have a toggle state"); //$NON-NLS-1$
+        if (!(state.getValue() instanceof Boolean))
+	        throw new ExecutionException("The command's toggle state doesn't contain a boolean value"); //$NON-NLS-1$
 
-		Command command = event.getCommand();
-		IEditingDomainProvider edp = getCurrentEDP(event);
-		if (edp == null) {
-			return null;
-		}
-		boolean oldState = HandlerUtil.toggleCommandState(command);
-		
-//		try {
-			if (oldState) {
-				detach(edp, event);
-			} else {
-				try {
-					attach(edp, event);
-				} catch (EolRuntimeException e) {
-					HandlerUtil.toggleCommandState(command);
-					throw new ExecutionException(e.getMessage());
+        ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+		boolean oldValue = ((Boolean) state.getValue()).booleanValue();
+		if (oldValue) {
+			detach(edp, event);
+			state.setValue(false);
+			HandlerUtil.toggleCommandState(command);
+		} else {
+			boolean success = false;
+			try {
+				success = attach(edp, event);
+			} catch (EolRuntimeException e) {
+				throw new ExecutionException(e.getMessage());
+			}
+			finally {
+				if (success) {
+					state.setValue(true);
+//					HandlerUtil.toggleCommandState(command);
 				}
 			}
-//		} catch (Exception e) {
-//			throw new ExecutionException("", e);
-//		}
+		}
+		commandService.refreshElements(event.getCommand().getId(), null);
 		return null;
 	}
-	
-	public void detach(IEditingDomainProvider edp, ExecutionEvent event) {
-		final IncrementalEvlModule module = EditorRegistry.REGISTRY.remove(edp);
-		module.listenToModelChanges(false);
-		module.getExecutionTraceManager().executionFinished();
-	}
 
-	public void attach(IEditingDomainProvider edp, ExecutionEvent event) throws EolRuntimeException {
+	public boolean attach(IEditingDomainProvider edp, ExecutionEvent event) throws EolRuntimeException {
 
 		final EvlSelectionDialog dialog = new EvlSelectionDialog(
 				HandlerUtil.getActiveWorkbenchWindow(event).getShell());
@@ -71,49 +99,56 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 				}
 			}
 		}
+		else {
+			return false;
+		}
 		
 		final ExecutionTraceManagerSelectionDialog managerDialog = new ExecutionTraceManagerSelectionDialog(HandlerUtil.getActiveWorkbenchWindow(event).getShell());
-		
 		ExecutionTraceManagerExtension managerExtension = null;
 		if (managerDialog.open() == Window.OK) {
 			managerExtension = managerDialog.getExecutionTraceManager();
 		}
 		else {
-			// Raise exception, we can not run without a trace manager
+			return false;
 		}
 		// Configure the manager
-		AbstractTraceManagerConfigurationDialog managerConfigurationDialog = null;
-		try {
-			managerConfigurationDialog = managerExtension.createConfigurationDialog();
-		} catch (CoreException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-		managerConfigurationDialog.setBlockOnOpen(true);
-		managerConfigurationDialog.open();
-		managerConfigurationDialog.close();
 		StringProperties properties = null;
-		if (managerConfigurationDialog.getReturnCode() == Window.OK){
-			properties = managerConfigurationDialog.getProperties();
+		try {
+			final AbstractTraceManagerConfigurationDialog  managerConfigurationDialog = managerExtension.createConfigurationDialog();
+			managerConfigurationDialog.setBlockOnOpen(true);
+			managerConfigurationDialog.open();
+			if (managerConfigurationDialog.getReturnCode() == Window.OK){
+				properties = managerConfigurationDialog.getProperties();
+				// We are online
+				properties.put(IIncrementalModule.ONLINE_MODE, true);
+			}
+			else {
+//				managerConfigurationDialog.close();
+				return false;
+			}
+		} catch (CoreException e2) {
+			throw new EolRuntimeException(e2.getMessage());
 		}
-		else {
-			// Raise exception, we can not run without a trace manager configuration
-		}
-		final IncrementalEvlModule module = new IncrementalEvlModule();
 		
+		
+		final IncrementalEvlModule module = new IncrementalEvlModule();
 		IExecutionTraceManager traceManager = null;
 		try {
 			traceManager = managerExtension.createTraceManager();
 		} catch (CoreException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			throw new EolRuntimeException(e1.getMessage());
 		}
 		traceManager.configure(properties);
 		module.setExecutionTraceManager(traceManager);
 		
-		// View not working
-		//module.setUnsatisfiedConstraintFixer(new ValidationViewFixer(null));
+		// View not working?
+		module.setUnsatisfiedConstraintFixer(new ValidationViewFixer(null));
 		//module.reset();
+		// It seems this is not executed in a UI thread, so the ValidationViewFixer never starts
+		//ILaunchConfiguration configuration = null;
+		//module.setUnsatisfiedConstraintFixer(new ValidationViewFixer(configuration));
+		// FIXME Do we need optimised constraints?
+		module.setOptimizeConstraints(false);
 		try {
 			module.parse(evlFile.getLocationURI());
 		} catch (Exception e) {
@@ -132,9 +167,15 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 			incrementalInMemoryEmfModel.getModules().add(module);
 			modelRepository.addModel(incrementalInMemoryEmfModel );
 		}
-
 		module.execute();
 		EditorRegistry.REGISTRY.put(edp, module);
+		return true;
+	}
+	
+	public void detach(IEditingDomainProvider edp, ExecutionEvent event) {
+		final IncrementalEvlModule module = EditorRegistry.REGISTRY.remove(edp);
+		module.listenToModelChanges(false);
+		module.getExecutionTraceManager().batchExecutionFinished();
 	}
 	
 	public IEditingDomainProvider getCurrentEDP(ExecutionEvent event) {
@@ -144,5 +185,17 @@ public class EnableLiveValidationHandler extends AbstractHandler {
 		}
 
 		return (IEditingDomainProvider) editorPart;
+	}
+
+	@Override
+	public void updateElement(UIElement element, Map parameters) {
+        if (commandId != null) {
+		    ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(
+                    ICommandService.class);
+			Command command = commandService.getCommand(commandId);
+//			element.setChecked((Boolean) command.getState(IMenuStateIds.STYLE).getValue());
+			State state = command.getState(LIVE_TOGGLE);
+			element.setChecked((Boolean) state.getValue());
+        }		
 	}
 }

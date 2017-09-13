@@ -7,7 +7,7 @@
             class="org.eclipse.epsilon.evl.incremental.orientdb.execute.OrientDbTraceManager"
             dialog="org.eclipse.epsilon.evl.incremental.orientdb.dialog.OrientDBManagerConfiguration"
             icon="icons/orientdb.png"
-            label="OrientDb Trace Manager">
+            label="OrientDB Trace Manager">
       </executionTraceManager>
    </extension>
 

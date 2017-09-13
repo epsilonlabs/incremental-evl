@@ -23,27 +23,6 @@ public class OrientDBManagerConfiguration extends AbstractTraceManagerConfigurat
 	private Text passwordText;
 
 	@Override
-	protected void createGroups(Composite parent) {
-		final Composite groupContent = createGroupContainer(parent, "Connection information", 2);
-		Label databaseUriLabel = new Label(groupContent, SWT.NONE);
-		databaseUriLabel.setText("DataBase URI: ");
-		databaseUrlText = new Text(groupContent, SWT.BORDER);
-		databaseUrlText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		
-		Label userLabel = new Label(groupContent, SWT.NONE);
-		userLabel.setText("user: ");
-		userText = new Text(groupContent, SWT.BORDER);
-		userText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		Label passwordLabel = new Label(groupContent, SWT.NONE);
-		passwordLabel.setText("password: ");
-		passwordText = new Text(groupContent, SWT.BORDER);
-		passwordText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-	}
-
-	@Override
 	protected String getExecutionTraceManagerName() {
 		return "OrientDB Trace Manager";
 	}
@@ -65,6 +44,27 @@ public class OrientDBManagerConfiguration extends AbstractTraceManagerConfigurat
 		properties.put(DB_PASS, passwordText.getText());
 		// FIXME Add check button for this
 		properties.put(DB_CREATE, true);
+	}
+	
+	@Override
+	protected void createGroups(Composite parent) {
+		final Composite groupContent = createGroupContainer(parent, "DB information", 2);
+		Label databaseUriLabel = new Label(groupContent, SWT.NONE);
+		databaseUriLabel.setText("DataBase URI: ");
+		databaseUrlText = new Text(groupContent, SWT.BORDER);
+		databaseUrlText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		
+		Label userLabel = new Label(groupContent, SWT.NONE);
+		userLabel.setText("user: ");
+		userText = new Text(groupContent, SWT.BORDER);
+		userText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Label passwordLabel = new Label(groupContent, SWT.NONE);
+		passwordLabel.setText("password: ");
+		passwordText = new Text(groupContent, SWT.BORDER);
+		passwordText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
 	}
 
 }

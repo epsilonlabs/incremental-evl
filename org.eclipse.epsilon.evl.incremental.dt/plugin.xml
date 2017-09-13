@@ -25,7 +25,7 @@
             id="org.eclipse.epsilon.evl.incremental.dt.commands.evlEnable"
             name="Incremental Validation">
          <state
-               id="org.eclipse.ui.commands.toggleState">
+               id="org.eclipse.epsilon.evl.incremental.dt.live">
             <class
                   class="org.eclipse.ui.handlers.RegistryToggleState">
                <parameter
@@ -53,6 +53,13 @@
                   id="org.eclipse.epsilon.evl.incremental.dt.menus.evlEnable"
                   style="toggle">
             </command>
+            <!--<visibleWhen>
+                <with variable="activeEditorId">
+                   <instanceof
+                         value="org.eclipse.emf.ecore.presentation.EcoreEditor">
+                   </instanceof>
+                </with>
+            </visibleWhen>-->
          </menu>
       </menuContribution>
    </extension>

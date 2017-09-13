@@ -6,25 +6,6 @@ pre {
 	var qualified_package = "org.eclipse.epsilon.evl.incremental.orientdb";
 }
 
-/*
-rule EPackage2Uril
-  transform p : EPackage {
-  
-  parameters {
-    var params : new Map;
-    params.put("today", now.toString());
-    params.put("qp", qualified_package);
-    return params;
-  }
-  
-  // The EGL template to be invoked
-  template : "EPackage2OrientDbUtil.egl"
-
-  // Output file
-  target : path_prefix + "execute/" + p.getName().firstToUpperCase() + "OrientDbUtil.java"
-  
-}
-*/
 rule EPackage2DAO
   transform p : EPackage {
   

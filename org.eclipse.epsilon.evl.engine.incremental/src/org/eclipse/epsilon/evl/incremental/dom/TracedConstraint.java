@@ -84,7 +84,10 @@ public class TracedConstraint extends Constraint {
 		} catch (EolRuntimeException e) {
 			throw new EolRuntimeException("Error getting module Id", this);
 		}
-		return postprocessCheck(self, context, unsatisfiedConstraint, result);
+		boolean postResult = postprocessCheck(self, context, unsatisfiedConstraint, result);
+		context.getConstraintTrace().clear();
+		return postResult;
+		
 	}
 
 	

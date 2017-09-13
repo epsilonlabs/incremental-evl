@@ -113,7 +113,7 @@ public class EmfPropertyChangeListener extends EContentAdapter {
 	public List<EObject> getElements(Trace executionTrace) {
 		
 		List<EObject> result = executionTrace.getReaches().stream()
-			.map(me -> me.getElement_id())
+			.map(me -> me.getElementId())
 			.map(id -> this.model.getElementById(id))
 			.map(EObject.class::cast)
 			.collect(Collectors.toList());

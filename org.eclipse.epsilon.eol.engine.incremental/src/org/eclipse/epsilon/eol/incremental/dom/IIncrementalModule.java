@@ -34,6 +34,8 @@ import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
  */
 public interface IIncrementalModule {
 	
+	public static final String ONLINE_MODE = "online";
+	
 	/**
 	 * Called to notify the module that the model has changed. Implementations would usually query the execution trace
 	 * model/store to test if the given property of the objcet that changed has a trace. If so, all elements of the

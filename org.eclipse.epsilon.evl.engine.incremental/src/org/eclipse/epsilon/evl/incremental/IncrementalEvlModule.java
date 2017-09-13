@@ -13,12 +13,10 @@ package org.eclipse.epsilon.evl.incremental;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.eclipse.epsilon.common.module.IModule;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
@@ -40,7 +38,6 @@ import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.parse.EvlParser;
-import org.eclipse.epsilon.evl.trace.ConstraintTraceItem;
 
 
 /**
@@ -81,7 +78,12 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 				.map(m -> m.getModelId())
 				.collect(Collectors.toList());
 		
-		getExecutionTraceManager().executionStarted();
+		try {
+			getExecutionTraceManager().batchExecutionStarted();
+		} catch (EOLIncrementalExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try {
 			getExecutionTraceManager().setExecutionContext(this.getSourceUri().toString(), modelIds);
 		} catch (EOLIncrementalExecutionException e) {
@@ -96,15 +98,14 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 			fixer.fix(this);
 		}
 		execute(getPost(), context);
-		getExecutionTraceManager().executionFinished();
+		try {
+			getExecutionTraceManager().batchExecutionFinished();
+		} catch (EOLIncrementalExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		for (UnsatisfiedConstraint uc : context.getUnsatisfiedConstraints()) {
 			System.out.println(uc.getMessage());
-		}
-		// Clear trace so constraints re-evaluate when model changes
-		Iterator<ConstraintTraceItem> it = getContext().getConstraintTrace().iterator();
-		while (it.hasNext()) {
-			it.next();
-			it.remove();
 		}
 		listenToModelChanges(true);
 		return null;
@@ -174,7 +175,12 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	public void onChange(String objectId, Object object, String propertyName) {
 		
 		System.out.println("On Change: " + objectId);
-		etManager.incrementalExecutionStarted();
+		try {
+			etManager.eventExecutionStarted();
+		} catch (EOLIncrementalExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		Collection<Trace> traces = null;
 		try {
 			traces = etManager.findExecutionTraces(objectId, propertyName);
@@ -185,14 +191,24 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 		if (traces != null) {
 			validateTraces(traces, object);
 		}
-		etManager.executionFinished();
+		try {
+			etManager.eventExecutionFinished();
+		} catch (EOLIncrementalExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void onCreate(Object newElement) {
 		
 		System.out.println("On Create: " + newElement);
-		etManager.incrementalExecutionStarted();
+		try {
+			etManager.eventExecutionStarted();
+		} catch (EOLIncrementalExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		for (ConstraintContext conCtx : getConstraintContexts()) {
 			 try {
 				if (conCtx.appliesTo(newElement, getContext())) {
@@ -204,14 +220,24 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 				e.printStackTrace();
 			}
 		}	
-		etManager.executionFinished();
+		try {
+			etManager.eventExecutionFinished();
+		} catch (EOLIncrementalExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void onDelete(String objectId, Object object) {
 		
 		System.out.println("On Delete: " + objectId);
-		etManager.incrementalExecutionStarted();
+		try {
+			etManager.eventExecutionStarted();
+		} catch (EOLIncrementalExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		Collection<Trace> traces = null;
 		try {
 			traces = etManager.findExecutionTraces(objectId);
@@ -224,7 +250,12 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 			validateTraces(traces, object);
 		}
 		// Do we need to delete the traces from the database?
-		etManager.executionFinished();
+		try {
+			etManager.eventExecutionFinished();
+		} catch (EOLIncrementalExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private void validateTraces(Collection<Trace> traces, Object modelObject) {
@@ -233,7 +264,7 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 		}
 		for (Trace t : traces) {
 			
-			String constraintId = t.getTraces().getModule_id();
+			String constraintId = t.getTraces().getModuleId();
 			// 
 			final Constraint constraint;
 			constraint = (Constraint) getModuleElementById(constraintId);
@@ -247,6 +278,15 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 			} catch (EolRuntimeException e) {
 				// TODO: Log exception
 				continue;
+			}
+		}
+		// Will satisfied constraints be removed? is the fix replacing everyhting?
+		if (fixer != null) {
+			try {
+				fixer.fix(this);
+			} catch (EolRuntimeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		for (UnsatisfiedConstraint uc : getContext().getUnsatisfiedConstraints()) {

@@ -21,7 +21,9 @@ import org.eclipse.epsilon.eol.incremental.trace.Trace;
 /**
  * An IIncrementalExecutionManager is responsible for creating and managing the different trace model elements that
  * are created during execution of an ExL module. The manager works both as a factory to create traces and as a manager
- * to manage the traces. The interface defines methods to signal the manager that execution of an ExL script has started and
+ * to find traces relevant to specific model elements and properties.
+ * 
+ * The interface defines methods to signal the manager that execution of an ExL script has started and
  * finished.
  * 
  * Implementations are free to select the preferred persistence technology for the traces, e.g. a database, EMF
@@ -33,23 +35,60 @@ import org.eclipse.epsilon.eol.incremental.trace.Trace;
  */
 public interface IExecutionTraceManager {
 	
+	// FIXME There is more than online-offline...
+	// Its more like a "in-memory" or persisted trace model. That is, the trace information is available only during
+	// a "validations session" or is available across validation sessions.
+	// A validation session starts with the execution of the run configuration. The validation session can be
+	// offline or onlince. In offline, the traces are created, but no listeners are attached to the model.
+	// In online, listeners are attached to the model and reaction to changes are triggered for the span of a session.
+	// How does a online session is ended?
+	// Further, in either mode and "full" execution of the script can be requested. .... 
+	//  I think I need an activity diagram to understand this better.
+	// THis only affects when the trace models are created and dropped, and when they should be loaded/unloaded.
+	
 	/**
 	 * Called to inform the manager that an ExL module is going to be executed.
 	 * 
-	 * Implementations can use this method, for example, to start a transaction in the DB. 
+	 * Implementations can use this method, for example, to setup the connection to a db. Furhter, in an online, 
+	 * session-only mode, the manager could create a new DB ad set up the required schema information. 
+	 * 
+	 * @throws EOLIncrementalExecutionException 
 	 */
-	public void executionStarted();
-	
-	/**
-	 * After the initial traces have been created this methods prepares the trace model for access. This method allows
-	 * fine grained control over when the trace model is loaded.
-	 */
-	void incrementalExecutionStarted();
+	public void batchExecutionStarted() throws EOLIncrementalExecutionException;
 	
 	/**
 	 * Called to inform the manager that an ExL module has finished executing.
+	 * 
+	 * Implementations should take into consideration the execution mode. In online mode changes in the model will
+	 * be listened after this method has been invoked, so the trace model should be kept "alive" (e.g. mantain the 
+	 * connection to the DB). In offline mode, the trace model can be persisted 
+	 * 
 	 */
-	public void executionFinished();
+	public void batchExecutionFinished()throws EOLIncrementalExecutionException;
+	
+	/**
+	 * This method is called when live changes are detected in the model to prepare the trace manager to access the trace
+	 * model. For example, if the DB connection was dropped in the {@link IExecutionTraceManager#batchExecutionFinished()},
+	 * then in this method the connection could be reestablished.
+	 */
+	void eventExecutionStarted() throws EOLIncrementalExecutionException;
+	
+	/**
+	 * This method is called after the model change event has been processed. 
+	 */
+	void eventExecutionFinished() throws EOLIncrementalExecutionException;
+	
+	/**
+	 * Called to indicate that a live execution has started.
+	 * @throws EOLIncrementalExecutionException
+	 */
+	void liveExecutionStarted() throws EOLIncrementalExecutionException;
+	
+	/**
+	 * Called to indicate that a live execution has finished.
+	 * @throws EOLIncrementalExecutionException
+	 */
+	void liveExecutionFinished() throws EOLIncrementalExecutionException;
 	
 	
 	/**
@@ -71,6 +110,7 @@ public interface IExecutionTraceManager {
 	 * @param properties the properties' name of properties accessed during execution
 	 * @return true, if successful
 	 */
+	// FIXME we probably want the list of the ones that could be created so we can retry!
 	public boolean createExecutionTraces(String moduleElementId, String elementId, List<String> properties) throws EOLIncrementalExecutionException;
 	
 	/**
