@@ -1,18 +1,8 @@
-# Ignore workspace settings
-.metadata
-.settings/
-
-# Built binaries
-bin/
-
 # Sonar files
 .sonar
 
 # Ignore examples
 *examples*
-org.eclipse.emf.validation
 
-# Generated files
-*/*-gen
 
 \.DS_Store

@@ -1,0 +1,279 @@
+[%import "CommonTemplates.egl";
+/**
+ *  The DAO template generates four CRUD methods for each EClass:
+ *      - create(args...)
+ *      - delete(Vertex v)
+ *      - update(Vertex v)
+ *      - getById(Object id)
+ *  
+ *  Additionally a getBy<Index> method is added if the EClass has an OrientDbIndex annotation.
+ *
+ *  The DAO also provides a createSchema method that creates the EdgeDefinitions and the vertex
+ *  collections
+ */%]
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Horacio Hoyos - Initial API and implementation
+ *******************************************************************************/
+
+/*******************************************************************************
+ ** [%=p.getName()%] OrientDB Node Interface automatically generated
+ ** on [%=today%].
+ ** Do not modify this file.
+ *******************************************************************************/
+package [%=qp%].execute;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.epsilon.eol.engine.incremental.EOLIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.trace.*;
+import org.eclipse.epsilon.incremental.arangodb.trace.impl.*;
+import org.json.simple.JSONObject;
+
+import com.arangodb.ArangoCursor;
+import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDBException;
+import com.arangodb.entity.EdgeDefinition;
+import com.arangodb.entity.GraphEntity;
+import com.arangodb.entity.VertexEntity;
+import com.arangodb.util.MapBuilder;
+
+/**
+ * The OrientDbDAO provides methods for CRUD operations on the graph db. 
+ */
+public class [%=p.getName().firstToUpperCase()%]ArangoDbDAO {
+
+[%  //Create static values for vertex collections' names
+    for (ec in p.getEClassifiers()
+            .select(ec | ec.isTypeOf(ecore!EClass) and not ec.isInterface())) {%]
+    public static final String [%=ec.getCollectionName()%] = "[%=ec.getName()%]";    
+    
+[%  }
+    for (er in p.getEClassifiers()
+            .select(ec | ec.isTypeOf(ecore!EClass) and not ec.isInterface())
+            .collect(ec | ec.getEReferences())
+            .flatten()
+            .select(er | er.isEdge())) {%]
+    public static final String [%=er.getCollectionName()%] = "[%=er.getName().firstToUpperCase()%]";    
+
+[%  }
+    %]
+    
+    /**
+     * The name of the graph to store the traces
+     */
+    private String graphName;
+    
+    /**
+     * The ArangoDB driver instance to connect to the DB.
+     */ 
+    private final ArangoDB arangoDB;
+    
+    /**
+     * The name of the database that this DAO will use
+     */
+    private final String dbName;
+    
+    /**
+     * Create a new ArangoDB DAO
+     */        
+    public [%=p.getName().firstToUpperCase()%]ArangoDbDAO(ArangoDB arangoDB, String dbName, String graphName) {
+        super();
+        this.arangoDB = arangoDB;
+        this.dbName = dbName;
+        this.graphName = graphName;
+    }
+    
+    /**
+     * Setup the DB schema. In ArangoDB edges need to be created first via EdgeDefinitions.
+     */
+    public void setupSchema() {
+    
+        // Edge definitions of the graph
+        List<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();
+[%  for (er in p.getEClassifiers()
+                .select(ec | ec.isTypeOf(ecore!EClass) and not ec.isInterface())
+                .collect(ec| ec.getEReferences())
+                .flatten()
+                .select(er | er.isEdge())) {%]
+                        
+        // [%=er.getName()%] edge definition:
+        EdgeDefinition edge[%=er.getName().firstToUpperCase()%] = new EdgeDefinition();
+        edge[%=er.getName().firstToUpperCase()%].collection([%=er.getCollectionName()%]);
+        edge[%=er.getName().firstToUpperCase()%].from([%=er.getEContainingClass().getCollectionName()%]);
+        edge[%=er.getName().firstToUpperCase()%].to([%=er.getEReferenceType().getCollectionName()%]);
+        edgeDefinitions.add(edge[%=er.getName().firstToUpperCase()%]);
+[%}%] 
+        try {
+            GraphEntity gEVLTraces = arangoDB.db(dbName).createGraph(graphName, edgeDefinitions);
+        } catch (ArangoDBException ex) {
+            // FIXME Add exception management
+        }       
+    }
+[%
+    // CRUD Methods
+    for (ec in p.getEClassifiers()
+            .select(ec | ec.isTypeOf(ecore!EClass) and not ec.isInterface())) {%]
+    /**
+     * Creates a [%=ec.getName()%] in the vertex collection
+     *
+[%      for (ea in ec.getEAttributes()) {%]
+     * @param [%=ea.getName()%]
+[%      }%]     
+     * @return the new [%=ec.getName()%]
+     */
+    [%=ec.getCreateSignature()%] {
+[%      var arguments = ec.getEAttributes().collect(ea | ea.getName()).concat(", ");%]            
+        [%=ec.getCreateReturnType()%]ArangoDbImpl vertex = new [%=ec.getCreateReturnType()%]ArangoDbImpl([%=arguments%]);
+        VertexEntity info = null;
+        try {
+            info = arangoDB.db(dbName).graph(graphName)
+                .vertexCollection([%=ec.getCollectionName()%]).insertVertex(vertex, null);
+            vertex.put("_id", info.getId());
+            vertex.put("_key", info.getKey());
+            vertex.put("_rev", info.getRev());
+        } catch (ArangoDBException ex) {
+            // FIXME log?
+            vertex = null;
+        }
+        return vertex;
+    }
+    
+    [%=ec.getGetByIdSignature()%] {
+        String query = "RETURN DOCUMENT(@vertexId)";
+        Map<String, Object> bindVars = new MapBuilder().put("vertexId", id).get();
+        [%=ec.getCreateReturnType()%]  vertex = null;
+        try {
+            ArangoCursor<[%=ec.getCreateReturnType()%]ArangoDbImpl> result = arangoDB.db(dbName)
+                    .query(query, bindVars, null, [%=ec.getCreateReturnType()%]ArangoDbImpl.class);
+            vertex = result.next();
+        } catch (ArangoDBException ex) {
+            
+        }
+        return vertex;
+    }
+[%      var index = ec.getIndexAttribute();
+        if (index <> null) {%]    
+    [%=ec.getGetByIndexSignature(true)%] {
+	            
+        String query = "FOR v IN @@collection FILTER v.[%=index%] == @[%=index%] return v";
+        Map<String, Object> bindVars = new MapBuilder()
+                .put("@collection", [%=ec.getCollectionName()%])
+                .put("[%=index%]", [%=index%])
+                .get();
+        List<[%=ec.getCreateReturnType()%] > vertices = new ArrayList<>();
+        try {
+            ArangoCursor<[%=ec.getCreateReturnType()%]ArangoDbImpl> result = arangoDB.db(dbName)
+                    .query(query, bindVars, null, [%=ec.getCreateReturnType()%]ArangoDbImpl.class);
+            while (result.hasNext()) {
+                vertices.add(result.next());
+            }
+        } catch (ArangoDBException ex) {
+            
+        }
+        return vertices;
+    }
+    
+[%      }
+    }%]    
+    
+    /*
+     * Generic wrapper for executing queries on the db. Vertex are assumed to be returned.
+     */
+    public <T, W extends TraceElement> List<W> executeQuery(String query, Map<String, Object> bindVars, Class<W> T) throws EOLIncrementalExecutionException {
+        List<W > vertices = new ArrayList<>();
+        try {
+            ArangoCursor<W> result = arangoDB.db(dbName)
+                    .query(query, bindVars, null, T);
+            while (result.hasNext()) {
+                vertices.add(result.next());
+            }
+        } catch (ArangoDBException ex) {
+            throw new EOLIncrementalExecutionException("Error executing query on DB.", ex);
+        }
+        return vertices;
+    }
+    
+    public void createEdge(Object from_id, Object to_id, String edgeCollection) throws EOLIncrementalExecutionException {
+        JSONObject edge = new JSONObject();
+        edge.put("_from", from_id);
+        edge.put("_to", to_id);
+        try {
+            arangoDB.db(dbName).graph(graphName)
+                .edgeCollection(edgeCollection).insertEdge(edge.toJSONString());
+        } catch (ArangoDBException ex) {
+            throw new EOLIncrementalExecutionException("Can't create edge in DB.", ex);
+        }
+        
+    }
+    
+}
+[%
+@template
+operation EClass getCollectionName() : String {%]
+VERTEX_COLLECTION_[%=self.getName().splitCamelCase("_").toUpperCase()%]
+[%}
+
+@template
+operation EReference getCollectionName() : String {%]
+EDGE_COLLECTION_[%=self.getName().splitCamelCase("_").toUpperCase()%]
+[%}
+
+// Create the method signature for a CREATE operation
+@template
+operation EClass getCreateSignature() {%]
+public [%=self.getCreateReturnType()%] create[%=self.getName()%](
+    [%=self.getCreateParameters()%])
+[%
+}
+
+// Create the method signature for a DELETE operation
+@template
+operation EClass getDeleteSignature() {%]
+public void delete[%=self.getJavaTypeName("", "")%]([%=self.getCreateReturnType()%] vertex)
+[%
+}
+
+// Create the method signature for an UPDATE operation
+@template
+operation EClass getUpdateSignature() {%]
+public void update[%=self.getJavaTypeName("", "")%]([%=self.getCreateReturnType()%] vertex)
+[%
+}
+
+// Create the method signature for a GET operation
+@template
+operation EClass getGetByIdSignature() {%]
+public [%=self.getCreateReturnType()%] get[%=self.getJavaTypeName("", "")%]ById(Object id)
+[%
+}
+
+// Create the method signature for a GET by INDEX operation
+@template
+operation EClass getGetByIndexSignature(non_unique : Boolean) {%]
+public [%if (non_unique){%]List<[%=self.getCreateReturnType()%]>[%}else{%][%=self.getCreateReturnType()%][%}%] get[%=self.getJavaTypeName("", "")%]ByIndex([%=self.getIndexGetterArgument()%])
+[%
+}
+
+// Assumes the annotation is tested
+@template
+operation EClass getIndexGetterArgument() {
+    var annot = self.getEAnnotation("https://eclipse.org/epsilon/incremental/OrientDbIndex");
+    var attr = annot.getReferences().first();%]
+[%=attr.getSetterParamterType("List")%] [%=attr.getName()%][%
+}
+
+@template
+operation EClass getCreateReturnType() {%]
+[%=self.getJavaTypeName("", "")%]
+[%}
+
+%]

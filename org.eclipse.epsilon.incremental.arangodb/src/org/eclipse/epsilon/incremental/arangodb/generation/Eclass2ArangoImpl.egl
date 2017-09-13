@@ -1,0 +1,114 @@
+[%import "CommonTemplates.egl";%]
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Horacio Hoyos - Initial API and implementation
+ *******************************************************************************/
+
+/*******************************************************************************
+ ** [%=eClass.getName()%] OrientDB Trace Model Implementation automatically
+ ** generated on [%=today%].
+ ** Do not modify this file.
+ *******************************************************************************/
+package [%=qp%].trace.impl;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
+
+import org.eclipse.epsilon.eol.incremental.trace.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+/**
+ * An implementation of the [%=eClass.getName()%] .
+ */
+public class [%=eClass.getJavaTypeName(typePrefix, typeSufix)%]ArangoDbImpl extends JSONObject implements [%=eClass.getName()%] {
+    
+    
+    /**
+     * Empty constructor to instantiate elements from the DB.
+     *
+     * @param delegate the delegate
+     */
+    public [%=eClass.getName()%]ArangoDbImpl() { }
+    
+[%
+if (not eClass.getEAttributes().isEmpty()) {%]
+    /**
+     * Instantiates a new [%=eClass.getName()%]ArangoDbImpl.
+     *
+     * @param delegate the delegate
+     */
+    public [%=eClass.getName()%]ArangoDbImpl(
+        [%=eClass.getCreateParameters()%]) {
+[%  for (ea in eClass.getEAttributes()) {
+        if (ea.isMany()) {%]
+        JSONArray list = new JSONArray();
+        list.addAll([%=ea.getName()%]);
+        put("[%=ea.getName()%]", list);
+[%      } else {%]
+        put("[%=ea.getName()%]", [%=ea.getName()%]);
+[%      }
+    }%]
+    }
+   
+[%
+}
+
+for (a in eClass.getEAllAttributes()) {
+    var gs = a.makeGetterSignature("List");%]
+    [%=a.makeGetterDoc()%]
+    [%if (a.isMany()) {%]
+    public [%=gs%] {
+        [%=a.getSetterParamterType("List")%] result = new Array[%=a.getSetterParamterType("List")%]();
+        JSONArray values = (JSONArray) getOrDefault("[%=a.getName()%]", Collections.emptyList());
+        Iterator<Object> iterator = values.iterator();
+        while (iterator.hasNext()) {
+            result.add(([%=a.getEAttributeType().getInstanceTypeName()%])iterator.next());
+        }
+        return result;
+    }[%
+    } else {%]
+    public [%=gs%] {
+        return ([%=a.getEAttributeType().getInstanceTypeName()%])get("[%if(a.isId()){%]_[%}%][%=a.getName()%]");
+    }
+    
+[%  }
+    if ((not a.isMany()) and (not a.isId())) {%]    
+    [%=a.makeSetterDoc()%]
+    public [%=a.makeSetterSignature("List")%] {
+        put("[%=a.getName()%]", [%=a.getSetterParamterName()%]);
+    }
+    
+[%  }
+}%] 
+[%for (r in eClass.getEAllReferences()) {
+    var gs = r.makeGetterSignature("List", typePrefix, typeSufix);
+    %]
+    [%=r.makeGetterDoc()%]
+    [%if (r.isMany()) {%]
+    public [%=gs%] {
+        return null;
+    }
+
+[%  } else {%]
+    public [%=gs%] {
+        return null;
+    }
+    
+[%  }if (not r.isMany()) {%]    
+    [%=r.makeSetterDoc()%]
+    public [%=r.makeSetterSignature(typePrefix, typeSufix)%] {
+        
+    }
+    
+[%  }
+}%] 
+}
