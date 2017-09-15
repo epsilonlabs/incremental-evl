@@ -36,9 +36,9 @@ import org.eclipse.epsilon.eol.incremental.trace.TracePackage;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.TraceImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.TraceImpl#getExecutionContext <em>Execution Context</em>}</li>
+ *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.TraceImpl#getCreatedIn <em>Created In</em>}</li>
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.TraceImpl#getTraces <em>Traces</em>}</li>
- *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.TraceImpl#getReaches <em>Reaches</em>}</li>
+ *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.TraceImpl#getInvolves <em>Involves</em>}</li>
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.TraceImpl#getAccesses <em>Accesses</em>}</li>
  * </ul>
  *
@@ -66,14 +66,14 @@ public class TraceImpl extends MinimalEObjectImpl.Container implements Trace {
 	protected Object id = ID_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getExecutionContext() <em>Execution Context</em>}' reference.
+	 * The cached value of the '{@link #getCreatedIn() <em>Created In</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getExecutionContext()
+	 * @see #getCreatedIn()
 	 * @generated
 	 * @ordered
 	 */
-	protected ExecutionContext executionContext;
+	protected ExecutionContext createdIn;
 
 	/**
 	 * The cached value of the '{@link #getTraces() <em>Traces</em>}' reference.
@@ -86,14 +86,14 @@ public class TraceImpl extends MinimalEObjectImpl.Container implements Trace {
 	protected ModuleElement traces;
 
 	/**
-	 * The cached value of the '{@link #getReaches() <em>Reaches</em>}' reference list.
+	 * The cached value of the '{@link #getInvolves() <em>Involves</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getReaches()
+	 * @see #getInvolves()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<ModelElement> reaches;
+	protected EList<ModelElement> involves;
 
 	/**
 	 * The cached value of the '{@link #getAccesses() <em>Accesses</em>}' reference list.
@@ -138,16 +138,16 @@ public class TraceImpl extends MinimalEObjectImpl.Container implements Trace {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ExecutionContext getExecutionContext() {
-		if (executionContext != null && ((EObject)executionContext).eIsProxy()) {
-			InternalEObject oldExecutionContext = (InternalEObject)executionContext;
-			executionContext = (ExecutionContext)eResolveProxy(oldExecutionContext);
-			if (executionContext != oldExecutionContext) {
+	public ExecutionContext getCreatedIn() {
+		if (createdIn != null && ((EObject)createdIn).eIsProxy()) {
+			InternalEObject oldCreatedIn = (InternalEObject)createdIn;
+			createdIn = (ExecutionContext)eResolveProxy(oldCreatedIn);
+			if (createdIn != oldCreatedIn) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, TracePackage.TRACE__EXECUTION_CONTEXT, oldExecutionContext, executionContext));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, TracePackage.TRACE__CREATED_IN, oldCreatedIn, createdIn));
 			}
 		}
-		return executionContext;
+		return createdIn;
 	}
 
 	/**
@@ -155,8 +155,8 @@ public class TraceImpl extends MinimalEObjectImpl.Container implements Trace {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ExecutionContext basicGetExecutionContext() {
-		return executionContext;
+	public ExecutionContext basicGetCreatedIn() {
+		return createdIn;
 	}
 
 	/**
@@ -164,11 +164,11 @@ public class TraceImpl extends MinimalEObjectImpl.Container implements Trace {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public NotificationChain basicSetExecutionContext(ExecutionContext newExecutionContext, NotificationChain msgs) {
-		ExecutionContext oldExecutionContext = executionContext;
-		executionContext = newExecutionContext;
+	public NotificationChain basicSetCreatedIn(ExecutionContext newCreatedIn, NotificationChain msgs) {
+		ExecutionContext oldCreatedIn = createdIn;
+		createdIn = newCreatedIn;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, TracePackage.TRACE__EXECUTION_CONTEXT, oldExecutionContext, newExecutionContext);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, TracePackage.TRACE__CREATED_IN, oldCreatedIn, newCreatedIn);
 			if (msgs == null) msgs = notification; else msgs.add(notification);
 		}
 		return msgs;
@@ -179,18 +179,18 @@ public class TraceImpl extends MinimalEObjectImpl.Container implements Trace {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setExecutionContext(ExecutionContext newExecutionContext) {
-		if (newExecutionContext != executionContext) {
+	public void setCreatedIn(ExecutionContext newCreatedIn) {
+		if (newCreatedIn != createdIn) {
 			NotificationChain msgs = null;
-			if (executionContext != null)
-				msgs = ((InternalEObject)executionContext).eInverseRemove(this, TracePackage.EXECUTION_CONTEXT__CONTAINS, ExecutionContext.class, msgs);
-			if (newExecutionContext != null)
-				msgs = ((InternalEObject)newExecutionContext).eInverseAdd(this, TracePackage.EXECUTION_CONTEXT__CONTAINS, ExecutionContext.class, msgs);
-			msgs = basicSetExecutionContext(newExecutionContext, msgs);
+			if (createdIn != null)
+				msgs = ((InternalEObject)createdIn).eInverseRemove(this, TracePackage.EXECUTION_CONTEXT__TRACES, ExecutionContext.class, msgs);
+			if (newCreatedIn != null)
+				msgs = ((InternalEObject)newCreatedIn).eInverseAdd(this, TracePackage.EXECUTION_CONTEXT__TRACES, ExecutionContext.class, msgs);
+			msgs = basicSetCreatedIn(newCreatedIn, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
 		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, TracePackage.TRACE__EXECUTION_CONTEXT, newExecutionContext, newExecutionContext));
+			eNotify(new ENotificationImpl(this, Notification.SET, TracePackage.TRACE__CREATED_IN, newCreatedIn, newCreatedIn));
 	}
 
 	/**
@@ -258,11 +258,11 @@ public class TraceImpl extends MinimalEObjectImpl.Container implements Trace {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<ModelElement> getReaches() {
-		if (reaches == null) {
-			reaches = new EObjectWithInverseResolvingEList.ManyInverse<ModelElement>(ModelElement.class, this, TracePackage.TRACE__REACHES, TracePackage.MODEL_ELEMENT__TRACES);
+	public List<ModelElement> getInvolves() {
+		if (involves == null) {
+			involves = new EObjectWithInverseResolvingEList.ManyInverse<ModelElement>(ModelElement.class, this, TracePackage.TRACE__INVOLVES, TracePackage.MODEL_ELEMENT__TRACES);
 		}
-		return reaches;
+		return involves;
 	}
 
 	/**
@@ -286,16 +286,16 @@ public class TraceImpl extends MinimalEObjectImpl.Container implements Trace {
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case TracePackage.TRACE__EXECUTION_CONTEXT:
-				if (executionContext != null)
-					msgs = ((InternalEObject)executionContext).eInverseRemove(this, TracePackage.EXECUTION_CONTEXT__CONTAINS, ExecutionContext.class, msgs);
-				return basicSetExecutionContext((ExecutionContext)otherEnd, msgs);
+			case TracePackage.TRACE__CREATED_IN:
+				if (createdIn != null)
+					msgs = ((InternalEObject)createdIn).eInverseRemove(this, TracePackage.EXECUTION_CONTEXT__TRACES, ExecutionContext.class, msgs);
+				return basicSetCreatedIn((ExecutionContext)otherEnd, msgs);
 			case TracePackage.TRACE__TRACES:
 				if (traces != null)
 					msgs = ((InternalEObject)traces).eInverseRemove(this, TracePackage.MODULE_ELEMENT__TRACES, ModuleElement.class, msgs);
 				return basicSetTraces((ModuleElement)otherEnd, msgs);
-			case TracePackage.TRACE__REACHES:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getReaches()).basicAdd(otherEnd, msgs);
+			case TracePackage.TRACE__INVOLVES:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getInvolves()).basicAdd(otherEnd, msgs);
 			case TracePackage.TRACE__ACCESSES:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getAccesses()).basicAdd(otherEnd, msgs);
 		}
@@ -310,12 +310,12 @@ public class TraceImpl extends MinimalEObjectImpl.Container implements Trace {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case TracePackage.TRACE__EXECUTION_CONTEXT:
-				return basicSetExecutionContext(null, msgs);
+			case TracePackage.TRACE__CREATED_IN:
+				return basicSetCreatedIn(null, msgs);
 			case TracePackage.TRACE__TRACES:
 				return basicSetTraces(null, msgs);
-			case TracePackage.TRACE__REACHES:
-				return ((InternalEList<?>)getReaches()).basicRemove(otherEnd, msgs);
+			case TracePackage.TRACE__INVOLVES:
+				return ((InternalEList<?>)getInvolves()).basicRemove(otherEnd, msgs);
 			case TracePackage.TRACE__ACCESSES:
 				return ((InternalEList<?>)getAccesses()).basicRemove(otherEnd, msgs);
 		}
@@ -332,14 +332,14 @@ public class TraceImpl extends MinimalEObjectImpl.Container implements Trace {
 		switch (featureID) {
 			case TracePackage.TRACE__ID:
 				return getId();
-			case TracePackage.TRACE__EXECUTION_CONTEXT:
-				if (resolve) return getExecutionContext();
-				return basicGetExecutionContext();
+			case TracePackage.TRACE__CREATED_IN:
+				if (resolve) return getCreatedIn();
+				return basicGetCreatedIn();
 			case TracePackage.TRACE__TRACES:
 				if (resolve) return getTraces();
 				return basicGetTraces();
-			case TracePackage.TRACE__REACHES:
-				return getReaches();
+			case TracePackage.TRACE__INVOLVES:
+				return getInvolves();
 			case TracePackage.TRACE__ACCESSES:
 				return getAccesses();
 		}
@@ -355,15 +355,15 @@ public class TraceImpl extends MinimalEObjectImpl.Container implements Trace {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case TracePackage.TRACE__EXECUTION_CONTEXT:
-				setExecutionContext((ExecutionContext)newValue);
+			case TracePackage.TRACE__CREATED_IN:
+				setCreatedIn((ExecutionContext)newValue);
 				return;
 			case TracePackage.TRACE__TRACES:
 				setTraces((ModuleElement)newValue);
 				return;
-			case TracePackage.TRACE__REACHES:
-				getReaches().clear();
-				getReaches().addAll((Collection<? extends ModelElement>)newValue);
+			case TracePackage.TRACE__INVOLVES:
+				getInvolves().clear();
+				getInvolves().addAll((Collection<? extends ModelElement>)newValue);
 				return;
 			case TracePackage.TRACE__ACCESSES:
 				getAccesses().clear();
@@ -381,14 +381,14 @@ public class TraceImpl extends MinimalEObjectImpl.Container implements Trace {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case TracePackage.TRACE__EXECUTION_CONTEXT:
-				setExecutionContext((ExecutionContext)null);
+			case TracePackage.TRACE__CREATED_IN:
+				setCreatedIn((ExecutionContext)null);
 				return;
 			case TracePackage.TRACE__TRACES:
 				setTraces((ModuleElement)null);
 				return;
-			case TracePackage.TRACE__REACHES:
-				getReaches().clear();
+			case TracePackage.TRACE__INVOLVES:
+				getInvolves().clear();
 				return;
 			case TracePackage.TRACE__ACCESSES:
 				getAccesses().clear();
@@ -407,12 +407,12 @@ public class TraceImpl extends MinimalEObjectImpl.Container implements Trace {
 		switch (featureID) {
 			case TracePackage.TRACE__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-			case TracePackage.TRACE__EXECUTION_CONTEXT:
-				return executionContext != null;
+			case TracePackage.TRACE__CREATED_IN:
+				return createdIn != null;
 			case TracePackage.TRACE__TRACES:
 				return traces != null;
-			case TracePackage.TRACE__REACHES:
-				return reaches != null && !reaches.isEmpty();
+			case TracePackage.TRACE__INVOLVES:
+				return involves != null && !involves.isEmpty();
 			case TracePackage.TRACE__ACCESSES:
 				return accesses != null && !accesses.isEmpty();
 		}

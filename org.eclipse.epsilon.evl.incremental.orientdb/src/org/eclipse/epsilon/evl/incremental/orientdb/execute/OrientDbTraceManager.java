@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.common.util.StringProperties;
-import org.eclipse.epsilon.eol.engine.incremental.EOLIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.EOLIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.eol.incremental.trace.Trace;
 import org.eclipse.epsilon.evl.incremental.orientdb.dialog.OrientDBManagerConfiguration;

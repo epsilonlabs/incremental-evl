@@ -72,12 +72,20 @@ public class TraceAdapterFactory extends AdapterFactoryImpl {
 				return createExecutionContextAdapter();
 			}
 			@Override
+			public Adapter caseScript(Script object) {
+				return createScriptAdapter();
+			}
+			@Override
 			public Adapter caseModuleElement(ModuleElement object) {
 				return createModuleElementAdapter();
 			}
 			@Override
 			public Adapter caseTrace(Trace object) {
 				return createTraceAdapter();
+			}
+			@Override
+			public Adapter caseModel(Model object) {
+				return createModelAdapter();
 			}
 			@Override
 			public Adapter caseModelElement(ModelElement object) {
@@ -126,6 +134,20 @@ public class TraceAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.epsilon.eol.incremental.trace.Script <em>Script</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.Script
+	 * @generated
+	 */
+	public Adapter createScriptAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.epsilon.eol.incremental.trace.ModuleElement <em>Module Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -150,6 +172,20 @@ public class TraceAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createTraceAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.epsilon.eol.incremental.trace.Model <em>Model</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.Model
+	 * @generated
+	 */
+	public Adapter createModelAdapter() {
 		return null;
 	}
 

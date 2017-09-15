@@ -61,7 +61,7 @@ operation EClass getIndexAttribute() : String {
 
 @cahced
 operation EReference isEdge() : Boolean {
-    var annot = self.getEAnnotation("https://eclipse.org/epsilon/incremental/OrientDbGraph");
+    var annot = self.getEAnnotation("https://eclipse.org/epsilon/incremental/Graph");
     if (annot.isUndefined()) {
         return false;
     }

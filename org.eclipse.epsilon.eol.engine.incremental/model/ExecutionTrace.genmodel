@@ -6,35 +6,46 @@
     complianceLevel="8.0" copyrightFields="false" operationReflection="true" importOrganizing="true">
   <foreignModel>ExecutionTrace.ecore</foreignModel>
   <genPackages prefix="Trace" basePackage="org.eclipse.epsilon.eol.incremental" disposableProviderFactory="true"
-      ecorePackage="ExecutionTrace.ecore#/">
+      fileExtensions="extrace" ecorePackage="ExecutionTrace.ecore#/">
     <genClasses ecoreClass="ExecutionTrace.ecore#//ExecutionContext">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ExecutionTrace.ecore#//ExecutionContext/scriptId"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ExecutionTrace.ecore#//ExecutionContext/modelsIds"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ExecutionContext/for"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ExecutionContext/contains"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ExecutionContext/involves"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ExecutionContext/traces"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ExecutionContext/uses"/>
+    </genClasses>
+    <genClasses ecoreClass="ExecutionTrace.ecore#//Script">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ExecutionTrace.ecore#//Script/scriptId"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Script/moduleElements"/>
     </genClasses>
     <genClasses ecoreClass="ExecutionTrace.ecore#//ModuleElement">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ExecutionTrace.ecore#//ModuleElement/id"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ModuleElement/forOp"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ModuleElement/tracesOp"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ExecutionTrace.ecore#//ModuleElement/moduleId"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ModuleElement/definedIn"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ModuleElement/traces"/>
     </genClasses>
     <genClasses ecoreClass="ExecutionTrace.ecore#//Trace">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Trace/containsOp"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Trace/createdIn"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Trace/traces"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Trace/reaches"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Trace/involves"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Trace/accesses"/>
     </genClasses>
+    <genClasses ecoreClass="ExecutionTrace.ecore#//Model">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ExecutionTrace.ecore#//Model/uri"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Model/executionContext"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Model/owns"/>
+    </genClasses>
     <genClasses ecoreClass="ExecutionTrace.ecore#//ModelElement">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ExecutionTrace.ecore#//ModelElement/id"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ModelElement/involvesOp"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ModelElement/reachesOp"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ModelElement/owns"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ExecutionTrace.ecore#//ModelElement/elementId"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ModelElement/traces"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ModelElement/contains"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ModelElement/owner"/>
     </genClasses>
     <genClasses ecoreClass="ExecutionTrace.ecore#//Property">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ExecutionTrace.ecore#//Property/name"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Property/ownsOp"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Property/accessesOp"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Property/modelElement"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Property/traces"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ExecutionTrace.ecore#//Property/value"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="ExecutionTrace.ecore#//TraceElement">
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute ExecutionTrace.ecore#//TraceElement/id"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

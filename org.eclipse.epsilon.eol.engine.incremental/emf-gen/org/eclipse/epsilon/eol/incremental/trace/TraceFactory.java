@@ -31,6 +31,15 @@ public interface TraceFactory extends EFactory {
 	ExecutionContext createExecutionContext();
 
 	/**
+	 * Returns a new object of class '<em>Script</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Script</em>'.
+	 * @generated
+	 */
+	Script createScript();
+
+	/**
 	 * Returns a new object of class '<em>Module Element</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -47,6 +56,15 @@ public interface TraceFactory extends EFactory {
 	 * @generated
 	 */
 	Trace createTrace();
+
+	/**
+	 * Returns a new object of class '<em>Model</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Model</em>'.
+	 * @generated
+	 */
+	Model createModel();
 
 	/**
 	 * Returns a new object of class '<em>Model Element</em>'.

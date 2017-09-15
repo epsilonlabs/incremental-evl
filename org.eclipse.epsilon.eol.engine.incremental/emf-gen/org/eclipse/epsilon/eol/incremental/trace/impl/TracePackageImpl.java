@@ -12,9 +12,11 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.eclipse.epsilon.eol.incremental.trace.ExecutionContext;
+import org.eclipse.epsilon.eol.incremental.trace.Model;
 import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
 import org.eclipse.epsilon.eol.incremental.trace.ModuleElement;
 import org.eclipse.epsilon.eol.incremental.trace.Property;
+import org.eclipse.epsilon.eol.incremental.trace.Script;
 import org.eclipse.epsilon.eol.incremental.trace.Trace;
 import org.eclipse.epsilon.eol.incremental.trace.TraceElement;
 import org.eclipse.epsilon.eol.incremental.trace.TraceFactory;
@@ -39,6 +41,13 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass scriptEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass moduleElementEClass = null;
 
 	/**
@@ -47,6 +56,13 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 	 * @generated
 	 */
 	private EClass traceEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass modelEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -144,25 +160,25 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getExecutionContext_ScriptId() {
-		return (EAttribute)executionContextEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getExecutionContext_ModelsIds() {
-		return (EAttribute)executionContextEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EReference getExecutionContext_For() {
+		return (EReference)executionContextEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getExecutionContext_Traces() {
+		return (EReference)executionContextEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getExecutionContext_Uses() {
 		return (EReference)executionContextEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -171,8 +187,8 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getExecutionContext_Contains() {
-		return (EReference)executionContextEClass.getEStructuralFeatures().get(3);
+	public EClass getScript() {
+		return scriptEClass;
 	}
 
 	/**
@@ -180,8 +196,17 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getExecutionContext_Involves() {
-		return (EReference)executionContextEClass.getEStructuralFeatures().get(4);
+	public EAttribute getScript_ScriptId() {
+		return (EAttribute)scriptEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getScript_ModuleElements() {
+		return (EReference)scriptEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -207,7 +232,7 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getModuleElement_ExecutionContexts() {
+	public EReference getModuleElement_DefinedIn() {
 		return (EReference)moduleElementEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -234,7 +259,7 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getTrace_ExecutionContext() {
+	public EReference getTrace_CreatedIn() {
 		return (EReference)traceEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -252,7 +277,7 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getTrace_Reaches() {
+	public EReference getTrace_Involves() {
 		return (EReference)traceEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -263,6 +288,42 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 	 */
 	public EReference getTrace_Accesses() {
 		return (EReference)traceEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getModel() {
+		return modelEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getModel_Uri() {
+		return (EAttribute)modelEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getModel_ExecutionContext() {
+		return (EReference)modelEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getModel_Owns() {
+		return (EReference)modelEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -288,7 +349,7 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getModelElement_ExecutionContext() {
+	public EReference getModelElement_Traces() {
 		return (EReference)modelElementEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -297,7 +358,7 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getModelElement_Traces() {
+	public EReference getModelElement_Contains() {
 		return (EReference)modelElementEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -306,7 +367,7 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getModelElement_Owns() {
+	public EReference getModelElement_Owner() {
 		return (EReference)modelElementEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -344,6 +405,15 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 	 */
 	public EReference getProperty_Traces() {
 		return (EReference)propertyEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getProperty_Value() {
+		return (EAttribute)propertyEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -393,33 +463,41 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 
 		// Create classes and their features
 		executionContextEClass = createEClass(EXECUTION_CONTEXT);
-		createEAttribute(executionContextEClass, EXECUTION_CONTEXT__SCRIPT_ID);
-		createEAttribute(executionContextEClass, EXECUTION_CONTEXT__MODELS_IDS);
 		createEReference(executionContextEClass, EXECUTION_CONTEXT__FOR);
-		createEReference(executionContextEClass, EXECUTION_CONTEXT__CONTAINS);
-		createEReference(executionContextEClass, EXECUTION_CONTEXT__INVOLVES);
+		createEReference(executionContextEClass, EXECUTION_CONTEXT__TRACES);
+		createEReference(executionContextEClass, EXECUTION_CONTEXT__USES);
+
+		scriptEClass = createEClass(SCRIPT);
+		createEAttribute(scriptEClass, SCRIPT__SCRIPT_ID);
+		createEReference(scriptEClass, SCRIPT__MODULE_ELEMENTS);
 
 		moduleElementEClass = createEClass(MODULE_ELEMENT);
 		createEAttribute(moduleElementEClass, MODULE_ELEMENT__MODULE_ID);
-		createEReference(moduleElementEClass, MODULE_ELEMENT__EXECUTION_CONTEXTS);
+		createEReference(moduleElementEClass, MODULE_ELEMENT__DEFINED_IN);
 		createEReference(moduleElementEClass, MODULE_ELEMENT__TRACES);
 
 		traceEClass = createEClass(TRACE);
-		createEReference(traceEClass, TRACE__EXECUTION_CONTEXT);
+		createEReference(traceEClass, TRACE__CREATED_IN);
 		createEReference(traceEClass, TRACE__TRACES);
-		createEReference(traceEClass, TRACE__REACHES);
+		createEReference(traceEClass, TRACE__INVOLVES);
 		createEReference(traceEClass, TRACE__ACCESSES);
+
+		modelEClass = createEClass(MODEL);
+		createEAttribute(modelEClass, MODEL__URI);
+		createEReference(modelEClass, MODEL__EXECUTION_CONTEXT);
+		createEReference(modelEClass, MODEL__OWNS);
 
 		modelElementEClass = createEClass(MODEL_ELEMENT);
 		createEAttribute(modelElementEClass, MODEL_ELEMENT__ELEMENT_ID);
-		createEReference(modelElementEClass, MODEL_ELEMENT__EXECUTION_CONTEXT);
 		createEReference(modelElementEClass, MODEL_ELEMENT__TRACES);
-		createEReference(modelElementEClass, MODEL_ELEMENT__OWNS);
+		createEReference(modelElementEClass, MODEL_ELEMENT__CONTAINS);
+		createEReference(modelElementEClass, MODEL_ELEMENT__OWNER);
 
 		propertyEClass = createEClass(PROPERTY);
 		createEAttribute(propertyEClass, PROPERTY__NAME);
 		createEReference(propertyEClass, PROPERTY__MODEL_ELEMENT);
 		createEReference(propertyEClass, PROPERTY__TRACES);
+		createEAttribute(propertyEClass, PROPERTY__VALUE);
 
 		traceElementEClass = createEClass(TRACE_ELEMENT);
 		createEAttribute(traceElementEClass, TRACE_ELEMENT__ID);
@@ -454,52 +532,126 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 
 		// Add supertypes to classes
 		executionContextEClass.getESuperTypes().add(this.getTraceElement());
+		scriptEClass.getESuperTypes().add(this.getTraceElement());
 		moduleElementEClass.getESuperTypes().add(this.getTraceElement());
 		traceEClass.getESuperTypes().add(this.getTraceElement());
+		modelEClass.getESuperTypes().add(this.getTraceElement());
 		modelElementEClass.getESuperTypes().add(this.getTraceElement());
 		propertyEClass.getESuperTypes().add(this.getTraceElement());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(executionContextEClass, ExecutionContext.class, "ExecutionContext", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getExecutionContext_ScriptId(), ecorePackage.getEString(), "scriptId", null, 1, 1, ExecutionContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getExecutionContext_ModelsIds(), ecorePackage.getEString(), "modelsIds", null, 0, -1, ExecutionContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getExecutionContext_For(), this.getModuleElement(), this.getModuleElement_ExecutionContexts(), "for", null, 0, -1, ExecutionContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getExecutionContext_Contains(), this.getTrace(), this.getTrace_ExecutionContext(), "contains", null, 0, -1, ExecutionContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getExecutionContext_Involves(), this.getModelElement(), this.getModelElement_ExecutionContext(), "involves", null, 0, -1, ExecutionContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getExecutionContext_For(), this.getScript(), null, "for", null, 0, 1, ExecutionContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getExecutionContext_Traces(), this.getTrace(), this.getTrace_CreatedIn(), "traces", null, 0, -1, ExecutionContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getExecutionContext_Uses(), this.getModel(), this.getModel_ExecutionContext(), "uses", null, 0, -1, ExecutionContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(scriptEClass, Script.class, "Script", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getScript_ScriptId(), ecorePackage.getEString(), "scriptId", null, 1, 1, Script.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getScript_ModuleElements(), this.getModuleElement(), this.getModuleElement_DefinedIn(), "moduleElements", null, 0, -1, Script.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(moduleElementEClass, ModuleElement.class, "ModuleElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getModuleElement_ModuleId(), ecorePackage.getEString(), "moduleId", null, 1, 1, ModuleElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getModuleElement_ExecutionContexts(), this.getExecutionContext(), this.getExecutionContext_For(), "executionContexts", null, 0, -1, ModuleElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getModuleElement_DefinedIn(), this.getScript(), this.getScript_ModuleElements(), "definedIn", null, 1, 1, ModuleElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getModuleElement_Traces(), this.getTrace(), this.getTrace_Traces(), "traces", null, 0, -1, ModuleElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(traceEClass, Trace.class, "Trace", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getTrace_ExecutionContext(), this.getExecutionContext(), this.getExecutionContext_Contains(), "executionContext", null, 0, 1, Trace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getTrace_CreatedIn(), this.getExecutionContext(), this.getExecutionContext_Traces(), "createdIn", null, 1, 1, Trace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getTrace_Traces(), this.getModuleElement(), this.getModuleElement_Traces(), "traces", null, 1, 1, Trace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getTrace_Reaches(), this.getModelElement(), this.getModelElement_Traces(), "reaches", null, 0, -1, Trace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getTrace_Involves(), this.getModelElement(), this.getModelElement_Traces(), "involves", null, 0, -1, Trace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getTrace_Accesses(), this.getProperty(), this.getProperty_Traces(), "accesses", null, 0, -1, Trace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getModel_Uri(), ecorePackage.getEString(), "uri", null, 1, 1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getModel_ExecutionContext(), this.getExecutionContext(), this.getExecutionContext_Uses(), "executionContext", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getModel_Owns(), this.getModelElement(), this.getModelElement_Owner(), "owns", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(modelElementEClass, ModelElement.class, "ModelElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getModelElement_ElementId(), ecorePackage.getEString(), "elementId", null, 1, 1, ModelElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getModelElement_ExecutionContext(), this.getExecutionContext(), this.getExecutionContext_Involves(), "executionContext", null, 0, -1, ModelElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getModelElement_Traces(), this.getTrace(), this.getTrace_Reaches(), "traces", null, 0, -1, ModelElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getModelElement_Owns(), this.getProperty(), this.getProperty_ModelElement(), "owns", null, 0, -1, ModelElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getModelElement_Traces(), this.getTrace(), this.getTrace_Involves(), "traces", null, 0, -1, ModelElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getModelElement_Contains(), this.getProperty(), this.getProperty_ModelElement(), "contains", null, 0, -1, ModelElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getModelElement_Owner(), this.getModel(), this.getModel_Owns(), "owner", null, 1, 1, ModelElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(propertyEClass, Property.class, "Property", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getProperty_Name(), ecorePackage.getEString(), "name", null, 1, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getProperty_ModelElement(), this.getModelElement(), this.getModelElement_Owns(), "modelElement", null, 1, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getProperty_ModelElement(), this.getModelElement(), this.getModelElement_Contains(), "modelElement", null, 1, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getProperty_Traces(), this.getTrace(), this.getTrace_Accesses(), "traces", null, 0, -1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getProperty_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(traceElementEClass, TraceElement.class, "TraceElement", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getTraceElement_Id(), ecorePackage.getEJavaObject(), "id", null, 0, 1, TraceElement.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTraceElement_Id(), ecorePackage.getEJavaObject(), "id", null, 1, 1, TraceElement.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
 
 		// Create annotations
+		// https://eclipse.org/epsilon/incremental/Graph
+		createGraphAnnotations();
 		// https://eclipse.org/epsilon/incremental/OrientDbIndex
 		createOrientDbIndexAnnotations();
-		// https://eclipse.org/epsilon/incremental/OrientDbGraph
-		createOrientDbGraphAnnotations();
+	}
+
+	/**
+	 * Initializes the annotations for <b>https://eclipse.org/epsilon/incremental/Graph</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createGraphAnnotations() {
+		String source = "https://eclipse.org/epsilon/incremental/Graph";	
+		addAnnotation
+		  (getExecutionContext_For(), 
+		   source, 
+		   new String[] {
+			 "edge", "true"
+		   });	
+		addAnnotation
+		  (getExecutionContext_Uses(), 
+		   source, 
+		   new String[] {
+			 "edge", "true"
+		   });	
+		addAnnotation
+		  (getModuleElement_DefinedIn(), 
+		   source, 
+		   new String[] {
+			 "edge", "true"
+		   });	
+		addAnnotation
+		  (getTrace_CreatedIn(), 
+		   source, 
+		   new String[] {
+			 "edge", "true"
+		   });	
+		addAnnotation
+		  (getTrace_Traces(), 
+		   source, 
+		   new String[] {
+			 "edge", "true"
+		   });	
+		addAnnotation
+		  (getTrace_Involves(), 
+		   source, 
+		   new String[] {
+			 "edge", "true"
+		   });	
+		addAnnotation
+		  (getTrace_Accesses(), 
+		   source, 
+		   new String[] {
+			 "edge", "true"
+		   });	
+		addAnnotation
+		  (getModel_Owns(), 
+		   source, 
+		   new String[] {
+			 "edge", "true"
+		   });	
+		addAnnotation
+		  (getModelElement_Contains(), 
+		   source, 
+		   new String[] {
+			 "edge", "true"
+		   });
 	}
 
 	/**
@@ -511,13 +663,13 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 	protected void createOrientDbIndexAnnotations() {
 		String source = "https://eclipse.org/epsilon/incremental/OrientDbIndex";	
 		addAnnotation
-		  (executionContextEClass, 
+		  (scriptEClass, 
 		   source, 
 		   new String[] {
 			 "type", "NOTUNIQUE_HASH_INDEX"
 		   },
 		   new URI[] {
-			 URI.createURI(eNS_URI).appendFragment("//ExecutionContext/scriptId")
+			 URI.createURI(eNS_URI).appendFragment("//Script/scriptId")
 		   });	
 		addAnnotation
 		  (moduleElementEClass, 
@@ -527,6 +679,15 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 		   },
 		   new URI[] {
 			 URI.createURI(eNS_URI).appendFragment("//ModuleElement/moduleId")
+		   });	
+		addAnnotation
+		  (modelEClass, 
+		   source, 
+		   new String[] {
+			 "type", "NOTUNIQUE_HASH_INDEX"
+		   },
+		   new URI[] {
+			 URI.createURI(eNS_URI).appendFragment("//Model/uri")
 		   });	
 		addAnnotation
 		  (modelElementEClass, 
@@ -545,58 +706,6 @@ public class TracePackageImpl extends EPackageImpl implements TracePackage {
 		   },
 		   new URI[] {
 			 URI.createURI(eNS_URI).appendFragment("//Property/name")
-		   });
-	}
-
-	/**
-	 * Initializes the annotations for <b>https://eclipse.org/epsilon/incremental/OrientDbGraph</b>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void createOrientDbGraphAnnotations() {
-		String source = "https://eclipse.org/epsilon/incremental/OrientDbGraph";	
-		addAnnotation
-		  (getExecutionContext_For(), 
-		   source, 
-		   new String[] {
-			 "edge", "true"
-		   });	
-		addAnnotation
-		  (getExecutionContext_Contains(), 
-		   source, 
-		   new String[] {
-			 "edge", "true"
-		   });	
-		addAnnotation
-		  (getExecutionContext_Involves(), 
-		   source, 
-		   new String[] {
-			 "edge", "true"
-		   });	
-		addAnnotation
-		  (getTrace_Traces(), 
-		   source, 
-		   new String[] {
-			 "edge", "true"
-		   });	
-		addAnnotation
-		  (getTrace_Reaches(), 
-		   source, 
-		   new String[] {
-			 "edge", "true"
-		   });	
-		addAnnotation
-		  (getTrace_Accesses(), 
-		   source, 
-		   new String[] {
-			 "edge", "true"
-		   });	
-		addAnnotation
-		  (getModelElement_Owns(), 
-		   source, 
-		   new String[] {
-			 "edge", "true"
 		   });
 	}
 

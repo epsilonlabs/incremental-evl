@@ -11,18 +11,18 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.eclipse.epsilon.eol.incremental.trace.ExecutionContext;
-import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
-import org.eclipse.epsilon.eol.incremental.trace.ModuleElement;
+import org.eclipse.epsilon.eol.incremental.trace.Model;
+import org.eclipse.epsilon.eol.incremental.trace.Script;
 import org.eclipse.epsilon.eol.incremental.trace.Trace;
 import org.eclipse.epsilon.eol.incremental.trace.TracePackage;
 
@@ -35,11 +35,9 @@ import org.eclipse.epsilon.eol.incremental.trace.TracePackage;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionContextImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionContextImpl#getScriptId <em>Script Id</em>}</li>
- *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionContextImpl#getModelsIds <em>Models Ids</em>}</li>
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionContextImpl#getFor <em>For</em>}</li>
- *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionContextImpl#getContains <em>Contains</em>}</li>
- *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionContextImpl#getInvolves <em>Involves</em>}</li>
+ *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionContextImpl#getTraces <em>Traces</em>}</li>
+ *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionContextImpl#getUses <em>Uses</em>}</li>
  * </ul>
  *
  * @generated
@@ -66,64 +64,34 @@ public class ExecutionContextImpl extends MinimalEObjectImpl.Container implement
 	protected Object id = ID_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getScriptId() <em>Script Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getScriptId()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String SCRIPT_ID_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getScriptId() <em>Script Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getScriptId()
-	 * @generated
-	 * @ordered
-	 */
-	protected String scriptId = SCRIPT_ID_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getModelsIds() <em>Models Ids</em>}' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getModelsIds()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<String> modelsIds;
-
-	/**
-	 * The cached value of the '{@link #getFor() <em>For</em>}' reference list.
+	 * The cached value of the '{@link #getFor() <em>For</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getFor()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<ModuleElement> for_;
+	protected Script for_;
 
 	/**
-	 * The cached value of the '{@link #getContains() <em>Contains</em>}' reference list.
+	 * The cached value of the '{@link #getTraces() <em>Traces</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getContains()
+	 * @see #getTraces()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<Trace> contains;
+	protected EList<Trace> traces;
 
 	/**
-	 * The cached value of the '{@link #getInvolves() <em>Involves</em>}' reference list.
+	 * The cached value of the '{@link #getUses() <em>Uses</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getInvolves()
+	 * @see #getUses()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<ModelElement> involves;
+	protected EList<Model> uses;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -158,42 +126,14 @@ public class ExecutionContextImpl extends MinimalEObjectImpl.Container implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getScriptId() {
-		return scriptId;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setScriptId(String newScriptId) {
-		String oldScriptId = scriptId;
-		scriptId = newScriptId;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, TracePackage.EXECUTION_CONTEXT__SCRIPT_ID, oldScriptId, scriptId));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public List<String> getModelsIds() {
-		if (modelsIds == null) {
-			modelsIds = new EDataTypeEList<String>(String.class, this, TracePackage.EXECUTION_CONTEXT__MODELS_IDS);
-		}
-		return modelsIds;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public List<ModuleElement> getFor() {
-		if (for_ == null) {
-			for_ = new EObjectWithInverseResolvingEList.ManyInverse<ModuleElement>(ModuleElement.class, this, TracePackage.EXECUTION_CONTEXT__FOR, TracePackage.MODULE_ELEMENT__EXECUTION_CONTEXTS);
+	public Script getFor() {
+		if (for_ != null && ((EObject)for_).eIsProxy()) {
+			InternalEObject oldFor = (InternalEObject)for_;
+			for_ = (Script)eResolveProxy(oldFor);
+			if (for_ != oldFor) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, TracePackage.EXECUTION_CONTEXT__FOR, oldFor, for_));
+			}
 		}
 		return for_;
 	}
@@ -203,11 +143,8 @@ public class ExecutionContextImpl extends MinimalEObjectImpl.Container implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<Trace> getContains() {
-		if (contains == null) {
-			contains = new EObjectWithInverseResolvingEList<Trace>(Trace.class, this, TracePackage.EXECUTION_CONTEXT__CONTAINS, TracePackage.TRACE__EXECUTION_CONTEXT);
-		}
-		return contains;
+	public Script basicGetFor() {
+		return for_;
 	}
 
 	/**
@@ -215,11 +152,35 @@ public class ExecutionContextImpl extends MinimalEObjectImpl.Container implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<ModelElement> getInvolves() {
-		if (involves == null) {
-			involves = new EObjectWithInverseResolvingEList.ManyInverse<ModelElement>(ModelElement.class, this, TracePackage.EXECUTION_CONTEXT__INVOLVES, TracePackage.MODEL_ELEMENT__EXECUTION_CONTEXT);
+	public void setFor(Script newFor) {
+		Script oldFor = for_;
+		for_ = newFor;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, TracePackage.EXECUTION_CONTEXT__FOR, oldFor, for_));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public List<Trace> getTraces() {
+		if (traces == null) {
+			traces = new EObjectWithInverseResolvingEList<Trace>(Trace.class, this, TracePackage.EXECUTION_CONTEXT__TRACES, TracePackage.TRACE__CREATED_IN);
 		}
-		return involves;
+		return traces;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public List<Model> getUses() {
+		if (uses == null) {
+			uses = new EObjectWithInverseResolvingEList.ManyInverse<Model>(Model.class, this, TracePackage.EXECUTION_CONTEXT__USES, TracePackage.MODEL__EXECUTION_CONTEXT);
+		}
+		return uses;
 	}
 
 	/**
@@ -231,12 +192,10 @@ public class ExecutionContextImpl extends MinimalEObjectImpl.Container implement
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case TracePackage.EXECUTION_CONTEXT__FOR:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getFor()).basicAdd(otherEnd, msgs);
-			case TracePackage.EXECUTION_CONTEXT__CONTAINS:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getContains()).basicAdd(otherEnd, msgs);
-			case TracePackage.EXECUTION_CONTEXT__INVOLVES:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getInvolves()).basicAdd(otherEnd, msgs);
+			case TracePackage.EXECUTION_CONTEXT__TRACES:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getTraces()).basicAdd(otherEnd, msgs);
+			case TracePackage.EXECUTION_CONTEXT__USES:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getUses()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -249,12 +208,10 @@ public class ExecutionContextImpl extends MinimalEObjectImpl.Container implement
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case TracePackage.EXECUTION_CONTEXT__FOR:
-				return ((InternalEList<?>)getFor()).basicRemove(otherEnd, msgs);
-			case TracePackage.EXECUTION_CONTEXT__CONTAINS:
-				return ((InternalEList<?>)getContains()).basicRemove(otherEnd, msgs);
-			case TracePackage.EXECUTION_CONTEXT__INVOLVES:
-				return ((InternalEList<?>)getInvolves()).basicRemove(otherEnd, msgs);
+			case TracePackage.EXECUTION_CONTEXT__TRACES:
+				return ((InternalEList<?>)getTraces()).basicRemove(otherEnd, msgs);
+			case TracePackage.EXECUTION_CONTEXT__USES:
+				return ((InternalEList<?>)getUses()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -269,16 +226,13 @@ public class ExecutionContextImpl extends MinimalEObjectImpl.Container implement
 		switch (featureID) {
 			case TracePackage.EXECUTION_CONTEXT__ID:
 				return getId();
-			case TracePackage.EXECUTION_CONTEXT__SCRIPT_ID:
-				return getScriptId();
-			case TracePackage.EXECUTION_CONTEXT__MODELS_IDS:
-				return getModelsIds();
 			case TracePackage.EXECUTION_CONTEXT__FOR:
-				return getFor();
-			case TracePackage.EXECUTION_CONTEXT__CONTAINS:
-				return getContains();
-			case TracePackage.EXECUTION_CONTEXT__INVOLVES:
-				return getInvolves();
+				if (resolve) return getFor();
+				return basicGetFor();
+			case TracePackage.EXECUTION_CONTEXT__TRACES:
+				return getTraces();
+			case TracePackage.EXECUTION_CONTEXT__USES:
+				return getUses();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -292,24 +246,16 @@ public class ExecutionContextImpl extends MinimalEObjectImpl.Container implement
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case TracePackage.EXECUTION_CONTEXT__SCRIPT_ID:
-				setScriptId((String)newValue);
-				return;
-			case TracePackage.EXECUTION_CONTEXT__MODELS_IDS:
-				getModelsIds().clear();
-				getModelsIds().addAll((Collection<? extends String>)newValue);
-				return;
 			case TracePackage.EXECUTION_CONTEXT__FOR:
-				getFor().clear();
-				getFor().addAll((Collection<? extends ModuleElement>)newValue);
+				setFor((Script)newValue);
 				return;
-			case TracePackage.EXECUTION_CONTEXT__CONTAINS:
-				getContains().clear();
-				getContains().addAll((Collection<? extends Trace>)newValue);
+			case TracePackage.EXECUTION_CONTEXT__TRACES:
+				getTraces().clear();
+				getTraces().addAll((Collection<? extends Trace>)newValue);
 				return;
-			case TracePackage.EXECUTION_CONTEXT__INVOLVES:
-				getInvolves().clear();
-				getInvolves().addAll((Collection<? extends ModelElement>)newValue);
+			case TracePackage.EXECUTION_CONTEXT__USES:
+				getUses().clear();
+				getUses().addAll((Collection<? extends Model>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -323,20 +269,14 @@ public class ExecutionContextImpl extends MinimalEObjectImpl.Container implement
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case TracePackage.EXECUTION_CONTEXT__SCRIPT_ID:
-				setScriptId(SCRIPT_ID_EDEFAULT);
-				return;
-			case TracePackage.EXECUTION_CONTEXT__MODELS_IDS:
-				getModelsIds().clear();
-				return;
 			case TracePackage.EXECUTION_CONTEXT__FOR:
-				getFor().clear();
+				setFor((Script)null);
 				return;
-			case TracePackage.EXECUTION_CONTEXT__CONTAINS:
-				getContains().clear();
+			case TracePackage.EXECUTION_CONTEXT__TRACES:
+				getTraces().clear();
 				return;
-			case TracePackage.EXECUTION_CONTEXT__INVOLVES:
-				getInvolves().clear();
+			case TracePackage.EXECUTION_CONTEXT__USES:
+				getUses().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -352,16 +292,12 @@ public class ExecutionContextImpl extends MinimalEObjectImpl.Container implement
 		switch (featureID) {
 			case TracePackage.EXECUTION_CONTEXT__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-			case TracePackage.EXECUTION_CONTEXT__SCRIPT_ID:
-				return SCRIPT_ID_EDEFAULT == null ? scriptId != null : !SCRIPT_ID_EDEFAULT.equals(scriptId);
-			case TracePackage.EXECUTION_CONTEXT__MODELS_IDS:
-				return modelsIds != null && !modelsIds.isEmpty();
 			case TracePackage.EXECUTION_CONTEXT__FOR:
-				return for_ != null && !for_.isEmpty();
-			case TracePackage.EXECUTION_CONTEXT__CONTAINS:
-				return contains != null && !contains.isEmpty();
-			case TracePackage.EXECUTION_CONTEXT__INVOLVES:
-				return involves != null && !involves.isEmpty();
+				return for_ != null;
+			case TracePackage.EXECUTION_CONTEXT__TRACES:
+				return traces != null && !traces.isEmpty();
+			case TracePackage.EXECUTION_CONTEXT__USES:
+				return uses != null && !uses.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -378,10 +314,6 @@ public class ExecutionContextImpl extends MinimalEObjectImpl.Container implement
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (id: ");
 		result.append(id);
-		result.append(", scriptId: ");
-		result.append(scriptId);
-		result.append(", modelsIds: ");
-		result.append(modelsIds);
 		result.append(')');
 		return result.toString();
 	}

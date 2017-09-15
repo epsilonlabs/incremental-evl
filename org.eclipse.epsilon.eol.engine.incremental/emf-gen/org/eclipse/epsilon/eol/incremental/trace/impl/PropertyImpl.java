@@ -37,6 +37,7 @@ import org.eclipse.epsilon.eol.incremental.trace.TracePackage;
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.PropertyImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.PropertyImpl#getModelElement <em>Model Element</em>}</li>
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.PropertyImpl#getTraces <em>Traces</em>}</li>
+ *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.PropertyImpl#getValue <em>Value</em>}</li>
  * </ul>
  *
  * @generated
@@ -101,6 +102,26 @@ public class PropertyImpl extends MinimalEObjectImpl.Container implements Proper
 	 * @ordered
 	 */
 	protected EList<Trace> traces;
+
+	/**
+	 * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getValue()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Object VALUE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getValue() <em>Value</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getValue()
+	 * @generated
+	 * @ordered
+	 */
+	protected Object value = VALUE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -201,9 +222,9 @@ public class PropertyImpl extends MinimalEObjectImpl.Container implements Proper
 		if (newModelElement != modelElement) {
 			NotificationChain msgs = null;
 			if (modelElement != null)
-				msgs = ((InternalEObject)modelElement).eInverseRemove(this, TracePackage.MODEL_ELEMENT__OWNS, ModelElement.class, msgs);
+				msgs = ((InternalEObject)modelElement).eInverseRemove(this, TracePackage.MODEL_ELEMENT__CONTAINS, ModelElement.class, msgs);
 			if (newModelElement != null)
-				msgs = ((InternalEObject)newModelElement).eInverseAdd(this, TracePackage.MODEL_ELEMENT__OWNS, ModelElement.class, msgs);
+				msgs = ((InternalEObject)newModelElement).eInverseAdd(this, TracePackage.MODEL_ELEMENT__CONTAINS, ModelElement.class, msgs);
 			msgs = basicSetModelElement(newModelElement, msgs);
 			if (msgs != null) msgs.dispatch();
 		}
@@ -228,13 +249,34 @@ public class PropertyImpl extends MinimalEObjectImpl.Container implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Object getValue() {
+		return value;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setValue(Object newValue) {
+		Object oldValue = value;
+		value = newValue;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, TracePackage.PROPERTY__VALUE, oldValue, value));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case TracePackage.PROPERTY__MODEL_ELEMENT:
 				if (modelElement != null)
-					msgs = ((InternalEObject)modelElement).eInverseRemove(this, TracePackage.MODEL_ELEMENT__OWNS, ModelElement.class, msgs);
+					msgs = ((InternalEObject)modelElement).eInverseRemove(this, TracePackage.MODEL_ELEMENT__CONTAINS, ModelElement.class, msgs);
 				return basicSetModelElement((ModelElement)otherEnd, msgs);
 			case TracePackage.PROPERTY__TRACES:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getTraces()).basicAdd(otherEnd, msgs);
@@ -275,6 +317,8 @@ public class PropertyImpl extends MinimalEObjectImpl.Container implements Proper
 				return basicGetModelElement();
 			case TracePackage.PROPERTY__TRACES:
 				return getTraces();
+			case TracePackage.PROPERTY__VALUE:
+				return getValue();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -298,6 +342,9 @@ public class PropertyImpl extends MinimalEObjectImpl.Container implements Proper
 				getTraces().clear();
 				getTraces().addAll((Collection<? extends Trace>)newValue);
 				return;
+			case TracePackage.PROPERTY__VALUE:
+				setValue(newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -319,6 +366,9 @@ public class PropertyImpl extends MinimalEObjectImpl.Container implements Proper
 			case TracePackage.PROPERTY__TRACES:
 				getTraces().clear();
 				return;
+			case TracePackage.PROPERTY__VALUE:
+				setValue(VALUE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -339,6 +389,8 @@ public class PropertyImpl extends MinimalEObjectImpl.Container implements Proper
 				return modelElement != null;
 			case TracePackage.PROPERTY__TRACES:
 				return traces != null && !traces.isEmpty();
+			case TracePackage.PROPERTY__VALUE:
+				return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -357,6 +409,8 @@ public class PropertyImpl extends MinimalEObjectImpl.Container implements Proper
 		result.append(id);
 		result.append(", name: ");
 		result.append(name);
+		result.append(", value: ");
+		result.append(value);
 		result.append(')');
 		return result.toString();
 	}

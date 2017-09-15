@@ -20,8 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.epsilon.eol.engine.incremental.EOLIncrementalExecutionException;
-import org.eclipse.epsilon.eol.incremental.trace.*;
+import org.eclipse.epsilon.eol.incremental.EOLIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.generation.*;
+import org.eclipse.epsilon.eol.incremental.trace.ExecutionContext;
+import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
+import org.eclipse.epsilon.eol.incremental.trace.ModuleElement;
+import org.eclipse.epsilon.eol.incremental.trace.Property;
+import org.eclipse.epsilon.eol.incremental.trace.Trace;
+import org.eclipse.epsilon.eol.incremental.trace.TraceElement;
 import org.eclipse.epsilon.incremental.arangodb.trace.impl.*;
 import org.json.simple.JSONObject;
 

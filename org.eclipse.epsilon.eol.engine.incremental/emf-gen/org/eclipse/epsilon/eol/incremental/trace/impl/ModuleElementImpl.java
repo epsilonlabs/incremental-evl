@@ -11,6 +11,7 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
@@ -19,8 +20,8 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
-import org.eclipse.epsilon.eol.incremental.trace.ExecutionContext;
 import org.eclipse.epsilon.eol.incremental.trace.ModuleElement;
+import org.eclipse.epsilon.eol.incremental.trace.Script;
 import org.eclipse.epsilon.eol.incremental.trace.Trace;
 import org.eclipse.epsilon.eol.incremental.trace.TracePackage;
 
@@ -34,7 +35,7 @@ import org.eclipse.epsilon.eol.incremental.trace.TracePackage;
  * <ul>
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModuleElementImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModuleElementImpl#getModuleId <em>Module Id</em>}</li>
- *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModuleElementImpl#getExecutionContexts <em>Execution Contexts</em>}</li>
+ *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModuleElementImpl#getDefinedIn <em>Defined In</em>}</li>
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModuleElementImpl#getTraces <em>Traces</em>}</li>
  * </ul>
  *
@@ -82,14 +83,14 @@ public class ModuleElementImpl extends MinimalEObjectImpl.Container implements M
 	protected String moduleId = MODULE_ID_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getExecutionContexts() <em>Execution Contexts</em>}' reference list.
+	 * The cached value of the '{@link #getDefinedIn() <em>Defined In</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getExecutionContexts()
+	 * @see #getDefinedIn()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<ExecutionContext> executionContexts;
+	protected Script definedIn;
 
 	/**
 	 * The cached value of the '{@link #getTraces() <em>Traces</em>}' reference list.
@@ -155,11 +156,59 @@ public class ModuleElementImpl extends MinimalEObjectImpl.Container implements M
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<ExecutionContext> getExecutionContexts() {
-		if (executionContexts == null) {
-			executionContexts = new EObjectWithInverseResolvingEList.ManyInverse<ExecutionContext>(ExecutionContext.class, this, TracePackage.MODULE_ELEMENT__EXECUTION_CONTEXTS, TracePackage.EXECUTION_CONTEXT__FOR);
+	public Script getDefinedIn() {
+		if (definedIn != null && ((EObject)definedIn).eIsProxy()) {
+			InternalEObject oldDefinedIn = (InternalEObject)definedIn;
+			definedIn = (Script)eResolveProxy(oldDefinedIn);
+			if (definedIn != oldDefinedIn) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, TracePackage.MODULE_ELEMENT__DEFINED_IN, oldDefinedIn, definedIn));
+			}
 		}
-		return executionContexts;
+		return definedIn;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Script basicGetDefinedIn() {
+		return definedIn;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetDefinedIn(Script newDefinedIn, NotificationChain msgs) {
+		Script oldDefinedIn = definedIn;
+		definedIn = newDefinedIn;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, TracePackage.MODULE_ELEMENT__DEFINED_IN, oldDefinedIn, newDefinedIn);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDefinedIn(Script newDefinedIn) {
+		if (newDefinedIn != definedIn) {
+			NotificationChain msgs = null;
+			if (definedIn != null)
+				msgs = ((InternalEObject)definedIn).eInverseRemove(this, TracePackage.SCRIPT__MODULE_ELEMENTS, Script.class, msgs);
+			if (newDefinedIn != null)
+				msgs = ((InternalEObject)newDefinedIn).eInverseAdd(this, TracePackage.SCRIPT__MODULE_ELEMENTS, Script.class, msgs);
+			msgs = basicSetDefinedIn(newDefinedIn, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, TracePackage.MODULE_ELEMENT__DEFINED_IN, newDefinedIn, newDefinedIn));
 	}
 
 	/**
@@ -183,8 +232,10 @@ public class ModuleElementImpl extends MinimalEObjectImpl.Container implements M
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case TracePackage.MODULE_ELEMENT__EXECUTION_CONTEXTS:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getExecutionContexts()).basicAdd(otherEnd, msgs);
+			case TracePackage.MODULE_ELEMENT__DEFINED_IN:
+				if (definedIn != null)
+					msgs = ((InternalEObject)definedIn).eInverseRemove(this, TracePackage.SCRIPT__MODULE_ELEMENTS, Script.class, msgs);
+				return basicSetDefinedIn((Script)otherEnd, msgs);
 			case TracePackage.MODULE_ELEMENT__TRACES:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getTraces()).basicAdd(otherEnd, msgs);
 		}
@@ -199,8 +250,8 @@ public class ModuleElementImpl extends MinimalEObjectImpl.Container implements M
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case TracePackage.MODULE_ELEMENT__EXECUTION_CONTEXTS:
-				return ((InternalEList<?>)getExecutionContexts()).basicRemove(otherEnd, msgs);
+			case TracePackage.MODULE_ELEMENT__DEFINED_IN:
+				return basicSetDefinedIn(null, msgs);
 			case TracePackage.MODULE_ELEMENT__TRACES:
 				return ((InternalEList<?>)getTraces()).basicRemove(otherEnd, msgs);
 		}
@@ -219,8 +270,9 @@ public class ModuleElementImpl extends MinimalEObjectImpl.Container implements M
 				return getId();
 			case TracePackage.MODULE_ELEMENT__MODULE_ID:
 				return getModuleId();
-			case TracePackage.MODULE_ELEMENT__EXECUTION_CONTEXTS:
-				return getExecutionContexts();
+			case TracePackage.MODULE_ELEMENT__DEFINED_IN:
+				if (resolve) return getDefinedIn();
+				return basicGetDefinedIn();
 			case TracePackage.MODULE_ELEMENT__TRACES:
 				return getTraces();
 		}
@@ -239,9 +291,8 @@ public class ModuleElementImpl extends MinimalEObjectImpl.Container implements M
 			case TracePackage.MODULE_ELEMENT__MODULE_ID:
 				setModuleId((String)newValue);
 				return;
-			case TracePackage.MODULE_ELEMENT__EXECUTION_CONTEXTS:
-				getExecutionContexts().clear();
-				getExecutionContexts().addAll((Collection<? extends ExecutionContext>)newValue);
+			case TracePackage.MODULE_ELEMENT__DEFINED_IN:
+				setDefinedIn((Script)newValue);
 				return;
 			case TracePackage.MODULE_ELEMENT__TRACES:
 				getTraces().clear();
@@ -262,8 +313,8 @@ public class ModuleElementImpl extends MinimalEObjectImpl.Container implements M
 			case TracePackage.MODULE_ELEMENT__MODULE_ID:
 				setModuleId(MODULE_ID_EDEFAULT);
 				return;
-			case TracePackage.MODULE_ELEMENT__EXECUTION_CONTEXTS:
-				getExecutionContexts().clear();
+			case TracePackage.MODULE_ELEMENT__DEFINED_IN:
+				setDefinedIn((Script)null);
 				return;
 			case TracePackage.MODULE_ELEMENT__TRACES:
 				getTraces().clear();
@@ -284,8 +335,8 @@ public class ModuleElementImpl extends MinimalEObjectImpl.Container implements M
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 			case TracePackage.MODULE_ELEMENT__MODULE_ID:
 				return MODULE_ID_EDEFAULT == null ? moduleId != null : !MODULE_ID_EDEFAULT.equals(moduleId);
-			case TracePackage.MODULE_ELEMENT__EXECUTION_CONTEXTS:
-				return executionContexts != null && !executionContexts.isEmpty();
+			case TracePackage.MODULE_ELEMENT__DEFINED_IN:
+				return definedIn != null;
 			case TracePackage.MODULE_ELEMENT__TRACES:
 				return traces != null && !traces.isEmpty();
 		}

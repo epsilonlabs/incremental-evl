@@ -19,6 +19,7 @@ import org.eclipse.epsilon.emc.emf.InMemoryEmfModel;
 import org.eclipse.epsilon.emc.emf.incremental.IncrementalInMemoryEmfModel;
 import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.eol.incremental.EOLIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
 import org.eclipse.epsilon.eol.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.eol.models.ModelRepository;
@@ -65,7 +66,11 @@ public class EnableLiveValidationHandler extends AbstractHandler implements IEle
         ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		boolean oldValue = ((Boolean) state.getValue()).booleanValue();
 		if (oldValue) {
-			detach(edp, event);
+			try {
+				detach(edp, event);
+			} catch (EOLIncrementalExecutionException e) {
+				throw new ExecutionException("Failed to trace the execution.", e);
+			}
 			state.setValue(false);
 			HandlerUtil.toggleCommandState(command);
 		} else {
@@ -172,7 +177,7 @@ public class EnableLiveValidationHandler extends AbstractHandler implements IEle
 		return true;
 	}
 	
-	public void detach(IEditingDomainProvider edp, ExecutionEvent event) {
+	public void detach(IEditingDomainProvider edp, ExecutionEvent event) throws EOLIncrementalExecutionException {
 		final IncrementalEvlModule module = EditorRegistry.REGISTRY.remove(edp);
 		module.listenToModelChanges(false);
 		module.getExecutionTraceManager().batchExecutionFinished();

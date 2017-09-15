@@ -12,12 +12,12 @@ import "CommonTemplates.egl";
  *  To crete the Shchema additional information in the form of EAnnotations has to be added to the
  *  metamodel that defines the Data Model. The EAnnotations sources supported are: 
  *
- *  https://eclipse.org/epsilon/incremental/OrientDbGraph       for edge definition
+ *  https://eclipse.org/epsilon/incremental/Graph       for edge definition
  *  https://eclipse.org/epsilon/incremental/OrientDbIndex       for index definitions
  *  https://eclipse.org/epsilon/incremental/OrientDbFind        for find methods
  *  https://eclipse.org/epsilon/incremental/OrientDbProperty    for property definitions
  *
- *  ## https://eclipse.org/epsilon/incremental/OrientDbGraph ##
+ *  ## https://eclipse.org/epsilon/incremental/Graph ##
  *
  *  EMF models support bi--directional relationships between classes by defining one EReference
  *  as the oppoiste of the other. In OrientDB, a single edge is needed to define the relationship.

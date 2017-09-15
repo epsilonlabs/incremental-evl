@@ -21,7 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.eclipse.epsilon.eol.incremental.trace.*;
+import org.eclipse.epsilon.eol.incremental.generation.*;
+import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
+import org.eclipse.epsilon.eol.incremental.trace.Property;
+import org.eclipse.epsilon.eol.incremental.trace.Trace;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 

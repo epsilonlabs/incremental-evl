@@ -16,6 +16,7 @@ import java.util.List;
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.Property#getName <em>Name</em>}</li>
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.Property#getModelElement <em>Model Element</em>}</li>
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.Property#getTraces <em>Traces</em>}</li>
+ *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.Property#getValue <em>Value</em>}</li>
  * </ul>
  *
  * @see org.eclipse.epsilon.eol.incremental.trace.TracePackage#getProperty()
@@ -51,7 +52,7 @@ public interface Property extends TraceElement {
 
 	/**
 	 * Returns the value of the '<em><b>Model Element</b></em>' reference.
-	 * It is bidirectional and its opposite is '{@link org.eclipse.epsilon.eol.incremental.trace.ModelElement#getOwns <em>Owns</em>}'.
+	 * It is bidirectional and its opposite is '{@link org.eclipse.epsilon.eol.incremental.trace.ModelElement#getContains <em>Contains</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Model Element</em>' reference isn't clear,
@@ -61,8 +62,8 @@ public interface Property extends TraceElement {
 	 * @return the value of the '<em>Model Element</em>' reference.
 	 * @see #setModelElement(ModelElement)
 	 * @see org.eclipse.epsilon.eol.incremental.trace.TracePackage#getProperty_ModelElement()
-	 * @see org.eclipse.epsilon.eol.incremental.trace.ModelElement#getOwns
-	 * @model opposite="owns" required="true"
+	 * @see org.eclipse.epsilon.eol.incremental.trace.ModelElement#getContains
+	 * @model opposite="contains" required="true"
 	 * @generated
 	 */
 	ModelElement getModelElement();
@@ -94,5 +95,31 @@ public interface Property extends TraceElement {
 	 * @generated
 	 */
 	List<Trace> getTraces();
+
+	/**
+	 * Returns the value of the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Value</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Value</em>' attribute.
+	 * @see #setValue(Object)
+	 * @see org.eclipse.epsilon.eol.incremental.trace.TracePackage#getProperty_Value()
+	 * @model
+	 * @generated
+	 */
+	Object getValue();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.epsilon.eol.incremental.trace.Property#getValue <em>Value</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Value</em>' attribute.
+	 * @see #getValue()
+	 * @generated
+	 */
+	void setValue(Object value);
 
 } // Property

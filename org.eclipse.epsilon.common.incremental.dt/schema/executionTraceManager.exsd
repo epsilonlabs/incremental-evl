@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.epsilon.common.incremental.dt" id="executionManager" name="Execution Manager"/>
       </appinfo>
       <documentation>
-         [Enter description of this extension point.]
+         An extension point to provide alternative TraceManagers for the execution of Epsilon Languages&apos; scripts with incremental support.
       </documentation>
    </annotation>
 
@@ -48,31 +48,29 @@
    </element>
 
    <element name="executionTraceManager">
+      <annotation>
+         <documentation>
+            Define the properties of a provider of a TraceManager implementaiton.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The class that implements the TraceManager interface
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.epsilon.eol.incremental.execute.IIncrementalExecutionTraceManager"/>
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="label" type="string" use="required">
+         <attribute name="model" type="string" use="required">
             <annotation>
                <documentation>
-                  A label for representing this type of trace manager in the UI
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="icon" type="string" use="required">
-            <annotation>
-               <documentation>
-                  An icon representative to this type of tracing models
+                  The class that implements the ITraceModel interface and that is used by the trace manager.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="resource"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.epsilon.eol.incremental.models.ITraceModel"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -86,6 +84,37 @@
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A name to uniquely identify this type of Trace Manager
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A label for representing this type of trace manager in the UI when the user is presented with options
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  An icon representative to this type of Trace Manager when the user is presented with options
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="stable" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Determines if the provided TraceManager is stable. Only managers provided by Epsilon should be stable.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -94,7 +123,7 @@
          <meta.section type="since"/>
       </appinfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         1.5
       </documentation>
    </annotation>
 
@@ -103,7 +132,16 @@
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         [Enter extension point usage example here.]
+         &lt;extension point=&quot;org.eclipse.epsilon.common.incremental.dt.executionTraceManager&quot;&gt;
+  &lt;executionTraceManager
+    class=&quot;org.eclipse.epsilon.evl.incremental.orientdb.execute.OrientDbTraceManager&quot;
+    dialog=&quot;org.eclipse.epsilon.evl.incremental.orientdb.dialog.OrientDBManagerConfiguration&quot;
+    model=&quot;org.eclipse.epsilon.evl.incremental.orientdb.dialog.OrientDBTraceModel&quot;
+    icon=&quot;icons/orientdb.png&quot;
+    label=&quot;OrientDB Trace Manager&quot;
+    type=&quot;ORIENTDB&quot;&gt;
+  &lt;/executionTraceManager&gt;
+&lt;/extension&gt;
       </documentation>
    </annotation>
 

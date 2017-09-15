@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Horacio Hoyos Rodriguez - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.epsilon.common.incremental.dt.launching.dialogs;
 
 import java.util.ArrayList;
@@ -146,42 +156,22 @@ public class ExecutionTraceManagerSelectionDialog extends TitleAreaDialog implem
 	}
 	
 	private List<ExecutionTraceManagerExtension> getStableExecutionTraceManagerExtensions() {
-//		ArrayList<ExecutionTraceManagerExtension> filtered = new ArrayList<ExecutionTraceManagerExtension>();
-//		for (ExecutionTraceManagerExtension ext : traceManagers) {
-//			if (ext.isStable()) {
-//				filtered.add(ext);
-//			}
-//		}
-//		return filtered;
-		return traceManagers;
+		ArrayList<ExecutionTraceManagerExtension> filtered = new ArrayList<ExecutionTraceManagerExtension>();
+		for (ExecutionTraceManagerExtension ext : traceManagers) {
+			if (ext.isStable()) {
+				filtered.add(ext);
+			}
+		}
+		return filtered;
 	}
 	
-	private void findTraceManagers() {		
-		traceManagers = new ArrayList<ExecutionTraceManagerExtension>();
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		
-		IExtensionPoint extensionPoint = registry.getExtensionPoint("org.eclipse.epsilon.common.incremental.dt.executionTraceManager");
-		IConfigurationElement[] configurationElements =  extensionPoint.getConfigurationElements();
-		
+	private void findTraceManagers() {
 		try {
-			for (int i=0;i<configurationElements.length; i++){
-				IConfigurationElement configurationElement = configurationElements[i];
-				ExecutionTraceManagerExtension traceManager = new ExecutionTraceManagerExtension();
-				traceManager.setManagerclazz(configurationElement.getAttribute("class"));
-				traceManager.setLabel(configurationElement.getAttribute("label"));
-				String contributingPlugin = configurationElement.getDeclaringExtension().getNamespaceIdentifier();
-				Image image = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPlugin,configurationElement.getAttribute("icon")).createImage();
-				traceManager.setImage(image);				
-				traceManager.setDialogclazz(configurationElement.getAttribute("dialog"));
-				//traceManager.setStable(Boolean.parseBoolean(configurationElement.getAttribute("stable")));
-				traceManager.setConfigurationElement(configurationElement);
-				traceManagers.add(traceManager);
-			}
+			traceManagers = ExecutionTraceManagerExtension.allTraceManagers();
 		}
 		catch (Exception ex) {
 			LogUtil.log(ex);
 		}
-		
 	}
 
 	public void selectionChanged(SelectionChangedEvent event) {

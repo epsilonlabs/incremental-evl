@@ -11,6 +11,7 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
@@ -19,7 +20,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
-import org.eclipse.epsilon.eol.incremental.trace.ExecutionContext;
+import org.eclipse.epsilon.eol.incremental.trace.Model;
 import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
 import org.eclipse.epsilon.eol.incremental.trace.Property;
 import org.eclipse.epsilon.eol.incremental.trace.Trace;
@@ -35,9 +36,9 @@ import org.eclipse.epsilon.eol.incremental.trace.TracePackage;
  * <ul>
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModelElementImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModelElementImpl#getElementId <em>Element Id</em>}</li>
- *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModelElementImpl#getExecutionContext <em>Execution Context</em>}</li>
  *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModelElementImpl#getTraces <em>Traces</em>}</li>
- *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModelElementImpl#getOwns <em>Owns</em>}</li>
+ *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModelElementImpl#getContains <em>Contains</em>}</li>
+ *   <li>{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModelElementImpl#getOwner <em>Owner</em>}</li>
  * </ul>
  *
  * @generated
@@ -84,16 +85,6 @@ public class ModelElementImpl extends MinimalEObjectImpl.Container implements Mo
 	protected String elementId = ELEMENT_ID_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getExecutionContext() <em>Execution Context</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getExecutionContext()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<ExecutionContext> executionContext;
-
-	/**
 	 * The cached value of the '{@link #getTraces() <em>Traces</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -104,14 +95,24 @@ public class ModelElementImpl extends MinimalEObjectImpl.Container implements Mo
 	protected EList<Trace> traces;
 
 	/**
-	 * The cached value of the '{@link #getOwns() <em>Owns</em>}' reference list.
+	 * The cached value of the '{@link #getContains() <em>Contains</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getOwns()
+	 * @see #getContains()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<Property> owns;
+	protected EList<Property> contains;
+
+	/**
+	 * The cached value of the '{@link #getOwner() <em>Owner</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getOwner()
+	 * @generated
+	 * @ordered
+	 */
+	protected Model owner;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -167,21 +168,9 @@ public class ModelElementImpl extends MinimalEObjectImpl.Container implements Mo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<ExecutionContext> getExecutionContext() {
-		if (executionContext == null) {
-			executionContext = new EObjectWithInverseResolvingEList.ManyInverse<ExecutionContext>(ExecutionContext.class, this, TracePackage.MODEL_ELEMENT__EXECUTION_CONTEXT, TracePackage.EXECUTION_CONTEXT__INVOLVES);
-		}
-		return executionContext;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public List<Trace> getTraces() {
 		if (traces == null) {
-			traces = new EObjectWithInverseResolvingEList.ManyInverse<Trace>(Trace.class, this, TracePackage.MODEL_ELEMENT__TRACES, TracePackage.TRACE__REACHES);
+			traces = new EObjectWithInverseResolvingEList.ManyInverse<Trace>(Trace.class, this, TracePackage.MODEL_ELEMENT__TRACES, TracePackage.TRACE__INVOLVES);
 		}
 		return traces;
 	}
@@ -191,11 +180,71 @@ public class ModelElementImpl extends MinimalEObjectImpl.Container implements Mo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<Property> getOwns() {
-		if (owns == null) {
-			owns = new EObjectWithInverseResolvingEList<Property>(Property.class, this, TracePackage.MODEL_ELEMENT__OWNS, TracePackage.PROPERTY__MODEL_ELEMENT);
+	public List<Property> getContains() {
+		if (contains == null) {
+			contains = new EObjectWithInverseResolvingEList<Property>(Property.class, this, TracePackage.MODEL_ELEMENT__CONTAINS, TracePackage.PROPERTY__MODEL_ELEMENT);
 		}
-		return owns;
+		return contains;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Model getOwner() {
+		if (owner != null && ((EObject)owner).eIsProxy()) {
+			InternalEObject oldOwner = (InternalEObject)owner;
+			owner = (Model)eResolveProxy(oldOwner);
+			if (owner != oldOwner) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, TracePackage.MODEL_ELEMENT__OWNER, oldOwner, owner));
+			}
+		}
+		return owner;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Model basicGetOwner() {
+		return owner;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetOwner(Model newOwner, NotificationChain msgs) {
+		Model oldOwner = owner;
+		owner = newOwner;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, TracePackage.MODEL_ELEMENT__OWNER, oldOwner, newOwner);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setOwner(Model newOwner) {
+		if (newOwner != owner) {
+			NotificationChain msgs = null;
+			if (owner != null)
+				msgs = ((InternalEObject)owner).eInverseRemove(this, TracePackage.MODEL__OWNS, Model.class, msgs);
+			if (newOwner != null)
+				msgs = ((InternalEObject)newOwner).eInverseAdd(this, TracePackage.MODEL__OWNS, Model.class, msgs);
+			msgs = basicSetOwner(newOwner, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, TracePackage.MODEL_ELEMENT__OWNER, newOwner, newOwner));
 	}
 
 	/**
@@ -207,12 +256,14 @@ public class ModelElementImpl extends MinimalEObjectImpl.Container implements Mo
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case TracePackage.MODEL_ELEMENT__EXECUTION_CONTEXT:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getExecutionContext()).basicAdd(otherEnd, msgs);
 			case TracePackage.MODEL_ELEMENT__TRACES:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getTraces()).basicAdd(otherEnd, msgs);
-			case TracePackage.MODEL_ELEMENT__OWNS:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getOwns()).basicAdd(otherEnd, msgs);
+			case TracePackage.MODEL_ELEMENT__CONTAINS:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getContains()).basicAdd(otherEnd, msgs);
+			case TracePackage.MODEL_ELEMENT__OWNER:
+				if (owner != null)
+					msgs = ((InternalEObject)owner).eInverseRemove(this, TracePackage.MODEL__OWNS, Model.class, msgs);
+				return basicSetOwner((Model)otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -225,12 +276,12 @@ public class ModelElementImpl extends MinimalEObjectImpl.Container implements Mo
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case TracePackage.MODEL_ELEMENT__EXECUTION_CONTEXT:
-				return ((InternalEList<?>)getExecutionContext()).basicRemove(otherEnd, msgs);
 			case TracePackage.MODEL_ELEMENT__TRACES:
 				return ((InternalEList<?>)getTraces()).basicRemove(otherEnd, msgs);
-			case TracePackage.MODEL_ELEMENT__OWNS:
-				return ((InternalEList<?>)getOwns()).basicRemove(otherEnd, msgs);
+			case TracePackage.MODEL_ELEMENT__CONTAINS:
+				return ((InternalEList<?>)getContains()).basicRemove(otherEnd, msgs);
+			case TracePackage.MODEL_ELEMENT__OWNER:
+				return basicSetOwner(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -247,12 +298,13 @@ public class ModelElementImpl extends MinimalEObjectImpl.Container implements Mo
 				return getId();
 			case TracePackage.MODEL_ELEMENT__ELEMENT_ID:
 				return getElementId();
-			case TracePackage.MODEL_ELEMENT__EXECUTION_CONTEXT:
-				return getExecutionContext();
 			case TracePackage.MODEL_ELEMENT__TRACES:
 				return getTraces();
-			case TracePackage.MODEL_ELEMENT__OWNS:
-				return getOwns();
+			case TracePackage.MODEL_ELEMENT__CONTAINS:
+				return getContains();
+			case TracePackage.MODEL_ELEMENT__OWNER:
+				if (resolve) return getOwner();
+				return basicGetOwner();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -269,17 +321,16 @@ public class ModelElementImpl extends MinimalEObjectImpl.Container implements Mo
 			case TracePackage.MODEL_ELEMENT__ELEMENT_ID:
 				setElementId((String)newValue);
 				return;
-			case TracePackage.MODEL_ELEMENT__EXECUTION_CONTEXT:
-				getExecutionContext().clear();
-				getExecutionContext().addAll((Collection<? extends ExecutionContext>)newValue);
-				return;
 			case TracePackage.MODEL_ELEMENT__TRACES:
 				getTraces().clear();
 				getTraces().addAll((Collection<? extends Trace>)newValue);
 				return;
-			case TracePackage.MODEL_ELEMENT__OWNS:
-				getOwns().clear();
-				getOwns().addAll((Collection<? extends Property>)newValue);
+			case TracePackage.MODEL_ELEMENT__CONTAINS:
+				getContains().clear();
+				getContains().addAll((Collection<? extends Property>)newValue);
+				return;
+			case TracePackage.MODEL_ELEMENT__OWNER:
+				setOwner((Model)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -296,14 +347,14 @@ public class ModelElementImpl extends MinimalEObjectImpl.Container implements Mo
 			case TracePackage.MODEL_ELEMENT__ELEMENT_ID:
 				setElementId(ELEMENT_ID_EDEFAULT);
 				return;
-			case TracePackage.MODEL_ELEMENT__EXECUTION_CONTEXT:
-				getExecutionContext().clear();
-				return;
 			case TracePackage.MODEL_ELEMENT__TRACES:
 				getTraces().clear();
 				return;
-			case TracePackage.MODEL_ELEMENT__OWNS:
-				getOwns().clear();
+			case TracePackage.MODEL_ELEMENT__CONTAINS:
+				getContains().clear();
+				return;
+			case TracePackage.MODEL_ELEMENT__OWNER:
+				setOwner((Model)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -321,12 +372,12 @@ public class ModelElementImpl extends MinimalEObjectImpl.Container implements Mo
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 			case TracePackage.MODEL_ELEMENT__ELEMENT_ID:
 				return ELEMENT_ID_EDEFAULT == null ? elementId != null : !ELEMENT_ID_EDEFAULT.equals(elementId);
-			case TracePackage.MODEL_ELEMENT__EXECUTION_CONTEXT:
-				return executionContext != null && !executionContext.isEmpty();
 			case TracePackage.MODEL_ELEMENT__TRACES:
 				return traces != null && !traces.isEmpty();
-			case TracePackage.MODEL_ELEMENT__OWNS:
-				return owns != null && !owns.isEmpty();
+			case TracePackage.MODEL_ELEMENT__CONTAINS:
+				return contains != null && !contains.isEmpty();
+			case TracePackage.MODEL_ELEMENT__OWNER:
+				return owner != null;
 		}
 		return super.eIsSet(featureID);
 	}

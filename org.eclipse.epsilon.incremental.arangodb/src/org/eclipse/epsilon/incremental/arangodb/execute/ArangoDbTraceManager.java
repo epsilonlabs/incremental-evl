@@ -6,10 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.epsilon.common.util.StringProperties;
-import org.eclipse.epsilon.eol.engine.incremental.EOLIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.EOLIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
 import org.eclipse.epsilon.eol.incremental.execute.IExecutionTraceManager;
-import org.eclipse.epsilon.eol.incremental.trace.*;
+import org.eclipse.epsilon.eol.incremental.generation.*;
+import org.eclipse.epsilon.eol.incremental.trace.ExecutionContext;
+import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
+import org.eclipse.epsilon.eol.incremental.trace.ModuleElement;
+import org.eclipse.epsilon.eol.incremental.trace.Property;
+import org.eclipse.epsilon.eol.incremental.trace.Trace;
 import org.eclipse.epsilon.incremental.arangodb.dialog.ArangoDBConfiguration;
 import org.eclipse.epsilon.incremental.arangodb.trace.impl.*;
 import com.arangodb.ArangoDB;

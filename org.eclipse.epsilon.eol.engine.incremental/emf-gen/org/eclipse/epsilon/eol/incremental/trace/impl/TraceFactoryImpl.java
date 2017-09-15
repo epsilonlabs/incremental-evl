@@ -57,8 +57,10 @@ public class TraceFactoryImpl extends EFactoryImpl implements TraceFactory {
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
 			case TracePackage.EXECUTION_CONTEXT: return (EObject)createExecutionContext();
+			case TracePackage.SCRIPT: return (EObject)createScript();
 			case TracePackage.MODULE_ELEMENT: return (EObject)createModuleElement();
 			case TracePackage.TRACE: return (EObject)createTrace();
+			case TracePackage.MODEL: return (EObject)createModel();
 			case TracePackage.MODEL_ELEMENT: return (EObject)createModelElement();
 			case TracePackage.PROPERTY: return (EObject)createProperty();
 			default:
@@ -81,6 +83,16 @@ public class TraceFactoryImpl extends EFactoryImpl implements TraceFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Script createScript() {
+		ScriptImpl script = new ScriptImpl();
+		return script;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public ModuleElement createModuleElement() {
 		ModuleElementImpl moduleElement = new ModuleElementImpl();
 		return moduleElement;
@@ -94,6 +106,16 @@ public class TraceFactoryImpl extends EFactoryImpl implements TraceFactory {
 	public Trace createTrace() {
 		TraceImpl trace = new TraceImpl();
 		return trace;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Model createModel() {
+		ModelImpl model = new ModelImpl();
+		return model;
 	}
 
 	/**

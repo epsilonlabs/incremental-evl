@@ -64,7 +64,7 @@ public interface TracePackage extends EPackage {
 	 * @see org.eclipse.epsilon.eol.incremental.trace.impl.TracePackageImpl#getTraceElement()
 	 * @generated
 	 */
-	int TRACE_ELEMENT = 5;
+	int TRACE_ELEMENT = 7;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -113,49 +113,31 @@ public interface TracePackage extends EPackage {
 	int EXECUTION_CONTEXT__ID = TRACE_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Script Id</b></em>' attribute.
+	 * The feature id for the '<em><b>For</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EXECUTION_CONTEXT__SCRIPT_ID = TRACE_ELEMENT_FEATURE_COUNT + 0;
+	int EXECUTION_CONTEXT__FOR = TRACE_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Models Ids</b></em>' attribute list.
+	 * The feature id for the '<em><b>Traces</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EXECUTION_CONTEXT__MODELS_IDS = TRACE_ELEMENT_FEATURE_COUNT + 1;
+	int EXECUTION_CONTEXT__TRACES = TRACE_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>For</b></em>' reference list.
+	 * The feature id for the '<em><b>Uses</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EXECUTION_CONTEXT__FOR = TRACE_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Contains</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EXECUTION_CONTEXT__CONTAINS = TRACE_ELEMENT_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Involves</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EXECUTION_CONTEXT__INVOLVES = TRACE_ELEMENT_FEATURE_COUNT + 4;
+	int EXECUTION_CONTEXT__USES = TRACE_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of structural features of the '<em>Execution Context</em>' class.
@@ -164,7 +146,7 @@ public interface TracePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EXECUTION_CONTEXT_FEATURE_COUNT = TRACE_ELEMENT_FEATURE_COUNT + 5;
+	int EXECUTION_CONTEXT_FEATURE_COUNT = TRACE_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of operations of the '<em>Execution Context</em>' class.
@@ -176,6 +158,61 @@ public interface TracePackage extends EPackage {
 	int EXECUTION_CONTEXT_OPERATION_COUNT = TRACE_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.epsilon.eol.incremental.trace.impl.ScriptImpl <em>Script</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.epsilon.eol.incremental.trace.impl.ScriptImpl
+	 * @see org.eclipse.epsilon.eol.incremental.trace.impl.TracePackageImpl#getScript()
+	 * @generated
+	 */
+	int SCRIPT = 1;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SCRIPT__ID = TRACE_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Script Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SCRIPT__SCRIPT_ID = TRACE_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Module Elements</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SCRIPT__MODULE_ELEMENTS = TRACE_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Script</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SCRIPT_FEATURE_COUNT = TRACE_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of operations of the '<em>Script</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SCRIPT_OPERATION_COUNT = TRACE_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModuleElementImpl <em>Module Element</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -183,7 +220,7 @@ public interface TracePackage extends EPackage {
 	 * @see org.eclipse.epsilon.eol.incremental.trace.impl.TracePackageImpl#getModuleElement()
 	 * @generated
 	 */
-	int MODULE_ELEMENT = 1;
+	int MODULE_ELEMENT = 2;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -204,13 +241,13 @@ public interface TracePackage extends EPackage {
 	int MODULE_ELEMENT__MODULE_ID = TRACE_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Execution Contexts</b></em>' reference list.
+	 * The feature id for the '<em><b>Defined In</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MODULE_ELEMENT__EXECUTION_CONTEXTS = TRACE_ELEMENT_FEATURE_COUNT + 1;
+	int MODULE_ELEMENT__DEFINED_IN = TRACE_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Traces</b></em>' reference list.
@@ -247,7 +284,7 @@ public interface TracePackage extends EPackage {
 	 * @see org.eclipse.epsilon.eol.incremental.trace.impl.TracePackageImpl#getTrace()
 	 * @generated
 	 */
-	int TRACE = 2;
+	int TRACE = 3;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -259,13 +296,13 @@ public interface TracePackage extends EPackage {
 	int TRACE__ID = TRACE_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Execution Context</b></em>' reference.
+	 * The feature id for the '<em><b>Created In</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TRACE__EXECUTION_CONTEXT = TRACE_ELEMENT_FEATURE_COUNT + 0;
+	int TRACE__CREATED_IN = TRACE_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Traces</b></em>' reference.
@@ -277,13 +314,13 @@ public interface TracePackage extends EPackage {
 	int TRACE__TRACES = TRACE_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Reaches</b></em>' reference list.
+	 * The feature id for the '<em><b>Involves</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TRACE__REACHES = TRACE_ELEMENT_FEATURE_COUNT + 2;
+	int TRACE__INVOLVES = TRACE_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Accesses</b></em>' reference list.
@@ -313,6 +350,70 @@ public interface TracePackage extends EPackage {
 	int TRACE_OPERATION_COUNT = TRACE_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModelImpl <em>Model</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.epsilon.eol.incremental.trace.impl.ModelImpl
+	 * @see org.eclipse.epsilon.eol.incremental.trace.impl.TracePackageImpl#getModel()
+	 * @generated
+	 */
+	int MODEL = 4;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL__ID = TRACE_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Uri</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL__URI = TRACE_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Execution Context</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL__EXECUTION_CONTEXT = TRACE_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Owns</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL__OWNS = TRACE_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Model</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL_FEATURE_COUNT = TRACE_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The number of operations of the '<em>Model</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL_OPERATION_COUNT = TRACE_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModelElementImpl <em>Model Element</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -320,7 +421,7 @@ public interface TracePackage extends EPackage {
 	 * @see org.eclipse.epsilon.eol.incremental.trace.impl.TracePackageImpl#getModelElement()
 	 * @generated
 	 */
-	int MODEL_ELEMENT = 3;
+	int MODEL_ELEMENT = 5;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -341,31 +442,31 @@ public interface TracePackage extends EPackage {
 	int MODEL_ELEMENT__ELEMENT_ID = TRACE_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Execution Context</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MODEL_ELEMENT__EXECUTION_CONTEXT = TRACE_ELEMENT_FEATURE_COUNT + 1;
-
-	/**
 	 * The feature id for the '<em><b>Traces</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_ELEMENT__TRACES = TRACE_ELEMENT_FEATURE_COUNT + 2;
+	int MODEL_ELEMENT__TRACES = TRACE_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Owns</b></em>' reference list.
+	 * The feature id for the '<em><b>Contains</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MODEL_ELEMENT__OWNS = TRACE_ELEMENT_FEATURE_COUNT + 3;
+	int MODEL_ELEMENT__CONTAINS = TRACE_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL_ELEMENT__OWNER = TRACE_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of structural features of the '<em>Model Element</em>' class.
@@ -393,7 +494,7 @@ public interface TracePackage extends EPackage {
 	 * @see org.eclipse.epsilon.eol.incremental.trace.impl.TracePackageImpl#getProperty()
 	 * @generated
 	 */
-	int PROPERTY = 4;
+	int PROPERTY = 6;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -432,13 +533,22 @@ public interface TracePackage extends EPackage {
 	int PROPERTY__TRACES = TRACE_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROPERTY__VALUE = TRACE_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
 	 * The number of structural features of the '<em>Property</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PROPERTY_FEATURE_COUNT = TRACE_ELEMENT_FEATURE_COUNT + 3;
+	int PROPERTY_FEATURE_COUNT = TRACE_ELEMENT_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of operations of the '<em>Property</em>' class.
@@ -461,32 +571,10 @@ public interface TracePackage extends EPackage {
 	EClass getExecutionContext();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.epsilon.eol.incremental.trace.ExecutionContext#getScriptId <em>Script Id</em>}'.
+	 * Returns the meta object for the reference '{@link org.eclipse.epsilon.eol.incremental.trace.ExecutionContext#getFor <em>For</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Script Id</em>'.
-	 * @see org.eclipse.epsilon.eol.incremental.trace.ExecutionContext#getScriptId()
-	 * @see #getExecutionContext()
-	 * @generated
-	 */
-	EAttribute getExecutionContext_ScriptId();
-
-	/**
-	 * Returns the meta object for the attribute list '{@link org.eclipse.epsilon.eol.incremental.trace.ExecutionContext#getModelsIds <em>Models Ids</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Models Ids</em>'.
-	 * @see org.eclipse.epsilon.eol.incremental.trace.ExecutionContext#getModelsIds()
-	 * @see #getExecutionContext()
-	 * @generated
-	 */
-	EAttribute getExecutionContext_ModelsIds();
-
-	/**
-	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.ExecutionContext#getFor <em>For</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>For</em>'.
+	 * @return the meta object for the reference '<em>For</em>'.
 	 * @see org.eclipse.epsilon.eol.incremental.trace.ExecutionContext#getFor()
 	 * @see #getExecutionContext()
 	 * @generated
@@ -494,26 +582,58 @@ public interface TracePackage extends EPackage {
 	EReference getExecutionContext_For();
 
 	/**
-	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.ExecutionContext#getContains <em>Contains</em>}'.
+	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.ExecutionContext#getTraces <em>Traces</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Contains</em>'.
-	 * @see org.eclipse.epsilon.eol.incremental.trace.ExecutionContext#getContains()
+	 * @return the meta object for the reference list '<em>Traces</em>'.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.ExecutionContext#getTraces()
 	 * @see #getExecutionContext()
 	 * @generated
 	 */
-	EReference getExecutionContext_Contains();
+	EReference getExecutionContext_Traces();
 
 	/**
-	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.ExecutionContext#getInvolves <em>Involves</em>}'.
+	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.ExecutionContext#getUses <em>Uses</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Involves</em>'.
-	 * @see org.eclipse.epsilon.eol.incremental.trace.ExecutionContext#getInvolves()
+	 * @return the meta object for the reference list '<em>Uses</em>'.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.ExecutionContext#getUses()
 	 * @see #getExecutionContext()
 	 * @generated
 	 */
-	EReference getExecutionContext_Involves();
+	EReference getExecutionContext_Uses();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.epsilon.eol.incremental.trace.Script <em>Script</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Script</em>'.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.Script
+	 * @generated
+	 */
+	EClass getScript();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.epsilon.eol.incremental.trace.Script#getScriptId <em>Script Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Script Id</em>'.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.Script#getScriptId()
+	 * @see #getScript()
+	 * @generated
+	 */
+	EAttribute getScript_ScriptId();
+
+	/**
+	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.Script#getModuleElements <em>Module Elements</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Module Elements</em>'.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.Script#getModuleElements()
+	 * @see #getScript()
+	 * @generated
+	 */
+	EReference getScript_ModuleElements();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.epsilon.eol.incremental.trace.ModuleElement <em>Module Element</em>}'.
@@ -537,15 +657,15 @@ public interface TracePackage extends EPackage {
 	EAttribute getModuleElement_ModuleId();
 
 	/**
-	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.ModuleElement#getExecutionContexts <em>Execution Contexts</em>}'.
+	 * Returns the meta object for the reference '{@link org.eclipse.epsilon.eol.incremental.trace.ModuleElement#getDefinedIn <em>Defined In</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Execution Contexts</em>'.
-	 * @see org.eclipse.epsilon.eol.incremental.trace.ModuleElement#getExecutionContexts()
+	 * @return the meta object for the reference '<em>Defined In</em>'.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.ModuleElement#getDefinedIn()
 	 * @see #getModuleElement()
 	 * @generated
 	 */
-	EReference getModuleElement_ExecutionContexts();
+	EReference getModuleElement_DefinedIn();
 
 	/**
 	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.ModuleElement#getTraces <em>Traces</em>}'.
@@ -569,15 +689,15 @@ public interface TracePackage extends EPackage {
 	EClass getTrace();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.epsilon.eol.incremental.trace.Trace#getExecutionContext <em>Execution Context</em>}'.
+	 * Returns the meta object for the reference '{@link org.eclipse.epsilon.eol.incremental.trace.Trace#getCreatedIn <em>Created In</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Execution Context</em>'.
-	 * @see org.eclipse.epsilon.eol.incremental.trace.Trace#getExecutionContext()
+	 * @return the meta object for the reference '<em>Created In</em>'.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.Trace#getCreatedIn()
 	 * @see #getTrace()
 	 * @generated
 	 */
-	EReference getTrace_ExecutionContext();
+	EReference getTrace_CreatedIn();
 
 	/**
 	 * Returns the meta object for the reference '{@link org.eclipse.epsilon.eol.incremental.trace.Trace#getTraces <em>Traces</em>}'.
@@ -591,15 +711,15 @@ public interface TracePackage extends EPackage {
 	EReference getTrace_Traces();
 
 	/**
-	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.Trace#getReaches <em>Reaches</em>}'.
+	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.Trace#getInvolves <em>Involves</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Reaches</em>'.
-	 * @see org.eclipse.epsilon.eol.incremental.trace.Trace#getReaches()
+	 * @return the meta object for the reference list '<em>Involves</em>'.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.Trace#getInvolves()
 	 * @see #getTrace()
 	 * @generated
 	 */
-	EReference getTrace_Reaches();
+	EReference getTrace_Involves();
 
 	/**
 	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.Trace#getAccesses <em>Accesses</em>}'.
@@ -611,6 +731,49 @@ public interface TracePackage extends EPackage {
 	 * @generated
 	 */
 	EReference getTrace_Accesses();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.epsilon.eol.incremental.trace.Model <em>Model</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Model</em>'.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.Model
+	 * @generated
+	 */
+	EClass getModel();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.epsilon.eol.incremental.trace.Model#getUri <em>Uri</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Uri</em>'.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.Model#getUri()
+	 * @see #getModel()
+	 * @generated
+	 */
+	EAttribute getModel_Uri();
+
+	/**
+	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.Model#getExecutionContext <em>Execution Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Execution Context</em>'.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.Model#getExecutionContext()
+	 * @see #getModel()
+	 * @generated
+	 */
+	EReference getModel_ExecutionContext();
+
+	/**
+	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.Model#getOwns <em>Owns</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Owns</em>'.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.Model#getOwns()
+	 * @see #getModel()
+	 * @generated
+	 */
+	EReference getModel_Owns();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.epsilon.eol.incremental.trace.ModelElement <em>Model Element</em>}'.
@@ -634,17 +797,6 @@ public interface TracePackage extends EPackage {
 	EAttribute getModelElement_ElementId();
 
 	/**
-	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.ModelElement#getExecutionContext <em>Execution Context</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Execution Context</em>'.
-	 * @see org.eclipse.epsilon.eol.incremental.trace.ModelElement#getExecutionContext()
-	 * @see #getModelElement()
-	 * @generated
-	 */
-	EReference getModelElement_ExecutionContext();
-
-	/**
 	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.ModelElement#getTraces <em>Traces</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -656,15 +808,26 @@ public interface TracePackage extends EPackage {
 	EReference getModelElement_Traces();
 
 	/**
-	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.ModelElement#getOwns <em>Owns</em>}'.
+	 * Returns the meta object for the reference list '{@link org.eclipse.epsilon.eol.incremental.trace.ModelElement#getContains <em>Contains</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Owns</em>'.
-	 * @see org.eclipse.epsilon.eol.incremental.trace.ModelElement#getOwns()
+	 * @return the meta object for the reference list '<em>Contains</em>'.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.ModelElement#getContains()
 	 * @see #getModelElement()
 	 * @generated
 	 */
-	EReference getModelElement_Owns();
+	EReference getModelElement_Contains();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.eclipse.epsilon.eol.incremental.trace.ModelElement#getOwner <em>Owner</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Owner</em>'.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.ModelElement#getOwner()
+	 * @see #getModelElement()
+	 * @generated
+	 */
+	EReference getModelElement_Owner();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.epsilon.eol.incremental.trace.Property <em>Property</em>}'.
@@ -708,6 +871,17 @@ public interface TracePackage extends EPackage {
 	 * @generated
 	 */
 	EReference getProperty_Traces();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.epsilon.eol.incremental.trace.Property#getValue <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @see org.eclipse.epsilon.eol.incremental.trace.Property#getValue()
+	 * @see #getProperty()
+	 * @generated
+	 */
+	EAttribute getProperty_Value();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.epsilon.eol.incremental.trace.TraceElement <em>Element</em>}'.
@@ -764,23 +938,7 @@ public interface TracePackage extends EPackage {
 		EClass EXECUTION_CONTEXT = eINSTANCE.getExecutionContext();
 
 		/**
-		 * The meta object literal for the '<em><b>Script Id</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute EXECUTION_CONTEXT__SCRIPT_ID = eINSTANCE.getExecutionContext_ScriptId();
-
-		/**
-		 * The meta object literal for the '<em><b>Models Ids</b></em>' attribute list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute EXECUTION_CONTEXT__MODELS_IDS = eINSTANCE.getExecutionContext_ModelsIds();
-
-		/**
-		 * The meta object literal for the '<em><b>For</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>For</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
@@ -788,20 +946,46 @@ public interface TracePackage extends EPackage {
 		EReference EXECUTION_CONTEXT__FOR = eINSTANCE.getExecutionContext_For();
 
 		/**
-		 * The meta object literal for the '<em><b>Contains</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Traces</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference EXECUTION_CONTEXT__CONTAINS = eINSTANCE.getExecutionContext_Contains();
+		EReference EXECUTION_CONTEXT__TRACES = eINSTANCE.getExecutionContext_Traces();
 
 		/**
-		 * The meta object literal for the '<em><b>Involves</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Uses</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference EXECUTION_CONTEXT__INVOLVES = eINSTANCE.getExecutionContext_Involves();
+		EReference EXECUTION_CONTEXT__USES = eINSTANCE.getExecutionContext_Uses();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.epsilon.eol.incremental.trace.impl.ScriptImpl <em>Script</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.epsilon.eol.incremental.trace.impl.ScriptImpl
+		 * @see org.eclipse.epsilon.eol.incremental.trace.impl.TracePackageImpl#getScript()
+		 * @generated
+		 */
+		EClass SCRIPT = eINSTANCE.getScript();
+
+		/**
+		 * The meta object literal for the '<em><b>Script Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SCRIPT__SCRIPT_ID = eINSTANCE.getScript_ScriptId();
+
+		/**
+		 * The meta object literal for the '<em><b>Module Elements</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SCRIPT__MODULE_ELEMENTS = eINSTANCE.getScript_ModuleElements();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModuleElementImpl <em>Module Element</em>}' class.
@@ -822,12 +1006,12 @@ public interface TracePackage extends EPackage {
 		EAttribute MODULE_ELEMENT__MODULE_ID = eINSTANCE.getModuleElement_ModuleId();
 
 		/**
-		 * The meta object literal for the '<em><b>Execution Contexts</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Defined In</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference MODULE_ELEMENT__EXECUTION_CONTEXTS = eINSTANCE.getModuleElement_ExecutionContexts();
+		EReference MODULE_ELEMENT__DEFINED_IN = eINSTANCE.getModuleElement_DefinedIn();
 
 		/**
 		 * The meta object literal for the '<em><b>Traces</b></em>' reference list feature.
@@ -848,12 +1032,12 @@ public interface TracePackage extends EPackage {
 		EClass TRACE = eINSTANCE.getTrace();
 
 		/**
-		 * The meta object literal for the '<em><b>Execution Context</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Created In</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference TRACE__EXECUTION_CONTEXT = eINSTANCE.getTrace_ExecutionContext();
+		EReference TRACE__CREATED_IN = eINSTANCE.getTrace_CreatedIn();
 
 		/**
 		 * The meta object literal for the '<em><b>Traces</b></em>' reference feature.
@@ -864,12 +1048,12 @@ public interface TracePackage extends EPackage {
 		EReference TRACE__TRACES = eINSTANCE.getTrace_Traces();
 
 		/**
-		 * The meta object literal for the '<em><b>Reaches</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Involves</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference TRACE__REACHES = eINSTANCE.getTrace_Reaches();
+		EReference TRACE__INVOLVES = eINSTANCE.getTrace_Involves();
 
 		/**
 		 * The meta object literal for the '<em><b>Accesses</b></em>' reference list feature.
@@ -878,6 +1062,40 @@ public interface TracePackage extends EPackage {
 		 * @generated
 		 */
 		EReference TRACE__ACCESSES = eINSTANCE.getTrace_Accesses();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModelImpl <em>Model</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.epsilon.eol.incremental.trace.impl.ModelImpl
+		 * @see org.eclipse.epsilon.eol.incremental.trace.impl.TracePackageImpl#getModel()
+		 * @generated
+		 */
+		EClass MODEL = eINSTANCE.getModel();
+
+		/**
+		 * The meta object literal for the '<em><b>Uri</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MODEL__URI = eINSTANCE.getModel_Uri();
+
+		/**
+		 * The meta object literal for the '<em><b>Execution Context</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference MODEL__EXECUTION_CONTEXT = eINSTANCE.getModel_ExecutionContext();
+
+		/**
+		 * The meta object literal for the '<em><b>Owns</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference MODEL__OWNS = eINSTANCE.getModel_Owns();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.epsilon.eol.incremental.trace.impl.ModelElementImpl <em>Model Element</em>}' class.
@@ -898,14 +1116,6 @@ public interface TracePackage extends EPackage {
 		EAttribute MODEL_ELEMENT__ELEMENT_ID = eINSTANCE.getModelElement_ElementId();
 
 		/**
-		 * The meta object literal for the '<em><b>Execution Context</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference MODEL_ELEMENT__EXECUTION_CONTEXT = eINSTANCE.getModelElement_ExecutionContext();
-
-		/**
 		 * The meta object literal for the '<em><b>Traces</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -914,12 +1124,20 @@ public interface TracePackage extends EPackage {
 		EReference MODEL_ELEMENT__TRACES = eINSTANCE.getModelElement_Traces();
 
 		/**
-		 * The meta object literal for the '<em><b>Owns</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Contains</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference MODEL_ELEMENT__OWNS = eINSTANCE.getModelElement_Owns();
+		EReference MODEL_ELEMENT__CONTAINS = eINSTANCE.getModelElement_Contains();
+
+		/**
+		 * The meta object literal for the '<em><b>Owner</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference MODEL_ELEMENT__OWNER = eINSTANCE.getModelElement_Owner();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.epsilon.eol.incremental.trace.impl.PropertyImpl <em>Property</em>}' class.
@@ -954,6 +1172,14 @@ public interface TracePackage extends EPackage {
 		 * @generated
 		 */
 		EReference PROPERTY__TRACES = eINSTANCE.getProperty_Traces();
+
+		/**
+		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PROPERTY__VALUE = eINSTANCE.getProperty_Value();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.epsilon.eol.incremental.trace.TraceElement <em>Element</em>}' class.

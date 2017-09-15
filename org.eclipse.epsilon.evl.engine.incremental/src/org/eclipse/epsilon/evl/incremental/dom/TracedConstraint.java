@@ -13,10 +13,10 @@ package org.eclipse.epsilon.evl.incremental.dom;
 
 import java.util.Iterator;
 
-import org.eclipse.epsilon.eol.engine.incremental.EOLIncrementalExecutionException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.introspection.recording.IPropertyAccess;
 import org.eclipse.epsilon.eol.execute.introspection.recording.PropertyAccessRecorder;
+import org.eclipse.epsilon.eol.incremental.EOLIncrementalExecutionException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;

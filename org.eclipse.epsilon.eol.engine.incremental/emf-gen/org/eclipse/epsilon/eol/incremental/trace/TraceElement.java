@@ -30,7 +30,7 @@ public interface TraceElement {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Id</em>' attribute.
 	 * @see org.eclipse.epsilon.eol.incremental.trace.TracePackage#getTraceElement_Id()
-	 * @model id="true" changeable="false"
+	 * @model id="true" required="true" changeable="false"
 	 * @generated
 	 */
 	Object getId();

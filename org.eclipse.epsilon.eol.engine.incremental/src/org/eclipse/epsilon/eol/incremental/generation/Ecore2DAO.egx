@@ -1,0 +1,29 @@
+import 'EcoreHelper.eol';
+
+pre {
+    var now  = new Native("java.util.Date");
+    var path_prefix = "../../../../../../../src-gen/org/eclipse/epsilon/eol/engine/incremental/";
+    var qualified_package = "org.eclipse.epsilon.eol.engine.incremental";
+}
+
+rule EPackage2DAO
+  transform p : EPackage {
+  
+  parameters {
+    var params : new Map;
+    params.put("today", now.toString());
+    params.put("qp", qualified_package);
+    return params;
+  }
+  
+  // The EGL template to be invoked
+  template : "EPackage2DaoInterface.egl"
+
+  // Output file
+  target : path_prefix + "models/I" + p.getName().firstToUpperCase() + "ModelBase.java"
+  
+}
+
+post {
+ "GenDone".println();
+}
