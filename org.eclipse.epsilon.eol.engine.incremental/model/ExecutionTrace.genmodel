@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.epsilon.eol.engine.incremental/emf-gen"
-    modelPluginID="" modelName="ExecutionTrace" rootExtendsInterface="" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
-    suppressEMFTypes="true" importerID="org.eclipse.emf.importer.ecore" bundleManifest="false"
-    complianceLevel="8.0" copyrightFields="false" operationReflection="true" importOrganizing="true">
+    modelPluginID="" modelName="ExecutionTrace" updateClasspath="false" rootExtendsInterface=""
+    rootExtendsClass="" suppressEMFTypes="true" suppressEMFMetaData="true" importerID="org.eclipse.emf.importer.ecore"
+    bundleManifest="false" complianceLevel="8.0" copyrightFields="false" operationReflection="true"
+    importOrganizing="true">
   <foreignModel>ExecutionTrace.ecore</foreignModel>
-  <genPackages prefix="Trace" basePackage="org.eclipse.epsilon.eol.incremental" disposableProviderFactory="true"
-      fileExtensions="extrace" ecorePackage="ExecutionTrace.ecore#/">
+  <genPackages prefix="EolTrace" basePackage="org.eclipse.epsilon.incremental.trace"
+      disposableProviderFactory="true" fileExtensions="eoltrace" ecorePackage="ExecutionTrace.ecore#/">
     <genClasses ecoreClass="ExecutionTrace.ecore#//ExecutionContext">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ExecutionContext/for"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ExecutionContext/traces"/>
@@ -27,10 +28,10 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Trace/involves"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Trace/accesses"/>
     </genClasses>
-    <genClasses ecoreClass="ExecutionTrace.ecore#//Model">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ExecutionTrace.ecore#//Model/uri"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Model/executionContext"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//Model/owns"/>
+    <genClasses ecoreClass="ExecutionTrace.ecore#//ModelReference">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ExecutionTrace.ecore#//ModelReference/uri"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ModelReference/executionContext"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ExecutionTrace.ecore#//ModelReference/owns"/>
     </genClasses>
     <genClasses ecoreClass="ExecutionTrace.ecore#//ModelElement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ExecutionTrace.ecore#//ModelElement/elementId"/>

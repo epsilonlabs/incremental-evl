@@ -1,0 +1,158 @@
+[%
+/*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Horacio Hoyos Rodriguez - initial API and implementation
+ ******************************************************************************/
+/**
+ * Create an abstract implementation of IModel that implements methods that depend on the types
+ * defined by the metamodel. The main idea is to provide a Model that conforms to a specific
+ * metamodel without needing the enclosing plugin to depend on EMF (i.e. this methods could
+ * be easily implemented by using the EMF api.) 
+ */
+
+// We need the list of classes all the time
+var eClasses = p.getEClassifiers().select(ec | ec.isTypeOf(ecore!EClass) and not ec.isInterface());
+// And the implementable ones
+var eClassesImpl = eClasses.select(ec | not ec.isAbstract);
+
+ 
+%]
+/*******************************************************************************
+ * Copyright (c) [%=year%] The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ ******************************************************************************/
+/*******************************************************************************
+ ** [%=p.getName().firstToUpperCase()%] model Interface automatically generated on [%=today%].
+ ** Do not modify this file.
+ *******************************************************************************/
+package [%=qp%].models;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.epsilon.common.util.StringProperties;
+import org.eclipse.epsilon.eol.compile.m3.Metamodel;
+import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
+import org.eclipse.epsilon.eol.models.IRelativePathResolver;
+import org.eclipse.epsilon.eol.models.Model;
+import org.eclipse.epsilon.incremental.trace.eol.*;
+
+public abstract class Abstract[%=p.getName().firstToUpperCase()%]TraceModel extends Model implements ITraceModel  {
+    
+    private static final Set<String> KNOWN_TYPES = Collections.unmodifiableSet(
+            new HashSet<String>(Arrays.asList(
+                    new String[] {[%=eClasses.collect(ec | "\""  + ec.name + "\"").concat(",")%]}
+                ))
+            );
+    
+    private static final Set<String> INSTANTIATABLE_TYPES = Collections.unmodifiableSet(
+            new HashSet<String>(Arrays.asList(
+                    new String[] {[%=eClasses.collect(ec | "\""  + ec.name + "\"").concat(",")%]}
+                ))
+            );
+    
+    private static final Map<String, Set<String>> TYPE_HIERARCHY;
+    static {
+        TYPE_HIERARCHY = new HashMap<String, Set<String>>();[%
+for (ec in eClasses) {
+    var supers = ec.getEAllSuperTypes().including(ec).collect(sc | "\""  + sc.name + "\"").concat(",");%]
+    
+        TYPE_HIERARCHY.put("[%=ec.name%]", new HashSet<String>(Arrays.asList(new String[]{[%=supers%]})));[%}%]        
+    }
+    
+    private static final Map<String, Set<String>> TYPE_PROPERTIES;
+    static {
+        TYPE_PROPERTIES = new HashMap<String, Set<String>>();[%
+for (ec in eClasses) {
+    var props = ec.getEAllStructuralFeatures().collect(sf | "\""  + sf.name + "\"").concat(",");%]
+    
+        TYPE_PROPERTIES.put("[%=ec.name%]", new HashSet<String>(Arrays.asList(new String[]{[%=props%]})));[%}%]        
+    }
+    
+    @Override
+    public Metamodel getMetamodel(StringProperties properties, IRelativePathResolver resolver) {
+        // TODO Implement OrientDbEvlTraceModel.isInstantiable
+        return null;
+    }
+    
+    @Override
+    public String getTypeNameOf(Object instance) {
+        if (!isModelElement(instance))
+            throw new IllegalArgumentException("Not a valid Trace model element: " + instance + " (" + instance.getClass().getCanonicalName() + ") ");
+    
+        return ((Class<?>)getTypeOf(instance)).getName();
+    }
+    
+    @Override
+    public Object getTypeOf(Object instance) {[%
+for (ec in eClasses) {%]
+
+        if (instance instanceof [%=ec.name%]) {
+            return [%=ec.name%].class;
+        }[%}%]        
+        return null;
+    }
+    
+    @Override
+    public boolean hasType(String type) {
+        return KNOWN_TYPES.contains(type);
+    }
+    
+    @Override
+    public boolean isInstantiable(String type) {
+        if (!hasType(type)) {
+            return false;
+        }
+        return INSTANTIATABLE_TYPES.contains(type);
+    }
+    
+    @Override
+    public boolean isModelElement(Object instance) {
+        return instance instanceof TraceElement;
+    }
+    
+    @Override
+    public boolean isOfKind(Object instance, String type) throws EolModelElementTypeNotFoundException {[%
+for (ec in eClasses) {%]
+
+        if (instance instanceof [%=ec.name%]) {
+            return TYPE_HIERARCHY.get("[%=ec.name%]").contains(type);
+        }[%}%]        
+        return false;
+    }
+    
+    @Override
+    public boolean isOfType(Object instance, String type) throws EolModelElementTypeNotFoundException {[%
+for (ec in eClasses) {%]
+
+        if (instance instanceof [%=ec.name%]) {
+            return "[%=ec.name%]".equals(type);
+        }[%}%]  
+        return false;
+    }
+  
+    @Override
+    public boolean knowsAboutProperty(Object instance, String property) {[%
+for (ec in eClasses) {%]
+        
+        if (instance instanceof [%=ec.name%]) {
+            return TYPE_PROPERTIES.get("[%=ec.name%]").contains(property);
+        }[%}%]        
+        return false;
+    }    
+    
+}

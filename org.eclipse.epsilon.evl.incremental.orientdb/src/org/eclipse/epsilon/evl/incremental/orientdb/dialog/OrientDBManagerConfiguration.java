@@ -10,13 +10,19 @@ import org.eclipse.swt.widgets.Text;
 
 public class OrientDBManagerConfiguration extends AbstractTraceManagerConfigurationDialog {
 
-	public static final String DB_URL = "url";
+	public static final String PROPERTY_DB_URL = "iURL";
 
-	public static final String DB_USER = "user";
+	public static final String PROPERTY_DB_USER = "iUser";
 
-	public static final String DB_PASS = "pass";
+	public static final String PROPERTY_DB_PASSSWORD = "iPassword";
 
-	public static final String DB_CREATE = "create";
+	public static final String PROPERTY_DB_CREATE = "create";
+
+	public static final String PROPERTY_DB_POOL_MIN_SIZE = "iMin";
+
+	public static final String PROPERTY_DB_POOL_MAX_SIZE = "iMax";
+
+	public static final String PROPERTY_DB_CREATE_POOL = "createPool";
 	
 	private Text databaseUrlText;
 	private Text userText;
@@ -30,20 +36,20 @@ public class OrientDBManagerConfiguration extends AbstractTraceManagerConfigurat
 	@Override
 	protected void loadProperties() {
 		if (properties == null) return;
-		databaseUrlText.setText(properties.getProperty(DB_URL));
+		databaseUrlText.setText(properties.getProperty(PROPERTY_DB_URL));
 		// FIXME add a save credentials button (safety risk)
-		userText.setText(properties.getProperty(DB_USER));
-		passwordText.setText(properties.getProperty(DB_PASS));
+		userText.setText(properties.getProperty(PROPERTY_DB_USER));
+		passwordText.setText(properties.getProperty(PROPERTY_DB_PASSSWORD));
 	}
 
 	@Override
 	protected void storeProperties() {
 		properties = new StringProperties();
-		properties.put(DB_URL, databaseUrlText.getText());
-		properties.put(DB_USER, userText.getText());
-		properties.put(DB_PASS, passwordText.getText());
+		properties.put(PROPERTY_DB_URL, databaseUrlText.getText());
+		properties.put(PROPERTY_DB_USER, userText.getText());
+		properties.put(PROPERTY_DB_PASSSWORD, passwordText.getText());
 		// FIXME Add check button for this
-		properties.put(DB_CREATE, true);
+		properties.put(PROPERTY_DB_CREATE, true);
 	}
 	
 	@Override

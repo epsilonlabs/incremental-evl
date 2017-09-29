@@ -21,7 +21,7 @@ import org.eclipse.epsilon.eol.exceptions.EolInternalException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.incremental.EOLIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
-import org.eclipse.epsilon.eol.incremental.execute.IExecutionTraceManager;
+import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.models.ModelRepository;
 import org.eclipse.epsilon.evl.dt.views.ValidationViewFixer;
 import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
@@ -111,7 +111,7 @@ public class EnableLiveValidationHandler extends AbstractHandler implements IEle
 		final ExecutionTraceManagerSelectionDialog managerDialog = new ExecutionTraceManagerSelectionDialog(HandlerUtil.getActiveWorkbenchWindow(event).getShell());
 		ExecutionTraceManagerExtension managerExtension = null;
 		if (managerDialog.open() == Window.OK) {
-			managerExtension = managerDialog.getExecutionTraceManager();
+			managerExtension = managerDialog.getExecutionTraceManagerExtension();
 		}
 		else {
 			return false;
@@ -137,7 +137,7 @@ public class EnableLiveValidationHandler extends AbstractHandler implements IEle
 		
 		
 		final IncrementalEvlModule module = new IncrementalEvlModule();
-		IExecutionTraceManager traceManager = null;
+		IEolExecutionTraceManager traceManager = null;
 		try {
 			traceManager = managerExtension.createTraceManager();
 		} catch (CoreException e1) {

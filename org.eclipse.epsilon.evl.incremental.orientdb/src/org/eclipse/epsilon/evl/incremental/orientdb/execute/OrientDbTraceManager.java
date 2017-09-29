@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.eol.incremental.EOLIncrementalExecutionException;
-import org.eclipse.epsilon.eol.incremental.execute.IExecutionTraceManager;
+import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.incremental.trace.Trace;
 import org.eclipse.epsilon.evl.incremental.orientdb.dialog.OrientDBManagerConfiguration;
 import org.eclipse.epsilon.evl.incremental.orientdb.trace.EAccesses;
@@ -45,13 +45,13 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 
 /**
- * Implementation of {@link IExecutionTraceManager} that uses Orient DB as its underlying
+ * Implementation of {@link IEolExecutionTraceManager} that uses Orient DB as its underlying
  * database.
  * 
  * @author Jonathan Co
  *
  */
-public class OrientDbTraceManager implements IExecutionTraceManager {
+public class OrientDbTraceManager implements IEolExecutionTraceManager {
 	
 	private OrientGraphFactory factory;
 	
@@ -99,11 +99,11 @@ public class OrientDbTraceManager implements IExecutionTraceManager {
 	@Override
 	public void configure(StringProperties configParameters) {
 		
-		url = configParameters.getProperty(OrientDBManagerConfiguration.DB_URL);
-		user = configParameters.getProperty(OrientDBManagerConfiguration.DB_USER);
-		password = configParameters.getProperty(OrientDBManagerConfiguration.DB_PASS);
+		url = configParameters.getProperty(OrientDBManagerConfiguration.PROPERTY_DB_URL);
+		user = configParameters.getProperty(OrientDBManagerConfiguration.PROPERTY_DB_USER);
+		password = configParameters.getProperty(OrientDBManagerConfiguration.PROPERTY_DB_PASSSWORD);
 		// "memory:EVLTrace"
-		setup = configParameters.getBooleanProperty(OrientDBManagerConfiguration.DB_CREATE, false);
+		setup = configParameters.getBooleanProperty(OrientDBManagerConfiguration.PROPERTY_DB_CREATE, false);
 		
 	}
 

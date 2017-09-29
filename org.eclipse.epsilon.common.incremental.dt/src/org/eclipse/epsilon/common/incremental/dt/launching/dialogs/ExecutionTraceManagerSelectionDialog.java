@@ -13,10 +13,6 @@ package org.eclipse.epsilon.common.incremental.dt.launching.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.epsilon.common.dt.EpsilonCommonsPlugin;
 import org.eclipse.epsilon.common.dt.util.ListContentProvider;
 import org.eclipse.epsilon.common.dt.util.LogUtil;
@@ -30,7 +26,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -41,12 +36,17 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+/**
+ * Provides a dialog to select a TraceManager form the registered ones.
+ * 
+ * @author Horacio Hoyos
+ *
+ */
 public class ExecutionTraceManagerSelectionDialog extends TitleAreaDialog implements ISelectionChangedListener {
 
 	private List<ExecutionTraceManagerExtension> traceManagers;
-	private ExecutionTraceManagerExtension traceManager;
+	private ExecutionTraceManagerExtension traceManagerExtension;
 
 	public ExecutionTraceManagerSelectionDialog(Shell parentShell) {
 		super(parentShell);
@@ -92,19 +92,18 @@ public class ExecutionTraceManagerSelectionDialog extends TitleAreaDialog implem
 		
 		TableViewer traceManagersViewer = new TableViewer(control, SWT.BORDER);
 		
-		
 		GridData viewerData = new GridData(GridData.FILL_BOTH);
 		traceManagersViewer.getControl().setLayoutData(viewerData);
 		traceManagersViewer.getControl().setFocus();
 		
-//		Button showAllButton = new Button(control, SWT.CHECK);
-//		GridData showAllButtonGridData = new GridData(GridData.FILL_HORIZONTAL);
-//		showAllButtonGridData.horizontalAlignment = SWT.END;
-//		showAllButton.setLayoutData(showAllButtonGridData);
-//		showAllButton.setText("Show all model types");
-//		showAllButton.setSelection(false);
+		Button showAllButton = new Button(control, SWT.CHECK);
+		GridData showAllButtonGridData = new GridData(GridData.FILL_HORIZONTAL);
+		showAllButtonGridData.horizontalAlignment = SWT.END;
+		showAllButton.setLayoutData(showAllButtonGridData);
+		showAllButton.setText("Show all trace model types");
+		showAllButton.setSelection(false);
 		
-		//modelTypesViewer.getControl().setLayoutData(viewerData);
+		//traceManagersViewer.getControl().setLayoutData(viewerData);
 		
 		traceManagersViewer.setContentProvider(new ListContentProvider());
 		traceManagersViewer.setInput(getStableExecutionTraceManagerExtensions());
@@ -113,8 +112,8 @@ public class ExecutionTraceManagerSelectionDialog extends TitleAreaDialog implem
 		traceManagersViewer.getControl().addMouseListener(new MouseListener() {
 
 			public void mouseDoubleClick(MouseEvent e) {
-				ExecutionTraceManagerSelectionDialog.this.traceManager = (ExecutionTraceManagerExtension)((IStructuredSelection)traceManagersViewer.getSelection()).getFirstElement();
-				if (ExecutionTraceManagerSelectionDialog.this.traceManager != null) {
+				ExecutionTraceManagerSelectionDialog.this.traceManagerExtension = (ExecutionTraceManagerExtension)((IStructuredSelection)traceManagersViewer.getSelection()).getFirstElement();
+				if (ExecutionTraceManagerSelectionDialog.this.traceManagerExtension != null) {
 					ExecutionTraceManagerSelectionDialog.this.close();
 				}
 			}
@@ -133,24 +132,24 @@ public class ExecutionTraceManagerSelectionDialog extends TitleAreaDialog implem
 		traceManagersViewer.refresh();
 		
 
-//		showAllButton.addListener(SWT.Selection, new Listener() {
-//			
-//			public void handleEvent(Event event) {
-//				
-//				ArrayList<ModelTypeExtension> filtered;
-//				
-//				if (showAllButton.getSelection()) {
-//					filtered = modelTypes;
-//				}
-//				else {
-//					filtered = getStableExecutionTraceManagerExtensions();
-//				}
-//				
-//				traceManagersViewer.setInput(filtered);
-//				traceManagersViewer.refresh();
-//				
-//			}
-//		});
+		showAllButton.addListener(SWT.Selection, new Listener() {
+			
+			public void handleEvent(Event event) {
+				
+				List<ExecutionTraceManagerExtension> filtered;
+				
+				if (showAllButton.getSelection()) {
+					filtered = traceManagers;
+				}
+				else {
+					filtered = getStableExecutionTraceManagerExtensions();
+				}
+				
+				traceManagersViewer.setInput(filtered);
+				traceManagersViewer.refresh();
+				
+			}
+		});
 		
 		return control;
 	}
@@ -175,11 +174,11 @@ public class ExecutionTraceManagerSelectionDialog extends TitleAreaDialog implem
 	}
 
 	public void selectionChanged(SelectionChangedEvent event) {
-		this.traceManager = (ExecutionTraceManagerExtension)((IStructuredSelection)event.getSelection()).getFirstElement();
+		this.traceManagerExtension = (ExecutionTraceManagerExtension)((IStructuredSelection)event.getSelection()).getFirstElement();
 	}
 	
-	public ExecutionTraceManagerExtension getExecutionTraceManager(){
-		return traceManager;
+	public ExecutionTraceManagerExtension getExecutionTraceManagerExtension(){
+		return traceManagerExtension;
 	}
 
 }

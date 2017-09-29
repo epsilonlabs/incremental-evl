@@ -8,7 +8,7 @@ import java.util.Map;
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.eol.incremental.EOLIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
-import org.eclipse.epsilon.eol.incremental.execute.IExecutionTraceManager;
+import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.incremental.generation.*;
 import org.eclipse.epsilon.eol.incremental.trace.ExecutionContext;
 import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
@@ -23,7 +23,7 @@ import com.arangodb.ArangoDatabase;
 import com.arangodb.Protocol;
 import com.arangodb.util.MapBuilder;
 
-public class ArangoDbTraceManager implements IExecutionTraceManager {
+public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 	
 	/**
 	 * The execution context id of this trace manager. We keep a reference to the id because all operations are atomic

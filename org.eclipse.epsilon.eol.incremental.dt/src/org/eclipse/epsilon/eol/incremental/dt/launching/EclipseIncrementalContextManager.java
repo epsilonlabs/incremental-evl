@@ -30,7 +30,7 @@ import org.eclipse.epsilon.eol.dt.launching.EclipseContextManager;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
 import org.eclipse.epsilon.eol.incremental.execute.IEolIncrementalContext;
-import org.eclipse.epsilon.eol.incremental.execute.IExecutionTraceManager;
+import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.incremental.models.ITraceModel;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 
@@ -66,7 +66,7 @@ public class EclipseIncrementalContextManager extends EclipseContextManager {
 			properties.load(modelDescriptor);
 			try {
 				ExecutionTraceManagerExtension tmExtension = ExecutionTraceManagerExtension.forType(properties.getProperty(ExecutionTraceManagerExtension.TRACE_MANAGER_TYPE));
-				IExecutionTraceManager traceManager = tmExtension.createTraceManager();
+				IEolExecutionTraceManager traceManager = tmExtension.createTraceManager();
 				ITraceModel traceModel = tmExtension.createModel();
 				traceModel.load(properties, new IRelativePathResolver() {
 					

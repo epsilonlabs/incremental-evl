@@ -1,11 +1,11 @@
 import 'EcoreHelper.eol';
 
 pre {
-    var now  = new Native("java.util.Date");
-    var path_prefix = "../../../../../../../src-gen/org/eclipse/epsilon/eol/engine/incremental/";
-    var qualified_package = "org.eclipse.epsilon.eol.engine.incremental";
+    var now  = Native("java.time.LocalDate").now();
+    var path_prefix = "../../../../../../../src-gen/org/eclipse/epsilon/eol/incremental/";
+    var qualified_package = "org.eclipse.epsilon.eol.incremental";
 }
-
+/*
 rule EPackage2DAO
   transform p : EPackage {
   
@@ -21,6 +21,25 @@ rule EPackage2DAO
 
   // Output file
   target : path_prefix + "models/I" + p.getName().firstToUpperCase() + "ModelBase.java"
+  
+}
+*/
+rule EPackage2Model
+  transform p : EPackage {
+  
+  parameters {
+    var params : new Map;
+    params.put("today", now.toString());
+    params.put("year", now.getYear().toString()); 
+    params.put("qp", qualified_package);
+    return params;
+  }
+  
+  // The EGL template to be invoked
+  template : "Ecore2TraceModel.egl"
+
+  // Output file
+  target : path_prefix + "models/Abstract" + p.getName().firstToUpperCase() + "TraceModel.java"
   
 }
 

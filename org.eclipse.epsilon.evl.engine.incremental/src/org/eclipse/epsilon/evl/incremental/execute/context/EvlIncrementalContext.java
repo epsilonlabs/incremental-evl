@@ -10,27 +10,27 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.execute.context;
 
-import org.eclipse.epsilon.eol.incremental.execute.IExecutionTraceManager;
+import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.evl.execute.context.EvlContext;
 import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
 
 public class EvlIncrementalContext extends EvlContext implements IEvlIncrementalContext {
 	
-	protected IExecutionTraceManager traceManager;
+	protected IEolExecutionTraceManager traceManager;
 	
 	public EvlIncrementalContext() {
 		super();
 	}
 
 	@Override
-	public void setTraceManager(IExecutionTraceManager traceManager) {
+	public void setTraceManager(IEolExecutionTraceManager traceManager) {
 		
 		this.traceManager = traceManager;
 
 	}
 
 	@Override
-	public IExecutionTraceManager getExecutionTraceManager() {
+	public IEolExecutionTraceManager getExecutionTraceManager() {
 		return traceManager;
 	}
 	

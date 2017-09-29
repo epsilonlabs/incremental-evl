@@ -18,17 +18,22 @@
 package org.eclipse.epsilon.evl.incremental.orientdb.trace.impl;
 
 import java.util.List;
-import java.util.ArrayList;
 
-import org.eclipse.epsilon.eol.incremental.trace.ExecutionContext;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.VExecutionContext;
-import org.eclipse.epsilon.eol.incremental.trace.ModuleElement;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.VModuleElement;
-import org.eclipse.epsilon.eol.incremental.trace.Trace;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.VTrace;
-import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.VModelElement;
-import com.tinkerpop.blueprints.Vertex;
+import org.eclipse.epsilon.incremental.trace.eol.ExecutionContext;
+import org.eclipse.epsilon.incremental.trace.eol.ModelReference;
+import org.eclipse.epsilon.incremental.trace.eol.Script;
+import org.eclipse.epsilon.incremental.trace.eol.Trace;
+
+import com.orientechnologies.orient.core.command.OCommandContext;
+import com.orientechnologies.orient.core.command.OCommandPredicate;
+import com.orientechnologies.orient.core.command.traverse.OTraverse;
+import com.orientechnologies.orient.core.db.record.OIdentifiable;
+import com.orientechnologies.orient.core.id.ORecordId;
+import com.orientechnologies.orient.core.record.ORecord;
+import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.tinkerpop.blueprints.impls.orient.OrientVertex;
+
+import java.util.ArrayList;
 
 
 /**
@@ -37,155 +42,60 @@ import com.tinkerpop.blueprints.Vertex;
 public class ExecutionContextOrientDbImpl implements ExecutionContext {
 
 	/** The delegate. */
-	final private VExecutionContext delegate;
+	final private OrientVertex delegate;
 	
 	/**
 	 * Instantiates a new ExecutionContextOrientDb.
 	 *
 	 * @param delegate the delegate
 	 */
-	public ExecutionContextOrientDbImpl(VExecutionContext  delegate) {
+	public ExecutionContextOrientDbImpl(OrientVertex  delegate) {
 		this.delegate = delegate;
+		delegate.detach();
 	}
 
-	/**
-	 * Gets the delegate.
-	 *
-	 * @return the delegate
-	 */
-	public VExecutionContext getDelegate() {
-		return delegate;
-	}
-	
-	/**
-	 * As vertex.
-	 *
-	 * @return the delegate as a vertex
-	 */
-	public Vertex asVertex() {
-		return delegate.asVertex();
-	}
-	
-	/**
-	 * Returns the value of the '<em><b>Id</b></em>' attribute.
-	 * <!-- protected region id-getter-doc on begin -->
-	 * <p>
-	 * If the meaning of the '<em>Id</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- protected region id-getter-doc end --> 
-	 * @return the value of the '<em>Id</em>' attribute.
-	 * @see #setId(String)
-	 */
-	public java.lang.Object getId() {
-		return delegate.asVertex().getId(); 
-	}
-	
-	/**
-	 * Returns the value of the '<em><b>Script Id</b></em>' attribute.
-	 * <!-- protected region scriptId-getter-doc on begin -->
-	 * <p>
-	 * If the meaning of the '<em>Script Id</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- protected region scriptId-getter-doc end --> 
-	 * @return the value of the '<em>Script Id</em>' attribute.
-	 * @see #setScriptId(String)
-	 */
-	public java.lang.String getScriptId() {
-		return delegate.getScriptId();
- 
-	}
-	
-	
-	/**
-	 * Sets the value of the '{@link ExecutionContext#ScriptId <em>Script Id</em>}' attribute.
-	 * <!-- protected region scriptId-setter-doc on begin -->
-	 * <!-- protected region scriptId-setter-doc end --> 
-	 * @param value the new value of the '<em>Script Id/em>' attribute.
-	 * @see #getScriptId()
-	 */
-	public void setScriptId(java.lang.String value) {
-		delegate.setScriptId(value);
-	}
-	
-	/**
-	 * Returns the value of the '<em><b>Models Ids</b></em>' attribute.
-	 * <!-- protected region modelsIds-getter-doc on begin -->
-	 * <p>
-	 * If the meaning of the '<em>Models Ids</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- protected region modelsIds-getter-doc end --> 
-	 * @return the value of the '<em>Models Ids</em>' attribute.
-	 * @see #setModelsIds(String)
-	 */
-	public List<java.lang.String> getModelsIds() {
-		List<java.lang.String>     result = new ArrayList<java.lang.String>    ();
-		for (java.lang.String item : delegate.getModelsIds()){
-			result.add(item);
-		}
-		return result;
-	}	
-	/**
-	 * Returns the value of the '<em><b>For</b></em>' attribute.
-	 * <!-- protected region for-getter-doc on begin -->
-	 * <p>
-	 * If the meaning of the '<em>For</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- protected region for-getter-doc end --> 
-	 * @return the value of the '<em>For</em>' attribute.
-	 * @see #setFor(String)
-	 */
-	public List<ModuleElement> getFor() {
-		ArrayList<ModuleElement> result = new ArrayList<ModuleElement>();
-		for (VModuleElement dItem : delegate.getFor()){
-			ModuleElementOrientDbImpl wrap = new ModuleElementOrientDbImpl(dItem);
-			result.add(wrap);
-		}
-		return result;
+	@Override
+	public Object getId() {
+		return delegate.getId();
 	}
 
-	/**
-	 * Returns the value of the '<em><b>Contains</b></em>' attribute.
-	 * <!-- protected region contains-getter-doc on begin -->
-	 * <p>
-	 * If the meaning of the '<em>Contains</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- protected region contains-getter-doc end --> 
-	 * @return the value of the '<em>Contains</em>' attribute.
-	 * @see #setContains(String)
-	 */
-	public List<Trace> getContains() {
-		ArrayList<Trace> result = new ArrayList<Trace>();
-		for (VTrace dItem : delegate.getContains()){
-			TraceOrientDbImpl wrap = new TraceOrientDbImpl(dItem);
-			result.add(wrap);
+	@Override
+	public Script getFor() {
+		// Is this worth it, or used framed??
+		OTraverse target = new OTraverse()
+				.field("out")
+				.target(new ORecordId((String)getId()))
+				.predicate(new OCommandPredicate() {
+					
+						public Object evaluate(OIdentifiable iRecord, ODocument iCurrentResult, OCommandContext iContext) {
+							return iCurrentResult.getSchemaClass().getName().equals("Script");
+						}}
+						);
+		if (target.hasNext()) {
+			return (Script) target.next();
 		}
-		return result;
+		return null;
 	}
 
-	/**
-	 * Returns the value of the '<em><b>Involves</b></em>' attribute.
-	 * <!-- protected region involves-getter-doc on begin -->
-	 * <p>
-	 * If the meaning of the '<em>Involves</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- protected region involves-getter-doc end --> 
-	 * @return the value of the '<em>Involves</em>' attribute.
-	 * @see #setInvolves(String)
-	 */
-	public List<ModelElement> getInvolves() {
-		ArrayList<ModelElement> result = new ArrayList<ModelElement>();
-		for (VModelElement dItem : delegate.getInvolves()){
-			ModelElementOrientDbImpl wrap = new ModelElementOrientDbImpl(dItem);
-			result.add(wrap);
-		}
-		return result;
+	@Override
+	public void setFor(Script value) {
+		// TODO Implement ExecutionContext.setFor
+		throw new UnsupportedOperationException("Unimplemented Method    ExecutionContext.setFor invoked.");
 	}
+
+	@Override
+	public List<Trace> getTraces() {
+		// TODO Implement ExecutionContext.getTraces
+		throw new UnsupportedOperationException("Unimplemented Method    ExecutionContext.getTraces invoked.");
+	}
+
+	@Override
+	public List<ModelReference> getUses() {
+		// TODO Implement ExecutionContext.getUses
+		throw new UnsupportedOperationException("Unimplemented Method    ExecutionContext.getUses invoked.");
+	}
+
+	
 
 	
 }

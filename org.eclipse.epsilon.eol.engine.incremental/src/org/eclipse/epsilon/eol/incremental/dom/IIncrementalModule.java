@@ -14,7 +14,7 @@ import java.util.Set;
 
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
-import org.eclipse.epsilon.eol.incremental.execute.IExecutionTraceManager;
+import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
 
 /**
@@ -22,7 +22,7 @@ import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
  * notified of changes in the model and execute specific elements/sections of the module that are related to the
  * objects that changed and their changes.
  * 
- * Implementations need to create an instance of an {@link IExecutionTraceManager} that will be used to manage
+ * Implementations need to create an instance of an {@link IEolExecutionTraceManager} that will be used to manage
  * the execution traces for the module.
  * 
  * An Incremental Module should not be executed completely all the time. Instead it should be executed completely once
@@ -97,13 +97,13 @@ public interface IIncrementalModule {
 	 * Set the execution trace manager for this module.
 	 * @param manager
 	 */
-	public void setExecutionTraceManager(IExecutionTraceManager manager);
+	public void setExecutionTraceManager(IEolExecutionTraceManager manager);
 	
 	/**
 	 * Get the execution trace manager associated to this module.
 	 * @return
 	 */
-	public IExecutionTraceManager getExecutionTraceManager();	
+	public IEolExecutionTraceManager getExecutionTraceManager();	
 
 	/**
 	 * Set a flag to listen or not to model changes.

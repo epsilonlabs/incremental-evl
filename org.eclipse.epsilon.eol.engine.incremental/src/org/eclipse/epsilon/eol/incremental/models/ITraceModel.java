@@ -10,10 +10,15 @@
  ******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.models;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
-import org.eclipse.epsilon.eol.engine.incremental.models.ITraceModelBase;
-import org.eclipse.epsilon.eol.incremental.trace.*;
+import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
+import org.eclipse.epsilon.eol.exceptions.models.EolNotInstantiableModelElementTypeException;
+import org.eclipse.epsilon.eol.models.IModel;
+import org.eclipse.epsilon.incremental.trace.eol.ExecutionContext;
+import org.eclipse.epsilon.incremental.trace.eol.Trace;
 
 /**
  * An ITraceModel extends the ITraceModelBase to provide additional search/modify methods that can not be
@@ -23,17 +28,19 @@ import org.eclipse.epsilon.eol.incremental.trace.*;
  * @author Horacio Hoyos
  *
  */
-public interface ITraceModel extends ITraceModelBase {
+public interface ITraceModel extends IModel {
 	
 	/**
-	 * Find an Execution Context for the given ExL script executing against the given models.
+	 * Allows instantiation of an element by type with a given set of parameters. Rather than by order (see {@link IModel#createInstance(String, Collection)})
+	 * this method allow parameters to be identified by name.
 	 * 
-	 * @param scriptId	the id of the EXL script
-	 * @param modelsUris the uris of the models
-	 * 
-	 * @return
+	 * @param type the type to instantiate
+	 * @param parameters a map of attributeName:value used for instantiation
+	 * @return the new object
+	 * @throws EolModelElementTypeNotFoundException
+	 * @throws EolNotInstantiableModelElementTypeException
 	 */
-	ExecutionContext findExecutionContext(String scriptId, List<String> modelsUris);
+	public Object createInstance(String type, Map<String, Object> parameters) throws EolModelElementTypeNotFoundException, EolNotInstantiableModelElementTypeException;
 	
 	/**
 	 * Convenience method to encapsulate the create-if-not-found logic. Given that this might also require the creation

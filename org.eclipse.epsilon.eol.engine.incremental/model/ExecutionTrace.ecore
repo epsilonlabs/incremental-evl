@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="trace" nsURI="http://www.eclipse.epsilon.org/incremental/ExecutionTrace.ecore"
-    nsPrefix="et">
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="eol" nsURI="http://www.eclipse.epsilon.org/incremental/eol/ExecutionTrace"
+    nsPrefix="eol_et">
   <eClassifiers xsi:type="ecore:EClass" name="ExecutionContext" eSuperTypes="#//TraceElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="for" eType="#//Script">
       <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
@@ -10,8 +10,8 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="traces" upperBound="-1"
         eType="#//Trace" eOpposite="#//Trace/createdIn"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="uses" upperBound="-1" eType="#//Model"
-        eOpposite="#//Model/executionContext">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="uses" upperBound="-1" eType="#//ModelReference"
+        eOpposite="#//ModelReference/executionContext">
       <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
         <details key="edge" value="true"/>
       </eAnnotations>
@@ -67,8 +67,8 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Model" eSuperTypes="#//TraceElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//Model/uri">
+  <eClassifiers xsi:type="ecore:EClass" name="ModelReference" eSuperTypes="#//TraceElement">
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//ModelReference/uri">
       <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="uri" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -95,8 +95,8 @@
         <details key="edge" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="owner" lowerBound="1" eType="#//Model"
-        eOpposite="#//Model/owns"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="owner" lowerBound="1" eType="#//ModelReference"
+        eOpposite="#//ModelReference/owns"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Property" eSuperTypes="#//TraceElement">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//Property/name">

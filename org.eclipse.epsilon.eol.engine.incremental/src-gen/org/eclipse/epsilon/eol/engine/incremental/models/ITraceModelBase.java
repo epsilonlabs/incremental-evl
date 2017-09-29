@@ -15,7 +15,7 @@
  *******************************************************************************/
 package org.eclipse.epsilon.eol.engine.incremental.models;
 
-import org.eclipse.epsilon.eol.incremental.trace.*;
+import org.eclipse.epsilon.incremental.trace.eol.*;
 import org.eclipse.epsilon.eol.models.IModel;
 
 /**
@@ -68,13 +68,13 @@ public interface ITraceModelBase extends IModel {
     boolean addForLink(ExecutionContext source, Script target);
     
     /**
-     * Add a Uses link between the ExecutionContext and the Model.
+     * Add a Uses link between the ExecutionContext and the ModelReference.
      *
      * @param source The source of the link
      * @param target The target of the link
      * @return True on success, false on failure
      */
-    boolean addUsesLink(ExecutionContext source, Model target);
+    boolean addUsesLink(ExecutionContext source, ModelReference target);
     
   
     /**
@@ -234,7 +234,7 @@ public interface ITraceModelBase extends IModel {
      * @param id The id to use for the search 
      * @return The Model for the id, null if not found.
      */
-    Model findModelbyId(Object id);
+    ModelReference findModelbyId(Object id);
     
     /**
      * Delete the Model.
@@ -242,7 +242,7 @@ public interface ITraceModelBase extends IModel {
      * @param model the Model to delete
      * @return True on success, false on failure
      */
-    boolean deleteModel(Model model);
+    boolean deleteModel(ModelReference model);
     
     /**
      * Update the Model. Note that this method should only update the element attributes.
@@ -251,7 +251,7 @@ public interface ITraceModelBase extends IModel {
      * @param model the Model to update
      * @return True on success, false on failure
      */
-    boolean updateModel(Model model);
+    boolean updateModel(ModelReference model);
     
     /**
      * Add a Owns link between the Model and the ModelElement.
@@ -260,7 +260,7 @@ public interface ITraceModelBase extends IModel {
      * @param target The target of the link
      * @return True on success, false on failure
      */
-    boolean addOwnsLink(Model source, ModelElement target);
+    boolean addOwnsLink(ModelReference source, ModelElement target);
     
   
     /**

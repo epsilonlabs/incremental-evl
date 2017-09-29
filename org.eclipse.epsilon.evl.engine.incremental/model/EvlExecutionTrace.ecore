@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="evl" nsURI="http://www.eclipse.epsilon.org/incremental/evl/ExecutionTrace"
+    nsPrefix="evl_et">
+  <eClassifiers xsi:type="ecore:EClass" name="EvlModuleElement" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore#//ModuleElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="satisfies" upperBound="-1"
+        eType="#//EvlModuleElement" eOpposite="#//EvlModuleElement/dependsOn"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dependsOn" eType="#//EvlModuleElement"
+        eOpposite="#//EvlModuleElement/satisfies">
+      <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
+        <details key="edge" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EvlScript" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore#//Script"/>
+</ecore:EPackage>

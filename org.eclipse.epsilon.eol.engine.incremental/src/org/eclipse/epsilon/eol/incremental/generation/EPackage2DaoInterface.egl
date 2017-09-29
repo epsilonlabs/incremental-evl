@@ -21,7 +21,7 @@ import "Ecore2JavaTemplates.egl";
  *******************************************************************************/
 package [%=qp%].models;
 
-import org.eclipse.epsilon.eol.incremental.trace.*;
+import org.eclipse.epsilon.incremental.trace.eol.*;
 import org.eclipse.epsilon.eol.models.IModel;
 
 /**
