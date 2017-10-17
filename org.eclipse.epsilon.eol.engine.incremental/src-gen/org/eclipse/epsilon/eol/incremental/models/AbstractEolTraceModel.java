@@ -7,7 +7,7 @@
  * 
  ******************************************************************************/
 /*******************************************************************************
- ** Eol model Interface automatically generated on 2017-09-29.
+ ** Eol model Interface automatically generated on 2017-10-17.
  ** Do not modify this file.
  *******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.models;
@@ -30,38 +30,40 @@ public abstract class AbstractEolTraceModel extends Model implements ITraceModel
     
     private static final Set<String> KNOWN_TYPES = Collections.unmodifiableSet(
             new HashSet<String>(Arrays.asList(
-                    new String[] {"ExecutionContext","Script","ModuleElement","Trace","ModelReference","ModelElement","Property"}
+                    new String[] {"Trace","ExecutableBlock","ModuleElement","ElementTrace","ModelElement","Property","TypeTrace","Type"}
                 ))
             );
     
     private static final Set<String> INSTANTIATABLE_TYPES = Collections.unmodifiableSet(
             new HashSet<String>(Arrays.asList(
-                    new String[] {"ExecutionContext","Script","ModuleElement","Trace","ModelReference","ModelElement","Property"}
+                    new String[] {"Trace","ExecutableBlock","ModuleElement","ElementTrace","ModelElement","Property","TypeTrace","Type"}
                 ))
             );
     
     private static final Map<String, Set<String>> TYPE_HIERARCHY;
     static {
         TYPE_HIERARCHY = new HashMap<String, Set<String>>();    
-        TYPE_HIERARCHY.put("ExecutionContext", new HashSet<String>(Arrays.asList(new String[]{"TraceElement","ExecutionContext"})));    
-        TYPE_HIERARCHY.put("Script", new HashSet<String>(Arrays.asList(new String[]{"TraceElement","Script"})));    
-        TYPE_HIERARCHY.put("ModuleElement", new HashSet<String>(Arrays.asList(new String[]{"TraceElement","ModuleElement"})));    
-        TYPE_HIERARCHY.put("Trace", new HashSet<String>(Arrays.asList(new String[]{"TraceElement","Trace"})));    
-        TYPE_HIERARCHY.put("ModelReference", new HashSet<String>(Arrays.asList(new String[]{"TraceElement","ModelReference"})));    
-        TYPE_HIERARCHY.put("ModelElement", new HashSet<String>(Arrays.asList(new String[]{"TraceElement","ModelElement"})));    
-        TYPE_HIERARCHY.put("Property", new HashSet<String>(Arrays.asList(new String[]{"TraceElement","Property"})));        
+        TYPE_HIERARCHY.put("Trace", new HashSet<String>(Arrays.asList(new String[]{"IdElement","Trace"})));    
+        TYPE_HIERARCHY.put("ExecutableBlock", new HashSet<String>(Arrays.asList(new String[]{"IdElement","TraceElement","ExecutableBlock"})));    
+        TYPE_HIERARCHY.put("ModuleElement", new HashSet<String>(Arrays.asList(new String[]{"IdElement","TraceElement","ModuleElement"})));    
+        TYPE_HIERARCHY.put("ElementTrace", new HashSet<String>(Arrays.asList(new String[]{"IdElement","Trace","ElementTrace"})));    
+        TYPE_HIERARCHY.put("ModelElement", new HashSet<String>(Arrays.asList(new String[]{"IdElement","TraceElement","ModelElement"})));    
+        TYPE_HIERARCHY.put("Property", new HashSet<String>(Arrays.asList(new String[]{"IdElement","TraceElement","Property"})));    
+        TYPE_HIERARCHY.put("TypeTrace", new HashSet<String>(Arrays.asList(new String[]{"IdElement","Trace","TypeTrace"})));    
+        TYPE_HIERARCHY.put("Type", new HashSet<String>(Arrays.asList(new String[]{"IdElement","TraceElement","Type"})));        
     }
     
     private static final Map<String, Set<String>> TYPE_PROPERTIES;
     static {
         TYPE_PROPERTIES = new HashMap<String, Set<String>>();    
-        TYPE_PROPERTIES.put("ExecutionContext", new HashSet<String>(Arrays.asList(new String[]{"id","for","traces","uses"})));    
-        TYPE_PROPERTIES.put("Script", new HashSet<String>(Arrays.asList(new String[]{"id","scriptId","moduleElements"})));    
-        TYPE_PROPERTIES.put("ModuleElement", new HashSet<String>(Arrays.asList(new String[]{"id","moduleId","definedIn","traces"})));    
-        TYPE_PROPERTIES.put("Trace", new HashSet<String>(Arrays.asList(new String[]{"id","createdIn","traces","involves","accesses"})));    
-        TYPE_PROPERTIES.put("ModelReference", new HashSet<String>(Arrays.asList(new String[]{"id","uri","executionContext","owns"})));    
-        TYPE_PROPERTIES.put("ModelElement", new HashSet<String>(Arrays.asList(new String[]{"id","elementId","traces","contains","owner"})));    
-        TYPE_PROPERTIES.put("Property", new HashSet<String>(Arrays.asList(new String[]{"id","name","modelElement","traces","value"})));        
+        TYPE_PROPERTIES.put("Trace", new HashSet<String>(Arrays.asList(new String[]{"id","blocks"})));    
+        TYPE_PROPERTIES.put("ExecutableBlock", new HashSet<String>(Arrays.asList(new String[]{"id","uri","traces","owner","result"})));    
+        TYPE_PROPERTIES.put("ModuleElement", new HashSet<String>(Arrays.asList(new String[]{"id","uri","executableblocks"})));    
+        TYPE_PROPERTIES.put("ElementTrace", new HashSet<String>(Arrays.asList(new String[]{"id","blocks","elements","accesses"})));    
+        TYPE_PROPERTIES.put("ModelElement", new HashSet<String>(Arrays.asList(new String[]{"id","uri","traces"})));    
+        TYPE_PROPERTIES.put("Property", new HashSet<String>(Arrays.asList(new String[]{"id","uri","traces","value"})));    
+        TYPE_PROPERTIES.put("TypeTrace", new HashSet<String>(Arrays.asList(new String[]{"id","blocks","types"})));    
+        TYPE_PROPERTIES.put("Type", new HashSet<String>(Arrays.asList(new String[]{"id","uri","traces"})));        
     }
     
     @Override
@@ -80,26 +82,29 @@ public abstract class AbstractEolTraceModel extends Model implements ITraceModel
     
     @Override
     public Object getTypeOf(Object instance) {
-        if (instance instanceof ExecutionContext) {
-            return ExecutionContext.class;
+        if (instance instanceof Trace) {
+            return Trace.class;
         }
-        if (instance instanceof Script) {
-            return Script.class;
+        if (instance instanceof ExecutableBlock) {
+            return ExecutableBlock.class;
         }
         if (instance instanceof ModuleElement) {
             return ModuleElement.class;
         }
-        if (instance instanceof Trace) {
-            return Trace.class;
-        }
-        if (instance instanceof ModelReference) {
-            return ModelReference.class;
+        if (instance instanceof ElementTrace) {
+            return ElementTrace.class;
         }
         if (instance instanceof ModelElement) {
             return ModelElement.class;
         }
         if (instance instanceof Property) {
             return Property.class;
+        }
+        if (instance instanceof TypeTrace) {
+            return TypeTrace.class;
+        }
+        if (instance instanceof Type) {
+            return Type.class;
         }        
         return null;
     }
@@ -124,78 +129,87 @@ public abstract class AbstractEolTraceModel extends Model implements ITraceModel
     
     @Override
     public boolean isOfKind(Object instance, String type) throws EolModelElementTypeNotFoundException {
-        if (instance instanceof ExecutionContext) {
-            return TYPE_HIERARCHY.get("ExecutionContext").contains(type);
+        if (instance instanceof Trace) {
+            return TYPE_HIERARCHY.get("Trace").contains(type);
         }
-        if (instance instanceof Script) {
-            return TYPE_HIERARCHY.get("Script").contains(type);
+        if (instance instanceof ExecutableBlock) {
+            return TYPE_HIERARCHY.get("ExecutableBlock").contains(type);
         }
         if (instance instanceof ModuleElement) {
             return TYPE_HIERARCHY.get("ModuleElement").contains(type);
         }
-        if (instance instanceof Trace) {
-            return TYPE_HIERARCHY.get("Trace").contains(type);
-        }
-        if (instance instanceof ModelReference) {
-            return TYPE_HIERARCHY.get("ModelReference").contains(type);
+        if (instance instanceof ElementTrace) {
+            return TYPE_HIERARCHY.get("ElementTrace").contains(type);
         }
         if (instance instanceof ModelElement) {
             return TYPE_HIERARCHY.get("ModelElement").contains(type);
         }
         if (instance instanceof Property) {
             return TYPE_HIERARCHY.get("Property").contains(type);
+        }
+        if (instance instanceof TypeTrace) {
+            return TYPE_HIERARCHY.get("TypeTrace").contains(type);
+        }
+        if (instance instanceof Type) {
+            return TYPE_HIERARCHY.get("Type").contains(type);
         }        
         return false;
     }
     
     @Override
     public boolean isOfType(Object instance, String type) throws EolModelElementTypeNotFoundException {
-        if (instance instanceof ExecutionContext) {
-            return "ExecutionContext".equals(type);
+        if (instance instanceof Trace) {
+            return "Trace".equals(type);
         }
-        if (instance instanceof Script) {
-            return "Script".equals(type);
+        if (instance instanceof ExecutableBlock) {
+            return "ExecutableBlock".equals(type);
         }
         if (instance instanceof ModuleElement) {
             return "ModuleElement".equals(type);
         }
-        if (instance instanceof Trace) {
-            return "Trace".equals(type);
-        }
-        if (instance instanceof ModelReference) {
-            return "ModelReference".equals(type);
+        if (instance instanceof ElementTrace) {
+            return "ElementTrace".equals(type);
         }
         if (instance instanceof ModelElement) {
             return "ModelElement".equals(type);
         }
         if (instance instanceof Property) {
             return "Property".equals(type);
+        }
+        if (instance instanceof TypeTrace) {
+            return "TypeTrace".equals(type);
+        }
+        if (instance instanceof Type) {
+            return "Type".equals(type);
         }  
         return false;
     }
   
     @Override
     public boolean knowsAboutProperty(Object instance, String property) {        
-        if (instance instanceof ExecutionContext) {
-            return TYPE_PROPERTIES.get("ExecutionContext").contains(property);
+        if (instance instanceof Trace) {
+            return TYPE_PROPERTIES.get("Trace").contains(property);
         }        
-        if (instance instanceof Script) {
-            return TYPE_PROPERTIES.get("Script").contains(property);
+        if (instance instanceof ExecutableBlock) {
+            return TYPE_PROPERTIES.get("ExecutableBlock").contains(property);
         }        
         if (instance instanceof ModuleElement) {
             return TYPE_PROPERTIES.get("ModuleElement").contains(property);
         }        
-        if (instance instanceof Trace) {
-            return TYPE_PROPERTIES.get("Trace").contains(property);
-        }        
-        if (instance instanceof ModelReference) {
-            return TYPE_PROPERTIES.get("ModelReference").contains(property);
+        if (instance instanceof ElementTrace) {
+            return TYPE_PROPERTIES.get("ElementTrace").contains(property);
         }        
         if (instance instanceof ModelElement) {
             return TYPE_PROPERTIES.get("ModelElement").contains(property);
         }        
         if (instance instanceof Property) {
             return TYPE_PROPERTIES.get("Property").contains(property);
+        }        
+        if (instance instanceof TypeTrace) {
+            return TYPE_PROPERTIES.get("TypeTrace").contains(property);
+        }        
+        if (instance instanceof Type) {
+            return TYPE_PROPERTIES.get("Type").contains(property);
         }        
         return false;
     }    

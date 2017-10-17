@@ -1,4 +1,7 @@
-/*******************************************************************************
+ /*******************************************************************************
+ * This file was automatically generated on: Tue Oct 17 12:38:47 BST 2017.
+ * Only modify protected regions indicated by "<!-- -->"
+ *
  * Copyright (c) 2016 University of York
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,166 +12,84 @@
  *     Jonathan Co - Initial API and implementation
  *     Horacio Hoyos - API extension
  *******************************************************************************/
-
-/*******************************************************************************
- ** ModelElement OrientDB Trace Model Implementation automatically
- ** generated on Mon Sep 04 15:50:37 BST 2017.
- ** Do not modify this file.
- *******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.orientdb.trace.impl;
 
-import java.util.List;
-import java.util.ArrayList;
-
-import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.VModelElement;
-import org.eclipse.epsilon.eol.incremental.trace.ExecutionContext;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.VExecutionContext;
-import org.eclipse.epsilon.eol.incremental.trace.Trace;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.VTrace;
-import org.eclipse.epsilon.eol.incremental.trace.Property;
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.VProperty;
-import com.tinkerpop.blueprints.Vertex;
-
+import java.util.Iterator;
+import java.util.HashSet;
+import java.util.Set;
+import org.eclipse.epsilon.incremental.trace.eol.ElementTrace;
+import org.eclipse.epsilon.eol.incremental.trace.tinkerpop.AbstractModelElementImpl;
+import com.tinkerpop.blueprints.impls.orient.OrientVertex;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
  * An implementation of the ModelElement that delegates to an OrientDB vertex.
  */
-public class ModelElementOrientDbImpl implements ModelElement {
+public class ModelElementOrientDbImpl extends AbstractModelElementImpl<OrientVertex> {
+    
+    /** The class name for Vertices of this type in the DB schema */
+    public static final String VERTEX_TYPE = "ModelElement";
+    
+    /** The attribute to use as index for vertices of this type */
+    public static final String VERTEX_INDEX = "uri";
+    
+    /** The attribute name in the DB */
+    public static final String URI = "uri";
+    
+    /** Placeholder for referenced values */
+    private Set<ElementTrace> traces;
+    
+    
+	/**
+     * Instantiates a new ModelElement OrientDb Impl.
+     *
+     * @param delegate the delegate
+     */
+    public ModelElementOrientDbImpl(OrientVertex  delegate) {
+        super(delegate);
+        if (!(delegate.getLabel() == "ModelElement")) {
+            throw new IllegalArgumentException(
+                    String.format("Delegate vertex is not of the correct type. Got: %s, expected: %s",
+                        delegate.getLabel(), "ModelElement"));
+        }
+        initTraces();
+    }
 
-	/** The delegate. */
-	final private VModelElement delegate;
-	
-	/**
-	 * Instantiates a new ModelElementOrientDb.
-	 *
-	 * @param delegate the delegate
-	 */
-	public ModelElementOrientDbImpl(VModelElement  delegate) {
-		this.delegate = delegate;
-	}
+    @Override
+    public Object getId() {
+        return delegate.getId();
+    }
+    
+    @Override
+    public void setId(Object value) {
+        // TODO Implement ModelElementOrientDbImpl.setId
+        throw new UnsupportedOperationException("Readonly field    ModelElementOrientDbImpl.setId invoked.");
+    }
+    
 
-	/**
-	 * Gets the delegate.
-	 *
-	 * @return the delegate
-	 */
-	public VModelElement getDelegate() {
-		return delegate;
-	}
-	
-	/**
-	 * As vertex.
-	 *
-	 * @return the delegate as a vertex
-	 */
-	public Vertex asVertex() {
-		return delegate.asVertex();
-	}
-	
-	/**
-	 * Returns the value of the '<em><b>Id</b></em>' attribute.
-	 * <!-- protected region id-getter-doc on begin -->
-	 * <p>
-	 * If the meaning of the '<em>Id</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- protected region id-getter-doc end --> 
-	 * @return the value of the '<em>Id</em>' attribute.
-	 * @see #setId(String)
-	 */
-	public java.lang.Object getId() {
-		return delegate.asVertex().getId(); 
-	}
-	
-	/**
-	 * Returns the value of the '<em><b>Element Id</b></em>' attribute.
-	 * <!-- protected region elementId-getter-doc on begin -->
-	 * <p>
-	 * If the meaning of the '<em>Element Id</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- protected region elementId-getter-doc end --> 
-	 * @return the value of the '<em>Element Id</em>' attribute.
-	 * @see #setElementId(String)
-	 */
-	public java.lang.String getElementId() {
-		return delegate.getElementId();
- 
-	}
-	
-	
-	/**
-	 * Sets the value of the '{@link ModelElement#ElementId <em>Element Id</em>}' attribute.
-	 * <!-- protected region elementId-setter-doc on begin -->
-	 * <!-- protected region elementId-setter-doc end --> 
-	 * @param value the new value of the '<em>Element Id/em>' attribute.
-	 * @see #getElementId()
-	 */
-	public void setElementId(java.lang.String value) {
-		delegate.setElementId(value);
-	}
-	
-	
-	/**
-	 * Returns the value of the '<em><b>Execution Context</b></em>' attribute.
-	 * <!-- protected region executionContext-getter-doc on begin -->
-	 * <p>
-	 * If the meaning of the '<em>Execution Context</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- protected region executionContext-getter-doc end --> 
-	 * @return the value of the '<em>Execution Context</em>' attribute.
-	 * @see #setExecutionContext(String)
-	 */
-	public List<ExecutionContext> getExecutionContext() {
-		ArrayList<ExecutionContext> result = new ArrayList<ExecutionContext>();
-		for (VExecutionContext dItem : delegate.getExecutionContext()){
-			ExecutionContextOrientDbImpl wrap = new ExecutionContextOrientDbImpl(dItem);
-			result.add(wrap);
-		}
-		return result;
-	}
-
-	/**
-	 * Returns the value of the '<em><b>Traces</b></em>' attribute.
-	 * <!-- protected region traces-getter-doc on begin -->
-	 * <p>
-	 * If the meaning of the '<em>Traces</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- protected region traces-getter-doc end --> 
-	 * @return the value of the '<em>Traces</em>' attribute.
-	 * @see #setTraces(String)
-	 */
-	public List<Trace> getTraces() {
-		ArrayList<Trace> result = new ArrayList<Trace>();
-		for (VTrace dItem : delegate.getTraces()){
-			TraceOrientDbImpl wrap = new TraceOrientDbImpl(dItem);
-			result.add(wrap);
-		}
-		return result;
-	}
-
-	/**
-	 * Returns the value of the '<em><b>Owns</b></em>' attribute.
-	 * <!-- protected region owns-getter-doc on begin -->
-	 * <p>
-	 * If the meaning of the '<em>Owns</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- protected region owns-getter-doc end --> 
-	 * @return the value of the '<em>Owns</em>' attribute.
-	 * @see #setOwns(String)
-	 */
-	public List<Property> getOwns() {
-		ArrayList<Property> result = new ArrayList<Property>();
-		for (VProperty dItem : delegate.getOwns()){
-			PropertyOrientDbImpl wrap = new PropertyOrientDbImpl(dItem);
-			result.add(wrap);
-		}
-		return result;
-	}
-
-	
+    @Override
+    public String getUri() {
+        return (String) delegate.getProperties().get("uri");
+    }
+    
+    @Override
+    public void setUri(String value) {
+        delegate.getProperties().put("ModelElement", value);
+    }    
+    @Override
+    public Set<ElementTrace> getTraces() {
+        return traces;
+    }
+    
+    private void initTraces() {
+        GremlinPipeline<OrientVertex, OrientVertex> pipeline = new GremlinPipeline<>();
+        traces = new HashSet<>();
+        Iterator<OrientVertex> it = getTraces(pipeline);
+        while (it.hasNext()) {
+            ElementTrace vImpl = new ElementTraceOrientDbImpl(it.next());
+            traces.add(vImpl);
+        }
+    
+    }
+      
 }

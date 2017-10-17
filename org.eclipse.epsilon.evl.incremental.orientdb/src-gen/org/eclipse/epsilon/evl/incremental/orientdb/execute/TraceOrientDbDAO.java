@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.eclipse.epsilon.evl.incremental.orientdb.trace.*;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.impl.EvlConstraintOrientDbImpl;
 
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.tinkerpop.blueprints.Parameter;
@@ -49,8 +50,7 @@ public class TraceOrientDbDAO {
 	// Schema Methods
 	
     /**
-     * Setup the DB schema. This operation uses a Non-Transactional Graph. Extending classes should implement the 
-     * {@link #createDbTypes(OrientGraphNoTx)} to add the required vertex and edge types to the db.
+     * Setup the DB schema. This operation uses a Non-Transactional Graph.
      */
     public void setupSchema() {
         OrientGraphNoTx graph = factory.getNoTx();
@@ -64,47 +64,14 @@ public class TraceOrientDbDAO {
      * @param graph The graph to add vertex types to
      */
     private void createDbTypes(OrientBaseGraph g) {
-        
   
-        OrientVertexType executionContextType = g.getVertexType(VExecutionContext.TRACE_TYPE);
-        if (executionContextType  == null) {
-            executionContextType  = g.createVertexType(VExecutionContext.TRACE_TYPE);       
-            executionContextType.createProperty(VExecutionContext.SCRIPT_ID, OType.STRING);       
-            executionContextType.createProperty(VExecutionContext.MODELS_IDS, OType.EMBEDDEDLIST);            
-            g.createKeyIndex(VExecutionContext.SCRIPT_ID, Vertex.class,
-                    new Parameter<String, String>("type", "NOTUNIQUE_HASH_INDEX"),
-                    new Parameter<String, String>("class", VExecutionContext.TRACE_TYPE));
-        }
-  
-        OrientVertexType moduleElementType = g.getVertexType(VModuleElement.TRACE_TYPE);
+        OrientVertexType moduleElementType = g.getVertexType(EvlConstraintOrientDbImpl.VERTEX_TYPE);
         if (moduleElementType  == null) {
-            moduleElementType  = g.createVertexType(VModuleElement.TRACE_TYPE);       
-            moduleElementType.createProperty(VModuleElement.MODULE_ID, OType.STRING);            
-            g.createKeyIndex(VModuleElement.MODULE_ID, Vertex.class,
-                    new Parameter<String, String>("type", "NOTUNIQUE_HASH_INDEX"),
-                    new Parameter<String, String>("class", VModuleElement.TRACE_TYPE));
-        }
-  
-        OrientVertexType traceType = g.getVertexType(VTrace.TRACE_TYPE);
-        if (traceType  == null) {
-            traceType  = g.createVertexType(VTrace.TRACE_TYPE);        }
-  
-        OrientVertexType modelElementType = g.getVertexType(VModelElement.TRACE_TYPE);
-        if (modelElementType  == null) {
-            modelElementType  = g.createVertexType(VModelElement.TRACE_TYPE);       
-            modelElementType.createProperty(VModelElement.ELEMENT_ID, OType.STRING);            
-            g.createKeyIndex(VModelElement.ELEMENT_ID, Vertex.class,
-                    new Parameter<String, String>("type", "NOTUNIQUE_HASH_INDEX"),
-                    new Parameter<String, String>("class", VModelElement.TRACE_TYPE));
-        }
-  
-        OrientVertexType propertyType = g.getVertexType(VProperty.TRACE_TYPE);
-        if (propertyType  == null) {
-            propertyType  = g.createVertexType(VProperty.TRACE_TYPE);       
-            propertyType.createProperty(VProperty.NAME, OType.STRING);            
-            g.createKeyIndex(VProperty.NAME, Vertex.class,
-                    new Parameter<String, String>("type", "NOTUNIQUE_HASH_INDEX"),
-                    new Parameter<String, String>("class", VProperty.TRACE_TYPE));
+            moduleElementType  = g.createVertexType(EvlConstraintOrientDbImpl.VERTEX_TYPE);       
+            moduleElementType.createProperty(EvlConstraintOrientDbImpl.URI, OType.STRING);            
+            g.createKeyIndex(EvlConstraintOrientDbImpl.URI, Vertex.class,
+                    new Parameter<String, String>("type", "UNIQUE_HASH_INDEX"),
+                    new Parameter<String, String>("class", EvlConstraintOrientDbImpl.VERTEX_TYPE));
         }
         setupEdgeTypes(g, EFor.TRACE_TYPE, EContains.TRACE_TYPE, EInvolves.TRACE_TYPE, ETraces.TRACE_TYPE, EReaches.TRACE_TYPE, EAccesses.TRACE_TYPE, EOwns.TRACE_TYPE);
     }

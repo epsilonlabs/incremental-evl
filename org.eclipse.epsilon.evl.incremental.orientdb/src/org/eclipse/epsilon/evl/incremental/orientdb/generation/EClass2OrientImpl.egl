@@ -1,5 +1,10 @@
-[%import "CommonTemplates.egl";%]
-/*******************************************************************************
+[%
+import "../../../../../../../../../org.eclipse.epsilon.incremental.common/src/org/eclipse/epsilon/incremental/common/generation/Ecore2JavaTemplates.egl";
+%]
+ /*******************************************************************************
+ * This file was automatically generated on: [%=today%].
+ * Only modify protected regions indicated by "<!-- -->"
+ *
  * Copyright (c) 2016 University of York
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,116 +15,169 @@
  *     Jonathan Co - Initial API and implementation
  *     Horacio Hoyos - API extension
  *******************************************************************************/
-
-/*******************************************************************************
- ** [%=eClass.getName()%] OrientDB Trace Model Implementation automatically
- ** generated on [%=today%].
- ** Do not modify this file.
- *******************************************************************************/
 package [%=qp%].trace.impl;
 
-import java.util.List;
-import java.util.ArrayList;
-
-import org.eclipse.epsilon.eol.incremental.trace.[%=eClass.getName()%];
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.V[%=eClass.getJavaTypeName(typePrefix, typeSufix)%];
-[%for (r in eClass.getEReferences()) {%]
-import org.eclipse.epsilon.eol.incremental.trace.[%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix)%];
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.[%=r.getEReferenceType().getJavaTypeName("V", typeSufix)%];
+import java.util.Iterator;
+[%
+for (imp in ec.getRequriedImports("org.eclipse.epsilon.incremental.trace", "", "", true, true)){%]
+import [%=imp%];
+[%}
+if (ec.getEpackage().name.startsWith("Evl")) {%]
+import org.eclipse.epsilon.evl.incremental.trace.tinkerpop.Abstract[%=ec.name%]Impl;
+[%} else {%]
+import org.eclipse.epsilon.[%=ec.getEpackage().name%].incremental.trace.tinkerpop.Abstract[%=ec.name%]Impl;
 [%}%]
-import com.tinkerpop.blueprints.Vertex;
-
+import com.tinkerpop.blueprints.impls.orient.OrientVertex;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
- * An implementation of the [%=eClass.getName()%] that delegates to an OrientDB vertex.
+ * An implementation of the [%=ec.name%] that delegates to an OrientDB vertex.
  */
-public class [%=eClass.getJavaTypeName(typePrefix, typeSufix)%]OrientDbImpl implements [%=eClass.getName()%] {
-
-	/** The delegate. */
-	final private [%=eClass.getJavaTypeName("V", typeSufix)%] delegate;
-	
+public class [%=ec.name%]OrientDbImpl extends Abstract[%=ec.name%]Impl<OrientVertex> {
+    
+    /** The class name for Vertices of this type in the DB schema */
+    public static final String VERTEX_TYPE = "[%=ec.name%]";
+[%
+var index = ec.getIndexAttribute();
+if (index.isDefined()){%]
+    
+    /** The attribute to use as index for vertices of this type */
+    public static final String VERTEX_INDEX = "[%=index.name%]";
+    
+[%}
+for (er in ec.getEAllAttributes().select(a | not a.isId())) {%]
+    /** The attribute name in the DB */
+    public static final String [%=er.name.toUpperCase()%] = "[%=er.name%]";
+    
+[%}
+for (er in ec.getEAllReferences()) {
+    var multi = "List";
+    if (er.isMany() and not er.isOrdered()) {
+        multi = "Set";
+    }%]
+    /** Placeholder for referenced values */
+    private [%=er.getGetterReturnType(multi, "", "")%] [%=er.name%];
+    
+[%}%]    
 	/**
-	 * Instantiates a new [%=eClass.getName()%]OrientDb.
-	 *
-	 * @param delegate the delegate
-	 */
-	public [%=eClass.getName()%]OrientDbImpl([%=eClass.getJavaTypeName("V", typeSufix)%]  delegate) {
-		this.delegate = delegate;
-	}
+     * Instantiates a new [%=ec.name%] OrientDb Impl.
+     *
+     * @param delegate the delegate
+     */
+    public [%=ec.name%]OrientDbImpl(OrientVertex  delegate) {
+        super(delegate);
+        if (!(delegate.getLabel() == "[%=ec.name%]")) {
+            throw new IllegalArgumentException(
+                    String.format("Delegate vertex is not of the correct type. Got: %s, expected: %s",
+                        delegate.getLabel(), "[%=ec.name%]"));
+        }
+[%for (er in ec.getEAllReferences()) {%]
+        init[%=er.name.firstToUpperCase()%]();
+[%}%]
+    }
 
-	/**
-	 * Gets the delegate.
-	 *
-	 * @return the delegate
-	 */
-	public [%=eClass.getJavaTypeName("V", typeSufix)%] getDelegate() {
-		return delegate;
-	}
-	
-	/**
-	 * As vertex.
-	 *
-	 * @return the delegate as a vertex
-	 */
-	public Vertex asVertex() {
-		return delegate.asVertex();
-	}
-	
-[%for (a in eClass.getEAllAttributes()) {
-    var gs = a.makeGetterSignature("List");%]
-	[%=a.makeGetterDoc()%]
-	[%if (a.isMany()) {%]
-	public [%=gs%] {
-		[%=a.getSetterParamterType("List")%] result = new Array[%=a.getSetterParamterType("List")%]();
-		for ([%=a.getEAttributeType().getInstanceTypeName()%] item : delegate.[%=a.getGetterMethodName()%]()){
-			result.add(item);
-		}
-		return result;
-	}[%
-	} else {%]
-	public [%=gs%] {
-[%  	if (a.isId()) {%]
-		return delegate.asVertex().getId();[%
-		} else {%]
-		return delegate.[%=a.getGetterMethodName()%]();
-		[%}%] 
-	}
-	
-[%  }
-    if ((not a.isMany()) and (not a.isId())) {%]	
-	[%=a.makeSetterDoc()%]
-	public [%=a.makeSetterSignature("List")%] {
-		delegate.[%=a.getSetterMethodName()%]([%=a.getSetterParamterName()%]);
-	}
-	
-[%  }
-}%]	
-[%for (r in eClass.getEAllReferences()) {
-    var gs = r.makeGetterSignature("List", typePrefix, typeSufix);
-    %]
-	[%=r.makeGetterDoc()%]
-	[%if (r.isMany()) {%]
-	public [%=gs%] {
-		ArrayList<[%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix)%]> result = new ArrayList<[%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix)%]>();
-		for ([%=r.getEReferenceType().getJavaTypeName("V", typeSufix)%] dItem : delegate.[%=r.getGetterMethodName()%]()){
-			[%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix)%]OrientDbImpl wrap = new [%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix)%]OrientDbImpl(dItem);
-			result.add(wrap);
-		}
-		return result;
-	}
+    @Override
+    public Object getId() {
+        return delegate.getId();
+    }
+    
+    @Override
+    public void setId(Object value) {
+        // TODO Implement [%=ec.name%]OrientDbImpl.setId
+        throw new UnsupportedOperationException("Readonly field    [%=ec.name%]OrientDbImpl.setId invoked.");
+    }
+    
+[%for (ea in ec.getEAllAttributes().select(ea | ea.name <> "id")) {
+    var multi = "List";
+    if (ea.isMany() and not ea.isOrdered()) {
+        multi = "Set";
+    }%]
 
-[%	} else {%]
-	public [%=gs%] {
-		return new [%=r.getGetterReturnType("Iterable", typePrefix, typeSufix)%]OrientDbImpl(delegate.[%=r.getGetterMethodName()%]());
-	}
-	
-[%  }if (not r.isMany()) {%]	
-	[%=r.makeSetterDoc()%]
-	public [%=r.makeSetterSignature(typePrefix, typeSufix)%] {
-		[%=r.getEReferenceType().getJavaTypeName("V", typeSufix)%] vertex = (([%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix)%]OrientDbImpl) [%=r.getSetterParamterName()%]).getDelegate();
-		delegate.[%=r.getSetterMethodName()%](vertex);
-	}
-	
-[%  }
-}%]	
+    @Override
+    public [%=ea.makeGetterSignature(multi)%] {
+        return ([%=ea.getGetterReturnType(multi)%]) delegate.getProperties().get("[%=ea.name%]");
+    }
+    
+    @Override
+    public [%=ea.makeSetterSignature(multi)%] {
+        delegate.getProperties().put("[%=ec.name%]", value);
+    }    
+[%}
+for (er in ec.getEAllReferences()) {
+    var retType = er.getEReferenceType().getJavaTypeName("", "");
+    var multi = "List";
+    if (er.isMany() and not er.isOrdered()) {
+        multi = "Set";
+    }%]
+    @Override
+    public [%=er.makeGetterSignature(multi, "", "")%] {
+        return [%=er.name%];
+    }
+[%  if (not er.isMany()) {%]
+    @Override
+    public [%=er.makeSetterSignature("", "")%] {
+        throw new UnsupportedOperationException("Readonly field    [%=er.name%]OrientDbImpl.[%=er.getSetterMethodName()%] invoked.");
+    }
+[%}%]    
+    private void init[%=er.name.firstToUpperCase()%]() {
+        GremlinPipeline<OrientVertex, OrientVertex> pipeline = new GremlinPipeline<>();
+[%  if (not er.isMany()) {%]
+        [%er.makeInitMethodSingle();%]
+[%  } else {%]
+        [%er.makeInitMethodMany();%]
+[%  }%]    
+    }
+[%}
+%]      
 }
+[%
+operation EReference makeInitMethodSingle() {
+    var retType = self.getEReferenceType().getJavaTypeName("", "");%]
+        OrientVertex vertex = [%=self.getGetterMethodName()%](pipeline);
+[%  if (self.getEReferenceType().isAbstract()) {%]
+        switch(vertex.getLabel()) {
+[%      for(sec in self.getEReferenceType().getEAllSubclasses()){%]
+        case("[%=sec.name%]"):
+            [%=self.name%] = new [%=sec.name%]OrientDbImpl(vertex);
+            break;
+[%      }%]      
+        default:
+            throw new IllegalArgumentException("Unknown [%=self.getEReferenceType().name%] subclass " + vertex.getLabel());
+        }
+[%  }
+    else {%]
+        [%=retType%] vImpl = new [%=retType%]OrientDbImpl(vertex);
+[%  }%]
+[%}
+
+operation EReference makeInitMethodMany() {
+    var retType = self.getEReferenceType().getJavaTypeName("", "");
+    var multi = "List";
+    var impl = "ArrayList";
+    if (not self.isOrdered()) {
+        multi = "Set";
+        impl = "HashSet";
+    }%]
+        [%=self.name%] = new [%=impl%]<>();
+        Iterator<OrientVertex> it = [%=self.getGetterMethodName()%](pipeline);
+        while (it.hasNext()) {
+[%  if (self.getEReferenceType().isAbstract()) {%]
+            OrientVertex vertex = it.next();
+            [%=retType%] vImpl = null;
+            switch(vertex.getLabel()) {
+[%      for(sec in self.getEReferenceType().getEAllSubclasses()){%]
+            case("[%=sec.name%]"):
+                vImpl = new [%=sec.name%]OrientDbImpl(vertex);
+                break;
+[%      }%]      
+            default:
+                throw new IllegalArgumentException("Unknown [%=self.getEReferenceType().name%] subclass " + vertex.getLabel());
+            }
+[%  }
+    else {%]
+            [%=retType%] vImpl = new [%=retType%]OrientDbImpl(it.next());
+[%  }%]
+            [%=self.name%].add(vImpl);
+        }
+[%}
+%]

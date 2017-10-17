@@ -17,7 +17,6 @@ import java.util.Map;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
 import org.eclipse.epsilon.eol.exceptions.models.EolNotInstantiableModelElementTypeException;
 import org.eclipse.epsilon.eol.models.IModel;
-import org.eclipse.epsilon.incremental.trace.eol.ExecutionContext;
 import org.eclipse.epsilon.incremental.trace.eol.Trace;
 
 /**
@@ -43,34 +42,23 @@ public interface ITraceModel extends IModel {
 	public Object createInstance(String type, Map<String, Object> parameters) throws EolModelElementTypeNotFoundException, EolNotInstantiableModelElementTypeException;
 	
 	/**
-	 * Convenience method to encapsulate the create-if-not-found logic. Given that this might also require the creation
-	 * of the Script and Model entries, implementations targeting multi-threaded execution should take the necessary
-	 * provisions to ensure that elements are created only once.
-	 *    
-	 * @param scriptId
-	 * @param modelsUris
-	 * @return
-	 */
-	ExecutionContext acquireExecutionContext(String scriptId, List<String> modelsUris);
-	
-	/**
 	 * Find all traces for the given element and property. This method assumes that it is invoked in the context of
 	 * an existing ExecutionContext that will be used to filter relevant traces. 
 	 * 
-	 * @param elementId
-	 * @param propertyId
+	 * @param elementUri
+	 * @param propertyUri
 	 * @return A list of traces that involve the element and access the property
 	 */
-	List<Trace> findTraces(String elementId, String propertyId);
+	List<Trace> findTraces(String elementUri, String propertyUri);
 	
 	/**
 	 * Find all traces for the given element. This method assumes that it is invoked in the context of
 	 * an existing ExecutionContext that will be used to filter relevant traces. 
 	 * 
-	 * @param elementId
+	 * @param elementUri
 	 * @return A list of traces that involve the element
 	 */
-	List<Trace> findTraces(String elementId);
+	List<Trace> findTraces(String elementUri);
 	
 	// FIXME Add methods for offline compare. This methods would also need to check changes in properties. 
 

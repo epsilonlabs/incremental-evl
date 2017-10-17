@@ -1,5 +1,5 @@
 [%
-import "CommonTemplates.egl";
+import "../../../../../../../../../org.eclipse.epsilon.incremental.common/src/org/eclipse/epsilon/incremental/common/generation/Ecore2JavaTemplates.egl";
 /**
  *  The DAO template generates four CRUD methods for each EClass:
  *      - create(args...)
@@ -47,7 +47,10 @@ import "CommonTemplates.egl";
  *  more control over the used type. THIS IS NOT IMPLEMENTED YET.
  */
 %]
-/*******************************************************************************
+ /*******************************************************************************
+ * This file was automatically generated on: [%=today%].
+ * Only modify protected regions indicated by "<!-- -->"
+ *
  * Copyright (c) 2016 University of York
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -58,18 +61,9 @@ import "CommonTemplates.egl";
  *     Jonathan Co - Initial API and implementation
  *     Horacio Hoyos - API extension
  *******************************************************************************/
-
-/*******************************************************************************
- ** [%=p.getName()%] OrientDB Node Interface automatically generated
- ** on [%=today%].
- ** Do not modify this file.
- *******************************************************************************/
 package [%=qp%].execute;
 
-import java.util.List;
-import java.util.ArrayList;
-
-import org.eclipse.epsilon.evl.incremental.orientdb.trace.*;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.impl.*;
 
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.tinkerpop.blueprints.Parameter;
@@ -89,8 +83,6 @@ public class [%=p.getName().firstToUpperCase()%]OrientDbDAO {
 
 	private OrientGraphFactory factory;
 	
-	private final FramedGraphFactory framedFactory = new FramedGraphFactory();
-	
 	public [%=p.getName().firstToUpperCase()%]OrientDbDAO(OrientGraphFactory factory) {
 		this.factory = factory;
 	}
@@ -101,7 +93,7 @@ public class [%=p.getName().firstToUpperCase()%]OrientDbDAO {
      * Setup the DB schema. This operation uses a Non-Transactional Graph. Extending classes should implement the 
      * {@link #createDbTypes(OrientGraphNoTx)} to add the required vertex and edge types to the db.
      */
-    public void setupSchema() {
+    public static void setupSchema(OrientGraphFactory factory) {
         OrientGraphNoTx graph = factory.getNoTx();
         createDbTypes(graph);
         graph.shutdown();
@@ -112,33 +104,35 @@ public class [%=p.getName().firstToUpperCase()%]OrientDbDAO {
      *
      * @param graph The graph to add vertex types to
      */
-    private void createDbTypes(OrientBaseGraph g) {
+    private static void createDbTypes(OrientBaseGraph g) {
         
-[%  for (c in p.getEClassifiers().select(ec | ec.isTypeOf(ecore!EClass) and not ec.isInterface())) {
-        var cName = c.getJavaTypeName("V", "");
+[%  //for (c in p.getEClassifiers().select(ec | ec.isTypeOf(ecore!EClass) and
+    //        not ec.isAbstract() and not ec.isInterface())) {
+    for (c in EClass.all.select(ec | not ec.isAbstract() and not ec.isInterface())) {
+        var cName = c.getJavaTypeName("", "OrientDbImpl");
         var cType = c.getName().firstToLowerCase() + "Type";%]  
-        OrientVertexType [%=cType%] = g.getVertexType([%=cName%].TRACE_TYPE);
+        OrientVertexType [%=cType%] = g.getVertexType([%=cName%].VERTEX_TYPE);
         if ([%=cType%]  == null) {
-            [%=cType%]  = g.createVertexType([%=cName%].TRACE_TYPE);[%
-        for (a in c.getEAttributes()) {
+            [%=cType%]  = g.createVertexType([%=cName%].VERTEX_TYPE);[%
+        for (a in c.getEAllAttributes().select(a | not a.isId())) {
             var oType = a.getEAttributeType().getInstanceClassName().split("\\.").last().toUpperCase();
             if (a.isMany()) oType = "EMBEDDEDLIST";%]       
-            [%=cType%].createProperty([%=cName%].[%=a.getName().splitCamelCase("_").toUpperCase()%], OType.[%=oType%]);[%}
-            //var idAttr = c.getEAttributes.selectOne(ea | ea.isId());
-            var index = c.getIndex();
-            if (index <> null) {%]
+            [%=cType%].createProperty([%=cName%].[%=a.getName().splitCamelCase("_").toUpperCase()%], OType.[%=oType%]);
+[%      }
+        var index = c.getIndex();
+        if (index <> null) {%]
             
-            g.createKeyIndex([%=cName%].[%=index.at(0)%], Vertex.class,
+            g.createKeyIndex([%=cName%].VERTEX_INDEX, Vertex.class,
                     new Parameter<String, String>("type", "[%=index.at(1)%]"),
-                    new Parameter<String, String>("class", [%=cName%].TRACE_TYPE));
-            [%}%]
+                    new Parameter<String, String>("class", [%=cName%].VERTEX_TYPE));
+[%      }%]
         }
 [%  }%]
-    [%var edges = p.getEClassifiers()
-            .collect(c:ecore!EClass | c.getEReferences())
+    [%var edges = ecore!EClass.all
+            .collect(c | c.getEReferences())
             .flatten()
             .select(r | r.isEdge())
-            .collect(r | r.getJavaTypeName("E", "") + ".TRACE_TYPE");%]
+            .collect(r | "\"" + r.name.firstToUpperCase() + "\"");%]
         setupEdgeTypes(g, [%=edges.concat(", ")%]);
     }
     
@@ -148,108 +142,21 @@ public class [%=p.getName().firstToUpperCase()%]OrientDbDAO {
      * @param graph the graph
      * @param types the types for the edges
      */
-    private void setupEdgeTypes(OrientBaseGraph g, String... types) {
+    private static void setupEdgeTypes(OrientBaseGraph g, String... types) {
         for (String type : types) {
             if (g.getEdgeType(type) == null) g.createEdgeType(type);
         }
     }
     
     // Direct DB Access
-    
+    /*
     public FramedTransactionalGraph<OrientGraph> getManager() {
         
         OrientGraph txGraph = factory.getTx();
         return framedFactory.create(txGraph);
-    }   
+    } 
+    */  
     
-    // CRUD Methods
-	
-[%  // CRUD methods for each EClass
-    for (c in p.getEClassifiers().select(ec | ec.isTypeOf(ecore!EClass) and not ec.isInterface())) {%]
-	[%=c.getCreateSignature()%] {
-	    OrientGraph txGraph = factory.getTx();
-	    FramedTransactionalGraph<OrientGraph> manager = framedFactory.create(txGraph);
-	    [%=c.getCreateReturnType()%] vertex = null;
-	    try{
-			vertex = manager.addVertex("class:[%=c.getName()%]", [%=c.getJavaTypeName("V", "")%].class);
-[%		for (a in c.getEAttributes()) {%]
-		    [%=a.getSetStatement("vertex")%]
-[%      }%]
-			manager.commit();
-		} catch (Exception e) {
-		    manager.rollback();
-		}    
-	    manager.shutdown();
-		return vertex;
-	}
-	
-	[%=c.getDeleteSignature()%] {
-		OrientGraph txGraph = factory.getTx();
-	    FramedTransactionalGraph<OrientGraph> manager = framedFactory.create(txGraph);
-	    try{
-			manager.removeVertex(vertex.asVertex());
-		} catch (Exception e) {
-		    manager.rollback();
-		}    
-	    manager.shutdown();
-	}
-	
-	[%=c.getUpdateSignature()%] {
-		OrientGraph txGraph = factory.getTx();
-	    FramedTransactionalGraph<OrientGraph> manager = framedFactory.create(txGraph);
-	    try{
-			[%=c.getCreateReturnType()%] persisted =  manager.getVertex(vertex.asVertex().getId(), [%=c.getCreateReturnType()%].class);		
-[%		for (a in c.getEAttributes()) {%]
-		    [%=a.getUpdateStatement("vertex", "persisted")%]
-[%      }
-		for (r in c.getEReferences()) {%]
-			[%=r.getUpdateStatement("vertex", "persisted")%]
-[%      }%]
-			manager.commit();
-		} catch (Exception e) {
-		    manager.rollback();
-		}    
-	    manager.shutdown();
-	}
-	
-	[%=c.getGetByIdSignature()%] {
-        OrientGraph txGraph = factory.getTx();
-        FramedTransactionalGraph<OrientGraph> manager = framedFactory.create(txGraph);
-        [%=c.getCreateReturnType()%] vertex = null;
-        vertex = manager.frame(manager.getVertex(id), [%=c.getCreateReturnType()%].class);            
-        manager.shutdown();
-        return vertex;
-    }
-    
-[%      var index = c.getIndex();
-        if (index <> null) {
-            if ("NOTUNIQUE".isSubstringOf(index.at(1))) {%]
-    [%=c.getGetByIndexSignature(true)%] {
-        OrientGraph txGraph = factory.getTx();
-        FramedTransactionalGraph<OrientGraph> manager = framedFactory.create(txGraph);
-        List<[%=c.getCreateReturnType()%]> vertices = new ArrayList<>();
-        for (Vertex v : manager.getVertices("[%=c.getName()%].[%=index.at(0).toLowerCase()%]", [%=index.at(0).toLowerCase()%])) {
-            vertices.add(manager.frame(v, [%=c.getCreateReturnType()%].class));
-        }
-        manager.shutdown();
-        return vertices;
-    }    
-[%          }
-            else{%]
-    [%=c.getGetByIndexSignature(false)%] {
-        OrientGraph txGraph = factory.getTx();
-        FramedTransactionalGraph<OrientGraph> manager = framedFactory.create(txGraph);
-        [%=c.getCreateReturnType()%] vertex = null;
-        for (Vertex v : manager.getVertices("[%=c.getName()%].[%=index.at(0).toLowerCase()%]", [%=index.at(0).toLowerCase()%])) {
-            vertex = ([%=c.getCreateReturnType()%] ) v;
-            break;
-        }
-        manager.shutdown();
-        return vertex;
-    }    
-[%          }
-        }
-    }%]
 }
 
 [%

@@ -1,12 +1,10 @@
-import 'EcoreHelper.eol';
-
 pre {
 	var now  = new Native("java.util.Date");
 	var path_prefix = "../../../../../../../../src-gen/org/eclipse/epsilon/evl/incremental/orientdb/";
 	var qualified_package = "org.eclipse.epsilon.evl.incremental.orientdb";
 }
 
-rule EPackage2DAO
+rule Evl2DAO
   transform p : EPackage {
   
   parameters {
@@ -15,44 +13,32 @@ rule EPackage2DAO
     params.put("qp", qualified_package);
     return params;
   }
-  
-  // The EGL template to be invoked
+  guard: p.name == "evl"  
   template : "EPackage2OrientDbDAO.egl"
-
-  // Output file
   target : path_prefix + "execute/" + p.getName().firstToUpperCase() + "OrientDbDAO.java"
   
 }
 
-rule EClass2OrientDbVertex
-  transform eClass : EClass {
-  
-  guard : not eClass.isInterface()
+rule Evl2TraceModelTest
+  transform p : EPackage {
   
   parameters {
-    // These parameters will be made available
-    // to the invoked template as variables
     var params : new Map;
     params.put("today", now.toString());
     params.put("qp", qualified_package);
-    // Allow flexibility for persistance classes to use the same base name as the model classes
-    params.put("typePrefix", "V");
-    params.put("typeSufix", "");
     return params;
   }
-
-  // The EGL template to be invoked
-  template : "EClass2Vertex.egl"
-
-  // Output file
-  target : path_prefix + "trace/" + eClass.getJavaTypeName("V", "") + ".java"
-
+  guard: p.name == "evl"  
+  template : "EPackage2OrientDbTraceTest.egl"
+  target : "../../../../../../../../../org.eclipse.epsilon.evl.incremental.orientdb.test/src-gen/org/eclipse/epsilon/evl/incremental/orientdb/"
+            + "test/trace/" + p.getName().firstToUpperCase() + "TraceModelTests.java"
+  
 }
 
 rule EClass2OrientDbImpl
-  transform eClass : EClass {
+  transform ec : EClass {
   
-  guard : not eClass.isInterface()
+  guard : not ec.isInterface() and not ec.isAbstract()
 
   parameters {
     // These parameters will be made available
@@ -70,33 +56,7 @@ rule EClass2OrientDbImpl
   template : "EClass2OrientImpl.egl"
 
   // Output file
-  target : path_prefix + "trace/impl/" + eClass.getName() + "OrientDbImpl.java"
-
-}
-
-
-rule EReferece2OrientDbEdge
-  transform eRef : EReference {
-
-  guard : eRef.isEdge()
-
-  parameters {
-    // These parameters will be made available
-    // to the invoked template as variables
-    var params : new Map;
-    params.put("today", now.toString());
-    params.put("qp", qualified_package);
-    // Allow flexibility for persistance classes to use the same base name as the model classes
-    params.put("typePrefix", "E");
-    params.put("typeSufix", "");
-    return params;
-  }
-
-  // The EGL template to be invoked
-  template : "EReference2Edge.egl"
-
-  // Output file
-  target : path_prefix + "trace/" + eRef.getJavaTypeName("E", "") + ".java"
+  target : path_prefix + "trace/impl/" + ec.getName() + "OrientDbImpl.java"
 
 }
 

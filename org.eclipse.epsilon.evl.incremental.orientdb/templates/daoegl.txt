@@ -1,0 +1,89 @@
+
+    // CRUD Methods
+    
+[%  // CRUD methods for each EClass
+    for (c in p.getEClassifiers().select(ec | ec.isTypeOf(ecore!EClass) and not ec.isInterface())) {%]
+    [%=c.getCreateSignature()%] {
+        OrientGraph txGraph = factory.getTx();
+        FramedTransactionalGraph<OrientGraph> manager = framedFactory.create(txGraph);
+        [%=c.getCreateReturnType()%] vertex = null;
+        try{
+            vertex = manager.addVertex("class:[%=c.getName()%]", [%=c.getJavaTypeName("V", "")%].class);
+[%      for (a in c.getEAttributes()) {%]
+            [%=a.getSetStatement("vertex")%]
+[%      }%]
+            manager.commit();
+        } catch (Exception e) {
+            manager.rollback();
+        }    
+        manager.shutdown();
+        return vertex;
+    }
+    
+    [%=c.getDeleteSignature()%] {
+        OrientGraph txGraph = factory.getTx();
+        FramedTransactionalGraph<OrientGraph> manager = framedFactory.create(txGraph);
+        try{
+            manager.removeVertex(vertex.asVertex());
+        } catch (Exception e) {
+            manager.rollback();
+        }    
+        manager.shutdown();
+    }
+    
+    [%=c.getUpdateSignature()%] {
+        OrientGraph txGraph = factory.getTx();
+        FramedTransactionalGraph<OrientGraph> manager = framedFactory.create(txGraph);
+        try{
+            [%=c.getCreateReturnType()%] persisted =  manager.getVertex(vertex.asVertex().getId(), [%=c.getCreateReturnType()%].class);     
+[%      for (a in c.getEAttributes()) {%]
+            [%=a.getUpdateStatement("vertex", "persisted")%]
+[%      }
+        for (r in c.getEReferences()) {%]
+            [%=r.getUpdateStatement("vertex", "persisted")%]
+[%      }%]
+            manager.commit();
+        } catch (Exception e) {
+            manager.rollback();
+        }    
+        manager.shutdown();
+    }
+    
+    [%=c.getGetByIdSignature()%] {
+        OrientGraph txGraph = factory.getTx();
+        FramedTransactionalGraph<OrientGraph> manager = framedFactory.create(txGraph);
+        [%=c.getCreateReturnType()%] vertex = null;
+        vertex = manager.frame(manager.getVertex(id), [%=c.getCreateReturnType()%].class);            
+        manager.shutdown();
+        return vertex;
+    }
+    
+[%      var index = c.getIndex();
+        if (index <> null) {
+            if ("NOTUNIQUE".isSubstringOf(index.at(1))) {%]
+    [%=c.getGetByIndexSignature(true)%] {
+        OrientGraph txGraph = factory.getTx();
+        FramedTransactionalGraph<OrientGraph> manager = framedFactory.create(txGraph);
+        List<[%=c.getCreateReturnType()%]> vertices = new ArrayList<>();
+        for (Vertex v : manager.getVertices("[%=c.getName()%].[%=index.at(0).toLowerCase()%]", [%=index.at(0).toLowerCase()%])) {
+            vertices.add(manager.frame(v, [%=c.getCreateReturnType()%].class));
+        }
+        manager.shutdown();
+        return vertices;
+    }    
+[%          }
+            else{%]
+    [%=c.getGetByIndexSignature(false)%] {
+        OrientGraph txGraph = factory.getTx();
+        FramedTransactionalGraph<OrientGraph> manager = framedFactory.create(txGraph);
+        [%=c.getCreateReturnType()%] vertex = null;
+        for (Vertex v : manager.getVertices("[%=c.getName()%].[%=index.at(0).toLowerCase()%]", [%=index.at(0).toLowerCase()%])) {
+            vertex = ([%=c.getCreateReturnType()%] ) v;
+            break;
+        }
+        manager.shutdown();
+        return vertex;
+    }    
+[%          }
+        }
+    }%]

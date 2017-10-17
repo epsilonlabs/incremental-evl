@@ -2,59 +2,42 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="eol" nsURI="http://www.eclipse.epsilon.org/incremental/eol/ExecutionTrace"
     nsPrefix="eol_et">
-  <eClassifiers xsi:type="ecore:EClass" name="ExecutionContext" eSuperTypes="#//TraceElement">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="for" eType="#//Script">
-      <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
-        <details key="edge" value="true"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="traces" upperBound="-1"
-        eType="#//Trace" eOpposite="#//Trace/createdIn"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="uses" upperBound="-1" eType="#//ModelReference"
-        eOpposite="#//ModelReference/executionContext">
-      <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
-        <details key="edge" value="true"/>
-      </eAnnotations>
-    </eStructuralFeatures>
+  <eClassifiers xsi:type="ecore:EClass" name="IdElement" abstract="true" interface="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
+        changeable="false" iD="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Script" eSuperTypes="#//TraceElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//Script/scriptId">
-      <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TraceElement" abstract="true" interface="true"
+      eSuperTypes="#//IdElement">
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//TraceElement/uri">
+      <details key="type" value="UNIQUE_HASH_INDEX"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="scriptId" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="moduleElements" upperBound="-1"
-        eType="#//ModuleElement" eOpposite="#//ModuleElement/definedIn"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="uri" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//AnyURI"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ModuleElement" eSuperTypes="#//TraceElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//ModuleElement/moduleId">
-      <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
-    </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="moduleId" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="definedIn" lowerBound="1"
-        eType="#//Script" eOpposite="#//Script/moduleElements">
+  <eClassifiers xsi:type="ecore:EClass" name="Trace" abstract="true" eSuperTypes="#//IdElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="blocks" lowerBound="1"
+        upperBound="-1" eType="#//ExecutableBlock" eOpposite="#//ExecutableBlock/traces">
       <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
         <details key="edge" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="traces" upperBound="-1"
-        eType="#//Trace" eOpposite="#//Trace/traces"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Trace" eSuperTypes="#//TraceElement">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="createdIn" lowerBound="1"
-        eType="#//ExecutionContext" eOpposite="#//ExecutionContext/traces">
+  <eClassifiers xsi:type="ecore:EClass" name="ExecutableBlock" abstract="true" eSuperTypes="#//TraceElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="traces" ordered="false"
+        upperBound="-1" eType="#//Trace" eOpposite="#//Trace/blocks"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="owner" eType="#//ModuleElement"
+        eOpposite="#//ModuleElement/executableblocks">
       <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
         <details key="edge" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="traces" lowerBound="1"
-        eType="#//ModuleElement" eOpposite="#//ModuleElement/traces">
-      <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
-        <details key="edge" value="true"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="involves" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="result" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModuleElement" abstract="true" eSuperTypes="#//TraceElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="executableblocks" upperBound="-1"
+        eType="#//ExecutableBlock" eOpposite="#//ExecutableBlock/owner"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ElementTrace" eSuperTypes="#//Trace">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
         eType="#//ModelElement" eOpposite="#//ModelElement/traces">
       <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
         <details key="edge" value="true"/>
@@ -67,50 +50,25 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ModelReference" eSuperTypes="#//TraceElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//ModelReference/uri">
-      <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
-    </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="uri" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="executionContext" upperBound="-1"
-        eType="#//ExecutionContext" eOpposite="#//ExecutionContext/uses"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="owns" upperBound="-1" eType="#//ModelElement"
-        eOpposite="#//ModelElement/owner">
-      <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
-        <details key="edge" value="true"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelElement" eSuperTypes="#//TraceElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//ModelElement/elementId">
-      <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
-    </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="elementId" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="traces" upperBound="-1"
-        eType="#//Trace" eOpposite="#//Trace/involves"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="contains" upperBound="-1"
-        eType="#//Property" eOpposite="#//Property/modelElement">
-      <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
-        <details key="edge" value="true"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="owner" lowerBound="1" eType="#//ModelReference"
-        eOpposite="#//ModelReference/owns"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="traces" ordered="false"
+        upperBound="-1" eType="#//ElementTrace" eOpposite="#//ElementTrace/elements"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Property" eSuperTypes="#//TraceElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//Property/name">
-      <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
-    </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="modelElement" lowerBound="1"
-        eType="#//ModelElement" eOpposite="#//ModelElement/contains"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="traces" upperBound="-1"
-        eType="#//Trace" eOpposite="#//Trace/accesses"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="traces" ordered="false"
+        upperBound="-1" eType="#//ElementTrace" eOpposite="#//ElementTrace/accesses"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="TraceElement" abstract="true" interface="true">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-        changeable="false" iD="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TypeTrace" eSuperTypes="#//Trace">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="types" lowerBound="1" upperBound="-1"
+        eType="#//Type" eOpposite="#//Type/traces">
+      <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
+        <details key="edge" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Type" eSuperTypes="#//TraceElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="traces" ordered="false"
+        upperBound="-1" eType="#//TypeTrace" eOpposite="#//TypeTrace/types"/>
   </eClassifiers>
 </ecore:EPackage>

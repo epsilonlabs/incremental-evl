@@ -6,8 +6,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.epsilon.eol.IEolModule;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.incremental.dt.launching.EclipseIncrementalContextManager;
+import org.eclipse.epsilon.evl.IncrementalEvlModule;
 import org.eclipse.epsilon.evl.dt.launching.EvlLaunchConfigurationDelegate;
-import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
 
 public class EvlIncrementalLaunchConfigurationDelegate extends EvlLaunchConfigurationDelegate {
 	
