@@ -9,6 +9,8 @@
  * Contributors:
  *     Horacio Hoyos Rodriguez - initial API and implementation
  ******************************************************************************/
+ 
+ 
 /**
  * Create an abstract implementation of IModel that implements methods that depend on the types
  * defined by the metamodel. The main idea is to provide a Model that conforms to a specific
@@ -20,10 +22,11 @@
 var eClasses = p.getEClassifiers().select(ec | ec.isTypeOf(ecore!EClass) and not ec.isInterface());
 // And the implementable ones
 var eClassesImpl = eClasses.select(ec | not ec.isAbstract);
-
- 
 %]
-/*******************************************************************************
+ /*******************************************************************************
+ * This file was automatically generated on: [%=today%].
+ * Only modify protected regions indicated by "<!-- -->"
+ *
  * Copyright (c) [%=year%] The University of York.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -31,10 +34,6 @@ var eClassesImpl = eClasses.select(ec | not ec.isAbstract);
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  ******************************************************************************/
-/*******************************************************************************
- ** [%=p.getName().firstToUpperCase()%] model Interface automatically generated on [%=today%].
- ** Do not modify this file.
- *******************************************************************************/
 package [%=qp%].models;
 
 import java.util.Arrays;
