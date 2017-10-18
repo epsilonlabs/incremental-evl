@@ -124,12 +124,12 @@ public class [%=p.getName().firstToUpperCase()%]OrientDbDAO {
             [%=cType%]  = g.createVertexType([%=cName%].VERTEX_TYPE);[%
         for (a in c.getEAllAttributes().select(a | not a.isId())) {
             var oType = a.getEAttributeType().getInstanceClassName().split("\\.").last().toUpperCase();
-            if (a.isMany()) oType = "EMBEDDEDLIST";%]       
-            [%=cType%].createProperty([%=cName%].[%=a.getName().splitCamelCase("_").toUpperCase()%], OType.[%=oType%]);
-[%      }
+            if (a.isMany()) oType = "EMBEDDEDLIST";%]    
+            [%=cType%].createProperty([%=cName%].[%=a.getName().splitCamelCase("_").toUpperCase()%], OType.[%=oType%]);[%
+        }
         var index = c.getIndex();
         if (index <> null) {%]
-            
+        
             g.createKeyIndex([%=cName%].VERTEX_INDEX, Vertex.class,
                     new Parameter<String, String>("type", "[%=index.at(1)%]"),
                     new Parameter<String, String>("class", [%=cName%].VERTEX_TYPE));
@@ -195,11 +195,11 @@ for (ec in EClass.all.select(ec | not ec.isAbstract() and not ec.isInterface()))
             properties.add("\"" + ea.name + "\"");
             properties.add(ea.name);        
     }%]
-        OrientVertex v = null;
+        OrientVertex vertex = null;
         try {[%
     if (properties.isEmpty()) {%]
         
-            v = graph.addVertex("class:[%=ec.name%]");
+            vertex = graph.addVertex("class:[%=ec.name%]");
             graph.commit();   
         } catch (Exception e) {
             graph.rollback();
@@ -209,11 +209,11 @@ for (ec in EClass.all.select(ec | not ec.isAbstract() and not ec.isInterface()))
         logger.debug("Record created - [%=ec.name%]");
 [%  } else {%]
 
-            v = graph.addVertex("class:[%=ec.name%]", [%=properties.concat(", ")%]);
+            vertex = graph.addVertex("class:[%=ec.name%]", [%=properties.concat(", ")%]);
             graph.commit();
         } catch (ORecordDuplicatedException e) {
             logger.debug("Duplicate Record creation - [%=ec.name%]:{}", [%=index.name%]);
-            v = (OrientVertex) graph.getVertices("[%=ec.name%].[%=index.name%]", [%=index.name%]).iterator().next();
+            vertex = (OrientVertex) graph.getVertices("[%=ec.name%].[%=index.name%]", [%=index.name%]).iterator().next();
             // TODO we would probably want a null test and/or a NoSuchElementException handler
         } catch (Exception e2) {
             graph.rollback();
@@ -222,8 +222,9 @@ for (ec in EClass.all.select(ec | not ec.isAbstract() and not ec.isInterface()))
         }
         logger.debug("Record created - [%=ec.name%]:{}", [%=index.name%]);
 [%  }%]
+        [%=ec.name%]OrientDbImpl impl = new [%=ec.name%]OrientDbImpl(vertex);
         graph.shutdown();
-        return new [%=ec.name%]OrientDbImpl(v);
+        return impl;
     }
     
     /**
@@ -234,35 +235,41 @@ for (ec in EClass.all.select(ec | not ec.isAbstract() and not ec.isInterface()))
     [%=ec.getDeleteSignature()%] throws EolIncrementalExecutionException {
         OrientGraph graph = factory.getTx();
         try{
-            graph.removeVertex(vertex.getDelegate());
+            impl.getDelegate().attach(graph);
+            graph.removeVertex(impl.getDelegate());
         } catch (Exception e) {
             graph.rollback();
-            logger.debug("Error in Record deletion - [%=ec.name%]:{}", vertex.getDelegate(), e);
+            logger.debug("Error in Record deletion - [%=ec.name%]:{}", impl.getDelegate(), e);
             throw new EolIncrementalExecutionException("Error deleting [%=ec.name%]", e);
         }
-        logger.debug("Record deleted - [%=ec.name%]:{}", vertex);
+        logger.debug("Record deleted - [%=ec.name%]:{}", impl);
         graph.shutdown();
     }
     
     /**
-     * Update a a vertex of type [%=ec.name%]. This only updates the vertex properties,
-     * not its references!
+     * Update a a vertex of type [%=ec.name%]. The passed implementation is no longer valid after
+     * updating so this method returns a new wrapper implementation.
+     *
+     * This only updates the vertex properties, not its references!
      * 
-     * * @throws EolIncrementalExecutionException if there was an error updating the vertex
+     * @throws EolIncrementalExecutionException if there was an error updating the vertex
      */
     [%=ec.getUpdateSignature()%] throws EolIncrementalExecutionException {
         OrientGraph graph = factory.getTx();
+        OrientVertex vertex = impl.getDelegate();
         try{
-            vertex.getDelegate().attach(graph);
-            vertex.getDelegate().save();
-            vertex.getDelegate().detach();
+            vertex.attach(graph);
+            vertex.save();
+            vertex = graph.getVertex(vertex.getId());
         } catch (Exception e) {
             graph.rollback();
-            logger.debug("Error in Record update - [%=ec.name%]:{}", vertex.getDelegate(), e);
+            logger.debug("Error in Record update - [%=ec.name%]:{}", vertex, e);
             throw new EolIncrementalExecutionException("Error updating [%=ec.name%]", e);
         }
         logger.debug("Record updated - [%=ec.name%]:{}", vertex);
+        impl = new [%=ec.name%]OrientDbImpl(vertex);
         graph.shutdown();
+        return impl;
     }
     
     /**
@@ -278,8 +285,9 @@ for (ec in EClass.all.select(ec | not ec.isAbstract() and not ec.isInterface()))
             logger.debug("Finding Record by id was null - [%=ec.name%]:{}", id);
             throw new EolIncrementalExecutionException("No [%=ec.name%] found with id: " + id);
         }
+        [%=ec.name%]OrientDbImpl impl = new [%=ec.name%]OrientDbImpl(vertex);
         graph.shutdown();
-        return new [%=ec.name%]OrientDbImpl(vertex);
+        return impl;
     }
     
 [%  if (index.isDefined()) {%]    
@@ -296,8 +304,9 @@ for (ec in EClass.all.select(ec | not ec.isAbstract() and not ec.isInterface()))
             logger.debug("Finding Record by index was null - [%=ec.name%]:{}", [%=index.name%]);
             throw new EolIncrementalExecutionException("No [%=ec.name%] found with index ([%=index.name%]): " + [%=index.name%]);
         }
+        [%=ec.name%]OrientDbImpl impl = new [%=ec.name%]OrientDbImpl(vertex);
         graph.shutdown();
-        return new [%=ec.name%]OrientDbImpl(vertex);
+        return impl;
     }
     
 [%  }
@@ -320,14 +329,14 @@ public [%=self.getJavaTypeName("", "OrientDbImpl")%] create[%=self.name.firstToU
 // Create the method signature for a DELETE operation
 @template
 operation EClass getDeleteSignature() {%]
-public void delete[%=self.name%]([%=self.getJavaTypeName("", "OrientDbImpl")%] vertex)
+public void delete[%=self.name%]([%=self.getJavaTypeName("", "OrientDbImpl")%] impl)
 [%
 }
 
 // Create the method signature for an UPDATE operation
 @template
 operation EClass getUpdateSignature() {%]
-public void update[%=self.name%]([%=self.getJavaTypeName("", "OrientDbImpl")%] vertex)
+public [%=self.getJavaTypeName("", "OrientDbImpl")%] update[%=self.name%]([%=self.getJavaTypeName("", "OrientDbImpl")%] impl)
 [%
 }
 

@@ -76,7 +76,10 @@ for (er in ec.getEAllReferences()) {
     if (not er.isMany()) {%]
     protected V [%=er.getGetterMethodName()%](GremlinPipeline<V, V> pipeline) {
         pipeline.start(delegate).[%=direction%]("[%=er.name%]");
-        return pipeline.next();            
+        if (pipeline.hasNext()) {
+            return pipeline.next();
+        }
+        return null;
     }
 [%  }
     else {%]

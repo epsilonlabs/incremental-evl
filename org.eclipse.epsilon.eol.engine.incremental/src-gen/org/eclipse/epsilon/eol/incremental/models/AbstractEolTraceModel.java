@@ -1,4 +1,7 @@
-/*******************************************************************************
+ /*******************************************************************************
+ * This file was automatically generated on: 2017-10-18.
+ * Only modify protected regions indicated by "<!-- -->"
+ *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -6,10 +9,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  ******************************************************************************/
-/*******************************************************************************
- ** Eol model Interface automatically generated on 2017-10-17.
- ** Do not modify this file.
- *******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.models;
 
 import java.util.Arrays;

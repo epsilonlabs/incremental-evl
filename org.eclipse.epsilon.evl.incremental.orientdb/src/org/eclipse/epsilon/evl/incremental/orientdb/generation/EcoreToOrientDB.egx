@@ -35,6 +35,22 @@ rule Evl2TraceModelTest
   
 }
 
+rule Evl2DAOTest
+  transform p : EPackage {
+  
+  parameters {
+    var params : new Map;
+    params.put("today", now.toString());
+    params.put("qp", qualified_package);
+    return params;
+  }
+  guard: p.name == "evl"  
+  template : "EPackage2OrientDbDAOTest.egl"
+  target : "../../../../../../../../../org.eclipse.epsilon.evl.incremental.orientdb.test/src-gen/org/eclipse/epsilon/evl/incremental/orientdb/"
+            + "test/execute/" + p.getName().firstToUpperCase() + "DAOTests.java"
+  
+}
+
 rule EClass2OrientDbImpl
   transform ec : EClass {
   

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: Wed Oct 18 11:16:55 BST 2017.
+ * This file was automatically generated on: Wed Oct 18 16:50:26 BST 2017.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2016 University of York
@@ -52,8 +52,8 @@ public class ModelElementOrientDbImpl extends AbstractModelElementImpl<OrientVer
                     String.format("Delegate vertex is not of the correct type. Got: %s, expected: %s",
                         delegate.getLabel(), "ModelElement"));
         }
-        delegate.detach();
         initTraces();
+        delegate.detach();      // After information has been cached, detach.
     }
 
     @Override
@@ -70,12 +70,12 @@ public class ModelElementOrientDbImpl extends AbstractModelElementImpl<OrientVer
 
     @Override
     public String getUri() {
-        return (String) delegate.getProperties().get("uri");
+        return (String) delegate.getProperty("uri");
     }
     
     @Override
     public void setUri(String value) {
-        delegate.getProperties().put("ModelElement", value);
+        delegate.setProperty("uri", value);
     }    
     @Override
     public Set<ElementTrace> getTraces() {

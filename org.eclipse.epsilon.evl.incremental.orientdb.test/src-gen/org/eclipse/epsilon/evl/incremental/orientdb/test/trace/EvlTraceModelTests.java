@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: Wed Oct 18 11:16:55 BST 2017.
+ * This file was automatically generated on: Wed Oct 18 16:50:26 BST 2017.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2016 University of York
@@ -13,7 +13,6 @@ package org.eclipse.epsilon.evl.incremental.orientdb.test.trace;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 
 import java.util.Iterator;
 
@@ -24,25 +23,18 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.impls.orient.OrientEdgeType;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
-import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
 
 /**
- * The OrientDbDAO provides methods for CRUD operations on the graph db. 
+ * Test the implementaion of the TraceModel that uses OrientDb. 
  */
 public class EvlTraceModelTests {
 
 	private OrientGraphFactory factory;
     
     @Before
-    /**
-     * Create some data in the graph
-     * - One vertex of each type so we can check its properties.
-     * - One each of each type so we can check navigation
-     */ 
     public void setupDb() {
         factory = new OrientGraphFactory("memory:evlTest");
         EvlOrientDbDAO.setupSchema(factory);
@@ -72,10 +64,10 @@ public class EvlTraceModelTests {
         graph.addEdge("class:Blocks", elementtrace, guard, null);
         graph.addEdge("class:Elements", elementtrace, modelelement, null);
         graph.addEdge("class:Accesses", elementtrace, property, null);
-        graph.addEdge("class:Blocks", typetrace, check, null);
+        graph.addEdge("class:Blocks", typetrace, guard, null);
         graph.addEdge("class:Types", typetrace, type, null);
-        graph.addEdge("class:Owner", guard, evlcontext, null);
-        graph.addEdge("class:Owner", check, evlcontext, null);
+        graph.addEdge("class:Owner", guard, evlconstraint, null);
+        graph.addEdge("class:Owner", check, evlconstraint, null);
         graph.addEdge("class:Owner", message, evlcontext, null);
         graph.commit();
         graph.shutdown();
@@ -85,46 +77,6 @@ public class EvlTraceModelTests {
     public void setupDB() {
         factory.drop();
         factory.close();
-    }
-    
-    @Test
-    // FIXME This should be in the DAO tests
-    public void testSchemaIsComplete() {
-        OrientGraph graph = factory.getTx();
-        OrientVertexType vt;
-        vt = graph.getVertexType("EvlConstraint");
-        assertThat(vt, is(notNullValue()));
-        vt = graph.getVertexType("EvlContext");
-        assertThat(vt, is(notNullValue()));
-        vt = graph.getVertexType("Guard");
-        assertThat(vt, is(notNullValue()));
-        vt = graph.getVertexType("Check");
-        assertThat(vt, is(notNullValue()));
-        vt = graph.getVertexType("Message");
-        assertThat(vt, is(notNullValue()));
-        vt = graph.getVertexType("ElementTrace");
-        assertThat(vt, is(notNullValue()));
-        vt = graph.getVertexType("ModelElement");
-        assertThat(vt, is(notNullValue()));
-        vt = graph.getVertexType("Property");
-        assertThat(vt, is(notNullValue()));
-        vt = graph.getVertexType("TypeTrace");
-        assertThat(vt, is(notNullValue()));
-        vt = graph.getVertexType("Type");
-        assertThat(vt, is(notNullValue()));
-
-        OrientEdgeType et;
-        et = graph.getEdgeType("Blocks");
-        assertThat(et, is(notNullValue()));
-        et = graph.getEdgeType("Owner");
-        assertThat(et, is(notNullValue()));
-        et = graph.getEdgeType("Elements");
-        assertThat(et, is(notNullValue()));
-        et = graph.getEdgeType("Accesses");
-        assertThat(et, is(notNullValue()));
-        et = graph.getEdgeType("Types");
-        assertThat(et, is(notNullValue()));
-        graph.shutdown();
     }
     
     @Test
@@ -240,6 +192,24 @@ public class EvlTraceModelTests {
     }
     
     @Test
+    public void testTypeTracePattern() {
+        OrientGraph graph = factory.getTx();
+        Iterator<Vertex> it = graph.getVerticesOfClass("TypeTrace").iterator();
+        TypeTraceOrientDbImpl impl = new TypeTraceOrientDbImpl((OrientVertex) it.next());
+        OrientVertex refV;
+        Iterator<Vertex> refIt;
+        refIt = graph.getVerticesOfClass("Type").iterator();
+        refV = (OrientVertex) refIt.next();
+        TypeOrientDbImpl type = (TypeOrientDbImpl) impl.getTypes().get(0);
+        assertThat(refV, is(type.getDelegate()));
+        refIt = graph.getVerticesOfClass("Guard").iterator();
+        refV = (OrientVertex) refIt.next();
+        GuardOrientDbImpl guard = (GuardOrientDbImpl) impl.getBlocks().get(0);
+        assertThat(refV, is(guard.getDelegate()));
+        graph.shutdown();
+    }
+    
+    @Test
     public void testElementTracePattern() {
         OrientGraph graph = factory.getTx();
         Iterator<Vertex> it = graph.getVerticesOfClass("ElementTrace").iterator();
@@ -262,20 +232,16 @@ public class EvlTraceModelTests {
     }
     
     @Test
-    public void testTypeTracePattern() {
+    public void testGuardPattern() {
         OrientGraph graph = factory.getTx();
-        Iterator<Vertex> it = graph.getVerticesOfClass("TypeTrace").iterator();
-        TypeTraceOrientDbImpl impl = new TypeTraceOrientDbImpl((OrientVertex) it.next());
+        Iterator<Vertex> it = graph.getVerticesOfClass("Guard").iterator();
+        GuardOrientDbImpl impl = new GuardOrientDbImpl((OrientVertex) it.next());
         OrientVertex refV;
         Iterator<Vertex> refIt;
-        refIt = graph.getVerticesOfClass("Type").iterator();
+        refIt = graph.getVerticesOfClass("EvlConstraint").iterator();
         refV = (OrientVertex) refIt.next();
-        TypeOrientDbImpl type = (TypeOrientDbImpl) impl.getTypes().get(0);
-        assertThat(refV, is(type.getDelegate()));
-        refIt = graph.getVerticesOfClass("Check").iterator();
-        refV = (OrientVertex) refIt.next();
-        CheckOrientDbImpl check = (CheckOrientDbImpl) impl.getBlocks().get(0);
-        assertThat(refV, is(check.getDelegate()));
+        EvlConstraintOrientDbImpl evlconstraint = (EvlConstraintOrientDbImpl) impl.getOwner();
+        assertThat(refV, is(evlconstraint.getDelegate()));
         graph.shutdown();
     }
     
@@ -300,24 +266,10 @@ public class EvlTraceModelTests {
         CheckOrientDbImpl impl = new CheckOrientDbImpl((OrientVertex) it.next());
         OrientVertex refV;
         Iterator<Vertex> refIt;
-        refIt = graph.getVerticesOfClass("EvlContext").iterator();
+        refIt = graph.getVerticesOfClass("EvlConstraint").iterator();
         refV = (OrientVertex) refIt.next();
-        EvlContextOrientDbImpl evlcontext = (EvlContextOrientDbImpl) impl.getOwner();
-        assertThat(refV, is(evlcontext.getDelegate()));
-        graph.shutdown();
-    }
-    
-    @Test
-    public void testGuardPattern() {
-        OrientGraph graph = factory.getTx();
-        Iterator<Vertex> it = graph.getVerticesOfClass("Guard").iterator();
-        GuardOrientDbImpl impl = new GuardOrientDbImpl((OrientVertex) it.next());
-        OrientVertex refV;
-        Iterator<Vertex> refIt;
-        refIt = graph.getVerticesOfClass("EvlContext").iterator();
-        refV = (OrientVertex) refIt.next();
-        EvlContextOrientDbImpl evlcontext = (EvlContextOrientDbImpl) impl.getOwner();
-        assertThat(refV, is(evlcontext.getDelegate()));
+        EvlConstraintOrientDbImpl evlconstraint = (EvlConstraintOrientDbImpl) impl.getOwner();
+        assertThat(refV, is(evlconstraint.getDelegate()));
         graph.shutdown();
     }
     

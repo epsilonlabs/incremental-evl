@@ -71,10 +71,10 @@ for (er in ec.getEAllReferences()) {
                     String.format("Delegate vertex is not of the correct type. Got: %s, expected: %s",
                         delegate.getLabel(), "[%=ec.name%]"));
         }
-        delegate.detach();
 [%for (er in ec.getEAllReferences()) {%]
         init[%=er.name.firstToUpperCase()%]();
 [%}%]
+        delegate.detach();      // After information has been cached, detach.
     }
 
     @Override
@@ -96,12 +96,12 @@ for (er in ec.getEAllReferences()) {
 
     @Override
     public [%=ea.makeGetterSignature(multi)%] {
-        return ([%=ea.getGetterReturnType(multi)%]) delegate.getProperties().get("[%=ea.name%]");
+        return ([%=ea.getGetterReturnType(multi)%]) delegate.getProperty("[%=ea.name%]");
     }
     
     @Override
     public [%=ea.makeSetterSignature(multi)%] {
-        delegate.getProperties().put("[%=ec.name%]", value);
+        delegate.setProperty("[%=ea.name%]", value);
     }    
 [%}
 for (er in ec.getEAllReferences()) {
@@ -135,16 +135,18 @@ for (er in ec.getEAllReferences()) {
 operation EReference makeInitMethodSingle() {
     var retType = self.getEReferenceType().getJavaTypeName("", "");%]
         OrientVertex vertex = [%=self.getGetterMethodName()%](pipeline);
+        if (vertex != null) {
 [%  if (self.getEReferenceType().isAbstract()) {%]
-        switch(vertex.getLabel()) {
+            switch(vertex.getLabel()) {
 [%      for(sec in self.getEReferenceType().getEAllSubclasses()){%]
-        case("[%=sec.name%]"):
-            [%=self.name%] = new [%=sec.name%]OrientDbImpl(vertex);
-            break;
+	        case("[%=sec.name%]"):
+	            [%=self.name%] = new [%=sec.name%]OrientDbImpl(vertex);
+	            break;
 [%      }%]      
-        default:
-            throw new IllegalArgumentException("Unknown [%=self.getEReferenceType().name%] subclass " + vertex.getLabel());
-        }
+	        default:
+	            throw new IllegalArgumentException("Unknown [%=self.getEReferenceType().name%] subclass " + vertex.getLabel());
+	        }
+	    }
 [%  }
     else {%]
         [%=retType%] vImpl = new [%=retType%]OrientDbImpl(vertex);

@@ -7,7 +7,7 @@
  * 
  ******************************************************************************/
  /*******************************************************************************
- ** ExecutableBlock implementation automatically generated on 2017-10-17.
+ ** ExecutableBlock implementation automatically generated on 2017-10-18.
  ** Do not modify this file.
  *******************************************************************************/
  
@@ -63,7 +63,10 @@ public abstract class AbstractExecutableBlockImpl<V> implements ExecutableBlock 
      */
     protected V getOwner(GremlinPipeline<V, V> pipeline) {
         pipeline.start(delegate).out("owner");
-        return pipeline.next();            
+        if (pipeline.hasNext()) {
+            return pipeline.next();
+        }
+        return null;
     }
     
 

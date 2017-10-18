@@ -7,7 +7,7 @@
  * 
  ******************************************************************************/
 /*******************************************************************************
- ** Evl model Interface automatically generated on 2017-10-17.
+ ** Evl model Interface automatically generated on 2017-10-18.
  ** Do not modify this file.
  *******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.models;

@@ -20,7 +20,6 @@ package [%=qp%].test.trace;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 
 import java.util.Iterator;
 
@@ -31,25 +30,18 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.impls.orient.OrientEdgeType;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
-import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
 
 /**
- * The OrientDbDAO provides methods for CRUD operations on the graph db. 
+ * Test the implementaion of the TraceModel that uses OrientDb. 
  */
 public class [%=p.getName().firstToUpperCase()%]TraceModelTests {
 
 	private OrientGraphFactory factory;
     
     @Before
-    /**
-     * Create some data in the graph
-     * - One vertex of each type so we can check its properties.
-     * - One each of each type so we can check navigation
-     */ 
     public void setupDb() {
         factory = new OrientGraphFactory("memory:evlTest");
         EvlOrientDbDAO.setupSchema(factory);
@@ -109,32 +101,6 @@ for (t in EClass.all.select(ec | ec.getESuperTypes.includes(EClass.all.selectOne
     public void setupDB() {
         factory.drop();
         factory.close();
-    }
-    
-    @Test
-    // FIXME This should be in the DAO tests
-    public void testSchemaIsComplete() {
-        OrientGraph graph = factory.getTx();
-        OrientVertexType vt;
-[%
-// Test that all vertex types where created in the DB
-for (ec in EClass.all.select(ec | not ec.isAbstract() and not ec.isInterface())) {%]
-        vt = graph.getVertexType("[%=ec.name%]");
-        assertThat(vt, is(notNullValue()));
-[%}%]
-
-        OrientEdgeType et;
-[%
-// Test that all edge types where created in the DB
-for (e in ecore!EClass.all
-            .collect(c | c.getEReferences())
-            .flatten()
-            .select(r | r.isEdge())
-            .collect(r | r.name.firstToUpperCase())) {%]
-        et = graph.getEdgeType("[%=e%]");
-        assertThat(et, is(notNullValue()));
-[%}%]
-        graph.shutdown();
     }
     
 [%

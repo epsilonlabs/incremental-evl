@@ -53,6 +53,7 @@ public abstract class Abstract[%=ec.name%]Impl<V> extends Abstract[%=superEc.nam
     }
     
 [%
+// FIXME The EOL script uses the same code, reuse that!!
 for (r in ec.getEReferences()) {
     var direction = "in";
     if (r.isEdge()) { direction = "out"; }%]
@@ -65,7 +66,10 @@ for (r in ec.getEReferences()) {
     if (not er.isMany()) {%]
     protected V [%=er.getGetterMethodName()%](GremlinPipeline<V, V> pipeline) {
         pipeline.start(delegate).[%=direction%]("[%=er.name%]");
-        return pipeline.next();            
+        if (pipeline.hasNext()) {
+            return pipeline.next();
+        }
+        return null;
     }
 [%  }
     else {%]

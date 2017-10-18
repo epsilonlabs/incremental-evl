@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: Wed Oct 18 11:16:55 BST 2017.
+ * This file was automatically generated on: Wed Oct 18 16:50:26 BST 2017.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2016 University of York
@@ -53,10 +53,10 @@ public class ElementTraceOrientDbImpl extends AbstractElementTraceImpl<OrientVer
                     String.format("Delegate vertex is not of the correct type. Got: %s, expected: %s",
                         delegate.getLabel(), "ElementTrace"));
         }
-        delegate.detach();
         initBlocks();
         initElements();
         initAccesses();
+        delegate.detach();      // After information has been cached, detach.
     }
 
     @Override
