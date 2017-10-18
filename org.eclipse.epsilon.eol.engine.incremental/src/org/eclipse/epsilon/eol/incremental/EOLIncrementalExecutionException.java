@@ -11,7 +11,7 @@
 package org.eclipse.epsilon.eol.incremental;
 
 
-public class EOLIncrementalExecutionException extends Exception {
+public class EolIncrementalExecutionException extends Exception {
 
 	/**
 	 * 
@@ -19,12 +19,12 @@ public class EOLIncrementalExecutionException extends Exception {
 	private static final long serialVersionUID = -6474163903079549097L;
 
 	
-	public EOLIncrementalExecutionException(String string, Exception e) {
+	public EolIncrementalExecutionException(String string, Exception e) {
 		super(string, e);
 	}
 
 
-	public EOLIncrementalExecutionException(String string) {
+	public EolIncrementalExecutionException(String string) {
 		super(string);
 	}
 

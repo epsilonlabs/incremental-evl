@@ -50,7 +50,7 @@ public class [%=p.getName().firstToUpperCase()%]TraceModelTests {
      * - One vertex of each type so we can check its properties.
      * - One each of each type so we can check navigation
      */ 
-    public void setupSchema() {
+    public void setupDb() {
         factory = new OrientGraphFactory("memory:evlTest");
         EvlOrientDbDAO.setupSchema(factory);
         OrientGraph graph = factory.getTx();
@@ -112,6 +112,7 @@ for (t in EClass.all.select(ec | ec.getESuperTypes.includes(EClass.all.selectOne
     }
     
     @Test
+    // FIXME This should be in the DAO tests
     public void testSchemaIsComplete() {
         OrientGraph graph = factory.getTx();
         OrientVertexType vt;

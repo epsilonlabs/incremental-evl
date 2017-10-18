@@ -71,6 +71,7 @@ for (er in ec.getEAllReferences()) {
                     String.format("Delegate vertex is not of the correct type. Got: %s, expected: %s",
                         delegate.getLabel(), "[%=ec.name%]"));
         }
+        delegate.detach();
 [%for (er in ec.getEAllReferences()) {%]
         init[%=er.name.firstToUpperCase()%]();
 [%}%]

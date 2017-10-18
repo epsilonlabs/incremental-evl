@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.epsilon.eol.incremental.EOLIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.generation.*;
 import org.eclipse.epsilon.eol.incremental.trace.ExecutionContext;
 import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
@@ -437,7 +437,7 @@ public class TraceArangoDbDAO {
     /*
      * Generic wrapper for executing queries on the db. Vertex are assumed to be returned.
      */
-    public <T, W extends TraceElement> List<W> executeQuery(String query, Map<String, Object> bindVars, Class<W> T) throws EOLIncrementalExecutionException {
+    public <T, W extends TraceElement> List<W> executeQuery(String query, Map<String, Object> bindVars, Class<W> T) throws EolIncrementalExecutionException {
         List<W > vertices = new ArrayList<>();
         try {
             ArangoCursor<W> result = arangoDB.db(dbName)
@@ -446,12 +446,12 @@ public class TraceArangoDbDAO {
                 vertices.add(result.next());
             }
         } catch (ArangoDBException ex) {
-            throw new EOLIncrementalExecutionException("Error executing query on DB.", ex);
+            throw new EolIncrementalExecutionException("Error executing query on DB.", ex);
         }
         return vertices;
     }
     
-    public void createEdge(Object from_id, Object to_id, String edgeCollection) throws EOLIncrementalExecutionException {
+    public void createEdge(Object from_id, Object to_id, String edgeCollection) throws EolIncrementalExecutionException {
         JSONObject edge = new JSONObject();
         edge.put("_from", from_id);
         edge.put("_to", to_id);
@@ -459,7 +459,7 @@ public class TraceArangoDbDAO {
             arangoDB.db(dbName).graph(graphName)
                 .edgeCollection(edgeCollection).insertEdge(edge.toJSONString());
         } catch (ArangoDBException ex) {
-            throw new EOLIncrementalExecutionException("Can't create edge in DB.", ex);
+            throw new EolIncrementalExecutionException("Can't create edge in DB.", ex);
         }
         
     }

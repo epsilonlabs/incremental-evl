@@ -12,7 +12,7 @@ package org.eclipse.epsilon.eol.incremental.execute;
 
 import java.util.List;
 
-import org.eclipse.epsilon.eol.incremental.EOLIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.models.ITraceModel;
 import org.eclipse.epsilon.incremental.trace.eol.Trace;
 
@@ -87,9 +87,9 @@ public interface IEolExecutionTraceManager {
 	 * @param scriptId the id of the ExL Script
 	 * @param models the list of models involved in the execution
 	 * 
-	 * @throws EOLIncrementalExecutionException If there is an exception adding the context to the trace model.
+	 * @throws EolIncrementalExecutionException If there is an exception adding the context to the trace model.
 	 */
-	void setExecutionContext(String scriptId, List<String> models) throws EOLIncrementalExecutionException;
+	void setExecutionContext(String scriptId, List<String> models) throws EolIncrementalExecutionException;
 	
 	/**
 	 * Creates traces for the properties accessed on a specific model element during the execution of a Epsilon module
@@ -124,9 +124,9 @@ public interface IEolExecutionTraceManager {
 	 * @param propertyName the property name
 	 *
 	 * @return the property
-	 * @throws EOLIncrementalExecutionException 
+	 * @throws EolIncrementalExecutionException 
 	 */
-	List<Trace> findExecutionTraces(String objectId, String propertyName) throws EOLIncrementalExecutionException;
+	List<Trace> findExecutionTraces(String objectId, String propertyName) throws EolIncrementalExecutionException;
 	
 	/**
 	 * Gets the execution traces related to this element. This allows coarse grained incremental execution for
@@ -135,15 +135,15 @@ public interface IEolExecutionTraceManager {
 	 * @param objectId the model object id
 	 * @return the element trace
 	 */
-	List<Trace> findExecutionTraces(String objectId) throws EOLIncrementalExecutionException;
+	List<Trace> findExecutionTraces(String objectId) throws EolIncrementalExecutionException;
 	
 	/**
 	 * Remove the trace information related to a specific object. This should be invoked when an element is deleted
 	 * from the model.
 	 * 
 	 * @param objectId the id of the object for which the trace information should be deleted.
-	 * @throws EOLIncrementalExecutionException
+	 * @throws EolIncrementalExecutionException
 	 */
-	void removeTraceInformation(String objectId) throws EOLIncrementalExecutionException;
+	void removeTraceInformation(String objectId) throws EolIncrementalExecutionException;
 
 }

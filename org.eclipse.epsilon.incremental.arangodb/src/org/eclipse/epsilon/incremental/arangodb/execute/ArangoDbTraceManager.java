@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.epsilon.common.util.StringProperties;
-import org.eclipse.epsilon.eol.incremental.EOLIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
 import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.incremental.generation.*;
@@ -131,7 +131,7 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 	}
 
 	@Override
-	public void batchExecutionStarted() throws EOLIncrementalExecutionException {
+	public void batchExecutionStarted() throws EolIncrementalExecutionException {
 		if (useDefaultCfg) {
 			arangoDB = new ArangoDB.Builder().build();
 		}
@@ -157,11 +157,11 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 				}
 				else {
 					System.err.println("Database not created: " + dbName);
-					throw new EOLIncrementalExecutionException("Failed to create the databse: " + dbName);
+					throw new EolIncrementalExecutionException("Failed to create the databse: " + dbName);
 				}
 			} catch (ArangoDBException e) {
 				System.err.println("Failed to create database: " + dbName + "; " + e.getMessage());
-				throw new EOLIncrementalExecutionException("Failed to create the databse: " + dbName);
+				throw new EolIncrementalExecutionException("Failed to create the databse: " + dbName);
 			} 
 		}
 		dao = new TraceArangoDbDAO(arangoDB, dbName, graphName);
@@ -221,7 +221,7 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 
 	@Override
 	public boolean createExecutionTrace(String moduleElementId, String elementId, String propertyName)
-			throws EOLIncrementalExecutionException {
+			throws EolIncrementalExecutionException {
 		
 		ModuleElement moduE = acquireModuleElement(moduleElementId);
 		ModelElement modeE = acquireModelElement(elementId);
@@ -238,7 +238,7 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 
 	@Override
 	public boolean createExecutionTraces(String moduleElementId, String elementId, List<String> properties)
-			throws EOLIncrementalExecutionException {
+			throws EolIncrementalExecutionException {
 		
 		for (String p : properties) {
 			if (!createExecutionTrace(moduleElementId, elementId, p)) {
@@ -249,7 +249,7 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 	}
 	
 	@Override
-	public void eventExecutionFinished() throws EOLIncrementalExecutionException {
+	public void eventExecutionFinished() throws EolIncrementalExecutionException {
 		// TODO Auto-generated method stub
 		
 	}
@@ -262,7 +262,7 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 	}
 
 	@Override
-	public List<Trace> findExecutionTraces(String objectId) throws EOLIncrementalExecutionException {
+	public List<Trace> findExecutionTraces(String objectId) throws EolIncrementalExecutionException {
 		String query = "FOR v,e,p IN 3 OUTBOUND @ecId @@I, INBOUND @@R, INBOUND @@C"
 				+ "			FILTER p.vertices[1].elementId == @elementId"
 				+ "			FILTER p.vertices[3]._id == @ecId"
@@ -281,7 +281,7 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 
 	@Override
 	public List<Trace> findExecutionTraces(String objectId, String propertyName)
-			throws EOLIncrementalExecutionException {
+			throws EolIncrementalExecutionException {
 		String query = "FOR v,e,p IN 4 OUTBOUND @ecId @@I, @@O, INBOUND @@A, @@R"
 				+ "			FILTER p.vertices[1].elementId == @elementId"
 				+ "			FILTER p.vertices[2].name == @name"
@@ -303,24 +303,24 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 
 	
 	@Override
-	public void liveExecutionFinished() throws EOLIncrementalExecutionException {
+	public void liveExecutionFinished() throws EolIncrementalExecutionException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void liveExecutionStarted() throws EOLIncrementalExecutionException {
+	public void liveExecutionStarted() throws EolIncrementalExecutionException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void setExecutionContext(String scriptId, List<String> models) throws EOLIncrementalExecutionException {
+	public void setExecutionContext(String scriptId, List<String> models) throws EolIncrementalExecutionException {
 		ExecutionContextArangoDbImpl ec = acquireExecutionContext(scriptId, models);
 		executionContextId = ec.getId();		
 	}
 
-	private ExecutionContextArangoDbImpl acquireExecutionContext(String scriptId, List<String> modelsIds) throws EOLIncrementalExecutionException {
+	private ExecutionContextArangoDbImpl acquireExecutionContext(String scriptId, List<String> modelsIds) throws EolIncrementalExecutionException {
 		ExecutionContextArangoDbImpl ec = findExecutionContext(scriptId, modelsIds);
 		if (ec == null) {
 			ec = createExecutionContext(scriptId, modelsIds);
@@ -328,7 +328,7 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 		return ec;
 	}
 
-	private ModelElement acquireModelElement(String elementId) throws EOLIncrementalExecutionException {
+	private ModelElement acquireModelElement(String elementId) throws EolIncrementalExecutionException {
 		ModelElement moduE = findModelElement(elementId);
 		if (moduE == null) {
 			moduE = createModelElement(elementId);
@@ -336,7 +336,7 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 		return moduE;
 	}
 
-	private ModuleElement acquireModuleElement(String moduleElementId) throws EOLIncrementalExecutionException {
+	private ModuleElement acquireModuleElement(String moduleElementId) throws EolIncrementalExecutionException {
 		
 		ModuleElement moduE = findModuleElement(moduleElementId);
 		if (moduE == null) {
@@ -345,7 +345,7 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 		return moduE;
 	}
 
-	private Trace acquireTrace(ModuleElement moduE, ModelElement modeE) throws EOLIncrementalExecutionException {
+	private Trace acquireTrace(ModuleElement moduE, ModelElement modeE) throws EolIncrementalExecutionException {
 		Trace trace = findTrace(moduE, modeE);
 		if (trace == null) {
 			trace = createTrace(moduE, modeE);
@@ -353,29 +353,29 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 		return trace;
 	}
 
-	private ExecutionContextArangoDbImpl createExecutionContext(String scriptId, List<String> modelsIds) throws EOLIncrementalExecutionException {
+	private ExecutionContextArangoDbImpl createExecutionContext(String scriptId, List<String> modelsIds) throws EolIncrementalExecutionException {
 		ExecutionContext ec = dao.createExecutionContext(scriptId, modelsIds);
 		if (ec == null) {
-			throw new EOLIncrementalExecutionException("Error creating the DB vertex in the DB.");
+			throw new EolIncrementalExecutionException("Error creating the DB vertex in the DB.");
 		}
 		return (ExecutionContextArangoDbImpl) ec;
 	}
 
-	private ModelElement createModelElement(String elementId) throws EOLIncrementalExecutionException {
+	private ModelElement createModelElement(String elementId) throws EolIncrementalExecutionException {
 		ModelElement me = dao.createModelElement(elementId);
 		dao.createEdge(executionContextId, me.getId(), "Involves");
 		return me;
 	}
 	
 	
-	private ModuleElement createModuleElement(String moduleElementId) throws EOLIncrementalExecutionException {
+	private ModuleElement createModuleElement(String moduleElementId) throws EolIncrementalExecutionException {
 		
 		ModuleElement me = dao.createModuleElement(moduleElementId);
 		dao.createEdge(executionContextId, me.getId(), "For");
 		return me;
 	}
 
-	private Trace createTrace(ModuleElement moduE, ModelElement modeE) throws EOLIncrementalExecutionException {
+	private Trace createTrace(ModuleElement moduE, ModelElement modeE) throws EolIncrementalExecutionException {
 		TraceArangoDbImpl trace = (TraceArangoDbImpl) dao.createTrace();
 		dao.createEdge(trace.getId(), moduE.getId(), "Traces");
 		dao.createEdge(trace.getId(), modeE.getId(), "Reaches");
@@ -383,7 +383,7 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 		return trace;
 	}
 
-	private ExecutionContextArangoDbImpl findExecutionContext(String scriptId, List<String> modelsIds) throws EOLIncrementalExecutionException {
+	private ExecutionContextArangoDbImpl findExecutionContext(String scriptId, List<String> modelsIds) throws EolIncrementalExecutionException {
 		String query = "FOR ec IN @@collection"
 				+ "			FILTER ec.script_id == @scriptId AND ec.modelsIds ALL IN @modelsIds"
 				+ "			RETURN ec";
@@ -399,7 +399,7 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 		return me.get(0);
 	}
 
-	private ModelElement findModelElement(String elementId) throws EOLIncrementalExecutionException {
+	private ModelElement findModelElement(String elementId) throws EolIncrementalExecutionException {
 		String query = "FOR v,e,p IN 1 OUTBOUND @ecId @@I"
 					+  "	FILTER p.vertices[1].elementId == @elementId"
 					+ "		RETURN p.vertices[1]";
@@ -419,9 +419,9 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 	 * A module element's id is only valid in the execution context
 	 * @param moduleElementId
 	 * @return
-	 * @throws EOLIncrementalExecutionException 
+	 * @throws EolIncrementalExecutionException 
 	 */
-	private ModuleElement findModuleElement(String moduleElementId) throws EOLIncrementalExecutionException {
+	private ModuleElement findModuleElement(String moduleElementId) throws EolIncrementalExecutionException {
 		String query = "FOR v,e,p IN 1 OUTBOUND @ecId @@F"
 				+  "	FILTER p.vertices[1].moduleId == @moduleId"
 				+ "		RETURN p.vertices[1]";
@@ -438,7 +438,7 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 		return qResult.get(0);
 	}
 
-	private Property findProperty(Trace trace, ModelElement modeE, String propertyName) throws EOLIncrementalExecutionException {
+	private Property findProperty(Trace trace, ModelElement modeE, String propertyName) throws EolIncrementalExecutionException {
 		String query = "FOR v,e,p IN 3 OUTBOUND @trace @@R, @@O, INBOUND @@A"
 				+ "        FILTER p.vertices[1].elementId == @elementId"
 				+ "        FILTER p.vertices[2].name == @pname"
@@ -458,7 +458,7 @@ public class ArangoDbTraceManager implements IEolExecutionTraceManager {
 		return qResult.get(0);
 	}
 
-	private Trace findTrace(ModuleElement moduE, ModelElement modeE) throws EOLIncrementalExecutionException {
+	private Trace findTrace(ModuleElement moduE, ModelElement modeE) throws EolIncrementalExecutionException {
 		String query = "FOR v,e,p IN 4 OUTBOUND @ecId @@F, INBOUND @@T, @@R, INBOUND @@I"
 				+ "			FILTER p.vertices[1].moduleId == @moduleId"
 				+ "			FILTER p.vertices[3].elementId == @elementId"

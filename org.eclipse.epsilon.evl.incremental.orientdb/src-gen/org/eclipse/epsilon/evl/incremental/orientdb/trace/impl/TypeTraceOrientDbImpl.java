@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: Tue Oct 17 12:38:47 BST 2017.
+ * This file was automatically generated on: Wed Oct 18 11:16:55 BST 2017.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2016 University of York
@@ -49,6 +49,7 @@ public class TypeTraceOrientDbImpl extends AbstractTypeTraceImpl<OrientVertex> {
                     String.format("Delegate vertex is not of the correct type. Got: %s, expected: %s",
                         delegate.getLabel(), "TypeTrace"));
         }
+        delegate.detach();
         initBlocks();
         initTypes();
     }

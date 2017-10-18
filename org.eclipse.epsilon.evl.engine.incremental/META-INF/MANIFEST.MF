@@ -5,10 +5,10 @@ Bundle-SymbolicName: org.eclipse.epsilon.evl.engine.incremental
 Bundle-Version: 1.0.0
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.eclipse.epsilon.evl.engine,
- org.eclipse.epsilon.eol.engine.incremental,
+Require-Bundle: org.eclipse.epsilon.common,
  org.eclipse.epsilon.eol.engine,
- org.eclipse.epsilon.common
+ org.eclipse.epsilon.eol.engine.incremental,
+ org.eclipse.epsilon.evl.engine
 Export-Package: org.eclipse.epsilon.evl,
  org.eclipse.epsilon.evl.dom,
  org.eclipse.epsilon.evl.execute,

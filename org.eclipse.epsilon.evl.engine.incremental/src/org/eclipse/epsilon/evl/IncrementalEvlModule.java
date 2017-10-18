@@ -23,7 +23,7 @@ import org.eclipse.epsilon.eol.dom.ExecutableBlock;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.execute.introspection.recording.PropertyAccessExecutionListener;
-import org.eclipse.epsilon.eol.incremental.EOLIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
 import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
@@ -81,7 +81,7 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 				.collect(Collectors.toList());
 		try {
 			getExecutionTraceManager().setExecutionContext(this.getSourceUri().toString(), modelIds);
-		} catch (EOLIncrementalExecutionException e) {
+		} catch (EolIncrementalExecutionException e) {
 			throw new EolRuntimeException("Error accesing the trace model. " + e.getMessage());
 		}
 		// Perform evaluation
@@ -185,7 +185,7 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 		Collection<Trace> traces = null;
 		try {
 			traces = etManager.findExecutionTraces(objectId, propertyName);
-		} catch (EOLIncrementalExecutionException e) {
+		} catch (EolIncrementalExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -218,7 +218,7 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 		Collection<Trace> traces = null;
 		try {
 			traces = etManager.findExecutionTraces(objectId);
-		} catch (EOLIncrementalExecutionException e) {
+		} catch (EolIncrementalExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -228,7 +228,7 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 		// Traces related to the deleted element should be deleted
 		try {
 			etManager.removeTraceInformation(objectId);
-		} catch (EOLIncrementalExecutionException e) {
+		} catch (EolIncrementalExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

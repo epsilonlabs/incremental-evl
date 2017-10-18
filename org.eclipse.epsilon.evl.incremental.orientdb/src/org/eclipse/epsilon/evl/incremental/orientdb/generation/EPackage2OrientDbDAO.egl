@@ -63,28 +63,36 @@ import "../../../../../../../../../org.eclipse.epsilon.incremental.common/src/or
  *******************************************************************************/
 package [%=qp%].execute;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.evl.incremental.orientdb.trace.impl.*;
 
 import com.orientechnologies.orient.core.metadata.schema.OType;
+import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
 import com.tinkerpop.blueprints.Parameter;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
+import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
-import com.tinkerpop.frames.FramedGraphFactory;
-import com.tinkerpop.frames.FramedTransactionalGraph;
 
 /**
  * The OrientDbDAO provides methods for CRUD operations on the graph db. 
  */
 public class [%=p.getName().firstToUpperCase()%]OrientDbDAO {
 
+    /** Factory to retrieve graph instances */
 	private OrientGraphFactory factory;
+	
+	/** The class loger */
+	private Logger logger;
 	
 	public [%=p.getName().firstToUpperCase()%]OrientDbDAO(OrientGraphFactory factory) {
 		this.factory = factory;
+		logger = LoggerFactory.getLogger([%=p.getName().firstToUpperCase()%]OrientDbDAO.class);
 	}
 	
 	// Schema Methods
@@ -149,79 +157,200 @@ public class [%=p.getName().firstToUpperCase()%]OrientDbDAO {
     }
     
     // Direct DB Access
-    /*
-    public FramedTransactionalGraph<OrientGraph> getManager() {
+    /**
+     * Get a transactional graph. The caller is responsible for the life cycle of the graph.
+     * 
+     * @return an OrientGraph
+     */
+    public OrientGraph getTransactionalGraph() {
         
-        OrientGraph txGraph = factory.getTx();
-        return framedFactory.create(txGraph);
-    } 
-    */  
+        return factory.getTx();
+    }
+    
+    /**
+     * Get a non-transactional graph. The caller is responsible for the life cycle of the graph.
+     * 
+     * @return an OrientGraphNoTx
+     */
+    public OrientGraphNoTx getNonTransactionalGraph() {
+        
+        return factory.getNoTx();
+    }
+    
+[%
+for (ec in EClass.all.select(ec | not ec.isAbstract() and not ec.isInterface())) {%]
+    /**
+     * Create a vertex of type [%=ec.name%]
+     *
+     * @return [%=ec.name%]OrientDbImpl wrapping the vertex
+     * @throws EolIncrementalExecutionException if there was an error creating the vertex
+     */
+    [%=ec.getCreateSignature()%] throws EolIncrementalExecutionException {    
+        
+        OrientGraph graph = factory.getTx();
+[%  // For each property create "name", value pair
+    var index = ec.getIndexAttribute();
+    var properties : Sequence;
+    for (ea in ec.getEAllAttributes().select(a | not a.isId())) {
+            properties.add("\"" + ea.name + "\"");
+            properties.add(ea.name);        
+    }%]
+        OrientVertex v = null;
+        try {[%
+    if (properties.isEmpty()) {%]
+        
+            v = graph.addVertex("class:[%=ec.name%]");
+            graph.commit();   
+        } catch (Exception e) {
+            graph.rollback();
+            logger.debug("Error in Record creation - [%=ec.name%]", e);
+            throw new EolIncrementalExecutionException("Error creating [%=ec.name%]", e);
+        }
+        logger.debug("Record created - [%=ec.name%]");
+[%  } else {%]
+
+            v = graph.addVertex("class:[%=ec.name%]", [%=properties.concat(", ")%]);
+            graph.commit();
+        } catch (ORecordDuplicatedException e) {
+            logger.debug("Duplicate Record creation - [%=ec.name%]:{}", [%=index.name%]);
+            v = (OrientVertex) graph.getVertices("[%=ec.name%].[%=index.name%]", [%=index.name%]).iterator().next();
+            // TODO we would probably want a null test and/or a NoSuchElementException handler
+        } catch (Exception e2) {
+            graph.rollback();
+            logger.debug("Error in Record creation - [%=ec.name%]:{}", [%=index.name%], e2);
+            throw new EolIncrementalExecutionException("Error creating [%=ec.name%]", e2);
+        }
+        logger.debug("Record created - [%=ec.name%]:{}", [%=index.name%]);
+[%  }%]
+        graph.shutdown();
+        return new [%=ec.name%]OrientDbImpl(v);
+    }
+    
+    /**
+     * Delete a vertex of type [%=ec.name%]
+     *
+     * @throws EolIncrementalExecutionException if there was an error deleting the vertex
+     */
+    [%=ec.getDeleteSignature()%] throws EolIncrementalExecutionException {
+        OrientGraph graph = factory.getTx();
+        try{
+            graph.removeVertex(vertex.getDelegate());
+        } catch (Exception e) {
+            graph.rollback();
+            logger.debug("Error in Record deletion - [%=ec.name%]:{}", vertex.getDelegate(), e);
+            throw new EolIncrementalExecutionException("Error deleting [%=ec.name%]", e);
+        }
+        logger.debug("Record deleted - [%=ec.name%]:{}", vertex);
+        graph.shutdown();
+    }
+    
+    /**
+     * Update a a vertex of type [%=ec.name%]. This only updates the vertex properties,
+     * not its references!
+     * 
+     * * @throws EolIncrementalExecutionException if there was an error updating the vertex
+     */
+    [%=ec.getUpdateSignature()%] throws EolIncrementalExecutionException {
+        OrientGraph graph = factory.getTx();
+        try{
+            vertex.getDelegate().attach(graph);
+            vertex.getDelegate().save();
+            vertex.getDelegate().detach();
+        } catch (Exception e) {
+            graph.rollback();
+            logger.debug("Error in Record update - [%=ec.name%]:{}", vertex.getDelegate(), e);
+            throw new EolIncrementalExecutionException("Error updating [%=ec.name%]", e);
+        }
+        logger.debug("Record updated - [%=ec.name%]:{}", vertex);
+        graph.shutdown();
+    }
+    
+    /**
+     * Find a vertex of type [%=ec.name%] by id.
+     *
+     * @return [%=ec.name%]OrientDbImpl wrapping the vertex, if found
+     * @throws EolIncrementalExecutionException in no vertex for that id is found
+     */
+    [%=ec.getGetByIdSignature()%] throws EolIncrementalExecutionException {
+        OrientGraph graph = factory.getTx();
+        OrientVertex vertex = graph.getVertex(id);
+        if (vertex == null) {
+            logger.debug("Finding Record by id was null - [%=ec.name%]:{}", id);
+            throw new EolIncrementalExecutionException("No [%=ec.name%] found with id: " + id);
+        }
+        graph.shutdown();
+        return new [%=ec.name%]OrientDbImpl(vertex);
+    }
+    
+[%  if (index.isDefined()) {%]    
+    /**
+     * Find a vertex of type [%=ec.name%] by index
+     * 
+     * @return [%=ec.name%]OrientDbImpl wrapping the vertex, if found
+     * @throws EolIncrementalExecutionException if no vertex for that index is found
+     */
+    [%=ec.getGetByIndexSignature()%]  throws EolIncrementalExecutionException {
+        OrientGraph graph = factory.getTx();
+        OrientVertex vertex = (OrientVertex) graph.getVertices("[%=ec.name%].[%=index.name%]", [%=index.name%]).iterator().next();
+        if (vertex == null) {
+            logger.debug("Finding Record by index was null - [%=ec.name%]:{}", [%=index.name%]);
+            throw new EolIncrementalExecutionException("No [%=ec.name%] found with index ([%=index.name%]): " + [%=index.name%]);
+        }
+        graph.shutdown();
+        return new [%=ec.name%]OrientDbImpl(vertex);
+    }
+    
+[%  }
+}%]   
     
 }
 
 [%
 // Create the method signature for a CREATE operation
 @template
-operation EClass getCreateSignature() {%]
-public [%=self.getCreateReturnType()%] create[%=self.getJavaTypeName("", "")%](
-	[%=self.getCreateParameters()%])
-[%
+operation EClass getCreateSignature() {
+    if (self.getEAllAttributes().select(ea | not ea.isId()).isEmpty()) {%]
+public [%=self.getJavaTypeName("", "OrientDbImpl")%] create[%=self.name.firstToUpperCase()%]()[%
+    } else {%]
+public [%=self.getJavaTypeName("", "OrientDbImpl")%] create[%=self.name.firstToUpperCase()%](
+        [%=self.getCreateParameters()%])
+[%  }
 }
 
 // Create the method signature for a DELETE operation
 @template
 operation EClass getDeleteSignature() {%]
-public void delete[%=self.getJavaTypeName("", "")%]([%=self.getCreateReturnType()%] vertex)
+public void delete[%=self.name%]([%=self.getJavaTypeName("", "OrientDbImpl")%] vertex)
 [%
 }
 
 // Create the method signature for an UPDATE operation
 @template
 operation EClass getUpdateSignature() {%]
-public void update[%=self.getJavaTypeName("", "")%]([%=self.getCreateReturnType()%] vertex)
+public void update[%=self.name%]([%=self.getJavaTypeName("", "OrientDbImpl")%] vertex)
 [%
 }
 
 // Create the method signature for a GET operation
 @template
 operation EClass getGetByIdSignature() {%]
-public [%=self.getCreateReturnType()%] get[%=self.getJavaTypeName("", "")%]ById(Object id)
+public [%=self.getJavaTypeName("", "OrientDbImpl")%] get[%=self.name%]ById(Object id)
 [%
 }
 
-// Create the method signature for a GET by INDEX operation
+// Create the method signature for a GET by INDEX operation, assumes index is UNIQUE
 @template
-operation EClass getGetByIndexSignature(non_unique : Boolean) {%]
-public [%if (non_unique){%]List<[%=self.getCreateReturnType()%]>[%}else{%][%=self.getCreateReturnType()%][%}%] get[%=self.getJavaTypeName("", "")%]ByIndex([%=self.getIndexGetterArgument()%])
-[%
-}
-
-// Create the method signature for a Select by operation
-@template
-operation EClass getGetByIndexSignature(params : Bag) {%]
-public List<[%=self.getCreateReturnType()%]> select([%=self.getSelectArgument(params)%])
-[%
-}
-
-@template
-operation EClass getSelectArgument(params : Bag) {
-// Types%]
-public List<[%=self.getCreateReturnType()%]> select([%=self.getSelectArgument(params)%])
+operation EClass getGetByIndexSignature() {%]
+public [%=self.getJavaTypeName("", "OrientDbImpl")%] get[%=self.name%]ByIndex([%=self.getIndexGetterArgument()%])
 [%
 }
 
 // Assumes the annotation is tested
 @template
 operation EClass getIndexGetterArgument() {
-    var annot = self.getEAnnotation("https://eclipse.org/epsilon/incremental/OrientDbIndex");
-    var attr = annot.getReferences().first();%]
-[%=attr.getSetterParamterType("List")%] [%=attr.getName().splitCamelCase("_").toLowerCase()%][%
+    var index = self.getIndexAttribute();%]
+[%=index.getSetterParamterType("List")%] [%=index.name%][%
 }
-
-@template
-operation EClass getCreateReturnType() {%]
-[%=self.getJavaTypeName("V", "")%]
-[%}
 
 /**
  * Get the required parameters for initialization of objects of this EClass. This returns
@@ -230,7 +359,7 @@ operation EClass getCreateReturnType() {%]
 @template
 operation EClass getCreateParameters() {
 	var results : Sequence = new Sequence();
-	for (a in self.getEAttributes) {
+	for (a in self.getEAllAttributes().select(ea | not ea.isId())) {
 		var type = a.getGetterReturnType("List");
 		var name = a.getName();
 		results.add(type + " " + name);

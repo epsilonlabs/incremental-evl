@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.common.util.StringProperties;
-import org.eclipse.epsilon.eol.incremental.EOLIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.incremental.trace.Trace;
 import org.eclipse.epsilon.evl.incremental.orientdb.dialog.OrientDBManagerConfiguration;
@@ -108,7 +108,7 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 	}
 
 	@Override
-	public boolean createExecutionTrace(String moduleElementId, String elementId, String propertyName) throws EOLIncrementalExecutionException {
+	public boolean createExecutionTrace(String moduleElementId, String elementId, String propertyName) throws EolIncrementalExecutionException {
 		
 		ModuleElementOrientDbImpl moduleElement = acquireModuleElement(moduleElementId);
 		ModelElementOrientDbImpl modelElement = acquireModelElement(elementId);
@@ -128,7 +128,7 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 	}
 
 	@Override
-	public boolean createExecutionTraces(String moduleElementId, String elementId, List<String> properties) throws EOLIncrementalExecutionException {
+	public boolean createExecutionTraces(String moduleElementId, String elementId, List<String> properties) throws EolIncrementalExecutionException {
 		for (String pName : properties) {
 			createExecutionTrace(moduleElementId, elementId, pName);
 		}
@@ -142,7 +142,7 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 	
 
 	@Override
-	public void batchExecutionStarted() throws EOLIncrementalExecutionException {
+	public void batchExecutionStarted() throws EolIncrementalExecutionException {
 		
 		if (url.startsWith("memory:")) {
 			String name = url.split(":")[1];
@@ -156,14 +156,14 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 				orientDbDAO.setupSchema();
 			}
 			catch (Exception ex) {
-				throw new EOLIncrementalExecutionException("Error setting up the schema.", ex);
+				throw new EolIncrementalExecutionException("Error setting up the schema.", ex);
 			}
 		}
 		
 	}
 
 	@Override
-	public List<Trace> findExecutionTraces(String elementId) throws EOLIncrementalExecutionException {
+	public List<Trace> findExecutionTraces(String elementId) throws EolIncrementalExecutionException {
 		final GremlinPipeline<Vertex, Vertex> pipe = new GremlinPipeline<Vertex, Vertex>();
 		FramedTransactionalGraph<OrientGraph> manager = orientDbDAO.getManager();
 		VExecutionContext vertex = manager.frame(manager.getVertex(executionContextId), VExecutionContext.class);
@@ -179,7 +179,7 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 				result.add(OrientDbUtil.wrap(TraceOrientDbImpl.class, manager.frame(v, VTrace.class)));
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException e) {
-				throw new EOLIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
+				throw new EolIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
 			} finally {
 				manager.shutdown();
 			}
@@ -189,7 +189,7 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 
 	@Override
 	public List<Trace> findExecutionTraces(String elementId, String propertyName)
-			throws EOLIncrementalExecutionException {
+			throws EolIncrementalExecutionException {
 		
 		final GremlinPipeline<Vertex, Vertex> pipe = new GremlinPipeline<Vertex, Vertex>();
 		FramedTransactionalGraph<OrientGraph> manager = orientDbDAO.getManager();
@@ -212,7 +212,7 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 				result.add(OrientDbUtil.wrap(TraceOrientDbImpl.class, manager.frame(v, VTrace.class)));
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException e) {
-				throw new EOLIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
+				throw new EolIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
 			} finally {
 				manager.shutdown();
 			}
@@ -221,13 +221,13 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 	}
 	
 	@Override
-	public void eventExecutionFinished() throws EOLIncrementalExecutionException {
+	public void eventExecutionFinished() throws EolIncrementalExecutionException {
 		factory.close();
 	}
 	
 	
 	@Override
-	public void eventExecutionStarted() throws EOLIncrementalExecutionException {
+	public void eventExecutionStarted() throws EolIncrementalExecutionException {
 		if (url.startsWith("memory:")) {
 			String name = url.split(":")[1];
 			factory = OrientDbUtil.getInMemoryFactory(name);
@@ -236,12 +236,12 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 	}
 
 	@Override
-	public void setExecutionContext(String scriptId, List<String> modelsIds) throws EOLIncrementalExecutionException {
+	public void setExecutionContext(String scriptId, List<String> modelsIds) throws EolIncrementalExecutionException {
 		ExecutionContextOrientDbImpl executionContext = (ExecutionContextOrientDbImpl) acquireExecutionContext(scriptId, modelsIds);
 		executionContextId = executionContext.getId();
 	}
 
-	private ExecutionContextOrientDbImpl acquireExecutionContext(String scriptId, List<String> modelsIds) throws EOLIncrementalExecutionException {
+	private ExecutionContextOrientDbImpl acquireExecutionContext(String scriptId, List<String> modelsIds) throws EolIncrementalExecutionException {
 		ExecutionContextOrientDbImpl ec = findExecutionContext(scriptId, modelsIds);
 		if (ec == null) {
 			ec = createExecutionContext(scriptId, modelsIds);
@@ -249,7 +249,7 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 		return ec;
 	}
 
-	private ModelElementOrientDbImpl acquireModelElement(String elementId) throws EOLIncrementalExecutionException {
+	private ModelElementOrientDbImpl acquireModelElement(String elementId) throws EolIncrementalExecutionException {
 		ModelElementOrientDbImpl me = getModelElement(elementId);
 		if (me == null) {
 			me = createModelElement(elementId);
@@ -257,7 +257,7 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 		return me;
 	}
 
-	private ModuleElementOrientDbImpl acquireModuleElement(String moduleElementId) throws EOLIncrementalExecutionException {
+	private ModuleElementOrientDbImpl acquireModuleElement(String moduleElementId) throws EolIncrementalExecutionException {
 		ModuleElementOrientDbImpl me = findModuleElement(moduleElementId);
 		if (me == null) {
 			me = createModuleElement(moduleElementId);
@@ -266,7 +266,7 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 	}
 
 	private TraceOrientDbImpl acquireTrace(ModuleElementOrientDbImpl moduleElement,
-			ModelElementOrientDbImpl modelElement) throws EOLIncrementalExecutionException {
+			ModelElementOrientDbImpl modelElement) throws EolIncrementalExecutionException {
 		
 		TraceOrientDbImpl trace = getTrace(moduleElement, modelElement);
 		if (trace == null) {
@@ -283,7 +283,7 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 				trace = OrientDbUtil.wrap(TraceOrientDbImpl.class, traceV);
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException e) {
-				throw new EOLIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
+				throw new EolIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
 			} finally {
 				manager.commit();
 				manager.shutdown();
@@ -292,41 +292,41 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 		return trace;
 	}
 
-	private PropertyOrientDbImpl craeteProperty(String propertyName) throws EOLIncrementalExecutionException {
+	private PropertyOrientDbImpl craeteProperty(String propertyName) throws EolIncrementalExecutionException {
 		VProperty proeprtyV = orientDbDAO.createProperty(propertyName);
 		if (proeprtyV == null) {
-			throw new EOLIncrementalExecutionException("Error creating the DB vertex in the DB.");
+			throw new EolIncrementalExecutionException("Error creating the DB vertex in the DB.");
 		}
 		PropertyOrientDbImpl property = null;
 		try {
 			property = OrientDbUtil.wrap(PropertyOrientDbImpl.class, proeprtyV);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			throw new EOLIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
+			throw new EolIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
 		}
 		return property;
 	}
 
-	private ExecutionContextOrientDbImpl createExecutionContext(String scriptId, List<String> modelsIds) throws EOLIncrementalExecutionException {
+	private ExecutionContextOrientDbImpl createExecutionContext(String scriptId, List<String> modelsIds) throws EolIncrementalExecutionException {
 		VExecutionContext ecV = orientDbDAO.createExecutionContext(scriptId, modelsIds);
 		if (ecV == null) {
-			throw new EOLIncrementalExecutionException("Error creating the DB vertex in the DB.");
+			throw new EolIncrementalExecutionException("Error creating the DB vertex in the DB.");
 		}
 		ExecutionContextOrientDbImpl ec = null;
 		try {
 			ec = OrientDbUtil.wrap(ExecutionContextOrientDbImpl.class, ecV);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			throw new EOLIncrementalExecutionException("Error creating the DB vertex wrapper instance.", e);
+			throw new EolIncrementalExecutionException("Error creating the DB vertex wrapper instance.", e);
 		}
 		return ec;
 	}
 
-	private ModelElementOrientDbImpl createModelElement(String elementId) throws EOLIncrementalExecutionException {
+	private ModelElementOrientDbImpl createModelElement(String elementId) throws EolIncrementalExecutionException {
 		VModelElement meV = orientDbDAO.createModelElement(elementId);
 		
 		if (meV == null) {
-			throw new EOLIncrementalExecutionException("Error creating the DB vertex in the DB.");
+			throw new EolIncrementalExecutionException("Error creating the DB vertex in the DB.");
 		}
 		FramedTransactionalGraph<OrientGraph> manager = orientDbDAO.getManager();
 		VExecutionContext vertex = manager.frame(manager.getVertex(executionContextId), VExecutionContext.class);
@@ -338,15 +338,15 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 			me = OrientDbUtil.wrap(ModelElementOrientDbImpl.class, meV);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			throw new EOLIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
+			throw new EolIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
 		}
 		return me;
 	}
 
-	private ModuleElementOrientDbImpl createModuleElement(String moduleElementId) throws EOLIncrementalExecutionException {
+	private ModuleElementOrientDbImpl createModuleElement(String moduleElementId) throws EolIncrementalExecutionException {
 		VModuleElement meV = orientDbDAO.createModuleElement(moduleElementId);
 		if (meV == null) {
-			throw new EOLIncrementalExecutionException("Error creating the DB vertex in the DB.");
+			throw new EolIncrementalExecutionException("Error creating the DB vertex in the DB.");
 		}
 		// Add the module element to the context
 		FramedTransactionalGraph<OrientGraph> manager = orientDbDAO.getManager();
@@ -359,22 +359,22 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 			me = OrientDbUtil.wrap(ModuleElementOrientDbImpl.class, meV);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			throw new EOLIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
+			throw new EolIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
 		}
 		return me;
 	}
 
-	private TraceOrientDbImpl createTrace() throws EOLIncrementalExecutionException {
+	private TraceOrientDbImpl createTrace() throws EolIncrementalExecutionException {
 		VTrace traceV = orientDbDAO.createTrace();
 		if (traceV == null) {
-			throw new EOLIncrementalExecutionException("Error creating the DB vertex in the DB.");
+			throw new EolIncrementalExecutionException("Error creating the DB vertex in the DB.");
 		}
 		TraceOrientDbImpl trace = null;
 		try {
 			trace = OrientDbUtil.wrap(TraceOrientDbImpl.class, traceV);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			throw new EOLIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
+			throw new EolIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
 		}
 		return trace;
 	}
@@ -386,9 +386,9 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 	 * @param scriptId The script's ID
 	 * @param modelsIds The models' IDs
 	 * @return
-	 * @throws EOLIncrementalExecutionException 
+	 * @throws EolIncrementalExecutionException 
 	 */
-	private ExecutionContextOrientDbImpl findExecutionContext(String scriptId, List<String> modelsIds) throws EOLIncrementalExecutionException {
+	private ExecutionContextOrientDbImpl findExecutionContext(String scriptId, List<String> modelsIds) throws EolIncrementalExecutionException {
 		List<VExecutionContext> vertices = orientDbDAO.getExecutionContextByIndex(scriptId);
 		VExecutionContext ec_vertex = null;
 		for (VExecutionContext v : vertices) {
@@ -404,11 +404,11 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 			return ec_vertex == null ? null : OrientDbUtil.wrap(ExecutionContextOrientDbImpl.class, ec_vertex);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			throw new EOLIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
+			throw new EolIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
 		}
 	}
 
-	private ModuleElementOrientDbImpl findModuleElement(String moduleElementId) throws EOLIncrementalExecutionException {
+	private ModuleElementOrientDbImpl findModuleElement(String moduleElementId) throws EolIncrementalExecutionException {
 		final GremlinPipeline<Vertex, Vertex> pipe = new GremlinPipeline<Vertex, Vertex>();
 		FramedTransactionalGraph<OrientGraph> manager = orientDbDAO.getManager();
 		VExecutionContext vertex = manager.frame(manager.getVertex(executionContextId), VExecutionContext.class);
@@ -422,14 +422,14 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 			// Return null as indication of not finding any;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			throw new EOLIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
+			throw new EolIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
 		} finally {
 			manager.shutdown();
 		}
 		return me;
 	}
 
-	private PropertyOrientDbImpl findProperty(TraceOrientDbImpl trace, ModelElementOrientDbImpl modelElement, String propertyName) throws EOLIncrementalExecutionException {
+	private PropertyOrientDbImpl findProperty(TraceOrientDbImpl trace, ModelElementOrientDbImpl modelElement, String propertyName) throws EolIncrementalExecutionException {
 		final GremlinPipeline<Vertex, Vertex> pipe = new GremlinPipeline<Vertex, Vertex>();
 		FramedTransactionalGraph<OrientGraph> manager = orientDbDAO.getManager();
 		VExecutionContext vertex = manager.frame(manager.getVertex(executionContextId), VExecutionContext.class);
@@ -451,7 +451,7 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 			// Return null as indication of not finding any;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			throw new EOLIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
+			throw new EolIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
 		} finally {
 			manager.shutdown();
 		}
@@ -460,7 +460,7 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 	}
 
 
-	private ModelElementOrientDbImpl getModelElement(String elementId) throws EOLIncrementalExecutionException {
+	private ModelElementOrientDbImpl getModelElement(String elementId) throws EolIncrementalExecutionException {
 		final GremlinPipeline<Vertex, Vertex> pipe = new GremlinPipeline<Vertex, Vertex>();
 		FramedTransactionalGraph<OrientGraph> manager = orientDbDAO.getManager();
 		VExecutionContext vertex = manager.frame(manager.getVertex(executionContextId), VExecutionContext.class);
@@ -474,7 +474,7 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 			// Return null as indication of not finding any;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			throw new EOLIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
+			throw new EolIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
 		} finally {
 			manager.shutdown();
 		}
@@ -482,7 +482,7 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 	}
 	
 	
-	private TraceOrientDbImpl getTrace(ModuleElementOrientDbImpl moduleElement, ModelElementOrientDbImpl modelElement) throws EOLIncrementalExecutionException {
+	private TraceOrientDbImpl getTrace(ModuleElementOrientDbImpl moduleElement, ModelElementOrientDbImpl modelElement) throws EolIncrementalExecutionException {
 		final GremlinPipeline<Vertex, Vertex> pipe = new GremlinPipeline<Vertex, Vertex>();
 		FramedTransactionalGraph<OrientGraph> manager = orientDbDAO.getManager();
 		VExecutionContext vertex = manager.frame(manager.getVertex(executionContextId), VExecutionContext.class);
@@ -510,7 +510,7 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 			// Return null as indication of not finding any;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			throw new EOLIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
+			throw new EolIncrementalExecutionException("Error creating the DB vertex wrapper instance..", e);
 		} finally {
 			manager.shutdown();
 		}
@@ -519,13 +519,13 @@ public class OrientDbTraceManager implements IEolExecutionTraceManager {
 	}
 
 	@Override
-	public void liveExecutionStarted() throws EOLIncrementalExecutionException {
+	public void liveExecutionStarted() throws EolIncrementalExecutionException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void liveExecutionFinished() throws EOLIncrementalExecutionException {
+	public void liveExecutionFinished() throws EolIncrementalExecutionException {
 		// TODO Auto-generated method stub
 		
 	}
