@@ -7,7 +7,7 @@
  * 
  ******************************************************************************/
  /*******************************************************************************
- ** ElementTrace implementation automatically generated on 2017-10-18.
+ ** Execution implementation automatically generated on 2017-10-20.
  ** Do not modify this file.
  *******************************************************************************/
  
@@ -20,22 +20,22 @@ import org.eclipse.epsilon.incremental.trace.eol.*;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
- * An abstract, generic, implementation of ElementTrace. The generic component allows the class
+ * An abstract, generic, implementation of Execution. The generic component allows the class
  * to be reused for different Databases. 
  *
  * @param <V> the specific DB vertex type.
  */
-public abstract class AbstractElementTraceImpl<V> implements ElementTrace {
+public abstract class AbstractExecutionImpl<V> implements Execution {
 
     /** The delegate vertex in the Graph. */
     final protected V delegate;
  
     /**
-     * Instantiates a new ElementTrace implementation.
+     * Instantiates a new Execution implementation.
      *
      * @param delegate the delegate vertex
      */
-    public AbstractElementTraceImpl(V delegate) {
+    public AbstractExecutionImpl(V delegate) {
         this.delegate = delegate;
     }
     
@@ -51,28 +51,8 @@ public abstract class AbstractElementTraceImpl<V> implements ElementTrace {
      * @param pipeline
      * @return
      */
-    protected Iterator<V> getBlocks(GremlinPipeline<V, V> pipeline) {
-        pipeline.start(delegate).out("blocks");
-        return pipeline.iterator();
-    }   
-
-    /**
-     * Get the EReference value(s) using the provided pipeline
-     * @param pipeline
-     * @return
-     */
-    protected Iterator<V> getElements(GremlinPipeline<V, V> pipeline) {
-        pipeline.start(delegate).out("elements");
-        return pipeline.iterator();
-    }   
-
-    /**
-     * Get the EReference value(s) using the provided pipeline
-     * @param pipeline
-     * @return
-     */
     protected Iterator<V> getAccesses(GremlinPipeline<V, V> pipeline) {
-        pipeline.start(delegate).out("accesses");
+        pipeline.start(delegate).in("accesses");
         return pipeline.iterator();
     }   
 

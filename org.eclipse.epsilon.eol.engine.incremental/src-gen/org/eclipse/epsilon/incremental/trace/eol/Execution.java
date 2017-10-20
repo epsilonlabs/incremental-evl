@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-10-18.
+ * This file was automatically generated on: 2017-10-20.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,22 +12,10 @@
 package org.eclipse.epsilon.incremental.trace.eol;
 
 import java.util.List;    
-import org.eclipse.epsilon.incremental.trace.eol.ModelElement;    
-import org.eclipse.epsilon.incremental.trace.eol.Property;    
+import org.eclipse.epsilon.incremental.trace.eol.Access;    
 
-public interface ElementTrace extends Trace {
+public interface Execution extends IdElement {
 
-    /**
-     * Returns the value of the '<em><b>Elements</b></em>' attribute.
-     * <!-- protected region elements-getter-doc on begin -->
-     * <p>
-     * If the meaning of the '<em>Elements</em>' attribute isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- protected region elements-getter-doc end --> 
-     * @return the value of the '<em>Elements</em>' attribute.
-     */
-    List<ModelElement> getElements();            
     /**
      * Returns the value of the '<em><b>Accesses</b></em>' attribute.
      * <!-- protected region accesses-getter-doc on begin -->
@@ -38,5 +26,5 @@ public interface ElementTrace extends Trace {
      * <!-- protected region accesses-getter-doc end --> 
      * @return the value of the '<em>Accesses</em>' attribute.
      */
-    List<Property> getAccesses();            
+    List<Access> getAccesses();            
 }

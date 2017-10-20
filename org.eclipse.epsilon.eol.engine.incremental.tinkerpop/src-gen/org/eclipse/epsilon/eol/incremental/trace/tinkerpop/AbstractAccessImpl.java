@@ -7,7 +7,7 @@
  * 
  ******************************************************************************/
  /*******************************************************************************
- ** Trace implementation automatically generated on 2017-10-18.
+ ** Access implementation automatically generated on 2017-10-20.
  ** Do not modify this file.
  *******************************************************************************/
  
@@ -20,22 +20,22 @@ import org.eclipse.epsilon.incremental.trace.eol.*;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
- * An abstract, generic, implementation of Trace. The generic component allows the class
+ * An abstract, generic, implementation of Access. The generic component allows the class
  * to be reused for different Databases. 
  *
  * @param <V> the specific DB vertex type.
  */
-public abstract class AbstractTraceImpl<V> implements Trace {
+public abstract class AbstractAccessImpl<V> implements Access {
 
     /** The delegate vertex in the Graph. */
     final protected V delegate;
  
     /**
-     * Instantiates a new Trace implementation.
+     * Instantiates a new Access implementation.
      *
      * @param delegate the delegate vertex
      */
-    public AbstractTraceImpl(V delegate) {
+    public AbstractAccessImpl(V delegate) {
         this.delegate = delegate;
     }
     
@@ -51,11 +51,13 @@ public abstract class AbstractTraceImpl<V> implements Trace {
      * @param pipeline
      * @return
      */
-    protected Iterator<V> getBlocks(GremlinPipeline<V, V> pipeline) {
-        pipeline.start(delegate).out("blocks");
-        return pipeline.iterator();
-    }   
-
+    protected V getExecution(GremlinPipeline<V, V> pipeline) {
+        pipeline.start(delegate).out("execution");
+        if (pipeline.hasNext()) {
+            return pipeline.next();
+        }
+        return null;
+    }
     
 
 }

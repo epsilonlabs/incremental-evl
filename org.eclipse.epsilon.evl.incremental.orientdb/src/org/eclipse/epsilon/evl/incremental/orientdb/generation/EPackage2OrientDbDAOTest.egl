@@ -158,6 +158,9 @@ for (ec in EClass.all.select(ec | not ec.isAbstract() and not ec.isInterface()))
         v1 = dao.get[%=ec.name%]ById("someid");
     }  
 
-[%}%]
+[%}
+// Testedges
+%]
+
 
 }

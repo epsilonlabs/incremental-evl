@@ -12,10 +12,10 @@
 package org.eclipse.epsilon.incremental.trace.eol;
 
 import java.util.List;    
-import org.eclipse.epsilon.incremental.trace.eol.ModelElement;    
-import org.eclipse.epsilon.incremental.trace.eol.PropertyAccess;    
+import org.eclipse.epsilon.incremental.trace.eol.AllInstancesAccess;    
+import org.eclipse.epsilon.incremental.trace.eol.Model;    
 
-public interface Property extends IdElement {
+public interface ModelType extends IdElement {
 
     /**
      * Returns the value of the '<em><b>Name</b></em>' attribute.
@@ -30,7 +30,7 @@ public interface Property extends IdElement {
     String getName();    
 
     /**
-     * Sets the value of the '{@link Property#Name <em>Name</em>}' attribute.
+     * Sets the value of the '{@link ModelType#Name <em>Name</em>}' attribute.
      * <!-- protected region name-setter-doc on begin -->
      * <!-- protected region name-setter-doc end --> 
      * @param value the new value of the '<em>Name/em>' attribute.
@@ -38,24 +38,24 @@ public interface Property extends IdElement {
     void setName(String value);
             
     /**
-     * Returns the value of the '<em><b>Element</b></em>' attribute.
-     * <!-- protected region element-getter-doc on begin -->
+     * Returns the value of the '<em><b>Model</b></em>' attribute.
+     * <!-- protected region model-getter-doc on begin -->
      * <p>
-     * If the meaning of the '<em>Element</em>' attribute isn't clear,
+     * If the meaning of the '<em>Model</em>' attribute isn't clear,
      * there really should be more of a description here...
      * </p>
-     * <!-- protected region element-getter-doc end --> 
-     * @return the value of the '<em>Element</em>' attribute.
+     * <!-- protected region model-getter-doc end --> 
+     * @return the value of the '<em>Model</em>' attribute.
      */
-    ModelElement getElement();    
+    Model getModel();    
 
     /**
-     * Sets the value of the '{@link Property#Element <em>Element</em>}' attribute.
-     * <!-- protected region element-setter-doc on begin -->
-     * <!-- protected region element-setter-doc end --> 
-     * @param value the new value of the '<em>Element/em>' attribute.
+     * Sets the value of the '{@link ModelType#Model <em>Model</em>}' attribute.
+     * <!-- protected region model-setter-doc on begin -->
+     * <!-- protected region model-setter-doc end --> 
+     * @param value the new value of the '<em>Model/em>' attribute.
      */
-    void setElement(ModelElement value);
+    void setModel(Model value);
             
     /**
      * Returns the value of the '<em><b>Accessed By</b></em>' attribute.
@@ -67,5 +67,5 @@ public interface Property extends IdElement {
      * <!-- protected region accessedBy-getter-doc end --> 
      * @return the value of the '<em>Accessed By</em>' attribute.
      */
-    List<PropertyAccess> getAccessedBy();            
+    List<AllInstancesAccess> getAccessedBy();            
 }

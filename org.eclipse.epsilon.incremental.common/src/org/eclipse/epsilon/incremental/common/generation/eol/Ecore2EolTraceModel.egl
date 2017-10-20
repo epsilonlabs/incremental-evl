@@ -121,7 +121,7 @@ for (ec in eClasses) {%]
     
     @Override
     public boolean isModelElement(Object instance) {
-        return instance instanceof TraceElement;
+        return instance instanceof IdElement;
     }
     
     @Override

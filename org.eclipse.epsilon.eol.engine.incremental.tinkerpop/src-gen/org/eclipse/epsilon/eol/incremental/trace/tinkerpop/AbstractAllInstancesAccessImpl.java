@@ -7,7 +7,7 @@
  * 
  ******************************************************************************/
  /*******************************************************************************
- ** Property implementation automatically generated on 2017-10-20.
+ ** AllInstancesAccess implementation automatically generated on 2017-10-20.
  ** Do not modify this file.
  *******************************************************************************/
  
@@ -20,22 +20,22 @@ import org.eclipse.epsilon.incremental.trace.eol.*;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
- * An abstract, generic, implementation of Property. The generic component allows the class
+ * An abstract, generic, implementation of AllInstancesAccess. The generic component allows the class
  * to be reused for different Databases. 
  *
  * @param <V> the specific DB vertex type.
  */
-public abstract class AbstractPropertyImpl<V> implements Property {
+public abstract class AbstractAllInstancesAccessImpl<V> implements AllInstancesAccess {
 
     /** The delegate vertex in the Graph. */
     final protected V delegate;
  
     /**
-     * Instantiates a new Property implementation.
+     * Instantiates a new AllInstancesAccess implementation.
      *
      * @param delegate the delegate vertex
      */
-    public AbstractPropertyImpl(V delegate) {
+    public AbstractAllInstancesAccessImpl(V delegate) {
         this.delegate = delegate;
     }
     
@@ -51,8 +51,8 @@ public abstract class AbstractPropertyImpl<V> implements Property {
      * @param pipeline
      * @return
      */
-    protected V getElement(GremlinPipeline<V, V> pipeline) {
-        pipeline.start(delegate).in("element");
+    protected V getExecution(GremlinPipeline<V, V> pipeline) {
+        pipeline.start(delegate).out("execution");
         if (pipeline.hasNext()) {
             return pipeline.next();
         }
@@ -63,8 +63,8 @@ public abstract class AbstractPropertyImpl<V> implements Property {
      * @param pipeline
      * @return
      */
-    protected Iterator<V> getAccessedBy(GremlinPipeline<V, V> pipeline) {
-        pipeline.start(delegate).out("accessedBy");
+    protected Iterator<V> getType(GremlinPipeline<V, V> pipeline) {
+        pipeline.start(delegate).in("type");
         return pipeline.iterator();
     }   
 

@@ -248,7 +248,7 @@ for (ec in EClass.all.select(ec | not ec.isAbstract() and not ec.isInterface()))
     
     /**
      * Update a a vertex of type [%=ec.name%]. The passed implementation is no longer valid after
-     * updating so this method returns a new wrapper implementation.
+     * updating so the getXXXById must be used to get a new wrapper.
      *
      * This only updates the vertex properties, not its references!
      * 
@@ -267,9 +267,8 @@ for (ec in EClass.all.select(ec | not ec.isAbstract() and not ec.isInterface()))
             throw new EolIncrementalExecutionException("Error updating [%=ec.name%]", e);
         }
         logger.debug("Record updated - [%=ec.name%]:{}", vertex);
-        impl = new [%=ec.name%]OrientDbImpl(vertex);
         graph.shutdown();
-        return impl;
+        return get[%=ec.name%]ById(impl.getId());
     }
     
     /**

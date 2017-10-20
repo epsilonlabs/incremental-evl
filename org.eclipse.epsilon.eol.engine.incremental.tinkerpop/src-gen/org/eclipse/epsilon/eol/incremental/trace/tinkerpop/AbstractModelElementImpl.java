@@ -7,7 +7,7 @@
  * 
  ******************************************************************************/
  /*******************************************************************************
- ** ModelElement implementation automatically generated on 2017-10-18.
+ ** ModelElement implementation automatically generated on 2017-10-20.
  ** Do not modify this file.
  *******************************************************************************/
  
@@ -51,8 +51,20 @@ public abstract class AbstractModelElementImpl<V> implements ModelElement {
      * @param pipeline
      * @return
      */
-    protected Iterator<V> getTraces(GremlinPipeline<V, V> pipeline) {
-        pipeline.start(delegate).in("traces");
+    protected V getModel(GremlinPipeline<V, V> pipeline) {
+        pipeline.start(delegate).in("model");
+        if (pipeline.hasNext()) {
+            return pipeline.next();
+        }
+        return null;
+    }
+    /**
+     * Get the EReference value(s) using the provided pipeline
+     * @param pipeline
+     * @return
+     */
+    protected Iterator<V> getProperties(GremlinPipeline<V, V> pipeline) {
+        pipeline.start(delegate).out("properties");
         return pipeline.iterator();
     }   
 

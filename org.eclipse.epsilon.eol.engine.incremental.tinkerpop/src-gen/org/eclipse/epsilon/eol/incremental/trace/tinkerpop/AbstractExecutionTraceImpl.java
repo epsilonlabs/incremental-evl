@@ -7,7 +7,7 @@
  * 
  ******************************************************************************/
  /*******************************************************************************
- ** TypeTrace implementation automatically generated on 2017-10-18.
+ ** ExecutionTrace implementation automatically generated on 2017-10-20.
  ** Do not modify this file.
  *******************************************************************************/
  
@@ -20,22 +20,22 @@ import org.eclipse.epsilon.incremental.trace.eol.*;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
- * An abstract, generic, implementation of TypeTrace. The generic component allows the class
+ * An abstract, generic, implementation of ExecutionTrace. The generic component allows the class
  * to be reused for different Databases. 
  *
  * @param <V> the specific DB vertex type.
  */
-public abstract class AbstractTypeTraceImpl<V> implements TypeTrace {
+public abstract class AbstractExecutionTraceImpl<V> implements ExecutionTrace {
 
     /** The delegate vertex in the Graph. */
     final protected V delegate;
  
     /**
-     * Instantiates a new TypeTrace implementation.
+     * Instantiates a new ExecutionTrace implementation.
      *
      * @param delegate the delegate vertex
      */
-    public AbstractTypeTraceImpl(V delegate) {
+    public AbstractExecutionTraceImpl(V delegate) {
         this.delegate = delegate;
     }
     
@@ -51,8 +51,8 @@ public abstract class AbstractTypeTraceImpl<V> implements TypeTrace {
      * @param pipeline
      * @return
      */
-    protected Iterator<V> getBlocks(GremlinPipeline<V, V> pipeline) {
-        pipeline.start(delegate).out("blocks");
+    protected Iterator<V> getExecution(GremlinPipeline<V, V> pipeline) {
+        pipeline.start(delegate).out("execution");
         return pipeline.iterator();
     }   
 
@@ -61,8 +61,8 @@ public abstract class AbstractTypeTraceImpl<V> implements TypeTrace {
      * @param pipeline
      * @return
      */
-    protected Iterator<V> getTypes(GremlinPipeline<V, V> pipeline) {
-        pipeline.start(delegate).out("types");
+    protected Iterator<V> getModel(GremlinPipeline<V, V> pipeline) {
+        pipeline.start(delegate).out("model");
         return pipeline.iterator();
     }   
 

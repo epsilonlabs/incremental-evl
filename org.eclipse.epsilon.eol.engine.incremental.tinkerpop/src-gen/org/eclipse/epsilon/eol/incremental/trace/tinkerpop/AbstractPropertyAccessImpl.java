@@ -7,7 +7,7 @@
  * 
  ******************************************************************************/
  /*******************************************************************************
- ** ModuleElement implementation automatically generated on 2017-10-18.
+ ** PropertyAccess implementation automatically generated on 2017-10-20.
  ** Do not modify this file.
  *******************************************************************************/
  
@@ -20,22 +20,22 @@ import org.eclipse.epsilon.incremental.trace.eol.*;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
- * An abstract, generic, implementation of ModuleElement. The generic component allows the class
+ * An abstract, generic, implementation of PropertyAccess. The generic component allows the class
  * to be reused for different Databases. 
  *
  * @param <V> the specific DB vertex type.
  */
-public abstract class AbstractModuleElementImpl<V> implements ModuleElement {
+public abstract class AbstractPropertyAccessImpl<V> implements PropertyAccess {
 
     /** The delegate vertex in the Graph. */
     final protected V delegate;
  
     /**
-     * Instantiates a new ModuleElement implementation.
+     * Instantiates a new PropertyAccess implementation.
      *
      * @param delegate the delegate vertex
      */
-    public AbstractModuleElementImpl(V delegate) {
+    public AbstractPropertyAccessImpl(V delegate) {
         this.delegate = delegate;
     }
     
@@ -51,11 +51,25 @@ public abstract class AbstractModuleElementImpl<V> implements ModuleElement {
      * @param pipeline
      * @return
      */
-    protected Iterator<V> getExecutableblocks(GremlinPipeline<V, V> pipeline) {
-        pipeline.start(delegate).in("executableblocks");
-        return pipeline.iterator();
-    }   
-
+    protected V getExecution(GremlinPipeline<V, V> pipeline) {
+        pipeline.start(delegate).out("execution");
+        if (pipeline.hasNext()) {
+            return pipeline.next();
+        }
+        return null;
+    }
+    /**
+     * Get the EReference value(s) using the provided pipeline
+     * @param pipeline
+     * @return
+     */
+    protected V getProperty(GremlinPipeline<V, V> pipeline) {
+        pipeline.start(delegate).in("property");
+        if (pipeline.hasNext()) {
+            return pipeline.next();
+        }
+        return null;
+    }
     
 
 }

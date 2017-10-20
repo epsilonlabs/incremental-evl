@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: Wed Oct 18 16:50:26 BST 2017.
+ * This file was automatically generated on: Thu Oct 19 08:58:19 BST 2017.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2016 University of York
@@ -64,11 +64,11 @@ public class EvlTraceModelTests {
         graph.addEdge("class:Blocks", elementtrace, guard, null);
         graph.addEdge("class:Elements", elementtrace, modelelement, null);
         graph.addEdge("class:Accesses", elementtrace, property, null);
-        graph.addEdge("class:Blocks", typetrace, guard, null);
+        graph.addEdge("class:Blocks", typetrace, message, null);
         graph.addEdge("class:Types", typetrace, type, null);
         graph.addEdge("class:Owner", guard, evlconstraint, null);
-        graph.addEdge("class:Owner", check, evlconstraint, null);
-        graph.addEdge("class:Owner", message, evlcontext, null);
+        graph.addEdge("class:Owner", check, evlcontext, null);
+        graph.addEdge("class:Owner", message, evlconstraint, null);
         graph.commit();
         graph.shutdown();
     }
@@ -202,10 +202,10 @@ public class EvlTraceModelTests {
         refV = (OrientVertex) refIt.next();
         TypeOrientDbImpl type = (TypeOrientDbImpl) impl.getTypes().get(0);
         assertThat(refV, is(type.getDelegate()));
-        refIt = graph.getVerticesOfClass("Guard").iterator();
+        refIt = graph.getVerticesOfClass("Message").iterator();
         refV = (OrientVertex) refIt.next();
-        GuardOrientDbImpl guard = (GuardOrientDbImpl) impl.getBlocks().get(0);
-        assertThat(refV, is(guard.getDelegate()));
+        MessageOrientDbImpl message = (MessageOrientDbImpl) impl.getBlocks().get(0);
+        assertThat(refV, is(message.getDelegate()));
         graph.shutdown();
     }
     
@@ -232,6 +232,20 @@ public class EvlTraceModelTests {
     }
     
     @Test
+    public void testCheckPattern() {
+        OrientGraph graph = factory.getTx();
+        Iterator<Vertex> it = graph.getVerticesOfClass("Check").iterator();
+        CheckOrientDbImpl impl = new CheckOrientDbImpl((OrientVertex) it.next());
+        OrientVertex refV;
+        Iterator<Vertex> refIt;
+        refIt = graph.getVerticesOfClass("EvlContext").iterator();
+        refV = (OrientVertex) refIt.next();
+        EvlContextOrientDbImpl evlcontext = (EvlContextOrientDbImpl) impl.getOwner();
+        assertThat(refV, is(evlcontext.getDelegate()));
+        graph.shutdown();
+    }
+    
+    @Test
     public void testGuardPattern() {
         OrientGraph graph = factory.getTx();
         Iterator<Vertex> it = graph.getVerticesOfClass("Guard").iterator();
@@ -250,20 +264,6 @@ public class EvlTraceModelTests {
         OrientGraph graph = factory.getTx();
         Iterator<Vertex> it = graph.getVerticesOfClass("Message").iterator();
         MessageOrientDbImpl impl = new MessageOrientDbImpl((OrientVertex) it.next());
-        OrientVertex refV;
-        Iterator<Vertex> refIt;
-        refIt = graph.getVerticesOfClass("EvlContext").iterator();
-        refV = (OrientVertex) refIt.next();
-        EvlContextOrientDbImpl evlcontext = (EvlContextOrientDbImpl) impl.getOwner();
-        assertThat(refV, is(evlcontext.getDelegate()));
-        graph.shutdown();
-    }
-    
-    @Test
-    public void testCheckPattern() {
-        OrientGraph graph = factory.getTx();
-        Iterator<Vertex> it = graph.getVerticesOfClass("Check").iterator();
-        CheckOrientDbImpl impl = new CheckOrientDbImpl((OrientVertex) it.next());
         OrientVertex refV;
         Iterator<Vertex> refIt;
         refIt = graph.getVerticesOfClass("EvlConstraint").iterator();

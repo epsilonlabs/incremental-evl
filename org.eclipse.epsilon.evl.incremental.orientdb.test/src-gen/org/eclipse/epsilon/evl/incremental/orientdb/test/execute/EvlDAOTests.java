@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: Wed Oct 18 16:50:26 BST 2017.
+ * This file was automatically generated on: Thu Oct 19 08:58:19 BST 2017.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2016 University of York
@@ -24,6 +24,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import com.tinkerpop.blueprints.impls.orient.OrientEdge;
 import com.tinkerpop.blueprints.impls.orient.OrientEdgeType;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
@@ -546,6 +547,17 @@ public class EvlDAOTests {
         exception.expectMessage("No Type  found with id: someid");
         v1 = dao.getTypeById("someid");
     }  
+    
+    @Test
+    public void testTypeTraceTypes() throws Exception {
+    	
+    	EvlOrientDbDAO dao = new EvlOrientDbDAO(factory);
+    	TypeTraceOrientDbImpl typeTrace = dao.createTypeTrace();
+    	TypeOrientDbImpl type = dao.createType("uri.value1");
+    	OrientEdge e = dao.addEdge(typeTrace, type);
+    	assertThat(e.getLabel(), is("Types"));
+    }
+    
 
 
 }

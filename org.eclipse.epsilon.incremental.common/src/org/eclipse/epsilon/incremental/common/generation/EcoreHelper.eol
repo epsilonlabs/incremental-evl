@@ -37,7 +37,7 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
     }
     for (ea in eas) {
         var dataTypeName = ea.getEAttributeType().getInstanceTypeName();
-        if (not dataTypeName.startsWith("java.lang.")) {
+        if (not dataTypeName.startsWith("java.lang.") and ".".isSubstringOf(dataTypeName)) {
             imports.add(dataTypeName);
         }
         imports.addAll(ea.getRequiredImports(isImpl));

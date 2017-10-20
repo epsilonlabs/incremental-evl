@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: Wed Oct 18 16:50:26 BST 2017.
+ * This file was automatically generated on: Thu Oct 19 08:58:19 BST 2017.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2016 University of York
@@ -24,6 +24,7 @@ import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
 import com.tinkerpop.blueprints.Parameter;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
+import com.tinkerpop.blueprints.impls.orient.OrientEdge;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
@@ -235,7 +236,7 @@ public class EvlOrientDbDAO {
     
     /**
      * Update a a vertex of type EvlConstraint. The passed implementation is no longer valid after
-     * updating so this method returns a new wrapper implementation.
+     * updating so the getXXXById must be used to get a new wrapper.
      *
      * This only updates the vertex properties, not its references!
      * 
@@ -254,9 +255,8 @@ public class EvlOrientDbDAO {
             throw new EolIncrementalExecutionException("Error updating EvlConstraint", e);
         }
         logger.debug("Record updated - EvlConstraint:{}", vertex);
-        impl = new EvlConstraintOrientDbImpl(vertex);
         graph.shutdown();
-        return impl;
+        return getEvlConstraintById(impl.getId());
     }
     
     /**
@@ -346,7 +346,7 @@ public class EvlOrientDbDAO {
     
     /**
      * Update a a vertex of type EvlContext. The passed implementation is no longer valid after
-     * updating so this method returns a new wrapper implementation.
+     * updating so the getXXXById must be used to get a new wrapper.
      *
      * This only updates the vertex properties, not its references!
      * 
@@ -365,9 +365,8 @@ public class EvlOrientDbDAO {
             throw new EolIncrementalExecutionException("Error updating EvlContext", e);
         }
         logger.debug("Record updated - EvlContext:{}", vertex);
-        impl = new EvlContextOrientDbImpl(vertex);
         graph.shutdown();
-        return impl;
+        return getEvlContextById(impl.getId());
     }
     
     /**
@@ -458,7 +457,7 @@ public class EvlOrientDbDAO {
     
     /**
      * Update a a vertex of type Guard. The passed implementation is no longer valid after
-     * updating so this method returns a new wrapper implementation.
+     * updating so the getXXXById must be used to get a new wrapper.
      *
      * This only updates the vertex properties, not its references!
      * 
@@ -477,9 +476,8 @@ public class EvlOrientDbDAO {
             throw new EolIncrementalExecutionException("Error updating Guard", e);
         }
         logger.debug("Record updated - Guard:{}", vertex);
-        impl = new GuardOrientDbImpl(vertex);
         graph.shutdown();
-        return impl;
+        return getGuardById(impl.getId());
     }
     
     /**
@@ -570,7 +568,7 @@ public class EvlOrientDbDAO {
     
     /**
      * Update a a vertex of type Check. The passed implementation is no longer valid after
-     * updating so this method returns a new wrapper implementation.
+     * updating so the getXXXById must be used to get a new wrapper.
      *
      * This only updates the vertex properties, not its references!
      * 
@@ -589,9 +587,8 @@ public class EvlOrientDbDAO {
             throw new EolIncrementalExecutionException("Error updating Check", e);
         }
         logger.debug("Record updated - Check:{}", vertex);
-        impl = new CheckOrientDbImpl(vertex);
         graph.shutdown();
-        return impl;
+        return getCheckById(impl.getId());
     }
     
     /**
@@ -682,7 +679,7 @@ public class EvlOrientDbDAO {
     
     /**
      * Update a a vertex of type Message. The passed implementation is no longer valid after
-     * updating so this method returns a new wrapper implementation.
+     * updating so the getXXXById must be used to get a new wrapper.
      *
      * This only updates the vertex properties, not its references!
      * 
@@ -701,9 +698,8 @@ public class EvlOrientDbDAO {
             throw new EolIncrementalExecutionException("Error updating Message", e);
         }
         logger.debug("Record updated - Message:{}", vertex);
-        impl = new MessageOrientDbImpl(vertex);
         graph.shutdown();
-        return impl;
+        return getMessageById(impl.getId());
     }
     
     /**
@@ -788,7 +784,7 @@ public class EvlOrientDbDAO {
     
     /**
      * Update a a vertex of type ElementTrace. The passed implementation is no longer valid after
-     * updating so this method returns a new wrapper implementation.
+     * updating so the getXXXById must be used to get a new wrapper.
      *
      * This only updates the vertex properties, not its references!
      * 
@@ -807,9 +803,8 @@ public class EvlOrientDbDAO {
             throw new EolIncrementalExecutionException("Error updating ElementTrace", e);
         }
         logger.debug("Record updated - ElementTrace:{}", vertex);
-        impl = new ElementTraceOrientDbImpl(vertex);
         graph.shutdown();
-        return impl;
+        return getElementTraceById(impl.getId());
     }
     
     /**
@@ -880,7 +875,7 @@ public class EvlOrientDbDAO {
     
     /**
      * Update a a vertex of type ModelElement. The passed implementation is no longer valid after
-     * updating so this method returns a new wrapper implementation.
+     * updating so the getXXXById must be used to get a new wrapper.
      *
      * This only updates the vertex properties, not its references!
      * 
@@ -899,9 +894,8 @@ public class EvlOrientDbDAO {
             throw new EolIncrementalExecutionException("Error updating ModelElement", e);
         }
         logger.debug("Record updated - ModelElement:{}", vertex);
-        impl = new ModelElementOrientDbImpl(vertex);
         graph.shutdown();
-        return impl;
+        return getModelElementById(impl.getId());
     }
     
     /**
@@ -992,7 +986,7 @@ public class EvlOrientDbDAO {
     
     /**
      * Update a a vertex of type Property. The passed implementation is no longer valid after
-     * updating so this method returns a new wrapper implementation.
+     * updating so the getXXXById must be used to get a new wrapper.
      *
      * This only updates the vertex properties, not its references!
      * 
@@ -1011,9 +1005,8 @@ public class EvlOrientDbDAO {
             throw new EolIncrementalExecutionException("Error updating Property", e);
         }
         logger.debug("Record updated - Property:{}", vertex);
-        impl = new PropertyOrientDbImpl(vertex);
         graph.shutdown();
-        return impl;
+        return getPropertyById(impl.getId());
     }
     
     /**
@@ -1098,7 +1091,7 @@ public class EvlOrientDbDAO {
     
     /**
      * Update a a vertex of type TypeTrace. The passed implementation is no longer valid after
-     * updating so this method returns a new wrapper implementation.
+     * updating so the getXXXById must be used to get a new wrapper.
      *
      * This only updates the vertex properties, not its references!
      * 
@@ -1117,9 +1110,8 @@ public class EvlOrientDbDAO {
             throw new EolIncrementalExecutionException("Error updating TypeTrace", e);
         }
         logger.debug("Record updated - TypeTrace:{}", vertex);
-        impl = new TypeTraceOrientDbImpl(vertex);
         graph.shutdown();
-        return impl;
+        return getTypeTraceById(impl.getId());
     }
     
     /**
@@ -1190,7 +1182,7 @@ public class EvlOrientDbDAO {
     
     /**
      * Update a a vertex of type Type. The passed implementation is no longer valid after
-     * updating so this method returns a new wrapper implementation.
+     * updating so the getXXXById must be used to get a new wrapper.
      *
      * This only updates the vertex properties, not its references!
      * 
@@ -1209,9 +1201,8 @@ public class EvlOrientDbDAO {
             throw new EolIncrementalExecutionException("Error updating Type", e);
         }
         logger.debug("Record updated - Type:{}", vertex);
-        impl = new TypeOrientDbImpl(vertex);
         graph.shutdown();
-        return impl;
+        return getTypeById(impl.getId());
     }
     
     /**
@@ -1249,6 +1240,28 @@ public class EvlOrientDbDAO {
         TypeOrientDbImpl impl = new TypeOrientDbImpl(vertex);
         graph.shutdown();
         return impl;
+    }
+    
+    public OrientEdge addEdge(TypeTraceOrientDbImpl source, TypeOrientDbImpl target) {
+    	OrientGraph graph = factory.getTx();
+    	source.getDelegate().attach(graph);
+    	target.getDelegate().attach(graph);
+    	OrientEdge e = graph.addEdge("class:Types", source.getDelegate(), target.getDelegate(), null);
+    	source.getDelegate().detach();
+    	target.getDelegate().detach();
+    	graph.shutdown();
+    	return e;
+    }
+    
+    public OrientEdge addEdge(TypeTraceOrientDbImpl source, EvlConstraintOrientDbImpl target) {
+    	OrientGraph graph = factory.getTx();
+    	source.getDelegate().attach(graph);
+    	target.getDelegate().attach(graph);
+    	OrientEdge e = graph.addEdge("class:ModuleElement", source.getDelegate(), target.getDelegate(), null);
+    	source.getDelegate().detach();
+    	target.getDelegate().detach();
+    	graph.shutdown();
+    	return e;
     }
     
    

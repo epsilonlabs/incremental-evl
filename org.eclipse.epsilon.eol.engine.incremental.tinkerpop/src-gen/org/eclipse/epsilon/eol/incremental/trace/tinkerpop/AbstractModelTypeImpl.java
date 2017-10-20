@@ -7,7 +7,7 @@
  * 
  ******************************************************************************/
  /*******************************************************************************
- ** Type implementation automatically generated on 2017-10-18.
+ ** ModelType implementation automatically generated on 2017-10-20.
  ** Do not modify this file.
  *******************************************************************************/
  
@@ -20,22 +20,22 @@ import org.eclipse.epsilon.incremental.trace.eol.*;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
- * An abstract, generic, implementation of Type. The generic component allows the class
+ * An abstract, generic, implementation of ModelType. The generic component allows the class
  * to be reused for different Databases. 
  *
  * @param <V> the specific DB vertex type.
  */
-public abstract class AbstractTypeImpl<V> implements Type {
+public abstract class AbstractModelTypeImpl<V> implements ModelType {
 
     /** The delegate vertex in the Graph. */
     final protected V delegate;
  
     /**
-     * Instantiates a new Type implementation.
+     * Instantiates a new ModelType implementation.
      *
      * @param delegate the delegate vertex
      */
-    public AbstractTypeImpl(V delegate) {
+    public AbstractModelTypeImpl(V delegate) {
         this.delegate = delegate;
     }
     
@@ -51,8 +51,20 @@ public abstract class AbstractTypeImpl<V> implements Type {
      * @param pipeline
      * @return
      */
-    protected Iterator<V> getTraces(GremlinPipeline<V, V> pipeline) {
-        pipeline.start(delegate).in("traces");
+    protected V getModel(GremlinPipeline<V, V> pipeline) {
+        pipeline.start(delegate).in("model");
+        if (pipeline.hasNext()) {
+            return pipeline.next();
+        }
+        return null;
+    }
+    /**
+     * Get the EReference value(s) using the provided pipeline
+     * @param pipeline
+     * @return
+     */
+    protected Iterator<V> getAccessedBy(GremlinPipeline<V, V> pipeline) {
+        pipeline.start(delegate).out("accessedBy");
         return pipeline.iterator();
     }   
 

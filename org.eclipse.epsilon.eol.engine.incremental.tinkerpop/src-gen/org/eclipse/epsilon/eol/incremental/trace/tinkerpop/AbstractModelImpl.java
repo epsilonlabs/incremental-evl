@@ -7,7 +7,7 @@
  * 
  ******************************************************************************/
  /*******************************************************************************
- ** ExecutableBlock implementation automatically generated on 2017-10-18.
+ ** Model implementation automatically generated on 2017-10-20.
  ** Do not modify this file.
  *******************************************************************************/
  
@@ -20,22 +20,22 @@ import org.eclipse.epsilon.incremental.trace.eol.*;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
- * An abstract, generic, implementation of ExecutableBlock. The generic component allows the class
+ * An abstract, generic, implementation of Model. The generic component allows the class
  * to be reused for different Databases. 
  *
  * @param <V> the specific DB vertex type.
  */
-public abstract class AbstractExecutableBlockImpl<V> implements ExecutableBlock {
+public abstract class AbstractModelImpl<V> implements Model {
 
     /** The delegate vertex in the Graph. */
     final protected V delegate;
  
     /**
-     * Instantiates a new ExecutableBlock implementation.
+     * Instantiates a new Model implementation.
      *
      * @param delegate the delegate vertex
      */
-    public AbstractExecutableBlockImpl(V delegate) {
+    public AbstractModelImpl(V delegate) {
         this.delegate = delegate;
     }
     
@@ -51,8 +51,8 @@ public abstract class AbstractExecutableBlockImpl<V> implements ExecutableBlock 
      * @param pipeline
      * @return
      */
-    protected Iterator<V> getTraces(GremlinPipeline<V, V> pipeline) {
-        pipeline.start(delegate).in("traces");
+    protected Iterator<V> getElements(GremlinPipeline<V, V> pipeline) {
+        pipeline.start(delegate).out("elements");
         return pipeline.iterator();
     }   
 
@@ -61,13 +61,11 @@ public abstract class AbstractExecutableBlockImpl<V> implements ExecutableBlock 
      * @param pipeline
      * @return
      */
-    protected V getOwner(GremlinPipeline<V, V> pipeline) {
-        pipeline.start(delegate).out("owner");
-        if (pipeline.hasNext()) {
-            return pipeline.next();
-        }
-        return null;
-    }
+    protected Iterator<V> getTypes(GremlinPipeline<V, V> pipeline) {
+        pipeline.start(delegate).out("types");
+        return pipeline.iterator();
+    }   
+
     
 
 }
