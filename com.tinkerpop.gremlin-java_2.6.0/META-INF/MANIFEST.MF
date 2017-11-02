@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tinkerpop Gremlin-Java
+Bundle-SymbolicName: com.tinkerpop.gremlin-java_2.6.0
+Bundle-Version: 2.6.0
+Bundle-Vendor: Tinkerpop
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: com.tinkerpop.gremlin,
+ com.tinkerpop.gremlin.java
+Import-Package: com.tinkerpop.blueprints,
+ com.tinkerpop.pipes,
+ com.tinkerpop.pipes.branch,
+ com.tinkerpop.pipes.filter,
+ com.tinkerpop.pipes.sideeffect,
+ com.tinkerpop.pipes.transform,
+ com.tinkerpop.pipes.util,
+ com.tinkerpop.pipes.util.iterators,
+ com.tinkerpop.pipes.util.structures

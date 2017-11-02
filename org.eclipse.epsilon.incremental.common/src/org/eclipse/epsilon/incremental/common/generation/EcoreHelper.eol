@@ -1,0 +1,172 @@
+
+
+operation EClass getJavaTypeName(typePrefix, typeSufix) {
+	
+	return typePrefix + self.getName() + typeSufix;
+}
+
+operation EReference getJavaTypeName(typePrefix, typeSufix) {
+	
+	return typePrefix + self.getName().firstToUpperCase() + typeSufix;
+}
+
+// Get all EDataTypes that are not java.lang.* and all EClasses that are not
+// in the same pacakge. Assumes other packages are generated in the same
+// base package
+operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeSufix:String) : Sequence {
+    return self.getRequriedImports(basePackage, typePrefix, typeSufix, false);
+}
+/**
+ * If isImpl is True, it will also add concrete implementations of the collections imports
+ */
+operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeSufix:String, isImpl:Boolean) : Sequence {
+    return self.getRequriedImports(basePackage, typePrefix, typeSufix, false, false);
+}
+operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeSufix:String,
+                                    isImpl:Boolean, flatten:Boolean) : Sequence {
+    var imports : Set;
+    var eas;
+    var ers;
+    if (not flatten) {
+        eas = self.getEAttributes();
+        ers = self.getEReferences();
+    }
+    else {
+        eas = self.getEAllAttributes();
+        ers = self.getEAllReferences();
+    }
+    for (ea in eas) {
+        var dataTypeName = ea.getEAttributeType().getInstanceTypeName();
+        if (not dataTypeName.startsWith("java.lang.") and ".".isSubstringOf(dataTypeName)) {
+            imports.add(dataTypeName);
+        }
+        imports.addAll(ea.getRequiredImports(isImpl));
+    }
+    for (er in ers) {
+        var type = er.getEReferenceType();
+        //if (type.getEPackage() <> self.getEPackage()) {
+            imports.add(basePackage + "." + type.getEPackage().name + "." + type.getJavaTypeName(typePrefix, typeSufix));
+        //}
+        imports.addAll(er.getRequiredImports(isImpl));
+        
+    }
+    for (ec in self.getESuperTypes().select(st | not (isImpl and st.isAbstract()))) {
+        if (ec.getEPackage() <> self.getEPackage()) {
+            imports.add(basePackage + "." + ec.getEPackage().name + "." + ec.getJavaTypeName(typePrefix, typeSufix));
+        }
+    }
+    return imports.sortBy(im | im);
+}
+
+operation EStructuralFeature getRequiredImports(isImpl:Boolean) : Set {
+    var result = new Set();
+    if (self.isMany()) {
+        if (self.isOrdered) {
+            result.add("java.util.List");
+            if (isImpl) {
+                result.add("java.util.ArrayList");                
+            }
+        }
+        else {
+            result.add("java.util.Set");
+            if (isImpl) {
+                result.add("java.util.HashSet");                
+            }
+        }
+    }
+    return result;
+}
+
+
+/**
+ * Get the select methods information. If available, returns a Bag containing two Sequences. The 
+ * first is the list of types in the path, the second is the list of attributes/references to match.
+ */
+@cached 
+operation EClass getSelect() : Sequence {
+    var annot = self.getEAnnotation("https://eclipse.org/epsilon/incremental/OrientDbSelect");
+    var result : Bag;
+    if (annot.isUndefined()) {
+        return result;
+    }
+    result.add(annot.getReferences());
+    var details = annot.getDetails();
+    if (details.containsKey('match')) {
+        result.add(details.get('match').split(','));
+    }
+    return result;
+}
+
+/**
+ * Get the index information. If available, returns a Sequence containing the EAttribute static 
+ * identifier (same used when creating the vertex class) and the index type.
+ */
+@cached 
+operation EClass getIndex() : Sequence {
+	var annot = self.findIndexAnnotation();
+    if (annot.isUndefined()) {
+        return null;
+    }
+    var details = annot.getDetails();
+    if (details.containsKey('type')) {
+        var attr = annot.getReferences().first().getName().splitCamelCase("_").toUpperCase();
+        var type = details.get('type');
+        var res : Sequence();
+        res.add(attr);
+        res.add(type);
+        return res;
+    }
+    return null;
+}
+
+operation EClass getIndexAttribute() : Any {
+    var annot = self.findIndexAnnotation();
+    if (annot.isUndefined()) {
+        return null;
+    }
+    return annot.getReferences().first();
+}
+
+// The annotation might be in the class or any of its super classes
+operation EClass findIndexAnnotation() : EAnnotation {
+    var annot = self.getEAnnotation("https://eclipse.org/epsilon/incremental/OrientDbIndex");
+    if (annot.isUndefined()) {
+        annot = self.getEAllSuperTypes()
+            .collect(st | st.getEAnnotation("https://eclipse.org/epsilon/incremental/OrientDbIndex"))
+            .selectOne(an | an.isDefined());
+    }
+    return annot;
+}
+
+@cached
+operation EClass getEAllSubclasses() {
+    return EClass.all().select(ec | ec.getEAllSuperTypes().includes(self));
+}
+
+@cached
+operation EDataType getJavaClassName() {
+    return self.getInstanceTypeName().split("\\.").last();
+}
+
+@cahced
+operation EReference isEdge() : Boolean {
+    var annot = self.getEAnnotation("https://eclipse.org/epsilon/incremental/Graph");
+    if (annot.isUndefined()) {
+        return false;
+    }
+    var details = annot.getDetails();
+    if (details.containsKey('edge')) {
+        var isEdge = details.get('edge');
+        return isEdge == 'true';
+    }
+    return false;
+}
+
+operation String splitCamelCase() : String {
+	return self.splitCamelCase(" ");
+}
+
+operation String splitCamelCase(char : String) : String {
+	var sp = self.split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
+	return sp.concat(char).firstToUpperCase();
+}

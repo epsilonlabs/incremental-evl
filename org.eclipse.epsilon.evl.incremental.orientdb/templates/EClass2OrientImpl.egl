@@ -1,0 +1,125 @@
+[%import "CommonTemplates.egl";%]
+/*******************************************************************************
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Jonathan Co - Initial API and implementation
+ *     Horacio Hoyos - API extension
+ *******************************************************************************/
+
+/*******************************************************************************
+ ** [%=eClass.getName()%] OrientDB Trace Model Implementation automatically
+ ** generated on [%=today%].
+ ** Do not modify this file.
+ *******************************************************************************/
+package [%=qp%].trace.impl;
+
+import java.util.List;
+import java.util.ArrayList;
+
+import org.eclipse.epsilon.eol.incremental.trace.[%=eClass.getName()%];
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.V[%=eClass.getJavaTypeName(typePrefix, typeSufix)%];
+[%for (r in eClass.getEReferences()) {%]
+import org.eclipse.epsilon.eol.incremental.trace.[%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix)%];
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.[%=r.getEReferenceType().getJavaTypeName("V", typeSufix)%];
+[%}%]
+import com.tinkerpop.blueprints.Vertex;
+
+
+/**
+ * An implementation of the [%=eClass.getName()%] that delegates to an OrientDB vertex.
+ */
+public class [%=eClass.getJavaTypeName(typePrefix, typeSufix)%]OrientDbImpl implements [%=eClass.getName()%] {
+
+	/** The delegate. */
+	final private [%=eClass.getJavaTypeName("V", typeSufix)%] delegate;
+	
+	/**
+	 * Instantiates a new [%=eClass.getName()%]OrientDb.
+	 *
+	 * @param delegate the delegate
+	 */
+	public [%=eClass.getName()%]OrientDbImpl([%=eClass.getJavaTypeName("V", typeSufix)%]  delegate) {
+		this.delegate = delegate;
+	}
+
+	/**
+	 * Gets the delegate.
+	 *
+	 * @return the delegate
+	 */
+	public [%=eClass.getJavaTypeName("V", typeSufix)%] getDelegate() {
+		return delegate;
+	}
+	
+	/**
+	 * As vertex.
+	 *
+	 * @return the delegate as a vertex
+	 */
+	public Vertex asVertex() {
+		return delegate.asVertex();
+	}
+	
+[%for (a in eClass.getEAllAttributes()) {
+    var gs = a.makeGetterSignature("List");%]
+	[%=a.makeGetterDoc()%]
+	[%if (a.isMany()) {%]
+	public [%=gs%] {
+		[%=a.getSetterParamterType("List")%] result = new Array[%=a.getSetterParamterType("List")%]();
+		for ([%=a.getEAttributeType().getInstanceTypeName()%] item : delegate.[%=a.getGetterMethodName()%]()){
+			result.add(item);
+		}
+		return result;
+	}[%
+	} else {%]
+	public [%=gs%] {
+[%  	if (a.isId()) {%]
+		return delegate.asVertex().getId();[%
+		} else {%]
+		return delegate.[%=a.getGetterMethodName()%]();
+		[%}%] 
+	}
+	
+[%  }
+    if ((not a.isMany()) and (not a.isId())) {%]	
+	[%=a.makeSetterDoc()%]
+	public [%=a.makeSetterSignature("List")%] {
+		delegate.[%=a.getSetterMethodName()%]([%=a.getSetterParamterName()%]);
+	}
+	
+[%  }
+}%]	
+[%for (r in eClass.getEAllReferences()) {
+    var gs = r.makeGetterSignature("List", typePrefix, typeSufix);
+    %]
+	[%=r.makeGetterDoc()%]
+	[%if (r.isMany()) {%]
+	public [%=gs%] {
+		ArrayList<[%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix)%]> result = new ArrayList<[%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix)%]>();
+		for ([%=r.getEReferenceType().getJavaTypeName("V", typeSufix)%] dItem : delegate.[%=r.getGetterMethodName()%]()){
+			[%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix)%]OrientDbImpl wrap = new [%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix)%]OrientDbImpl(dItem);
+			result.add(wrap);
+		}
+		return result;
+	}
+
+[%	} else {%]
+	public [%=gs%] {
+		return new [%=r.getGetterReturnType("Iterable", typePrefix, typeSufix)%]OrientDbImpl(delegate.[%=r.getGetterMethodName()%]());
+	}
+	
+[%  }if (not r.isMany()) {%]	
+	[%=r.makeSetterDoc()%]
+	public [%=r.makeSetterSignature(typePrefix, typeSufix)%] {
+		[%=r.getEReferenceType().getJavaTypeName("V", typeSufix)%] vertex = (([%=r.getEReferenceType().getJavaTypeName(typePrefix, typeSufix)%]OrientDbImpl) [%=r.getSetterParamterName()%]).getDelegate();
+		delegate.[%=r.getSetterMethodName()%](vertex);
+	}
+	
+[%  }
+}%]	
+}

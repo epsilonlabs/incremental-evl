@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="evl" nsURI="http://www.eclipse.epsilon.org/incremental/evl/ExecutionTrace"
+    nsPrefix="evl_et">
+  <eClassifiers xsi:type="ecore:EClass" name="EvlConstraint" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore#//ModuleElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EvlContext" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore#//ModuleElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Guard" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore#//ExecutableBlock"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Check" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore#//ExecutableBlock"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Message" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore#//ExecutableBlock"/>
+</ecore:EPackage>

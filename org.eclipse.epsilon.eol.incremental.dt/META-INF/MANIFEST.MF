@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: psilon Object Language Incremental Development Tools
+Bundle-SymbolicName: org.eclipse.epsilon.eol.incremental.dt;singleton:=true
+Bundle-Version: 1.5.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.epsilon.common.dt,
+ org.eclipse.epsilon.eol.dt,
+ org.eclipse.epsilon.eol.engine.incremental,
+ org.eclipse.epsilon.common.incremental.dt
+Bundle-Activator: org.eclipse.epsilon.eol.incremental.dt.EolIncrementalPlugin
+Export-Package: org.eclipse.epsilon.eol.incremental.dt.launching

@@ -1,0 +1,95 @@
+[%
+/*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Horacio Hoyos Rodriguez - initial API and implementation
+ ******************************************************************************/
+/**
+ * A template to generate an abstract implementation of an EClass that uses a TinkerPop Gremlin
+ * Pipeline to navigate the EReferences.
+ */
+ import "../Ecore2JavaTemplates.egl";  
+ %]
+ /*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ ******************************************************************************/
+ /*******************************************************************************
+ ** [%=ec.getName()%] implementation automatically generated on [%=today%].
+ ** Do not modify this file.
+ *******************************************************************************/
+ 
+package [%=qp%].tinkerpop;
+
+import java.util.Iterator;
+
+import org.eclipse.epsilon.incremental.trace.eol.*;
+
+import com.tinkerpop.gremlin.java.GremlinPipeline;
+
+/**
+ * An abstract, generic, implementation of [%=ec.getName()%]. The generic component allows the class
+ * to be reused for different Databases. 
+ *
+ * @param <V> the specific DB vertex type.
+ */
+public abstract class Abstract[%=ec.getName()%]Impl<V> implements [%=ec.getName()%] {
+
+    /** The delegate vertex in the Graph. */
+    final protected V delegate;
+ 
+    /**
+     * Instantiates a new [%=ec.getName()%] implementation.
+     *
+     * @param delegate the delegate vertex
+     */
+    public Abstract[%=ec.getName()%]Impl(V delegate) {
+        this.delegate = delegate;
+    }
+    
+    /**
+     * Get the delegate vertex
+     */
+    public V getDelegate() {
+        return delegate;
+    }
+    
+[%
+for (er in ec.getEAllReferences()) {
+    var direction = "in";
+    if (er.isEdge()) { direction = "out"; }%]
+    /**
+     * Get the EReference value(s) using the provided pipeline
+     * @param pipeline
+     * @return
+     */
+    [%  
+    if (not er.isMany()) {%]
+    protected V [%=er.getGetterMethodName()%](GremlinPipeline<V, V> pipeline) {
+        pipeline.start(delegate).[%=direction%]("[%=er.name%]");
+        if (pipeline.hasNext()) {
+            return pipeline.next();
+        }
+        return null;
+    }
+[%  }
+    else {%]
+    protected Iterator<V> [%=er.getGetterMethodName()%](GremlinPipeline<V, V> pipeline) {
+        pipeline.start(delegate).[%=direction%]("[%=er.name%]");
+        return pipeline.iterator();
+    }   
+
+[%  }
+}
+%]    
+
+}
