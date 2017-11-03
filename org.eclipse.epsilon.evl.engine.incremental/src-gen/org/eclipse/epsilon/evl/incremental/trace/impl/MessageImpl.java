@@ -12,7 +12,10 @@
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.eclipse.epsilon.evl.incremental.trace.Message;
+import org.eclipse.epsilon.evl.incremental.trace.Invariant;
 import org.eclipse.epsilon.evl.incremental.trace.MessageHasInvariant;
+
+import org.eclipse.epsilon.eol.incremental.trace.Access;
 import org.eclipse.epsilon.eol.incremental.trace.ExecutionHasAccesses;
 import org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionHasAccessesImpl;
 
@@ -31,9 +34,10 @@ public class MessageImpl implements Message {
     private final MessageHasInvariant invariant;
 
     /**
-     * Instantiates a new Message.
-     */
-    public MessageImpl() {
+     * Instantiates a new Message. The Message is uniquely identified by its
+     * container and any attributes identified as indexes.
+     */    
+    public MessageImpl(Invariant container) {
         accesses = new ExecutionHasAccessesImpl(this);
         invariant = new MessageHasInvariantImpl(this);
     }

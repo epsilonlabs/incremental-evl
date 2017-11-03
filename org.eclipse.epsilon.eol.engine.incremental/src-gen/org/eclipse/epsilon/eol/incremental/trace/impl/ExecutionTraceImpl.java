@@ -12,8 +12,12 @@
 package org.eclipse.epsilon.eol.incremental.trace.impl;
 
 import org.eclipse.epsilon.eol.incremental.trace.ExecutionTrace;
+import org.eclipse.epsilon.eol.incremental.trace.Execution;
 import org.eclipse.epsilon.eol.incremental.trace.ExecutionTraceHasExecution;
+
+import org.eclipse.epsilon.eol.incremental.trace.Model;
 import org.eclipse.epsilon.eol.incremental.trace.ExecutionTraceHasModel;
+
 
 /**
  * Implementation of ExecutionTrace. 
@@ -30,8 +34,9 @@ public class ExecutionTraceImpl implements ExecutionTrace {
     private final ExecutionTraceHasModel model;
 
     /**
-     * Instantiates a new ExecutionTrace.
-     */
+     * Instantiates a new ExecutionTrace. The ExecutionTrace is uniquely identified by its
+     * container and any attributes identified as indexes.
+     */    
     public ExecutionTraceImpl() {
         execution = new ExecutionTraceHasExecutionImpl(this);
         model = new ExecutionTraceHasModelImpl(this);

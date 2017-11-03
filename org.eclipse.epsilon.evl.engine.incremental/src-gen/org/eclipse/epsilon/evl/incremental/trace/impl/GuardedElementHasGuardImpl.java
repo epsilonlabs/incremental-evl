@@ -54,14 +54,14 @@ public class GuardedElementHasGuardImpl extends Feature implements GuardedElemen
     public boolean conflict(Guard  target) {
         boolean result = false;
         result |= get() != null;
-        result &= target.guards().get() != null;
+        result &= target.limits().get() != null;
         return result;
     }
     
     @Override
     public boolean related(Guard target) {
   
-        return target.equals(this.target) & source.equals(target.guards().get());
+        return target.equals(this.target) & source.equals(target.limits().get());
     }
     
     @Override
@@ -72,7 +72,7 @@ public class GuardedElementHasGuardImpl extends Feature implements GuardedElemen
         if (related(target)) {
             return true;
         }
-        target.guards().set(source);
+        target.limits().set(source);
         set(target);
         return true;
     }
@@ -82,7 +82,7 @@ public class GuardedElementHasGuardImpl extends Feature implements GuardedElemen
         if (!related(target)) {
             return false;
         }
-        target.guards().remove(source);
+        target.limits().remove(source);
         remove(target);
         return true;
     }

@@ -12,7 +12,9 @@
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.eclipse.epsilon.evl.incremental.trace.Satisfies;
+import org.eclipse.epsilon.evl.incremental.trace.Invariant;
 import org.eclipse.epsilon.evl.incremental.trace.SatisfiesHasSatsfies;
+
 
 /**
  * Implementation of Satisfies. 
@@ -26,8 +28,9 @@ public class SatisfiesImpl implements Satisfies {
     private final SatisfiesHasSatsfies satsfies;
 
     /**
-     * Instantiates a new Satisfies.
-     */
+     * Instantiates a new Satisfies. The Satisfies is uniquely identified by its
+     * container and any attributes identified as indexes.
+     */    
     public SatisfiesImpl() {
         satsfies = new SatisfiesHasSatsfiesImpl(this);
     }

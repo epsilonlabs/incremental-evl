@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
+import org.eclipse.epsilon.evl.incremental.trace.Invariant;    
 
 public interface Satisfies {
 

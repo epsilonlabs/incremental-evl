@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.trace;
 
+import org.eclipse.epsilon.eol.incremental.trace.ModelType;    
 
 public interface AllInstancesAccess extends Access {
 

@@ -60,11 +60,13 @@ public abstract class AbstractEvlTraceModel extends AbstractEolTraceModel implem
         TYPE_PROPERTIES.put("GuardedElement", new HashSet<String>(Arrays.asList(new String[]{"id","accesses","guard"})));    
         TYPE_PROPERTIES.put("Context", new HashSet<String>(Arrays.asList(new String[]{"id","accesses","guard","constraints"})));    
         TYPE_PROPERTIES.put("Invariant", new HashSet<String>(Arrays.asList(new String[]{"id","accesses","guard","result","check","message","satisfies"})));    
-        TYPE_PROPERTIES.put("Guard", new HashSet<String>(Arrays.asList(new String[]{"id","accesses","result","guards"})));    
+        TYPE_PROPERTIES.put("Guard", new HashSet<String>(Arrays.asList(new String[]{"id","accesses","result","limits"})));    
         TYPE_PROPERTIES.put("Check", new HashSet<String>(Arrays.asList(new String[]{"id","accesses","invariant"})));    
         TYPE_PROPERTIES.put("Message", new HashSet<String>(Arrays.asList(new String[]{"id","accesses","invariant"})));    
         TYPE_PROPERTIES.put("Satisfies", new HashSet<String>(Arrays.asList(new String[]{"all","satsfies"})));        
     }
+    
+    
     
     @Override
     public Metamodel getMetamodel(StringProperties properties, IRelativePathResolver resolver) {

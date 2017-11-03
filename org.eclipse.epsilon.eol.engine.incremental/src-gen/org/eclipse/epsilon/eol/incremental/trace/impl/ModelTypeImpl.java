@@ -12,8 +12,9 @@
 package org.eclipse.epsilon.eol.incremental.trace.impl;
 
 import org.eclipse.epsilon.eol.incremental.trace.ModelType;
+import org.eclipse.epsilon.eol.incremental.trace.Model;
 import org.eclipse.epsilon.eol.incremental.trace.ModelTypeHasModel;
-import org.eclipse.epsilon.eol.incremental.trace.ModelTypeHasAccessedBy;
+
 
 /**
  * Implementation of ModelType. 
@@ -29,15 +30,13 @@ public class ModelTypeImpl implements ModelType {
     /** The model relation */
     private final ModelTypeHasModel model;
 
-    /** The accessedBy relation */
-    private final ModelTypeHasAccessedBy accessedBy;
-
     /**
-     * Instantiates a new ModelType.
-     */
-    public ModelTypeImpl() {
+     * Instantiates a new ModelType. The ModelType is uniquely identified by its
+     * container and any attributes identified as indexes.
+     */    
+    public ModelTypeImpl(String name,
+                         Model container) {
         model = new ModelTypeHasModelImpl(this);
-        accessedBy = new ModelTypeHasAccessedByImpl(this);
     }
     
     @Override
@@ -65,10 +64,6 @@ public class ModelTypeImpl implements ModelType {
     @Override
     public ModelTypeHasModel model() {
         return model;
-    }
-    @Override
-    public ModelTypeHasAccessedBy accessedBy() {
-        return accessedBy;
     }
  
 

@@ -28,12 +28,17 @@ import "Ecore2JavaTemplates.egl";
 package [%=qp%].trace.impl;
 
 import [%=qp%].trace.[%=ec.getName()%];
-[%for (er in ec.getEReferences()) {%]
+[%for (er in ec.getEReferences()) {
+    var pack = er.getEContainingClass().getEPackage().name;
+    var erqp = qp.replace("." + ec.getEPackage().name + ".", "." + pack + ".");%]
+import [%=erqp%].trace.[%=er.getEReferenceType().name%];
 import [%=qp%].trace.[%=er.getEContainingClass().name%]Has[%=er.name.firstToUpperCase()%];
+
 [%}%]
 [%for (er in ec.getEAllReferences().excludingAll(ec.getEReferences())) {
     var pack = er.getEContainingClass().getEPackage().name;
     var erqp = qp.replace("." + ec.getEPackage().name + ".", "." + pack + ".");%]
+import [%=erqp%].trace.[%=er.getEReferenceType().name%];
 import [%=erqp%].trace.[%=er.getEContainingClass().name%]Has[%=er.name.firstToUpperCase()%];
 import [%=erqp%].trace.impl.[%=er.getEContainingClass().name%]Has[%=er.name.firstToUpperCase()%]Impl;
 [%}%]
@@ -56,9 +61,10 @@ public class [%=ec.name%]Impl implements [%=ec.name%] {
 
 [%}%]
     /**
-     * Instantiates a new [%=ec.getName()%].
-     */
-    public [%=ec.getName()%]Impl() {
+     * Instantiates a new [%=ec.getName()%]. The [%=ec.getName()%] is uniquely identified by its
+     * container and any attributes identified as indexes.
+     */    
+    public [%=ec.getName()%]Impl([%=ec.getConstructorParameters(false)%]) {
 [%for (er in ec.getEAllReferences()) {%]
         [%=er.name%] = new [%=er.getEContainingClass().name %]Has[%=er.name.firstToUpperCase()%]Impl(this);
 [%}%]
@@ -88,6 +94,28 @@ public class [%=ec.name%]Impl implements [%=ec.name%] {
         return [%=er.name%];
     }
 [%
-}%] 
+}
+// FIXME We need Equals and Hash!
+/*
+  @Override
+  public boolean sameIdentityAs(final Cargo other) {
+    return other != null && trackingId.sameValueAs(other.trackingId);
+  }
+
+  @Override
+  public boolean equals(final Object object) {
+    if (this == object) return true;
+    if (object == null || getClass() != object.getClass()) return false;
+
+    final Cargo other = (Cargo) object;
+    return sameIdentityAs(other);
+  }
+
+  @Override
+  public int hashCode() {
+    return trackingId.hashCode();
+  }
+*/
+%] 
 
 }

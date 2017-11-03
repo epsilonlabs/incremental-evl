@@ -12,7 +12,10 @@
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.eclipse.epsilon.evl.incremental.trace.Check;
+import org.eclipse.epsilon.evl.incremental.trace.Invariant;
 import org.eclipse.epsilon.evl.incremental.trace.CheckHasInvariant;
+
+import org.eclipse.epsilon.eol.incremental.trace.Access;
 import org.eclipse.epsilon.eol.incremental.trace.ExecutionHasAccesses;
 import org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionHasAccessesImpl;
 
@@ -31,9 +34,10 @@ public class CheckImpl implements Check {
     private final CheckHasInvariant invariant;
 
     /**
-     * Instantiates a new Check.
-     */
-    public CheckImpl() {
+     * Instantiates a new Check. The Check is uniquely identified by its
+     * container and any attributes identified as indexes.
+     */    
+    public CheckImpl(Invariant container) {
         accesses = new ExecutionHasAccessesImpl(this);
         invariant = new CheckHasInvariantImpl(this);
     }

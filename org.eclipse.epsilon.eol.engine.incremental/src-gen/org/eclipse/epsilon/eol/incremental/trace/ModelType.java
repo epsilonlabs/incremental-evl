@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.trace;
 
+import org.eclipse.epsilon.eol.incremental.trace.Model;    
 
 public interface ModelType extends IdElement {
 
@@ -35,6 +36,5 @@ public interface ModelType extends IdElement {
     void setName(String value);
             
     ModelTypeHasModel model();            
-    ModelTypeHasAccessedBy accessedBy();            
 
 }

@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.trace;
 
+import org.eclipse.epsilon.eol.incremental.trace.Model;    
+import org.eclipse.epsilon.eol.incremental.trace.Property;    
 
 public interface ModelElement extends IdElement {
 

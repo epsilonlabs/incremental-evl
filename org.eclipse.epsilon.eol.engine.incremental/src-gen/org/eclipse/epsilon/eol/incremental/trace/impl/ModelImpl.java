@@ -12,8 +12,12 @@
 package org.eclipse.epsilon.eol.incremental.trace.impl;
 
 import org.eclipse.epsilon.eol.incremental.trace.Model;
+import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
 import org.eclipse.epsilon.eol.incremental.trace.ModelHasElements;
+
+import org.eclipse.epsilon.eol.incremental.trace.ModelType;
 import org.eclipse.epsilon.eol.incremental.trace.ModelHasTypes;
+
 
 /**
  * Implementation of Model. 
@@ -33,9 +37,10 @@ public class ModelImpl implements Model {
     private final ModelHasTypes types;
 
     /**
-     * Instantiates a new Model.
-     */
-    public ModelImpl() {
+     * Instantiates a new Model. The Model is uniquely identified by its
+     * container and any attributes identified as indexes.
+     */    
+    public ModelImpl(String name) {
         elements = new ModelHasElementsImpl(this);
         types = new ModelHasTypesImpl(this);
     }

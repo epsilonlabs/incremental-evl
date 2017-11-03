@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.trace;
 
+import org.eclipse.epsilon.eol.incremental.trace.Execution;    
+import org.eclipse.epsilon.eol.incremental.trace.Model;    
 
 public interface ExecutionTrace extends IdElement {
 

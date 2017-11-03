@@ -12,9 +12,13 @@
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.eclipse.epsilon.evl.incremental.trace.Context;
+import org.eclipse.epsilon.evl.incremental.trace.Invariant;
 import org.eclipse.epsilon.evl.incremental.trace.ContextHasConstraints;
+
+import org.eclipse.epsilon.eol.incremental.trace.Access;
 import org.eclipse.epsilon.eol.incremental.trace.ExecutionHasAccesses;
 import org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionHasAccessesImpl;
+import org.eclipse.epsilon.evl.incremental.trace.Guard;
 import org.eclipse.epsilon.evl.incremental.trace.GuardedElementHasGuard;
 import org.eclipse.epsilon.evl.incremental.trace.impl.GuardedElementHasGuardImpl;
 
@@ -36,8 +40,9 @@ public class ContextImpl implements Context {
     private final ContextHasConstraints constraints;
 
     /**
-     * Instantiates a new Context.
-     */
+     * Instantiates a new Context. The Context is uniquely identified by its
+     * container and any attributes identified as indexes.
+     */    
     public ContextImpl() {
         accesses = new ExecutionHasAccessesImpl(this);
         guard = new GuardedElementHasGuardImpl(this);

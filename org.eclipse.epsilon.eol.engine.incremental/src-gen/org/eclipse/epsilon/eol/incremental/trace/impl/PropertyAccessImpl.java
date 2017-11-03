@@ -12,7 +12,10 @@
 package org.eclipse.epsilon.eol.incremental.trace.impl;
 
 import org.eclipse.epsilon.eol.incremental.trace.PropertyAccess;
+import org.eclipse.epsilon.eol.incremental.trace.Property;
 import org.eclipse.epsilon.eol.incremental.trace.PropertyAccessHasProperty;
+
+import org.eclipse.epsilon.eol.incremental.trace.Execution;
 import org.eclipse.epsilon.eol.incremental.trace.AccessHasExecution;
 import org.eclipse.epsilon.eol.incremental.trace.impl.AccessHasExecutionImpl;
 
@@ -34,9 +37,10 @@ public class PropertyAccessImpl implements PropertyAccess {
     private final PropertyAccessHasProperty property;
 
     /**
-     * Instantiates a new PropertyAccess.
-     */
-    public PropertyAccessImpl() {
+     * Instantiates a new PropertyAccess. The PropertyAccess is uniquely identified by its
+     * container and any attributes identified as indexes.
+     */    
+    public PropertyAccessImpl(Execution container) {
         execution = new AccessHasExecutionImpl(this);
         property = new PropertyAccessHasPropertyImpl(this);
     }

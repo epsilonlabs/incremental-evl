@@ -11,6 +11,9 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
+import org.eclipse.epsilon.evl.incremental.trace.Check;    
+import org.eclipse.epsilon.evl.incremental.trace.Message;    
+import org.eclipse.epsilon.evl.incremental.trace.Satisfies;    
 
 public interface Invariant extends GuardedElement {
 

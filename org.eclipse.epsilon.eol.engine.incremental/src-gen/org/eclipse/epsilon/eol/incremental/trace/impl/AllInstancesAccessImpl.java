@@ -12,7 +12,10 @@
 package org.eclipse.epsilon.eol.incremental.trace.impl;
 
 import org.eclipse.epsilon.eol.incremental.trace.AllInstancesAccess;
+import org.eclipse.epsilon.eol.incremental.trace.ModelType;
 import org.eclipse.epsilon.eol.incremental.trace.AllInstancesAccessHasType;
+
+import org.eclipse.epsilon.eol.incremental.trace.Execution;
 import org.eclipse.epsilon.eol.incremental.trace.AccessHasExecution;
 import org.eclipse.epsilon.eol.incremental.trace.impl.AccessHasExecutionImpl;
 
@@ -34,9 +37,10 @@ public class AllInstancesAccessImpl implements AllInstancesAccess {
     private final AllInstancesAccessHasType type;
 
     /**
-     * Instantiates a new AllInstancesAccess.
-     */
-    public AllInstancesAccessImpl() {
+     * Instantiates a new AllInstancesAccess. The AllInstancesAccess is uniquely identified by its
+     * container and any attributes identified as indexes.
+     */    
+    public AllInstancesAccessImpl(Execution container) {
         execution = new AccessHasExecutionImpl(this);
         type = new AllInstancesAccessHasTypeImpl(this);
     }

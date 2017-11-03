@@ -56,14 +56,14 @@ public class ModelHasElementsImpl extends Feature implements ModelHasElements {
     public boolean conflict(ModelElement  target) {
         boolean result = false;
         result |= get().contains(target);
-        result |= target.model().get().contains(source);
+        result &= target.model().get() != null;
         return result;
     }
     
     @Override
     public boolean related(ModelElement target) {
   
-        return get().contains(target) & target.model().get().contains(source);
+        return get().contains(target) & source.equals(target.model().get());
     }
     
     @Override

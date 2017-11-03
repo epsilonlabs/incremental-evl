@@ -54,14 +54,13 @@ public class PropertyAccessHasPropertyImpl extends Feature implements PropertyAc
     public boolean conflict(Property  target) {
         boolean result = false;
         result |= get() != null;
-        result |= target.accessedBy().get().contains(source);
         return result;
     }
     
     @Override
     public boolean related(Property target) {
   
-        return target.equals(this.target) & target.accessedBy().get().contains(source);
+        return target.equals(this.target) ;
     }
     
     @Override
@@ -72,7 +71,6 @@ public class PropertyAccessHasPropertyImpl extends Feature implements PropertyAc
         if (related(target)) {
             return true;
         }
-        target.accessedBy().set(source);
         set(target);
         return true;
     }
@@ -82,7 +80,6 @@ public class PropertyAccessHasPropertyImpl extends Feature implements PropertyAc
         if (!related(target)) {
             return false;
         }
-        target.accessedBy().remove(source);
         remove(target);
         return true;
     }

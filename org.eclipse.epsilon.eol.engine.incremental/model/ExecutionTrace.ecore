@@ -34,35 +34,28 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AllInstancesAccess" eSuperTypes="#//Access">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ofKind" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="type" upperBound="-1" eType="#//ModelType"
-        eOpposite="#//ModelType/accessedBy"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" upperBound="-1" eType="#//ModelType"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PropertyAccess" eSuperTypes="#//Access">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="property" lowerBound="1"
-        eType="#//Property" eOpposite="#//Property/accessedBy"/>
+        eType="#//Property"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Property" eSuperTypes="#//IdElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//Property/name #//Property/element">
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//Property/name">
       <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="element" lowerBound="1"
         eType="#//ModelElement" eOpposite="#//ModelElement/properties"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="accessedBy" upperBound="-1"
-        eType="#//PropertyAccess" eOpposite="#//PropertyAccess/property">
-      <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
-        <details key="edge" value="true"/>
-      </eAnnotations>
-    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelElement" eSuperTypes="#//IdElement">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//ModelElement/uri">
       <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="uri" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//AnyURI"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="model" lowerBound="1" upperBound="-1"
-        eType="#//Model" eOpposite="#//Model/elements"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="model" lowerBound="1" eType="#//Model"
+        eOpposite="#//Model/elements"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
         eType="#//Property" containment="true" eOpposite="#//Property/element">
       <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
@@ -77,12 +70,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="model" lowerBound="1" eType="#//Model"
         eOpposite="#//Model/types"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="accessedBy" upperBound="-1"
-        eType="#//AllInstancesAccess" eOpposite="#//AllInstancesAccess/type">
-      <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
-        <details key="edge" value="true"/>
-      </eAnnotations>
-    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Model" eSuperTypes="#//IdElement">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//Model/name">
@@ -90,7 +77,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
-        eType="#//ModelElement" eOpposite="#//ModelElement/model">
+        eType="#//ModelElement" containment="true" eOpposite="#//ModelElement/model">
       <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
         <details key="edge" value="true"/>
       </eAnnotations>

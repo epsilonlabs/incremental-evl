@@ -51,7 +51,7 @@ rule EPackage2Model
   }
   
   guard: p.name == targetLanguage
-  template : "Ecore2TraceModel.egl"
+  template : "Ecore2AbstractTraceModel.egl"
   target : project + folder + "/models/Abstract" + p.name.firstToUpperCase() + "TraceModel.java"
   
 }

@@ -11,8 +11,6 @@
  ******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.trace.impl;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
 import org.eclipse.epsilon.eol.incremental.trace.Model;
 import org.eclipse.epsilon.eol.incremental.trace.ModelElementHasModel;
@@ -25,7 +23,7 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 public class ModelElementHasModelImpl extends Feature implements ModelElementHasModel {
     
     protected ModelElement source;
-    protected Queue<Model> target =  new ConcurrentLinkedQueue<Model>();
+    protected Model target;
     
     /**
      * Instantiates a new ModelElementHasModel.
@@ -38,24 +36,24 @@ public class ModelElementHasModelImpl extends Feature implements ModelElementHas
     }
     
     @Override
-    public Queue<Model> get() {
+    public Model get() {
         return target;
     }
     
     @Override
     public void set(Model target) {
-        this.target.add(target);
+        this.target = target;
     }
     
     @Override
     public void remove(Model target) {
-        this.target.remove(target);
+        this.target = null;
     }
     
     @Override
     public boolean conflict(Model  target) {
         boolean result = false;
-        result |= get().contains(target);
+        result |= get() != null;
         result |= target.elements().get().contains(source);
         return result;
     }
@@ -63,7 +61,7 @@ public class ModelElementHasModelImpl extends Feature implements ModelElementHas
     @Override
     public boolean related(Model target) {
   
-        return get().contains(target) & target.elements().get().contains(source);
+        return target.equals(this.target) & target.elements().get().contains(source);
     }
     
     @Override

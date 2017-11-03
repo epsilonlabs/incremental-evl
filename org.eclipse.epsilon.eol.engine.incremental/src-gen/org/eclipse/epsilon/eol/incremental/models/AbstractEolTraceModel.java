@@ -62,9 +62,9 @@ public abstract class AbstractEolTraceModel extends Model implements ITraceModel
         TYPE_PROPERTIES.put("Access", new HashSet<String>(Arrays.asList(new String[]{"id","execution"})));    
         TYPE_PROPERTIES.put("AllInstancesAccess", new HashSet<String>(Arrays.asList(new String[]{"id","execution","ofKind","type"})));    
         TYPE_PROPERTIES.put("PropertyAccess", new HashSet<String>(Arrays.asList(new String[]{"id","execution","value","property"})));    
-        TYPE_PROPERTIES.put("Property", new HashSet<String>(Arrays.asList(new String[]{"id","name","element","accessedBy"})));    
+        TYPE_PROPERTIES.put("Property", new HashSet<String>(Arrays.asList(new String[]{"id","name","element"})));    
         TYPE_PROPERTIES.put("ModelElement", new HashSet<String>(Arrays.asList(new String[]{"id","uri","model","properties"})));    
-        TYPE_PROPERTIES.put("ModelType", new HashSet<String>(Arrays.asList(new String[]{"id","name","model","accessedBy"})));    
+        TYPE_PROPERTIES.put("ModelType", new HashSet<String>(Arrays.asList(new String[]{"id","name","model"})));    
         TYPE_PROPERTIES.put("Model", new HashSet<String>(Arrays.asList(new String[]{"id","name","elements","types"})));        
     }
     

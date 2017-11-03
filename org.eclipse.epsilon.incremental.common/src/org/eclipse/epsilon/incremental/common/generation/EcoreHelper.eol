@@ -1,5 +1,4 @@
 
-
 operation EClass getJavaTypeName(typePrefix, typeSufix) {
 	
 	return typePrefix + self.getName() + typeSufix;
@@ -22,6 +21,7 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
 operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeSufix:String, isImpl:Boolean) : Sequence {
     return self.getRequriedImports(basePackage, typePrefix, typeSufix, false, false);
 }
+
 operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeSufix:String,
                                     isImpl:Boolean, flatten:Boolean) : Sequence {
     var imports : Set;
@@ -42,14 +42,14 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
         }
         imports.addAll(ea.getRequiredImports(isImpl));
     }
-    /*for (er in ers) {
+    for (er in ers) {
         var type = er.getEReferenceType();
         //if (type.getEPackage() <> self.getEPackage()) {
             imports.add(basePackage + "." + type.getJavaTypeName(typePrefix, typeSufix));
         //}
         //imports.addAll(er.getRequiredImports(isImpl));
         
-    }*/
+    }
     for (ec in self.getESuperTypes().select(st | not (isImpl and st.isAbstract()))) {
         if (ec.getEPackage() <> self.getEPackage()) {
             imports.add("org.eclipse.epsilon." + ec.getEPackage().name + ".incremental.trace." + ec.getJavaTypeName(typePrefix, typeSufix));
@@ -119,12 +119,13 @@ operation EClass getIndex() : Sequence {
     return null;
 }
 
-operation EClass getIndexAttribute() : Any {
+operation EClass getIndexAttributes() : Sequence {
+    var result : Sequence();
     var annot = self.findIndexAnnotation();
-    if (annot.isUndefined()) {
-        return null;
+    if (annot.isDefined()) {
+        result.addAll(annot.getReferences());
     }
-    return annot.getReferences().first();
+    return result;
 }
 
 // The annotation might be in the class or any of its super classes

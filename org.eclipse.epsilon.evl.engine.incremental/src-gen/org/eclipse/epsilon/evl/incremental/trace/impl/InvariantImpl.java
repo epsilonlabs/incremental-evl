@@ -12,11 +12,19 @@
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.eclipse.epsilon.evl.incremental.trace.Invariant;
+import org.eclipse.epsilon.evl.incremental.trace.Check;
 import org.eclipse.epsilon.evl.incremental.trace.InvariantHasCheck;
+
+import org.eclipse.epsilon.evl.incremental.trace.Message;
 import org.eclipse.epsilon.evl.incremental.trace.InvariantHasMessage;
+
+import org.eclipse.epsilon.evl.incremental.trace.Satisfies;
 import org.eclipse.epsilon.evl.incremental.trace.InvariantHasSatisfies;
+
+import org.eclipse.epsilon.eol.incremental.trace.Access;
 import org.eclipse.epsilon.eol.incremental.trace.ExecutionHasAccesses;
 import org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionHasAccessesImpl;
+import org.eclipse.epsilon.evl.incremental.trace.Guard;
 import org.eclipse.epsilon.evl.incremental.trace.GuardedElementHasGuard;
 import org.eclipse.epsilon.evl.incremental.trace.impl.GuardedElementHasGuardImpl;
 
@@ -47,8 +55,9 @@ public class InvariantImpl implements Invariant {
     private final InvariantHasSatisfies satisfies;
 
     /**
-     * Instantiates a new Invariant.
-     */
+     * Instantiates a new Invariant. The Invariant is uniquely identified by its
+     * container and any attributes identified as indexes.
+     */    
     public InvariantImpl() {
         accesses = new ExecutionHasAccessesImpl(this);
         guard = new GuardedElementHasGuardImpl(this);

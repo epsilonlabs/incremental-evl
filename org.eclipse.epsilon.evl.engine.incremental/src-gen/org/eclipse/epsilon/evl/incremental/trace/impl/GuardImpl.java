@@ -12,7 +12,10 @@
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.eclipse.epsilon.evl.incremental.trace.Guard;
-import org.eclipse.epsilon.evl.incremental.trace.GuardHasGuards;
+import org.eclipse.epsilon.evl.incremental.trace.GuardedElement;
+import org.eclipse.epsilon.evl.incremental.trace.GuardHasLimits;
+
+import org.eclipse.epsilon.eol.incremental.trace.Access;
 import org.eclipse.epsilon.eol.incremental.trace.ExecutionHasAccesses;
 import org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionHasAccessesImpl;
 
@@ -30,15 +33,16 @@ public class GuardImpl implements Guard {
     /** The accesses relation */
     private final ExecutionHasAccesses accesses;
 
-    /** The guards relation */
-    private final GuardHasGuards guards;
+    /** The limits relation */
+    private final GuardHasLimits limits;
 
     /**
-     * Instantiates a new Guard.
-     */
-    public GuardImpl() {
+     * Instantiates a new Guard. The Guard is uniquely identified by its
+     * container and any attributes identified as indexes.
+     */    
+    public GuardImpl(GuardedElement container) {
         accesses = new ExecutionHasAccessesImpl(this);
-        guards = new GuardHasGuardsImpl(this);
+        limits = new GuardHasLimitsImpl(this);
     }
     
     @Override
@@ -68,8 +72,8 @@ public class GuardImpl implements Guard {
         return accesses;
     }
     @Override
-    public GuardHasGuards guards() {
-        return guards;
+    public GuardHasLimits limits() {
+        return limits;
     }
  
 

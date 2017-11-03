@@ -12,8 +12,9 @@
 package org.eclipse.epsilon.eol.incremental.trace.impl;
 
 import org.eclipse.epsilon.eol.incremental.trace.Property;
+import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
 import org.eclipse.epsilon.eol.incremental.trace.PropertyHasElement;
-import org.eclipse.epsilon.eol.incremental.trace.PropertyHasAccessedBy;
+
 
 /**
  * Implementation of Property. 
@@ -29,15 +30,13 @@ public class PropertyImpl implements Property {
     /** The element relation */
     private final PropertyHasElement element;
 
-    /** The accessedBy relation */
-    private final PropertyHasAccessedBy accessedBy;
-
     /**
-     * Instantiates a new Property.
-     */
-    public PropertyImpl() {
+     * Instantiates a new Property. The Property is uniquely identified by its
+     * container and any attributes identified as indexes.
+     */    
+    public PropertyImpl(String name,
+                        ModelElement container) {
         element = new PropertyHasElementImpl(this);
-        accessedBy = new PropertyHasAccessedByImpl(this);
     }
     
     @Override
@@ -65,10 +64,6 @@ public class PropertyImpl implements Property {
     @Override
     public PropertyHasElement element() {
         return element;
-    }
-    @Override
-    public PropertyHasAccessedBy accessedBy() {
-        return accessedBy;
     }
  
 

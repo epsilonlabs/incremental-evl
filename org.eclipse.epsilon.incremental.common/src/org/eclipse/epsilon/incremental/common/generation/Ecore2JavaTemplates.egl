@@ -14,27 +14,30 @@ import "EcoreHelper.eol";
 // A set of reusable templetes for java code generation from an Ecore metamodel
 
 /**
- * Get the required parameters for initialization of objects of this EClass. This prints the 
+ * Get the required parameters for initialization of objects of this EClass. The required parameters
+ * are and instance of the container (if conatined) and and attributes that are indices. The 
+ * containment must be reachable via opposite
  */
 @template
-operation EClass getCreateParameters(signature : Boolean) {
-    var attr =self.getEAttributes; 
-    if (attr.isEmpty()) {
-        %][%     
+operation EClass getConstructorParameters(signature : Boolean) {
+    // Index attributes
+    var attr =self.getIndexAttributes(); 
+    var results : Sequence = new Sequence();
+	for (a in attr) {
+        var type = a.getGetterReturnType("");
+        var name = a.getName();
+        results.add(type + " " + name);
     }
-    else {
-	    var results : Sequence = new Sequence();
-	    for (a in attr) {
-	        var type = a.getGetterReturnType("List");
-	        var name = a.getName();
-	        results.add(type + " " + name);
-	    }
-	    if (signature) {
+    // Container
+    var container = self.getEAllReferences().selectOne(er | er.isContainer());
+    if (container.isDefined()) {
+        results.add(container.getEReferenceType().name + " container");
+    }
+	if (signature) {
 %][%=results.concat(", ")%]
-[%      } else {
+[%  } else {
 %][%=results.concat(",\n")%]
-[%      }
-    }
+[%  }
 }
 
 // Get the java interface name of an EClass, correctly extending interfaces defined for the EClass

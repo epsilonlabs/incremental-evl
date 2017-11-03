@@ -12,6 +12,7 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
 import org.eclipse.epsilon.eol.incremental.trace.Execution;    
+import org.eclipse.epsilon.evl.incremental.trace.GuardedElement;    
 
 public interface Guard extends Execution {
 
@@ -35,6 +36,6 @@ public interface Guard extends Execution {
      */
     void setResult(boolean value);
             
-    GuardHasGuards guards();            
+    GuardHasLimits limits();            
 
 }

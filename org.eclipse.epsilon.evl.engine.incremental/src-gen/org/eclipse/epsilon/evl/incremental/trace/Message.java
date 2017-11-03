@@ -12,6 +12,7 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
 import org.eclipse.epsilon.eol.incremental.trace.Execution;    
+import org.eclipse.epsilon.evl.incremental.trace.Invariant;    
 
 public interface Message extends Execution {
 

@@ -12,8 +12,12 @@
 package org.eclipse.epsilon.eol.incremental.trace.impl;
 
 import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
+import org.eclipse.epsilon.eol.incremental.trace.Model;
 import org.eclipse.epsilon.eol.incremental.trace.ModelElementHasModel;
+
+import org.eclipse.epsilon.eol.incremental.trace.Property;
 import org.eclipse.epsilon.eol.incremental.trace.ModelElementHasProperties;
+
 
 /**
  * Implementation of ModelElement. 
@@ -33,9 +37,11 @@ public class ModelElementImpl implements ModelElement {
     private final ModelElementHasProperties properties;
 
     /**
-     * Instantiates a new ModelElement.
-     */
-    public ModelElementImpl() {
+     * Instantiates a new ModelElement. The ModelElement is uniquely identified by its
+     * container and any attributes identified as indexes.
+     */    
+    public ModelElementImpl(String uri,
+                            Model container) {
         model = new ModelElementHasModelImpl(this);
         properties = new ModelElementHasPropertiesImpl(this);
     }

@@ -9,79 +9,80 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  ******************************************************************************/
-package org.eclipse.epsilon.eol.incremental.trace.impl;
+package org.eclipse.epsilon.evl.incremental.trace.impl;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import org.eclipse.epsilon.eol.incremental.trace.AllInstancesAccess;
-import org.eclipse.epsilon.eol.incremental.trace.ModelType;
-import org.eclipse.epsilon.eol.incremental.trace.AllInstancesAccessHasType;
+import org.eclipse.epsilon.evl.incremental.trace.Guard;
+import org.eclipse.epsilon.evl.incremental.trace.GuardedElement;
+import org.eclipse.epsilon.evl.incremental.trace.GuardHasLimits;
 import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of type reference. 
+ * Implementation of limits reference. 
  */
-public class AllInstancesAccessHasTypeImpl extends Feature implements AllInstancesAccessHasType {
+public class GuardHasLimitsImpl extends Feature implements GuardHasLimits {
     
-    protected AllInstancesAccess source;
-    protected Queue<ModelType> target =  new ConcurrentLinkedQueue<ModelType>();
+    protected Guard source;
+    protected GuardedElement target;
     
     /**
-     * Instantiates a new AllInstancesAccessHasType.
+     * Instantiates a new GuardHasLimits.
      *
      * @param source the source of the reference
      */
-    public AllInstancesAccessHasTypeImpl (AllInstancesAccess source) {
+    public GuardHasLimitsImpl (Guard source) {
         super(true);
         this.source = source;
     }
     
     @Override
-    public Queue<ModelType> get() {
+    public GuardedElement get() {
         return target;
     }
     
     @Override
-    public void set(ModelType target) {
-        this.target.add(target);
+    public void set(GuardedElement target) {
+        this.target = target;
     }
     
     @Override
-    public void remove(ModelType target) {
-        this.target.remove(target);
+    public void remove(GuardedElement target) {
+        this.target = null;
     }
     
     @Override
-    public boolean conflict(ModelType  target) {
+    public boolean conflict(GuardedElement  target) {
         boolean result = false;
-        result |= get().contains(target);
+        result |= get() != null;
+        result &= target.guard().get() != null;
         return result;
     }
     
     @Override
-    public boolean related(ModelType target) {
+    public boolean related(GuardedElement target) {
   
-        return get().contains(target) ;
+        return target.equals(this.target) & source.equals(target.guard().get());
     }
     
     @Override
-    public boolean create(ModelType target) {
+    public boolean create(GuardedElement target) {
         if (conflict(target)) {
             return false;
         }
         if (related(target)) {
             return true;
         }
+        target.guard().set(source);
         set(target);
         return true;
     }
 
     @Override
-    public boolean destroy(ModelType target) {
+    public boolean destroy(GuardedElement target) {
         if (!related(target)) {
             return false;
         }
+        target.guard().remove(source);
         remove(target);
         return true;
     }
