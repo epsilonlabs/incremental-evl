@@ -1,0 +1,93 @@
+[%
+/*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Horacio Hoyos Rodriguez - initial API and implementation
+ ******************************************************************************/
+/**
+ * A template to generate an implementation of an EClass that can be used as a DTO.
+ */
+import "Ecore2JavaTemplates.egl";
+ %]
+ /*******************************************************************************
+ * This file was automatically generated on: [%=today%].
+ * Only modify protected regions indicated by "<!-- -->"
+ *
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ ******************************************************************************/
+package [%=qp%].trace.impl;
+
+import [%=qp%].trace.[%=ec.getName()%];
+[%for (er in ec.getEReferences()) {%]
+import [%=qp%].trace.[%=er.getEContainingClass().name%]Has[%=er.name.firstToUpperCase()%];
+[%}%]
+[%for (er in ec.getEAllReferences().excludingAll(ec.getEReferences())) {
+    var pack = er.getEContainingClass().getEPackage().name;
+    var erqp = qp.replace("." + ec.getEPackage().name + ".", "." + pack + ".");%]
+import [%=erqp%].trace.[%=er.getEContainingClass().name%]Has[%=er.name.firstToUpperCase()%];
+import [%=erqp%].trace.impl.[%=er.getEContainingClass().name%]Has[%=er.name.firstToUpperCase()%]Impl;
+[%}%]
+
+/**
+ * Implementation of [%=ec.getName()%]. 
+ */
+public class [%=ec.name%]Impl implements [%=ec.name%] {
+
+[%for (ea in ec.getEAllAttributes()) {
+    var multi = "List";
+    if (ea.isOrdered()) { multi = "Set"; }%]
+    /** The [%=ea.name%] */
+    private [%=ea.getGetterReturnType(multi)%] [%=ea.name%];
+
+[%}%]
+[%for (er in ec.getEAllReferences()) {%]
+    /** The [%=er.name%] relation */
+    private final [%=er.getEContainingClass().name%]Has[%=er.name.firstToUpperCase()%] [%=er.name%];
+
+[%}%]
+    /**
+     * Instantiates a new [%=ec.getName()%].
+     */
+    public [%=ec.getName()%]Impl() {
+[%for (er in ec.getEAllReferences()) {%]
+        [%=er.name%] = new [%=er.getEContainingClass().name %]Has[%=er.name.firstToUpperCase()%]Impl(this);
+[%}%]
+    }
+    
+[%for (ea in ec.getEAllAttributes()) {
+    var multi = "List";
+    if (ea.isOrdered()) {
+        multi = "Set";
+    }%]
+    @Override
+    public [%=ea.makeGetterSignature(multi)%] {
+        return [%=ea.name%];
+    }
+    
+[%  if (not ea.isMany()) {%]    
+    @Override
+    public [%=ea.makeSetterSignature(multi)%] {
+        this.[%=ea.name%] = value;
+    }   
+     
+[%  }
+}%]
+[%for (er in ec.getEAllReferences()) {%]
+    @Override
+    public [%=er.getEContainingClass().name%]Has[%=er.name.firstToUpperCase()%] [%=er.name%]() {
+        return [%=er.name%];
+    }
+[%
+}%] 
+
+}

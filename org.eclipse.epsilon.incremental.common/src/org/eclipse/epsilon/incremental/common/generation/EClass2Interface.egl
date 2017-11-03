@@ -26,10 +26,10 @@ import "Ecore2JavaTemplates.egl";
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  ******************************************************************************/
-package [%=qp%].[%=pName%];
+package [%=qp%].trace;
 
 [%
-for (imp in ec.getRequriedImports(qp, "", "")) {%]
+for (imp in ec.getRequriedImports(qp+".trace", "", "")) {%]
 import [%=imp%];    
 [%}%]
 
@@ -49,22 +49,12 @@ public interface [%=ec.getInterfaceName()%] {
     [%=ea.makeSetterSignature(multi)%];
 [%      }%]
             
-[%    }%]
+[%  }%]
 [%
     for (er in ec.getEReferences()) {
-        var multi = "List";
-        if (er.isMany() and not er.isOrdered()) {
-            multi = "Set";
-        }%]
-    [%=er.makeGetterDoc()%]
-    [%=er.makeGetterSignature(multi, "", "")%];[%
-        if (not er.isMany()) {%]    
-
-    [%=er.makeSetterDoc()%]
-    [%=er.makeSetterSignature("", "")%];
-[%      }%]
-            
+        var featureType = ec.name + "Has" + er.name.firstToUpperCase();%]
+    [%=featureType%] [%=er.name%]();            
 [%  }
-    
 %]
+
 }

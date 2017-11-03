@@ -6,45 +6,8 @@ import "../../../../../../../../../org.eclipse.epsilon.incremental.common/src/or
  *      - delete(Vertex v)
  *      - update(Vertex v)
  *      - getById(Object id)
- *  
  *  Additionally a getBy<Index> method is added if the EClass has an OrientDbIndex annotation.
- *
- *  To crete the Shchema additional information in the form of EAnnotations has to be added to the
- *  metamodel that defines the Data Model. The EAnnotations sources supported are: 
- *
- *  https://eclipse.org/epsilon/incremental/Graph       for edge definition
- *  https://eclipse.org/epsilon/incremental/OrientDbIndex       for index definitions
- *  https://eclipse.org/epsilon/incremental/OrientDbFind        for find methods
- *  https://eclipse.org/epsilon/incremental/OrientDbProperty    for property definitions
- *
- *  ## https://eclipse.org/epsilon/incremental/Graph ##
- *
- *  EMF models support bi--directional relationships between classes by defining one EReference
- *  as the oppoiste of the other. In OrientDB, a single edge is needed to define the relationship.
- *  In order to avoid double edges the OrientDbGraph annotation allow you to define which
- *  EReferences in the metamodel should be used as edges in the DB. If the EReference used for
- *  and edge has an opposite reference, the appropiate access methods will be added to the
- *  Vertex definitions (see EClass2Vertex.egl).
- *
- *  OrientDbGraph annotaions should only be added to EReferences, and will be ignored in any other
- *  metamodel elements.
- *
- *  ## https://eclipse.org/epsilon/incremental/OrientDbIndex ##
- *
- *  The OrientDbIndex annotation allows information relevant to to Index definitions (see 
- *  http://orientdb.com/docs/last/Indexes.html). To define an index for an EClass, the annotation
- *  must reference the EAttribute that will be used as an index and must include a details entry
- *  where the key is "type" and the value is one of the supported index types.
- *  
- *  OrientDbIndex annotaions should only be added to EClasses, and will be ignored in any other
- *  metamodel elements. 
- *
- *  ## https://eclipse.org/epsilon/incremental/OrientDbProperty ##
- *
- *  By default the temaplte assumes that EAttributes use EPrmitive types (EString, EInt, etc.) as
- *  types and uses the correspoinding Java type to select the appropiate OType type when creating
- *  properties. For cases in which this is not the case, the OrientDbProperty can be used to have
- *  more control over the used type. THIS IS NOT IMPLEMENTED YET.
+ 
  */
 %]
  /*******************************************************************************

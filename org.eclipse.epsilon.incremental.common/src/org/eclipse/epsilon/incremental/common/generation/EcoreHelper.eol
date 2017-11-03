@@ -42,17 +42,17 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
         }
         imports.addAll(ea.getRequiredImports(isImpl));
     }
-    for (er in ers) {
+    /*for (er in ers) {
         var type = er.getEReferenceType();
         //if (type.getEPackage() <> self.getEPackage()) {
-            imports.add(basePackage + "." + type.getEPackage().name + "." + type.getJavaTypeName(typePrefix, typeSufix));
+            imports.add(basePackage + "." + type.getJavaTypeName(typePrefix, typeSufix));
         //}
-        imports.addAll(er.getRequiredImports(isImpl));
+        //imports.addAll(er.getRequiredImports(isImpl));
         
-    }
+    }*/
     for (ec in self.getESuperTypes().select(st | not (isImpl and st.isAbstract()))) {
         if (ec.getEPackage() <> self.getEPackage()) {
-            imports.add(basePackage + "." + ec.getEPackage().name + "." + ec.getJavaTypeName(typePrefix, typeSufix));
+            imports.add("org.eclipse.epsilon." + ec.getEPackage().name + ".incremental.trace." + ec.getJavaTypeName(typePrefix, typeSufix));
         }
     }
     return imports.sortBy(im | im);

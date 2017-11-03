@@ -16,8 +16,8 @@ import java.util.Map;
 
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
 import org.eclipse.epsilon.eol.exceptions.models.EolNotInstantiableModelElementTypeException;
+import org.eclipse.epsilon.eol.incremental.trace.Execution;
 import org.eclipse.epsilon.eol.models.IModel;
-import org.eclipse.epsilon.incremental.trace.eol.Trace;
 
 /**
  * An ITraceModel extends the ITraceModelBase to provide additional search/modify methods that can not be
@@ -49,7 +49,7 @@ public interface ITraceModel extends IModel {
 	 * @param propertyUri
 	 * @return A list of traces that involve the element and access the property
 	 */
-	List<Trace> findTraces(String elementUri, String propertyUri);
+	List<Execution> findTraces(String elementUri, String propertyUri);
 	
 	/**
 	 * Find all traces for the given element. This method assumes that it is invoked in the context of
@@ -58,7 +58,7 @@ public interface ITraceModel extends IModel {
 	 * @param elementUri
 	 * @return A list of traces that involve the element
 	 */
-	List<Trace> findTraces(String elementUri);
+	List<Execution> findTraces(String elementUri);
 	
 	// FIXME Add methods for offline compare. This methods would also need to check changes in properties. 
 

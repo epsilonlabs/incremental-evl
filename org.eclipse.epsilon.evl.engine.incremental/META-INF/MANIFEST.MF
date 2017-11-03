@@ -15,4 +15,5 @@ Export-Package: org.eclipse.epsilon.evl,
  org.eclipse.epsilon.evl.execute.context,
  org.eclipse.epsilon.evl.execute.introspection.recording,
  org.eclipse.epsilon.evl.incremental.models,
- org.eclipse.epsilon.incremental.trace.evl
+ org.eclipse.epsilon.evl.incremental.trace,
+ org.eclipse.epsilon.evl.incremental.trace.impl

@@ -8,6 +8,7 @@ Export-Package: org.eclipse.epsilon.eol.incremental,
  org.eclipse.epsilon.eol.incremental.dom,
  org.eclipse.epsilon.eol.incremental.execute,
  org.eclipse.epsilon.eol.incremental.models,
- org.eclipse.epsilon.incremental.trace.eol
+ org.eclipse.epsilon.eol.incremental.trace,
+ org.eclipse.epsilon.eol.incremental.trace.impl
 Require-Bundle: org.eclipse.epsilon.eol.engine,
  org.eclipse.epsilon.common

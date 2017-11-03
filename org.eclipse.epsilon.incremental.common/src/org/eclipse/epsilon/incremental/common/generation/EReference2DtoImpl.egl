@@ -1,0 +1,163 @@
+[%
+/*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Horacio Hoyos Rodriguez - initial API and implementation
+ ******************************************************************************/
+/**
+ * A template to generate an implementation of an EClass that can be used as a DTO.
+ */
+import "Ecore2JavaTemplates.egl";
+var sourceType = er.getEContainingClass().name;
+var targetType = er.getEReferenceType().name;
+var unique = "true";
+if (not er.isUnique()) { unique = "false";}
+var opposite;
+var opp_many = false;
+if (er.getEOpposite().isDefined()) {
+    opposite = er.getEOpposite().name;
+    opp_many = er.getEOpposite().isMany();
+}
+ %]
+ /*******************************************************************************
+ * This file was automatically generated on: [%=today%].
+ * Only modify protected regions indicated by "<!-- -->"
+ *
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ ******************************************************************************/
+package [%=qp%].trace.impl;
+
+[%if (er.isMany()) {%]
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+[%}%]
+import [%=qp%].trace.[%=sourceType%];
+import [%=qp%].trace.[%=targetType%];
+import [%=qp%].trace.[%=featureType%];
+import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
+
+
+/**
+ * Implementation of [%=er.name%] reference. 
+ */
+public class [%=featureType%]Impl extends Feature implements [%=featureType%] {
+    
+    protected [%=sourceType%] source;
+[%if (er.isMany()) {%]
+    protected Queue<[%=targetType%]> target =  new ConcurrentLinkedQueue<[%=targetType%]>();
+[%} else {%]
+    protected [%=targetType%] target;
+[%}%]
+    
+    /**
+     * Instantiates a new [%=featureType%].
+     *
+     * @param source the source of the reference
+     */
+    public [%=featureType%]Impl ([%=sourceType%] source) {
+        super([%=unique%]);
+        this.source = source;
+    }
+    
+    @Override
+[%if (er.isMany()) {%]
+    public Queue<[%=targetType%]> get() {
+[%} else {%]
+    public [%=targetType%] get() {
+[%}%]
+        return target;
+    }
+    
+    @Override
+    public void set([%=targetType%] target) {
+[%if (er.isMany()) {%]
+        this.target.add(target);
+[%} else {%]
+        this.target = target;
+[%}%]
+    }
+    
+    @Override
+    public void remove([%=targetType%] target) {
+[%if (er.isMany()) {%]
+        this.target.remove(target);
+[%} else {%]
+        this.target = null;
+[%}%]
+    }
+    
+    @Override
+    public boolean conflict([%=targetType%]  target) {
+        boolean result = false;
+[%if (er.isMany()) {%]
+        result |= get().contains(target);
+[%} else {%]
+        result |= get() != null;
+[%}
+if (opposite.isDefined() and opp_many) {%]
+        result |= target.[%=opposite%]().get().contains(source);
+[%} else if (opposite.isDefined()) {%]
+        result &= target.[%=opposite%]().get() != null;
+[%}%]
+        return result;
+    }
+    
+    @Override
+    public boolean related([%=targetType%] target) {
+[%var sourceRel;
+if (er.isMany()) {
+    sourceRel = "get().contains(target)";
+} else {
+    sourceRel = "target.equals(this.target)";
+}
+// If there is an opposite, need to check that too. The check depends on the
+// multiplicity of the opposite
+var targetRel = ";";
+if (opposite.isDefined()) {
+    if (opp_many) {
+        targetRel = "& target." + opposite + "().get().contains(source);";
+	} else {
+	    targetRel = "& source.equals(target." + opposite + "().get());";
+	}
+}%]  
+        return [%=sourceRel%] [%=targetRel%]
+    }
+    
+    @Override
+    public boolean create([%=targetType%] target) {
+        if (conflict(target)) {
+            return false;
+        }
+        if (related(target)) {
+            return true;
+        }
+[%if (opposite.isDefined()) {%]
+        target.[%=opposite%]().set(source);
+[%}%]
+        set(target);
+        return true;
+    }
+
+    @Override
+    public boolean destroy([%=targetType%] target) {
+        if (!related(target)) {
+            return false;
+        }
+[%if (opposite.isDefined()) {%]
+        target.[%=opposite%]().remove(source);
+[%}%]
+        remove(target);
+        return true;
+    }
+
+}

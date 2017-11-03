@@ -43,7 +43,7 @@
         eType="#//Property" eOpposite="#//Property/accessedBy"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Property" eSuperTypes="#//IdElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//Property/name">
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//Property/name #//Property/element">
       <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -61,8 +61,8 @@
       <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="uri" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//AnyURI"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="model" lowerBound="1" eType="#//Model"
-        eOpposite="#//Model/elements"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="model" lowerBound="1" upperBound="-1"
+        eType="#//Model" eOpposite="#//Model/elements"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
         eType="#//Property" containment="true" eOpposite="#//Property/element">
       <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
@@ -90,7 +90,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
-        eType="#//ModelElement" containment="true" eOpposite="#//ModelElement/model">
+        eType="#//ModelElement" eOpposite="#//ModelElement/model">
       <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
         <details key="edge" value="true"/>
       </eAnnotations>

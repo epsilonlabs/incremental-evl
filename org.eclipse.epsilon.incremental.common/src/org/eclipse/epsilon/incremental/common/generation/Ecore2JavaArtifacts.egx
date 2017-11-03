@@ -1,0 +1,141 @@
+/*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Horacio Hoyos Rodriguez - initial API and implementation
+ ******************************************************************************/
+ 
+import 'EcoreHelper.eol';
+
+/**
+ * Create Java artifacts related to the ExL Trace Ecore metamodel. The launch configuration (or
+ * java invocation) must provide the name of the package of interest, i.e. the package that
+ * contains the classes for the ExL language, as a "targetLanguage" variable/parameter.
+ * Additionally we need to know if the language extends another, so the model implementation
+ * can reuse the extended language model implementation.
+ *
+ *  The craeted artifacts are:
+ *  - An ITraceModel implementaiton that exploits the metamodel information (Ecore2TraceModel.egl)
+ *  - A defintion of a java interface and a DTO implementation for each EClass of the metamodel's
+ *    package
+ *  - A definition of a java interface and a DTO implementation for each EReference of the
+ *    metamodel's package, used to handle EReference semantics
+ *  - An implementaiton of each EClass that delegates to TinkerPop Gremlin calls to resolve
+ *      references. 
+ */
+pre {
+    var now  = Native("java.time.LocalDate").now();
+    var project = "../../../../../../../../org.eclipse.epsilon." + targetLanguage + ".engine.incremental";
+    var folder = "/src-gen/org/eclipse/epsilon/" + targetLanguage + "/incremental";
+    var qp = "org.eclipse.epsilon." + targetLanguage + ".incremental";
+    var bl = "";
+    if (baseLanguage.length() > 0) {
+        bl = baseLanguage;
+    }
+}
+
+rule EPackage2Model
+  transform p : EPackage {
+  
+  parameters {
+    var params : new Map;
+    params.put("today", now.toString());
+    params.put("year", now.getYear().toString()); 
+    params.put("qp", qp);
+    params.put("baseLanguage", bl);
+    return params;
+  }
+  
+  guard: p.name == targetLanguage
+  template : "Ecore2TraceModel.egl"
+  target : project + folder + "/models/Abstract" + p.name.firstToUpperCase() + "TraceModel.java"
+  
+}
+
+rule EClass2Interface
+  transform ec : EClass {
+  
+    parameters {
+      var params : new Map;
+      params.put("today", now.toString());
+      params.put("year", now.getYear().toString()); 
+      params.put("qp", qp);
+      return params;
+    }
+    guard    : ec.getEPackage().name == targetLanguage
+    template : "EClass2Interface.egl"
+    target   : project + folder + "/trace/" + ec.name + ".java"
+  }
+
+rule EClass2DTO
+  transform ec : EClass {
+  
+    parameters {
+      var params : new Map;
+      params.put("today", now.toString());
+      params.put("year", now.getYear().toString()); 
+      params.put("qp", qp);
+      return params;
+    }
+    guard    : not ec.isInterface() and not ec.isAbstract and (ec.getEPackage().name == targetLanguage)
+    template : "EClass2DtoImpl.egl"
+    target   : project + folder + "/trace/impl/" + ec.name + "Impl.java"
+  }
+
+rule EReference2Interface
+  transform er : EReference {
+  
+    parameters {
+      var featureType = er.getEContainingClass().name + "Has" + er.name.firstToUpperCase();
+      var params : new Map;
+      params.put("today", now.toString());
+      params.put("year", now.getYear().toString()); 
+      params.put("qp", qp);
+      params.put("featureType", featureType);
+      return params;
+    }
+    guard    : er.getEContainingClass().getEPackage().name == targetLanguage
+    template : "EReference2Interface.egl"
+    target   : project + folder + "/trace/" + featureType + ".java"
+  }
+
+rule ERefernce2DTO
+  transform er : EReference {
+  
+    parameters {
+      var featureType = er.getEContainingClass().name + "Has" + er.name.firstToUpperCase();
+      var params : new Map;
+      params.put("today", now.toString());
+      params.put("year", now.getYear().toString()); 
+      params.put("qp", qp);
+      params.put("featureType", featureType);
+      return params;
+    }
+    guard    : er.getEContainingClass().getEPackage().name == targetLanguage
+    template : "EReference2DtoImpl.egl"
+    target   : project + folder + "/trace/impl/" + featureType + "Impl.java"
+  }
+/*
+rule EClass2GremlinImpl
+  transform ec : EClass {
+  
+    parameters {
+      var params : new Map;
+      params.put("today", now.toString());
+      params.put("year", now.getYear().toString()); 
+      params.put("qp", "org.eclipse.epsilon.evl.incremental.trace");
+      return params;
+    }
+    guard : not ec.isInterface() and not ec.isAbstract() and (ec.getEPackage().name == "evl")
+    template : "Eclass2EvlGremlinImpl.egl"
+    target : "../../../../../../../../../org.eclipse.epsilon.evl.engine.incremental.tinkerpop" +
+             "/src-gen/org/eclipse/epsilon/evl/incremental/trace/tinkerpop/Abstract" + ec.name + "Impl.java"
+  }
+*/
+post {
+ "GenDone".println();
+}

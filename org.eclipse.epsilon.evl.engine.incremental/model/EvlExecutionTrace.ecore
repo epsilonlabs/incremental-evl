@@ -2,9 +2,41 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="evl" nsURI="http://www.eclipse.epsilon.org/incremental/evl/ExecutionTrace"
     nsPrefix="evl_et">
-  <eClassifiers xsi:type="ecore:EClass" name="EvlConstraint" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore#//ModuleElement"/>
-  <eClassifiers xsi:type="ecore:EClass" name="EvlContext" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore#//ModuleElement"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Guard" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore#//ExecutableBlock"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Check" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore#//ExecutableBlock"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Message" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore#//ExecutableBlock"/>
+  <eClassifiers xsi:type="ecore:EClass" name="GuardedElement" abstract="true" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore#//Execution">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="guard" eType="#//Guard"
+        eOpposite="#//Guard/guards"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Context" eSuperTypes="#//GuardedElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="constraints" upperBound="-1"
+        eType="#//Invariant" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Invariant" eSuperTypes="#//GuardedElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="result" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="check" eType="#//Check"
+        eOpposite="#//Check/invariant"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="message" eType="#//Message"
+        eOpposite="#//Message/invariant"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="satisfies" eType="#//Satisfies"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Guard" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore#//Execution">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="result" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="guards" eType="#//GuardedElement"
+        eOpposite="#//GuardedElement/guard"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Check" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore#//Execution">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="invariant" lowerBound="1"
+        eType="#//Invariant" eOpposite="#//Invariant/check"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Message" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore#//Execution">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="invariant" lowerBound="1"
+        eType="#//Invariant" eOpposite="#//Invariant/message"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Satisfies">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="all" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="satsfies" lowerBound="1"
+        upperBound="-1" eType="#//Invariant"/>
+  </eClassifiers>
 </ecore:EPackage>

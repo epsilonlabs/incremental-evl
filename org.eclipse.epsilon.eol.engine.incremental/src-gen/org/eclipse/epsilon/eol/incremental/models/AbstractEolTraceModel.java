@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-10-20.
+ * This file was automatically generated on: 2017-11-03.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -23,10 +23,11 @@ import org.eclipse.epsilon.eol.compile.m3.Metamodel;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 import org.eclipse.epsilon.eol.models.Model;
-import org.eclipse.epsilon.incremental.trace.eol.*;
+import org.eclipse.epsilon.eol.incremental.trace.*;
+
 
 public abstract class AbstractEolTraceModel extends Model implements ITraceModel  {
-    
+ 
     private static final Set<String> KNOWN_TYPES = Collections.unmodifiableSet(
             new HashSet<String>(Arrays.asList(
                     new String[] {"ExecutionTrace","Execution","Access","AllInstancesAccess","PropertyAccess","Property","ModelElement","ModelType","Model"}
@@ -67,9 +68,11 @@ public abstract class AbstractEolTraceModel extends Model implements ITraceModel
         TYPE_PROPERTIES.put("Model", new HashSet<String>(Arrays.asList(new String[]{"id","name","elements","types"})));        
     }
     
+    
+    
     @Override
     public Metamodel getMetamodel(StringProperties properties, IRelativePathResolver resolver) {
-        // TODO Implement OrientDbEvlTraceModel.isInstantiable
+        // TODO Generate AbstractEolTraceModel.getMetamodel
         return null;
     }
     
@@ -83,39 +86,55 @@ public abstract class AbstractEolTraceModel extends Model implements ITraceModel
     
     @Override
     public Object getTypeOf(Object instance) {
-        if (instance instanceof ExecutionTrace) {
-            return ExecutionTrace.class;
-        }
-        if (instance instanceof Execution) {
-            return Execution.class;
-        }
-        if (instance instanceof Access) {
-            return Access.class;
-        }
-        if (instance instanceof AllInstancesAccess) {
-            return AllInstancesAccess.class;
-        }
-        if (instance instanceof PropertyAccess) {
-            return PropertyAccess.class;
-        }
-        if (instance instanceof Property) {
-            return Property.class;
-        }
-        if (instance instanceof ModelElement) {
-            return ModelElement.class;
-        }
-        if (instance instanceof ModelType) {
-            return ModelType.class;
-        }
-        if (instance instanceof Model) {
-            return Model.class;
-        }        
-        return null;
+        Object type = null;
+        {
+            if (instance instanceof ExecutionTrace) {
+                type = ExecutionTrace.class;
+            }
+            
+            else if (instance instanceof Execution) {
+                type = Execution.class;
+            }
+            
+            else if (instance instanceof Access) {
+                type = Access.class;
+            }
+            
+            else if (instance instanceof AllInstancesAccess) {
+                type = AllInstancesAccess.class;
+            }
+            
+            else if (instance instanceof PropertyAccess) {
+                type = PropertyAccess.class;
+            }
+            
+            else if (instance instanceof Property) {
+                type = Property.class;
+            }
+            
+            else if (instance instanceof ModelElement) {
+                type = ModelElement.class;
+            }
+            
+            else if (instance instanceof ModelType) {
+                type = ModelType.class;
+            }
+            
+            else if (instance instanceof Model) {
+                type = Model.class;
+            }
+            
+        }       
+        return type;
     }
     
     @Override
     public boolean hasType(String type) {
-        return KNOWN_TYPES.contains(type);
+        boolean result = false;
+        {
+            result = KNOWN_TYPES.contains(type);
+        }
+        return result;
     }
     
     @Override
@@ -123,7 +142,12 @@ public abstract class AbstractEolTraceModel extends Model implements ITraceModel
         if (!hasType(type)) {
             return false;
         }
-        return INSTANTIATABLE_TYPES.contains(type);
+        boolean result = false;
+        {
+        
+            result = INSTANTIATABLE_TYPES.contains(type);
+        }
+        return result;
     }
     
     @Override
@@ -133,98 +157,134 @@ public abstract class AbstractEolTraceModel extends Model implements ITraceModel
     
     @Override
     public boolean isOfKind(Object instance, String type) throws EolModelElementTypeNotFoundException {
-        if (instance instanceof ExecutionTrace) {
-            return TYPE_HIERARCHY.get("ExecutionTrace").contains(type);
-        }
-        if (instance instanceof Execution) {
-            return TYPE_HIERARCHY.get("Execution").contains(type);
-        }
-        if (instance instanceof Access) {
-            return TYPE_HIERARCHY.get("Access").contains(type);
-        }
-        if (instance instanceof AllInstancesAccess) {
-            return TYPE_HIERARCHY.get("AllInstancesAccess").contains(type);
-        }
-        if (instance instanceof PropertyAccess) {
-            return TYPE_HIERARCHY.get("PropertyAccess").contains(type);
-        }
-        if (instance instanceof Property) {
-            return TYPE_HIERARCHY.get("Property").contains(type);
-        }
-        if (instance instanceof ModelElement) {
-            return TYPE_HIERARCHY.get("ModelElement").contains(type);
-        }
-        if (instance instanceof ModelType) {
-            return TYPE_HIERARCHY.get("ModelType").contains(type);
-        }
-        if (instance instanceof Model) {
-            return TYPE_HIERARCHY.get("Model").contains(type);
-        }        
-        return false;
+        boolean result = false;
+        {
+
+	        if  (instance instanceof ExecutionTrace) {
+	            result = TYPE_HIERARCHY.get("ExecutionTrace").contains(type);
+	        }
+
+	        else if  (instance instanceof Execution) {
+	            result = TYPE_HIERARCHY.get("Execution").contains(type);
+	        }
+
+	        else if  (instance instanceof Access) {
+	            result = TYPE_HIERARCHY.get("Access").contains(type);
+	        }
+
+	        else if  (instance instanceof AllInstancesAccess) {
+	            result = TYPE_HIERARCHY.get("AllInstancesAccess").contains(type);
+	        }
+
+	        else if  (instance instanceof PropertyAccess) {
+	            result = TYPE_HIERARCHY.get("PropertyAccess").contains(type);
+	        }
+
+	        else if  (instance instanceof Property) {
+	            result = TYPE_HIERARCHY.get("Property").contains(type);
+	        }
+
+	        else if  (instance instanceof ModelElement) {
+	            result = TYPE_HIERARCHY.get("ModelElement").contains(type);
+	        }
+
+	        else if  (instance instanceof ModelType) {
+	            result = TYPE_HIERARCHY.get("ModelType").contains(type);
+	        }
+
+	        else if  (instance instanceof Model) {
+	            result = TYPE_HIERARCHY.get("Model").contains(type);
+	        }
+        } 
+        return result;
     }
     
     @Override
     public boolean isOfType(Object instance, String type) throws EolModelElementTypeNotFoundException {
-        if (instance instanceof ExecutionTrace) {
-            return "ExecutionTrace".equals(type);
+        boolean result = false;
+        {
+
+	        if  (instance instanceof ExecutionTrace) {
+	            result = "ExecutionTrace".equals(type);
+	        }
+
+	        else if  (instance instanceof Execution) {
+	            result = "Execution".equals(type);
+	        }
+
+	        else if  (instance instanceof Access) {
+	            result = "Access".equals(type);
+	        }
+
+	        else if  (instance instanceof AllInstancesAccess) {
+	            result = "AllInstancesAccess".equals(type);
+	        }
+
+	        else if  (instance instanceof PropertyAccess) {
+	            result = "PropertyAccess".equals(type);
+	        }
+
+	        else if  (instance instanceof Property) {
+	            result = "Property".equals(type);
+	        }
+
+	        else if  (instance instanceof ModelElement) {
+	            result = "ModelElement".equals(type);
+	        }
+
+	        else if  (instance instanceof ModelType) {
+	            result = "ModelType".equals(type);
+	        }
+
+	        else if  (instance instanceof Model) {
+	            result = "Model".equals(type);
+	        }
         }
-        if (instance instanceof Execution) {
-            return "Execution".equals(type);
-        }
-        if (instance instanceof Access) {
-            return "Access".equals(type);
-        }
-        if (instance instanceof AllInstancesAccess) {
-            return "AllInstancesAccess".equals(type);
-        }
-        if (instance instanceof PropertyAccess) {
-            return "PropertyAccess".equals(type);
-        }
-        if (instance instanceof Property) {
-            return "Property".equals(type);
-        }
-        if (instance instanceof ModelElement) {
-            return "ModelElement".equals(type);
-        }
-        if (instance instanceof ModelType) {
-            return "ModelType".equals(type);
-        }
-        if (instance instanceof Model) {
-            return "Model".equals(type);
-        }  
-        return false;
+        return result;
     }
   
     @Override
-    public boolean knowsAboutProperty(Object instance, String property) {        
-        if (instance instanceof ExecutionTrace) {
-            return TYPE_PROPERTIES.get("ExecutionTrace").contains(property);
-        }        
-        if (instance instanceof Execution) {
-            return TYPE_PROPERTIES.get("Execution").contains(property);
-        }        
-        if (instance instanceof Access) {
-            return TYPE_PROPERTIES.get("Access").contains(property);
-        }        
-        if (instance instanceof AllInstancesAccess) {
-            return TYPE_PROPERTIES.get("AllInstancesAccess").contains(property);
-        }        
-        if (instance instanceof PropertyAccess) {
-            return TYPE_PROPERTIES.get("PropertyAccess").contains(property);
-        }        
-        if (instance instanceof Property) {
-            return TYPE_PROPERTIES.get("Property").contains(property);
-        }        
-        if (instance instanceof ModelElement) {
-            return TYPE_PROPERTIES.get("ModelElement").contains(property);
-        }        
-        if (instance instanceof ModelType) {
-            return TYPE_PROPERTIES.get("ModelType").contains(property);
-        }        
-        if (instance instanceof Model) {
-            return TYPE_PROPERTIES.get("Model").contains(property);
-        }        
-        return false;
+    public boolean knowsAboutProperty(Object instance, String property) {
+        boolean result = false;
+        {
+        
+	        if  (instance instanceof ExecutionTrace) {
+	            result = TYPE_PROPERTIES.get("ExecutionTrace").contains(property);
+	        }
+        
+	        else if  (instance instanceof Execution) {
+	            result = TYPE_PROPERTIES.get("Execution").contains(property);
+	        }
+        
+	        else if  (instance instanceof Access) {
+	            result = TYPE_PROPERTIES.get("Access").contains(property);
+	        }
+        
+	        else if  (instance instanceof AllInstancesAccess) {
+	            result = TYPE_PROPERTIES.get("AllInstancesAccess").contains(property);
+	        }
+        
+	        else if  (instance instanceof PropertyAccess) {
+	            result = TYPE_PROPERTIES.get("PropertyAccess").contains(property);
+	        }
+        
+	        else if  (instance instanceof Property) {
+	            result = TYPE_PROPERTIES.get("Property").contains(property);
+	        }
+        
+	        else if  (instance instanceof ModelElement) {
+	            result = TYPE_PROPERTIES.get("ModelElement").contains(property);
+	        }
+        
+	        else if  (instance instanceof ModelType) {
+	            result = TYPE_PROPERTIES.get("ModelType").contains(property);
+	        }
+        
+	        else if  (instance instanceof Model) {
+	            result = TYPE_PROPERTIES.get("Model").contains(property);
+	        }
+        }
+        return result;
     }    
     
 }
