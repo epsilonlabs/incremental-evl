@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,11 +18,14 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of execution reference. 
+ * Implementation of AccessHasExecution reference. 
  */
 public class AccessHasExecutionImpl extends Feature implements AccessHasExecution {
     
+    /** The source(s) of the reference */
     protected Access source;
+    
+    /** The target(s) of the reference */
     protected Execution target;
     
     /**
@@ -35,42 +38,20 @@ public class AccessHasExecutionImpl extends Feature implements AccessHasExecutio
         this.source = source;
     }
     
+    // PUBLIC API
+        
     @Override
     public Execution get() {
         return target;
     }
     
     @Override
-    public void set(Execution target) {
-        this.target = target;
-    }
-    
-    @Override
-    public void remove(Execution target) {
-        this.target = null;
-    }
-    
-    @Override
-    public boolean conflict(Execution  target) {
-        boolean result = false;
-        result |= get() != null;
-        result |= target.accesses().get().contains(source);
-        return result;
-    }
-    
-    @Override
-    public boolean related(Execution target) {
-  
-        return target.equals(this.target) & target.accesses().get().contains(source);
-    }
-    
-    @Override
     public boolean create(Execution target) {
+        if (isUnique && related(target)) {
+            return true;
+        }
         if (conflict(target)) {
             return false;
-        }
-        if (related(target)) {
-            return true;
         }
         target.accesses().set(source);
         set(target);
@@ -85,6 +66,32 @@ public class AccessHasExecutionImpl extends Feature implements AccessHasExecutio
         target.accesses().remove(source);
         remove(target);
         return true;
+    }
+    
+    @Override
+    public boolean conflict(Execution target) {
+        boolean result = false;
+        result |= get() != null;
+        result |= target.accesses().isUnique() && target.accesses().get().contains(source);
+        return result;
+    }
+    
+    @Override
+    public boolean related(Execution target) {
+  
+        return target.equals(this.target) & target.accesses().get().contains(source);
+    }
+    
+    // PRIVATE API
+    
+    @Override
+    public void set(Execution target) {
+        this.target = target;
+    }
+    
+    @Override
+    public void remove(Execution target) {
+        this.target = null;
     }
 
 }

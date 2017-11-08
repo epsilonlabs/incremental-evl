@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -43,6 +43,7 @@ public class PropertyAccessImpl implements PropertyAccess {
     public PropertyAccessImpl(Execution container) {
         execution = new AccessHasExecutionImpl(this);
         property = new PropertyAccessHasPropertyImpl(this);
+        execution.create(container);
     }
     
     @Override

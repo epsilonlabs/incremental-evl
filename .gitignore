@@ -1,6 +1,9 @@
 # Sonar files
 .sonar
 
+# Binaries
+bin/
+
 # Ignore examples
 *examples*
 

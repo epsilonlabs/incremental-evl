@@ -22,4 +22,10 @@ public abstract class Feature {
 		this.isUnique = true;
 	}
 
+	public boolean isUnique() {
+		return isUnique;
+	}
+	
+	
+
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,11 +20,14 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of properties reference. 
+ * Implementation of ModelElementHasProperties reference. 
  */
 public class ModelElementHasPropertiesImpl extends Feature implements ModelElementHasProperties {
     
+    /** The source(s) of the reference */
     protected ModelElement source;
+    
+    /** The target(s) of the reference */
     protected Queue<Property> target =  new ConcurrentLinkedQueue<Property>();
     
     /**
@@ -37,42 +40,20 @@ public class ModelElementHasPropertiesImpl extends Feature implements ModelEleme
         this.source = source;
     }
     
+    // PUBLIC API
+        
     @Override
     public Queue<Property> get() {
         return target;
     }
     
     @Override
-    public void set(Property target) {
-        this.target.add(target);
-    }
-    
-    @Override
-    public void remove(Property target) {
-        this.target.remove(target);
-    }
-    
-    @Override
-    public boolean conflict(Property  target) {
-        boolean result = false;
-        result |= get().contains(target);
-        result &= target.element().get() != null;
-        return result;
-    }
-    
-    @Override
-    public boolean related(Property target) {
-  
-        return get().contains(target) & source.equals(target.element().get());
-    }
-    
-    @Override
     public boolean create(Property target) {
+        if (isUnique && related(target)) {
+            return true;
+        }
         if (conflict(target)) {
             return false;
-        }
-        if (related(target)) {
-            return true;
         }
         target.element().set(source);
         set(target);
@@ -87,6 +68,34 @@ public class ModelElementHasPropertiesImpl extends Feature implements ModelEleme
         target.element().remove(source);
         remove(target);
         return true;
+    }
+    
+    @Override
+    public boolean conflict(Property target) {
+        boolean result = false;
+        if (isUnique) {
+            result |= get().contains(target);
+        }
+        result |= target.element().get() != null;
+        return result;
+    }
+    
+    @Override
+    public boolean related(Property target) {
+  
+        return get().contains(target) & source.equals(target.element().get());
+    }
+    
+    // PRIVATE API
+    
+    @Override
+    public void set(Property target) {
+        this.target.add(target);
+    }
+    
+    @Override
+    public void remove(Property target) {
+        this.target.remove(target);
     }
 
 }

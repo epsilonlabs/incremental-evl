@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -42,8 +42,10 @@ public class ModelElementImpl implements ModelElement {
      */    
     public ModelElementImpl(String uri,
                             Model container) {
+        this.uri = uri;
         model = new ModelElementHasModelImpl(this);
         properties = new ModelElementHasPropertiesImpl(this);
+        model.create(container);
     }
     
     @Override

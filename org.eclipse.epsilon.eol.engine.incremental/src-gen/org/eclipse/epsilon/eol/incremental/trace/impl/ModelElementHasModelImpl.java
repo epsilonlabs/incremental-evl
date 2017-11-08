@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,11 +18,14 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of model reference. 
+ * Implementation of ModelElementHasModel reference. 
  */
 public class ModelElementHasModelImpl extends Feature implements ModelElementHasModel {
     
+    /** The source(s) of the reference */
     protected ModelElement source;
+    
+    /** The target(s) of the reference */
     protected Model target;
     
     /**
@@ -35,42 +38,20 @@ public class ModelElementHasModelImpl extends Feature implements ModelElementHas
         this.source = source;
     }
     
+    // PUBLIC API
+        
     @Override
     public Model get() {
         return target;
     }
     
     @Override
-    public void set(Model target) {
-        this.target = target;
-    }
-    
-    @Override
-    public void remove(Model target) {
-        this.target = null;
-    }
-    
-    @Override
-    public boolean conflict(Model  target) {
-        boolean result = false;
-        result |= get() != null;
-        result |= target.elements().get().contains(source);
-        return result;
-    }
-    
-    @Override
-    public boolean related(Model target) {
-  
-        return target.equals(this.target) & target.elements().get().contains(source);
-    }
-    
-    @Override
     public boolean create(Model target) {
+        if (isUnique && related(target)) {
+            return true;
+        }
         if (conflict(target)) {
             return false;
-        }
-        if (related(target)) {
-            return true;
         }
         target.elements().set(source);
         set(target);
@@ -85,6 +66,32 @@ public class ModelElementHasModelImpl extends Feature implements ModelElementHas
         target.elements().remove(source);
         remove(target);
         return true;
+    }
+    
+    @Override
+    public boolean conflict(Model target) {
+        boolean result = false;
+        result |= get() != null;
+        result |= target.elements().isUnique() && target.elements().get().contains(source);
+        return result;
+    }
+    
+    @Override
+    public boolean related(Model target) {
+  
+        return target.equals(this.target) & target.elements().get().contains(source);
+    }
+    
+    // PRIVATE API
+    
+    @Override
+    public void set(Model target) {
+        this.target = target;
+    }
+    
+    @Override
+    public void remove(Model target) {
+        this.target = null;
     }
 
 }

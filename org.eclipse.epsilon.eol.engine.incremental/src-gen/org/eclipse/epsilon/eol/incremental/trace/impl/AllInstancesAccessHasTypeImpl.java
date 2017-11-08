@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,11 +20,14 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of type reference. 
+ * Implementation of AllInstancesAccessHasType reference. 
  */
 public class AllInstancesAccessHasTypeImpl extends Feature implements AllInstancesAccessHasType {
     
+    /** The source(s) of the reference */
     protected AllInstancesAccess source;
+    
+    /** The target(s) of the reference */
     protected Queue<ModelType> target =  new ConcurrentLinkedQueue<ModelType>();
     
     /**
@@ -37,41 +40,20 @@ public class AllInstancesAccessHasTypeImpl extends Feature implements AllInstanc
         this.source = source;
     }
     
+    // PUBLIC API
+        
     @Override
     public Queue<ModelType> get() {
         return target;
     }
     
     @Override
-    public void set(ModelType target) {
-        this.target.add(target);
-    }
-    
-    @Override
-    public void remove(ModelType target) {
-        this.target.remove(target);
-    }
-    
-    @Override
-    public boolean conflict(ModelType  target) {
-        boolean result = false;
-        result |= get().contains(target);
-        return result;
-    }
-    
-    @Override
-    public boolean related(ModelType target) {
-  
-        return get().contains(target) ;
-    }
-    
-    @Override
     public boolean create(ModelType target) {
+        if (isUnique && related(target)) {
+            return true;
+        }
         if (conflict(target)) {
             return false;
-        }
-        if (related(target)) {
-            return true;
         }
         set(target);
         return true;
@@ -84,6 +66,33 @@ public class AllInstancesAccessHasTypeImpl extends Feature implements AllInstanc
         }
         remove(target);
         return true;
+    }
+    
+    @Override
+    public boolean conflict(ModelType target) {
+        boolean result = false;
+        if (isUnique) {
+            result |= get().contains(target);
+        }
+        return result;
+    }
+    
+    @Override
+    public boolean related(ModelType target) {
+  
+        return get().contains(target) ;
+    }
+    
+    // PRIVATE API
+    
+    @Override
+    public void set(ModelType target) {
+        this.target.add(target);
+    }
+    
+    @Override
+    public void remove(ModelType target) {
+        this.target.remove(target);
     }
 
 }

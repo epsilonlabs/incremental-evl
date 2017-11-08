@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -43,6 +43,7 @@ public class AllInstancesAccessImpl implements AllInstancesAccess {
     public AllInstancesAccessImpl(Execution container) {
         execution = new AccessHasExecutionImpl(this);
         type = new AllInstancesAccessHasTypeImpl(this);
+        execution.create(container);
     }
     
     @Override

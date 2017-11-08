@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -36,7 +36,9 @@ public class ModelTypeImpl implements ModelType {
      */    
     public ModelTypeImpl(String name,
                          Model container) {
+        this.name = name;
         model = new ModelTypeHasModelImpl(this);
+        model.create(container);
     }
     
     @Override

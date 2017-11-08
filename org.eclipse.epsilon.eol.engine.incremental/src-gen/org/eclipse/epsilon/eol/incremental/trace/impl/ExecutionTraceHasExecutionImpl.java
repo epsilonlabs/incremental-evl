@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,11 +20,14 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of execution reference. 
+ * Implementation of ExecutionTraceHasExecution reference. 
  */
 public class ExecutionTraceHasExecutionImpl extends Feature implements ExecutionTraceHasExecution {
     
+    /** The source(s) of the reference */
     protected ExecutionTrace source;
+    
+    /** The target(s) of the reference */
     protected Queue<Execution> target =  new ConcurrentLinkedQueue<Execution>();
     
     /**
@@ -37,41 +40,20 @@ public class ExecutionTraceHasExecutionImpl extends Feature implements Execution
         this.source = source;
     }
     
+    // PUBLIC API
+        
     @Override
     public Queue<Execution> get() {
         return target;
     }
     
     @Override
-    public void set(Execution target) {
-        this.target.add(target);
-    }
-    
-    @Override
-    public void remove(Execution target) {
-        this.target.remove(target);
-    }
-    
-    @Override
-    public boolean conflict(Execution  target) {
-        boolean result = false;
-        result |= get().contains(target);
-        return result;
-    }
-    
-    @Override
-    public boolean related(Execution target) {
-  
-        return get().contains(target) ;
-    }
-    
-    @Override
     public boolean create(Execution target) {
+        if (isUnique && related(target)) {
+            return true;
+        }
         if (conflict(target)) {
             return false;
-        }
-        if (related(target)) {
-            return true;
         }
         set(target);
         return true;
@@ -84,6 +66,33 @@ public class ExecutionTraceHasExecutionImpl extends Feature implements Execution
         }
         remove(target);
         return true;
+    }
+    
+    @Override
+    public boolean conflict(Execution target) {
+        boolean result = false;
+        if (isUnique) {
+            result |= get().contains(target);
+        }
+        return result;
+    }
+    
+    @Override
+    public boolean related(Execution target) {
+  
+        return get().contains(target) ;
+    }
+    
+    // PRIVATE API
+    
+    @Override
+    public void set(Execution target) {
+        this.target.add(target);
+    }
+    
+    @Override
+    public void remove(Execution target) {
+        this.target.remove(target);
     }
 
 }

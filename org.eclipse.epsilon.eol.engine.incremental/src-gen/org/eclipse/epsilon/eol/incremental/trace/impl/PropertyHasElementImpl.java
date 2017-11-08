@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,11 +18,14 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of element reference. 
+ * Implementation of PropertyHasElement reference. 
  */
 public class PropertyHasElementImpl extends Feature implements PropertyHasElement {
     
+    /** The source(s) of the reference */
     protected Property source;
+    
+    /** The target(s) of the reference */
     protected ModelElement target;
     
     /**
@@ -35,42 +38,20 @@ public class PropertyHasElementImpl extends Feature implements PropertyHasElemen
         this.source = source;
     }
     
+    // PUBLIC API
+        
     @Override
     public ModelElement get() {
         return target;
     }
     
     @Override
-    public void set(ModelElement target) {
-        this.target = target;
-    }
-    
-    @Override
-    public void remove(ModelElement target) {
-        this.target = null;
-    }
-    
-    @Override
-    public boolean conflict(ModelElement  target) {
-        boolean result = false;
-        result |= get() != null;
-        result |= target.properties().get().contains(source);
-        return result;
-    }
-    
-    @Override
-    public boolean related(ModelElement target) {
-  
-        return target.equals(this.target) & target.properties().get().contains(source);
-    }
-    
-    @Override
     public boolean create(ModelElement target) {
+        if (isUnique && related(target)) {
+            return true;
+        }
         if (conflict(target)) {
             return false;
-        }
-        if (related(target)) {
-            return true;
         }
         target.properties().set(source);
         set(target);
@@ -85,6 +66,32 @@ public class PropertyHasElementImpl extends Feature implements PropertyHasElemen
         target.properties().remove(source);
         remove(target);
         return true;
+    }
+    
+    @Override
+    public boolean conflict(ModelElement target) {
+        boolean result = false;
+        result |= get() != null;
+        result |= target.properties().isUnique() && target.properties().get().contains(source);
+        return result;
+    }
+    
+    @Override
+    public boolean related(ModelElement target) {
+  
+        return target.equals(this.target) & target.properties().get().contains(source);
+    }
+    
+    // PRIVATE API
+    
+    @Override
+    public void set(ModelElement target) {
+        this.target = target;
+    }
+    
+    @Override
+    public void remove(ModelElement target) {
+        this.target = null;
     }
 
 }

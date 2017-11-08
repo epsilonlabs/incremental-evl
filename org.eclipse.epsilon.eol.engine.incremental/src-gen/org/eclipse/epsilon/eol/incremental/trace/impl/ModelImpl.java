@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -41,6 +41,7 @@ public class ModelImpl implements Model {
      * container and any attributes identified as indexes.
      */    
     public ModelImpl(String name) {
+        this.name = name;
         elements = new ModelHasElementsImpl(this);
         types = new ModelHasTypesImpl(this);
     }

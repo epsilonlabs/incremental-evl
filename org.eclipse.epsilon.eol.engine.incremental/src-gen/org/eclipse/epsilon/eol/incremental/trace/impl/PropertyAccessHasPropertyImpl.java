@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,11 +18,14 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of property reference. 
+ * Implementation of PropertyAccessHasProperty reference. 
  */
 public class PropertyAccessHasPropertyImpl extends Feature implements PropertyAccessHasProperty {
     
+    /** The source(s) of the reference */
     protected PropertyAccess source;
+    
+    /** The target(s) of the reference */
     protected Property target;
     
     /**
@@ -35,41 +38,20 @@ public class PropertyAccessHasPropertyImpl extends Feature implements PropertyAc
         this.source = source;
     }
     
+    // PUBLIC API
+        
     @Override
     public Property get() {
         return target;
     }
     
     @Override
-    public void set(Property target) {
-        this.target = target;
-    }
-    
-    @Override
-    public void remove(Property target) {
-        this.target = null;
-    }
-    
-    @Override
-    public boolean conflict(Property  target) {
-        boolean result = false;
-        result |= get() != null;
-        return result;
-    }
-    
-    @Override
-    public boolean related(Property target) {
-  
-        return target.equals(this.target) ;
-    }
-    
-    @Override
     public boolean create(Property target) {
+        if (isUnique && related(target)) {
+            return true;
+        }
         if (conflict(target)) {
             return false;
-        }
-        if (related(target)) {
-            return true;
         }
         set(target);
         return true;
@@ -82,6 +64,31 @@ public class PropertyAccessHasPropertyImpl extends Feature implements PropertyAc
         }
         remove(target);
         return true;
+    }
+    
+    @Override
+    public boolean conflict(Property target) {
+        boolean result = false;
+        result |= get() != null;
+        return result;
+    }
+    
+    @Override
+    public boolean related(Property target) {
+  
+        return target.equals(this.target) ;
+    }
+    
+    // PRIVATE API
+    
+    @Override
+    public void set(Property target) {
+        this.target = target;
+    }
+    
+    @Override
+    public void remove(Property target) {
+        this.target = null;
     }
 
 }

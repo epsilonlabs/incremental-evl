@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,11 +20,14 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of accesses reference. 
+ * Implementation of ExecutionHasAccesses reference. 
  */
 public class ExecutionHasAccessesImpl extends Feature implements ExecutionHasAccesses {
     
+    /** The source(s) of the reference */
     protected Execution source;
+    
+    /** The target(s) of the reference */
     protected Queue<Access> target =  new ConcurrentLinkedQueue<Access>();
     
     /**
@@ -37,42 +40,20 @@ public class ExecutionHasAccessesImpl extends Feature implements ExecutionHasAcc
         this.source = source;
     }
     
+    // PUBLIC API
+        
     @Override
     public Queue<Access> get() {
         return target;
     }
     
     @Override
-    public void set(Access target) {
-        this.target.add(target);
-    }
-    
-    @Override
-    public void remove(Access target) {
-        this.target.remove(target);
-    }
-    
-    @Override
-    public boolean conflict(Access  target) {
-        boolean result = false;
-        result |= get().contains(target);
-        result &= target.execution().get() != null;
-        return result;
-    }
-    
-    @Override
-    public boolean related(Access target) {
-  
-        return get().contains(target) & source.equals(target.execution().get());
-    }
-    
-    @Override
     public boolean create(Access target) {
+        if (isUnique && related(target)) {
+            return true;
+        }
         if (conflict(target)) {
             return false;
-        }
-        if (related(target)) {
-            return true;
         }
         target.execution().set(source);
         set(target);
@@ -87,6 +68,34 @@ public class ExecutionHasAccessesImpl extends Feature implements ExecutionHasAcc
         target.execution().remove(source);
         remove(target);
         return true;
+    }
+    
+    @Override
+    public boolean conflict(Access target) {
+        boolean result = false;
+        if (isUnique) {
+            result |= get().contains(target);
+        }
+        result |= target.execution().get() != null;
+        return result;
+    }
+    
+    @Override
+    public boolean related(Access target) {
+  
+        return get().contains(target) & source.equals(target.execution().get());
+    }
+    
+    // PRIVATE API
+    
+    @Override
+    public void set(Access target) {
+        this.target.add(target);
+    }
+    
+    @Override
+    public void remove(Access target) {
+        this.target.remove(target);
     }
 
 }
