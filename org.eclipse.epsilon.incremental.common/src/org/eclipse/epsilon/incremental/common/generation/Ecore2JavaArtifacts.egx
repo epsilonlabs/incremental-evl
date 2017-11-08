@@ -119,6 +119,24 @@ rule ERefernce2DTO
     template : "EReference2DtoImpl.egl"
     target   : project + folder + "/trace/impl/" + featureType + "Impl.java"
   }
+
+rule EPackage2Tests
+  transform ep : EPackage {
+  
+  parameters {
+    var params : new Map;
+    params.put("today", now.toString());
+    params.put("year", now.getYear().toString()); 
+    params.put("qp", qp);
+    params.put("baseLanguage", bl);
+    return params;
+  }
+  
+  guard: ep.name == targetLanguage
+  template : "test/EPackageToModelTests.egl"
+  target : project + ".test" + folder + "/trace/" + ep.name.firstToUpperCase() + "TraceModelTests.java"
+  
+}
 /*
 rule EClass2GremlinImpl
   transform ec : EClass {

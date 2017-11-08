@@ -65,8 +65,15 @@ public class [%=ec.name%]Impl implements [%=ec.name%] {
      * container and any attributes identified as indexes.
      */    
     public [%=ec.getName()%]Impl([%=ec.getConstructorParameters(false)%]) {
+[%for (index in ec.getIndexAttributes()) {%]
+        this.[%=index.name%] = [%=index.name%];
+[%}%]
 [%for (er in ec.getEAllReferences()) {%]
         [%=er.name%] = new [%=er.getEContainingClass().name %]Has[%=er.name.firstToUpperCase()%]Impl(this);
+[%}%]
+[%var container = ec.getEAllReferences().selectOne(er | er.isContainer());
+if (container.isDefined()) {%]
+        [%=container.name%].create(container);
 [%}%]
     }
     

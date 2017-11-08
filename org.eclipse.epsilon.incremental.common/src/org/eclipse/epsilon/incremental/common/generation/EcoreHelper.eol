@@ -118,7 +118,7 @@ operation EClass getIndex() : Sequence {
     }
     return null;
 }
-
+@cached
 operation EClass getIndexAttributes() : Sequence {
     var result : Sequence();
     var annot = self.findIndexAnnotation();

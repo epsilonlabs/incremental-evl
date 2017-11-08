@@ -48,11 +48,14 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of [%=er.name%] reference. 
+ * Implementation of [%=featureType%] reference. 
  */
 public class [%=featureType%]Impl extends Feature implements [%=featureType%] {
     
+    /** The source(s) of the reference */
     protected [%=sourceType%] source;
+    
+    /** The target(s) of the reference */
 [%if (er.isMany()) {%]
     protected Queue<[%=targetType%]> target =  new ConcurrentLinkedQueue<[%=targetType%]>();
 [%} else {%]
@@ -69,6 +72,8 @@ public class [%=featureType%]Impl extends Feature implements [%=featureType%] {
         this.source = source;
     }
     
+    // PUBLIC API
+        
     @Override
 [%if (er.isMany()) {%]
     public Queue<[%=targetType%]> get() {
@@ -79,67 +84,12 @@ public class [%=featureType%]Impl extends Feature implements [%=featureType%] {
     }
     
     @Override
-    public void set([%=targetType%] target) {
-[%if (er.isMany()) {%]
-        this.target.add(target);
-[%} else {%]
-        this.target = target;
-[%}%]
-    }
-    
-    @Override
-    public void remove([%=targetType%] target) {
-[%if (er.isMany()) {%]
-        this.target.remove(target);
-[%} else {%]
-        this.target = null;
-[%}%]
-    }
-    
-    @Override
-    public boolean conflict([%=targetType%]  target) {
-        boolean result = false;
-[%if (er.isMany()) {%]
-        result |= get().contains(target);
-[%} else {%]
-        result |= get() != null;
-[%}
-if (opposite.isDefined() and opp_many) {%]
-        result |= target.[%=opposite%]().get().contains(source);
-[%} else if (opposite.isDefined()) {%]
-        result &= target.[%=opposite%]().get() != null;
-[%}%]
-        return result;
-    }
-    
-    @Override
-    public boolean related([%=targetType%] target) {
-[%var sourceRel;
-if (er.isMany()) {
-    sourceRel = "get().contains(target)";
-} else {
-    sourceRel = "target.equals(this.target)";
-}
-// If there is an opposite, need to check that too. The check depends on the
-// multiplicity of the opposite
-var targetRel = ";";
-if (opposite.isDefined()) {
-    if (opp_many) {
-        targetRel = "& target." + opposite + "().get().contains(source);";
-	} else {
-	    targetRel = "& source.equals(target." + opposite + "().get());";
-	}
-}%]  
-        return [%=sourceRel%] [%=targetRel%]
-    }
-    
-    @Override
     public boolean create([%=targetType%] target) {
+        if (isUnique && related(target)) {
+            return true;
+        }
         if (conflict(target)) {
             return false;
-        }
-        if (related(target)) {
-            return true;
         }
 [%if (opposite.isDefined()) {%]
         target.[%=opposite%]().set(source);
@@ -158,6 +108,65 @@ if (opposite.isDefined()) {
 [%}%]
         remove(target);
         return true;
+    }
+    
+    @Override
+    public boolean conflict([%=targetType%] target) {
+        boolean result = false;
+[%if (er.isMany()) {%]
+        if (isUnique) {
+            result |= get().contains(target);
+        }
+[%} else {%]
+        result |= get() != null;
+[%}
+if (opposite.isDefined() and opp_many) {%]
+        result |= target.[%=opposite%]().isUnique() && target.[%=opposite%]().get().contains(source);
+[%} else if (opposite.isDefined()) {%]
+        result |= target.[%=opposite%]().get() != null;
+[%}%]
+        return result;
+    }
+    
+    @Override
+    public boolean related([%=targetType%] target) {
+[%var sourceRel;
+if (er.isMany()) {
+    sourceRel = "get().contains(target)";
+} else {
+    sourceRel = "target.equals(this.target)";
+}
+// If there is an opposite, need to check that too. The check depends on the
+// multiplicity of the opposite
+var targetRel = ";";
+if (opposite.isDefined()) {
+    if (opp_many) {
+        targetRel = "& target." + opposite + "().get().contains(source);";
+    } else {
+        targetRel = "& source.equals(target." + opposite + "().get());";
+    }
+}%]  
+        return [%=sourceRel%] [%=targetRel%]
+    }
+    
+    // PRIVATE API
+    
+    @Override
+    public void set([%=targetType%] target) {
+[%if (er.isMany()) {%]
+        this.target.add(target);
+[%} else {%]
+        this.target = target;
+[%}%]
+    }
+    
+    @Override
+    public void remove([%=targetType%] target) {
+[%if (er.isMany()) {%]
+        this.target.remove(target);
+[%} else {%]
+        this.target = null;
+[%}%]
     }
 
 }
