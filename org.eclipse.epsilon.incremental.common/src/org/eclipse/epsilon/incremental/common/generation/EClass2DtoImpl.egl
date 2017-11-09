@@ -28,19 +28,9 @@ import "Ecore2JavaTemplates.egl";
 package [%=qp%].trace.impl;
 
 import [%=qp%].trace.[%=ec.getName()%];
-[%for (er in ec.getEReferences()) {
-    var pack = er.getEContainingClass().getEPackage().name;
-    var erqp = qp.replace("." + ec.getEPackage().name + ".", "." + pack + ".");%]
-import [%=erqp%].trace.[%=er.getEReferenceType().name%];
-import [%=qp%].trace.[%=er.getEContainingClass().name%]Has[%=er.name.firstToUpperCase()%];
-
-[%}%]
-[%for (er in ec.getEAllReferences().excludingAll(ec.getEReferences())) {
-    var pack = er.getEContainingClass().getEPackage().name;
-    var erqp = qp.replace("." + ec.getEPackage().name + ".", "." + pack + ".");%]
-import [%=erqp%].trace.[%=er.getEReferenceType().name%];
-import [%=erqp%].trace.[%=er.getEContainingClass().name%]Has[%=er.name.firstToUpperCase()%];
-import [%=erqp%].trace.impl.[%=er.getEContainingClass().name%]Has[%=er.name.firstToUpperCase()%]Impl;
+[%
+for (imp in ec.getRequriedImports(qp+".trace", "", "", true, true)) {%]
+import [%=imp%];    
 [%}%]
 
 /**
@@ -64,16 +54,21 @@ public class [%=ec.name%]Impl implements [%=ec.name%] {
      * Instantiates a new [%=ec.getName()%]. The [%=ec.getName()%] is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public [%=ec.getName()%]Impl([%=ec.getConstructorParameters(false)%]) {
+    public [%=ec.getName()%]Impl([%=ec.getConstructorParameters(true)%]) {
 [%for (index in ec.getIndexAttributes()) {%]
         this.[%=index.name%] = [%=index.name%];
 [%}%]
 [%for (er in ec.getEAllReferences()) {%]
-        [%=er.name%] = new [%=er.getEContainingClass().name %]Has[%=er.name.firstToUpperCase()%]Impl(this);
+        this.[%=er.name%] = new [%=er.getEContainingClass().name %]Has[%=er.name.firstToUpperCase()%]Impl(this);
+[%  if ((er <> ec.getContainerReference().at(0)) and er.isRequired() and not er.isMany()) {%]
+        this.[%=er.name%].create([%=er.name%]);
+[%  }%]
 [%}%]
-[%var container = ec.getEAllReferences().selectOne(er | er.isContainer());
+[%var container = ec.getContainerReference().at(2);
 if (container.isDefined()) {%]
-        [%=container.name%].create(container);
+        container.[%=container.name%]().create(this);
+[%} else if (ec.getContainerReference().at(0).isDefined()) {%]
+        container.[%=ec.getContainerReference().at(0).name%]().create(this);
 [%}%]
     }
     
@@ -100,8 +95,27 @@ if (container.isDefined()) {%]
     public [%=er.getEContainingClass().name%]Has[%=er.name.firstToUpperCase()%] [%=er.name%]() {
         return [%=er.name%];
     }
+
 [%
-}
+}%]
+[%/* Factory Methods
+ * If the EReferenceType is abstract, we add factory methods for each of the subclasses of the
+ * EReferenceType. We only look for all classes as we are implementing the methods.
+ */
+for (er in ec.getEAllReferences().select(er | er.isContainment())) {
+    if (not er.getEReferenceType().isAbstract()) {%]
+    [%=er.getEReferenceType().factoryMethod()%]
+[%  } else {
+        var subClasses = er.getEReferenceType().getEAllSubclasses();
+        for (sc in subClasses) {%]
+    [%=sc.factoryMethod()%]
+            
+[%      }%]
+[%  }%]
+                  
+[%}%]
+
+[%
 // FIXME We need Equals and Hash!
 /*
   @Override
@@ -126,3 +140,14 @@ if (container.isDefined()) {%]
 %] 
 
 }
+[%
+@template
+operation EClass factoryMethod() {
+    var params = self.getEAttributeParameters().includingAll(self.getRequiredFeatureParameters());
+    var vars = self.getIndexAttributes().includingAll(self.getRequiredFeatures()).collect(a | a.name).including("this");%]
+@Override
+public [%=self.name%] create[%=self.name%]([%=params.concat(", ")%]) {
+    return new [%=self.name%]Impl([%=vars.concat(", ")%]);
+}      
+[%}
+%]

@@ -15,6 +15,8 @@ import "Ecore2JavaTemplates.egl";
  * Generation of Java Interface from an EReference.
  */
 var targetType = er.getEReferenceType().name;
+var pack = er.getEReferenceType().getEPackage().name;
+var erqp = qp.replace("." + er.getEContainingClass().getEPackage().name + ".", "." + pack + ".");
 %]
  /*******************************************************************************
  * This file was automatically generated on: [%=today%].
@@ -32,6 +34,8 @@ package [%=qp%].trace;
 [%if (er.isMany()) {%]
 import java.util.Queue;
 [%}%]
+
+import [%=erqp%].trace.[%=targetType%];
 
 public interface [%=featureType%] {
 

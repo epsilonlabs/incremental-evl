@@ -16,7 +16,11 @@ import java.util.Queue;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
 import org.easymock.Mock;
-import org.eclipse.epsilon.eol.incremental.trace.impl.*;
+[%if (baseLanguage.isDefined()) { // Noe enough, we need to actually collect all packages%]
+import org.eclipse.epsilon.[%=baseLanguage%].incremental.trace.*;
+import org.eclipse.epsilon.[%=baseLanguage%].incremental.trace.impl.*;
+[%}%]
+import org.eclipse.epsilon.[%=ep.name%].incremental.trace.impl.*;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;

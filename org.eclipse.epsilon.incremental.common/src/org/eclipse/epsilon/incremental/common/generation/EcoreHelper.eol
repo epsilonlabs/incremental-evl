@@ -32,23 +32,78 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
         ers = self.getEReferences();
     }
     else {
+        //self.name.println("EAllFeatures ");
         eas = self.getEAllAttributes();
         ers = self.getEAllReferences();
     }
     for (ea in eas) {
-        var dataTypeName = ea.getEAttributeType().getInstanceTypeName();
-        if (not dataTypeName.startsWith("java.lang.") and ".".isSubstringOf(dataTypeName)) {
-            imports.add(dataTypeName);
-        }
-        imports.addAll(ea.getRequiredImports(isImpl));
+        imports.addAll(ea.getImports(isImpl));
     }
     for (er in ers) {
         var type = er.getEReferenceType();
+        var erqp = type.getCorrectPackage(basePackage, self);
+        //var pack = er.getEReferenceType().getEPackage().name;
+        //var erqp = basePackage.replace("." + self.getEPackage().name + ".", "." + pack + ".");
+        if (er.isContainment()) {
+            if (type.isAbstract()) {
+                var subClasses = er.getEReferenceType().getEAllSubclasses();
+		        for (sc in subClasses) {
+		            imports.add(erqp + "." + sc.getJavaTypeName(typePrefix, typeSufix));
+	                if (isImpl) {
+	                    imports.add(erqp + ".impl." + sc.getJavaTypeName(typePrefix, "Impl"));
+	                }
+	                // Add imports for the constructor 
+	                for (ea in sc.getIndexAttributes()) {
+	                   imports.addAll(ea.getImports(isImpl));
+	                }
+	                for (er in sc.getRequiredFeatures()) {
+	                   var rferqp = er.getEReferenceType().getCorrectPackage(basePackage, self);
+	                   imports.add(rferqp + "." + er.getEReferenceType().getJavaTypeName(typePrefix, typeSufix));
+	                }
+		        }
+            }
+            else {
+                imports.add(erqp + "." + type.getJavaTypeName(typePrefix, typeSufix));
+                if (isImpl) {
+                    imports.add(erqp + ".impl." + type.getJavaTypeName(typePrefix, "Impl"));
+                }
+            }
+        }
+        else {
+            imports.add(erqp + "." + type.getJavaTypeName(typePrefix, typeSufix));
+        }
+        if (flatten) {
+            if (er.getEContainingClass().getEPackage() <> self.getEPackage()) {
+                imports.add(erqp + "." + er.getEContainingClass().name + "Has" + er.name.firstToUpperCase());
+            }
+            else {
+                imports.add(basePackage + "." + er.getEContainingClass().name + "Has" + er.name.firstToUpperCase());
+            }
+            
+        }
+        if (isImpl) {
+            //er.name.println("Adding impl import ");
+            if (er.getEContainingClass().getEPackage() <> self.getEPackage()) {
+                imports.add(erqp + ".impl." + er.getEContainingClass().name + "Has" + er.name.firstToUpperCase() + "Impl");
+            }
+            else {
+                imports.add(basePackage + ".impl." + er.getEContainingClass().name + "Has" + er.name.firstToUpperCase() + "Impl");
+            }
+        }
         //if (type.getEPackage() <> self.getEPackage()) {
-            imports.add(basePackage + "." + type.getJavaTypeName(typePrefix, typeSufix));
+        //    imports.add(basePackage + "." + type.getJavaTypeName(typePrefix, typeSufix));
         //}
         //imports.addAll(er.getRequiredImports(isImpl));
-        
+    }
+    if (isImpl) {
+		var containerType = self.getContainerReference().at(1);
+		if (containerType.isDefined()) {
+		    var fullpath = basePackage + ".";
+		    if (containerType.getEPackage() <> self.getEPackage()) {
+		        fullpath = basePackage.replace("." + self.getEPackage().name + ".", "." + containerType.getEPackage().name + ".");
+		    }
+		    imports.add(fullpath + containerType.getJavaTypeName(typePrefix, typeSufix));
+		}
     }
     for (ec in self.getESuperTypes().select(st | not (isImpl and st.isAbstract()))) {
         if (ec.getEPackage() <> self.getEPackage()) {
@@ -56,6 +111,32 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
         }
     }
     return imports.sortBy(im | im);
+}
+
+operation EClass getCorrectPackage(basePackage, baseClass : EClass) : String {
+    var pack = self.getEPackage().name;
+    var erqp = basePackage.replace("." + baseClass.getEPackage().name + ".", "." + pack + ".");
+    return erqp;
+}
+
+// Return the EReference and Type of the container reference
+@cached
+operation EClass getContainerReference() : Sequence {
+    var container = self.getEAllReferences().selectOne(er | er.isContainer());
+    var type;
+    var opposite;
+    if (container.isUndefined()) {
+        //Containment might not have an opposite, we assume elements can only be contained by one other relation
+        opposite = EReference.all.selectOne(er | er.isContainment() and (er.getEReferenceType() == self));
+        if (opposite.isDefined()) {
+            type = opposite.getEContainingClass();
+        }
+    }
+    else {
+        opposite = container.getEOpposite();
+        type = container.getEReferenceType();
+    }
+    return Sequence{container, type, opposite};
 }
 
 operation EStructuralFeature getRequiredImports(isImpl:Boolean) : Set {
@@ -77,6 +158,41 @@ operation EStructuralFeature getRequiredImports(isImpl:Boolean) : Set {
     return result;
 }
 
+operation EAttribute getImports(isImpl : Boolean) : Set {
+    var result = new Set();
+    var dataTypeName = self.getEAttributeType().getInstanceTypeName();
+    if (not dataTypeName.startsWith("java.lang.") and ".".isSubstringOf(dataTypeName)) {
+        result.add(dataTypeName);
+    }
+    result.addAll(self.getRequiredImports(isImpl));
+    return result;
+}
+
+/**
+ * Get a list of <Type name> strings for each of the EAttributes of the class.
+ */
+operation EClass getEAttributeParameters() : Sequence {
+    var results : Sequence = new Sequence();
+    var attr =self.getIndexAttributes(); 
+    for (a in attr) {
+        var type = a.getGetterReturnType("");
+        var name = a.getName();
+        results.add(type + " " + name);
+    }
+    return results;
+}
+
+operation EClass getRequiredFeatureParameters() {
+    var results : Sequence = new Sequence();
+    for (er in self.getRequiredFeatures()) {
+        results.add(er.getEReferenceType().name + " " + er.name);
+    }
+    return results;
+}
+
+operation EClass getRequiredFeatures() {
+    return self.getEAllReferences().select(er | er.isRequired() and not er.isMany()).excluding(self.getContainerReference().at(0));
+}
 
 /**
  * Get the select methods information. If available, returns a Bag containing two Sequences. The 

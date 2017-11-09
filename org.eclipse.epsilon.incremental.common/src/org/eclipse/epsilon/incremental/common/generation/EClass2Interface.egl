@@ -33,28 +33,60 @@ for (imp in ec.getRequriedImports(qp+".trace", "", "")) {%]
 import [%=imp%];    
 [%}%]
 
+/**
+ * The [%=ec.name%] defines the access methods for the EClass features.
+ * Additionally, the [%=ec.getInterfaceName()%] acts as the root entity of the AGGREGATE of its
+ * container references. That is, elements contained in the [%=ec.name%] must be
+ * created through this interface.
+ */
 public interface [%=ec.getInterfaceName()%] {
 
 [%
-    for (ea in ec.getEAttributes()) {
-	    var multi = "List";
-	    if (ea.isMany() and not ea.isOrdered()) {
-	        multi = "Set";
-	    }%]
+for (ea in ec.getEAttributes()) {
+    var multi = "List";
+    if (ea.isMany() and not ea.isOrdered()) {
+        multi = "Set";
+    }%]
     [%=ea.makeGetterDoc()%]
     [%=ea.makeGetterSignature(multi)%];[%
-        if (not ea.isMany()) {%]    
+    if (not ea.isMany()) {%]    
 
     [%=ea.makeSetterDoc()%]
     [%=ea.makeSetterSignature(multi)%];
 [%      }%]
             
-[%  }%]
+[%}%]
 [%
-    for (er in ec.getEReferences()) {
-        var featureType = ec.name + "Has" + er.name.firstToUpperCase();%]
-    [%=featureType%] [%=er.name%]();            
-[%  }
-%]
-
+for (er in ec.getEReferences()) {
+    var featureType = ec.name + "Has" + er.name.firstToUpperCase();%]
+    /** The [%=er.name%] reference. */
+    [%=featureType%] [%=er.name%]();
+                
+[%
+}%]
+[%/* Factory Methods
+ * If the EReferenceType is abstract, we add factory methods for each of the subclasses of the
+ * EReferenceType. We only look for classes in the EClass Package
+ */
+for (er in ec.getEReferences().select(er | er.isContainment())) {
+    if (not er.getEReferenceType().isAbstract()) {%]
+    [%=er.getEReferenceType().factorySignature()%]
+[%  } else {
+        var subClasses = er.getEReferenceType().getEAllSubclasses().select(sc | sc.getEPackage() == ec.getEPackage());
+        for (sc in subClasses) {%]
+    [%=sc.factorySignature()%]
+            
+[%      }%]
+[%  }%]
+   
+[%
+}%]
 }
+[%
+@template
+operation EClass factorySignature() {
+    var params = self.getEAttributeParameters().includingAll(self.getRequiredFeatureParameters());%]
+/** The [%=self.name%] Factory. */
+[%=self.name%] create[%=self.name%]([%=params.concat(", ")%]);       
+[%}
+%]

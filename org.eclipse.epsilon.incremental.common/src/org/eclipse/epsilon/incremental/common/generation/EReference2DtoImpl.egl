@@ -23,7 +23,9 @@ if (er.getEOpposite().isDefined()) {
     opposite = er.getEOpposite().name;
     opp_many = er.getEOpposite().isMany();
 }
- %]
+var pack = er.getEReferenceType().getEPackage().name;
+var erqp = qp.replace("." + er.getEContainingClass().getEPackage().name + ".", "." + pack + ".");
+%]
  /*******************************************************************************
  * This file was automatically generated on: [%=today%].
  * Only modify protected regions indicated by "<!-- -->"
@@ -42,7 +44,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 [%}%]
 import [%=qp%].trace.[%=sourceType%];
-import [%=qp%].trace.[%=targetType%];
+import [%=erqp%].trace.[%=targetType%];
 import [%=qp%].trace.[%=featureType%];
 import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
