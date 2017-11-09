@@ -48,8 +48,9 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
             if (type.isAbstract()) {
                 var subClasses = er.getEReferenceType().getEAllSubclasses();
 		        for (sc in subClasses) {
+		            erqp = sc.getCorrectPackage(basePackage, self);
 		            imports.add(erqp + "." + sc.getJavaTypeName(typePrefix, typeSufix));
-	                if (isImpl) {
+	                if (isImpl and not sc.isAbstract()) {
 	                    imports.add(erqp + ".impl." + sc.getJavaTypeName(typePrefix, "Impl"));
 	                }
 	                // Add imports for the constructor 
@@ -74,6 +75,7 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
         }
         if (flatten) {
             if (er.getEContainingClass().getEPackage() <> self.getEPackage()) {
+                erqp = er.getEContainingClass().getCorrectPackage(basePackage, self);
                 imports.add(erqp + "." + er.getEContainingClass().name + "Has" + er.name.firstToUpperCase());
             }
             else {
@@ -84,6 +86,7 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
         if (isImpl) {
             //er.name.println("Adding impl import ");
             if (er.getEContainingClass().getEPackage() <> self.getEPackage()) {
+                erqp = er.getEContainingClass().getCorrectPackage(basePackage, self);
                 imports.add(erqp + ".impl." + er.getEContainingClass().name + "Has" + er.name.firstToUpperCase() + "Impl");
             }
             else {
@@ -94,6 +97,37 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
         //    imports.add(basePackage + "." + type.getJavaTypeName(typePrefix, typeSufix));
         //}
         //imports.addAll(er.getRequiredImports(isImpl));
+    }
+    for (er in self.getEAllReferences().select(er | er.isContainment())) {
+        var type = er.getEReferenceType();
+        basePackage.println("factory types ");
+        var erqp = type.getCorrectPackage(basePackage, self);
+        if (type.isAbstract()) {
+            var subClasses = er.getEReferenceType().getEAllSubclasses();
+            for (sc in subClasses) {
+                erqp = sc.getCorrectPackage(basePackage, self);
+                if (not sc.isAbstract()) {
+	                imports.add(erqp + "." + sc.getJavaTypeName(typePrefix, typeSufix));
+	                if (isImpl) {
+	                    imports.add(erqp + ".impl." + sc.getJavaTypeName(typePrefix, "Impl"));
+	                }
+	            }
+                // Add imports for the constructor 
+                for (ea in sc.getIndexAttributes()) {
+                   imports.addAll(ea.getImports(isImpl));
+                }
+                for (er in sc.getRequiredFeatures()) {
+                   var rferqp = er.getEReferenceType().getCorrectPackage(basePackage, self);
+                   imports.add(rferqp + "." + er.getEReferenceType().getJavaTypeName(typePrefix, typeSufix));
+                }
+            }
+        }
+        else {
+            imports.add(erqp + "." + type.getJavaTypeName(typePrefix, typeSufix));
+            if (isImpl) {
+                imports.add(erqp + ".impl." + type.getJavaTypeName(typePrefix, "Impl"));
+            }
+        }
     }
     if (isImpl) {
 		var containerType = self.getContainerReference().at(1);
@@ -114,8 +148,16 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
 }
 
 operation EClass getCorrectPackage(basePackage, baseClass : EClass) : String {
+    "getCorrectPackage".println();
+    self.name.println("class ");
     var pack = self.getEPackage().name;
+    pack.println("in ");
+    baseClass.name.println("against ");
+    baseClass.getEPackage().name.println("in ");
+    basePackage.println("was ");
     var erqp = basePackage.replace("." + baseClass.getEPackage().name + ".", "." + pack + ".");
+    erqp.println("returns ");
+    "getCorrectPackage END".println();
     return erqp;
 }
 
@@ -139,6 +181,7 @@ operation EClass getContainerReference() : Sequence {
     return Sequence{container, type, opposite};
 }
 
+@cached
 operation EStructuralFeature getRequiredImports(isImpl:Boolean) : Set {
     var result = new Set();
     if (self.isMany()) {
@@ -171,6 +214,7 @@ operation EAttribute getImports(isImpl : Boolean) : Set {
 /**
  * Get a list of <Type name> strings for each of the EAttributes of the class.
  */
+@cached
 operation EClass getEAttributeParameters() : Sequence {
     var results : Sequence = new Sequence();
     var attr =self.getIndexAttributes(); 
@@ -182,6 +226,7 @@ operation EClass getEAttributeParameters() : Sequence {
     return results;
 }
 
+@cached
 operation EClass getRequiredFeatureParameters() {
     var results : Sequence = new Sequence();
     for (er in self.getRequiredFeatures()) {
@@ -190,6 +235,7 @@ operation EClass getRequiredFeatureParameters() {
     return results;
 }
 
+@cached
 operation EClass getRequiredFeatures() {
     return self.getEAllReferences().select(er | er.isRequired() and not er.isMany()).excluding(self.getContainerReference().at(0));
 }

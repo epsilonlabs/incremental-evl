@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-08.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,7 +11,8 @@
  ******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.trace;
 
-import java.util.Queue;
+
+import org.eclipse.epsilon.eol.incremental.trace.ModelType;
 
 public interface AllInstancesAccessHasType {
 
@@ -22,7 +23,7 @@ public interface AllInstancesAccessHasType {
     /**
      * Get the value(s) for the reference
      */
-    Queue<ModelType> get();
+    ModelType get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the

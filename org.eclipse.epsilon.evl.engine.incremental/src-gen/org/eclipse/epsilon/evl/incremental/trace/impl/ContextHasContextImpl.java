@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-08.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -9,33 +9,33 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  ******************************************************************************/
-package org.eclipse.epsilon.eol.incremental.trace.impl;
+package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import org.eclipse.epsilon.eol.incremental.trace.ExecutionTrace;
-import org.eclipse.epsilon.eol.incremental.trace.Execution;
-import org.eclipse.epsilon.eol.incremental.trace.ExecutionTraceHasExecution;
+import org.eclipse.epsilon.evl.incremental.trace.Context;
+import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
+import org.eclipse.epsilon.evl.incremental.trace.ContextHasContext;
 import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of ExecutionTraceHasExecution reference. 
+ * Implementation of ContextHasContext reference. 
  */
-public class ExecutionTraceHasExecutionImpl extends Feature implements ExecutionTraceHasExecution {
+public class ContextHasContextImpl extends Feature implements ContextHasContext {
     
     /** The source(s) of the reference */
-    protected ExecutionTrace source;
+    protected Context source;
     
     /** The target(s) of the reference */
-    protected Queue<Execution> target =  new ConcurrentLinkedQueue<Execution>();
+    protected Queue<ModelElement> target =  new ConcurrentLinkedQueue<ModelElement>();
     
     /**
-     * Instantiates a new ExecutionTraceHasExecution.
+     * Instantiates a new ContextHasContext.
      *
      * @param source the source of the reference
      */
-    public ExecutionTraceHasExecutionImpl (ExecutionTrace source) {
+    public ContextHasContextImpl (Context source) {
         super(true);
         this.source = source;
     }
@@ -43,15 +43,12 @@ public class ExecutionTraceHasExecutionImpl extends Feature implements Execution
     // PUBLIC API
         
     @Override
-    public Queue<Execution> get() {
+    public Queue<ModelElement> get() {
         return target;
     }
     
     @Override
-    public boolean create(Execution target) {
-        if (isUnique && related(target)) {
-            return true;
-        }
+    public boolean create(ModelElement target) {
         if (conflict(target)) {
             return false;
         }
@@ -60,7 +57,7 @@ public class ExecutionTraceHasExecutionImpl extends Feature implements Execution
     }
 
     @Override
-    public boolean destroy(Execution target) {
+    public boolean destroy(ModelElement target) {
         if (!related(target)) {
             return false;
         }
@@ -69,7 +66,7 @@ public class ExecutionTraceHasExecutionImpl extends Feature implements Execution
     }
     
     @Override
-    public boolean conflict(Execution target) {
+    public boolean conflict(ModelElement target) {
         boolean result = false;
         if (isUnique) {
             result |= get().contains(target);
@@ -78,7 +75,7 @@ public class ExecutionTraceHasExecutionImpl extends Feature implements Execution
     }
     
     @Override
-    public boolean related(Execution target) {
+    public boolean related(ModelElement target) {
   
         return get().contains(target) ;
     }
@@ -86,12 +83,12 @@ public class ExecutionTraceHasExecutionImpl extends Feature implements Execution
     // PRIVATE API
     
     @Override
-    public void set(Execution target) {
+    public void set(ModelElement target) {
         this.target.add(target);
     }
     
     @Override
-    public void remove(Execution target) {
+    public void remove(ModelElement target) {
         this.target.remove(target);
     }
 

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,11 +18,14 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of guard reference. 
+ * Implementation of GuardedElementHasGuard reference. 
  */
 public class GuardedElementHasGuardImpl extends Feature implements GuardedElementHasGuard {
     
+    /** The source(s) of the reference */
     protected GuardedElement source;
+    
+    /** The target(s) of the reference */
     protected Guard target;
     
     /**
@@ -35,33 +38,11 @@ public class GuardedElementHasGuardImpl extends Feature implements GuardedElemen
         this.source = source;
     }
     
+    // PUBLIC API
+        
     @Override
     public Guard get() {
         return target;
-    }
-    
-    @Override
-    public void set(Guard target) {
-        this.target = target;
-    }
-    
-    @Override
-    public void remove(Guard target) {
-        this.target = null;
-    }
-    
-    @Override
-    public boolean conflict(Guard  target) {
-        boolean result = false;
-        result |= get() != null;
-        result &= target.limits().get() != null;
-        return result;
-    }
-    
-    @Override
-    public boolean related(Guard target) {
-  
-        return target.equals(this.target) & source.equals(target.limits().get());
     }
     
     @Override
@@ -69,10 +50,10 @@ public class GuardedElementHasGuardImpl extends Feature implements GuardedElemen
         if (conflict(target)) {
             return false;
         }
-        if (related(target)) {
-            return true;
-        }
         target.limits().set(source);
+        if (related(target)) {
+            return false;
+        }
         set(target);
         return true;
     }
@@ -85,6 +66,32 @@ public class GuardedElementHasGuardImpl extends Feature implements GuardedElemen
         target.limits().remove(source);
         remove(target);
         return true;
+    }
+    
+    @Override
+    public boolean conflict(Guard target) {
+        boolean result = false;
+        result |= get() != null;
+        result |= target.limits().get() != null;
+        return result;
+    }
+    
+    @Override
+    public boolean related(Guard target) {
+  
+        return target.equals(this.target) & source.equals(target.limits().get());
+    }
+    
+    // PRIVATE API
+    
+    @Override
+    public void set(Guard target) {
+        this.target = target;
+    }
+    
+    @Override
+    public void remove(Guard target) {
+        this.target = null;
     }
 
 }

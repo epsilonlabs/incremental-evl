@@ -28,6 +28,7 @@ import "Ecore2JavaTemplates.egl";
  ******************************************************************************/
 package [%=qp%].trace;
 
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 [%
 for (imp in ec.getRequriedImports(qp+".trace", "", "")) {%]
 import [%=imp%];    
@@ -64,15 +65,24 @@ for (er in ec.getEReferences()) {
                 
 [%
 }%]
+[%if (not (ec.isAbstract() or ec.isInterface())) {%] 
+    /**
+     * [%=ec.name%] has same identity in the aggregate.
+     */
+    public boolean sameIdentityAs(final [%=ec.name%] other);
+    
+[%}%]
 [%/* Factory Methods
  * If the EReferenceType is abstract, we add factory methods for each of the subclasses of the
  * EReferenceType. We only look for classes in the EClass Package
  */
-for (er in ec.getEReferences().select(er | er.isContainment())) {
+ec.name.println("Factory "); 
+for (er in ec.getEAllReferences().select(er | er.isContainment())) {
     if (not er.getEReferenceType().isAbstract()) {%]
     [%=er.getEReferenceType().factorySignature()%]
 [%  } else {
-        var subClasses = er.getEReferenceType().getEAllSubclasses().select(sc | sc.getEPackage() == ec.getEPackage());
+        var subClasses = er.getEReferenceType().getEAllSubclasses()
+            .select(sc | (sc.getEPackage() == ec.getEPackage()) and not sc.isAbstract());
         for (sc in subClasses) {%]
     [%=sc.factorySignature()%]
             
@@ -87,6 +97,6 @@ for (er in ec.getEReferences().select(er | er.isContainment())) {
 operation EClass factorySignature() {
     var params = self.getEAttributeParameters().includingAll(self.getRequiredFeatureParameters());%]
 /** The [%=self.name%] Factory. */
-[%=self.name%] create[%=self.name%]([%=params.concat(", ")%]);       
+[%=self.name%] create[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException;       
 [%}
 %]

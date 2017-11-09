@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-08.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.trace;
 
+
+import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
 
 public interface PropertyHasElement {
 

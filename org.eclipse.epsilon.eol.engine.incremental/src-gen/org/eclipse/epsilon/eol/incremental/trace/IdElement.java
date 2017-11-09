@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-08.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,7 +11,14 @@
  ******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.trace;
 
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 
+/**
+ * The IdElement defines the access methods for the EClass features.
+ * Additionally, the IdElement acts as the root entity of the AGGREGATE of its
+ * container references. That is, elements contained in the IdElement must be
+ * created through this interface.
+ */
 public interface IdElement {
 
     /**
@@ -34,5 +41,4 @@ public interface IdElement {
      */
     void setId(Object value);
             
-
 }

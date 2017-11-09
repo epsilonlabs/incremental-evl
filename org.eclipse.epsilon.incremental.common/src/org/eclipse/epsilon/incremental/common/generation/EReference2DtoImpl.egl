@@ -58,7 +58,8 @@ public class [%=featureType%]Impl extends Feature implements [%=featureType%] {
     protected [%=sourceType%] source;
     
     /** The target(s) of the reference */
-[%if (er.isMany()) {%]
+[%if (er.isMany()) { // Perhaps use ConcurrentHashMap.newKeySet() if unique?
+%]
     protected Queue<[%=targetType%]> target =  new ConcurrentLinkedQueue<[%=targetType%]>();
 [%} else {%]
     protected [%=targetType%] target;
@@ -87,14 +88,14 @@ public class [%=featureType%]Impl extends Feature implements [%=featureType%] {
     
     @Override
     public boolean create([%=targetType%] target) {
-        if (isUnique && related(target)) {
-            return true;
-        }
         if (conflict(target)) {
             return false;
         }
 [%if (opposite.isDefined()) {%]
         target.[%=opposite%]().set(source);
+        if (related(target)) {
+            return false;
+        }
 [%}%]
         set(target);
         return true;

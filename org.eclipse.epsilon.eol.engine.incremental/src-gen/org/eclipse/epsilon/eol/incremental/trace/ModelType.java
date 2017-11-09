@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-08.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,8 +11,15 @@
  ******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.trace;
 
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.trace.Model;    
 
+/**
+ * The ModelType defines the access methods for the EClass features.
+ * Additionally, the ModelType extends IdElement acts as the root entity of the AGGREGATE of its
+ * container references. That is, elements contained in the ModelType must be
+ * created through this interface.
+ */
 public interface ModelType extends IdElement {
 
     /**
@@ -35,6 +42,13 @@ public interface ModelType extends IdElement {
      */
     void setName(String value);
             
-    ModelTypeHasModel model();            
-
+    /** The model reference. */
+    ModelTypeHasModel model();
+                
+ 
+    /**
+     * ModelType has same identity in the aggregate.
+     */
+    public boolean sameIdentityAs(final ModelType other);
+    
 }

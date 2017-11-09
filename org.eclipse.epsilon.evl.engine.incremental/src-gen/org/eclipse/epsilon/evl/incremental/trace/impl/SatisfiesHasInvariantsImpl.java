@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,63 +15,42 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.eclipse.epsilon.evl.incremental.trace.Satisfies;
 import org.eclipse.epsilon.evl.incremental.trace.Invariant;
-import org.eclipse.epsilon.evl.incremental.trace.SatisfiesHasSatsfies;
+import org.eclipse.epsilon.evl.incremental.trace.SatisfiesHasInvariants;
 import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of satsfies reference. 
+ * Implementation of SatisfiesHasInvariants reference. 
  */
-public class SatisfiesHasSatsfiesImpl extends Feature implements SatisfiesHasSatsfies {
+public class SatisfiesHasInvariantsImpl extends Feature implements SatisfiesHasInvariants {
     
+    /** The source(s) of the reference */
     protected Satisfies source;
+    
+    /** The target(s) of the reference */
     protected Queue<Invariant> target =  new ConcurrentLinkedQueue<Invariant>();
     
     /**
-     * Instantiates a new SatisfiesHasSatsfies.
+     * Instantiates a new SatisfiesHasInvariants.
      *
      * @param source the source of the reference
      */
-    public SatisfiesHasSatsfiesImpl (Satisfies source) {
+    public SatisfiesHasInvariantsImpl (Satisfies source) {
         super(true);
         this.source = source;
     }
     
+    // PUBLIC API
+        
     @Override
     public Queue<Invariant> get() {
         return target;
     }
     
     @Override
-    public void set(Invariant target) {
-        this.target.add(target);
-    }
-    
-    @Override
-    public void remove(Invariant target) {
-        this.target.remove(target);
-    }
-    
-    @Override
-    public boolean conflict(Invariant  target) {
-        boolean result = false;
-        result |= get().contains(target);
-        return result;
-    }
-    
-    @Override
-    public boolean related(Invariant target) {
-  
-        return get().contains(target) ;
-    }
-    
-    @Override
     public boolean create(Invariant target) {
         if (conflict(target)) {
             return false;
-        }
-        if (related(target)) {
-            return true;
         }
         set(target);
         return true;
@@ -84,6 +63,33 @@ public class SatisfiesHasSatsfiesImpl extends Feature implements SatisfiesHasSat
         }
         remove(target);
         return true;
+    }
+    
+    @Override
+    public boolean conflict(Invariant target) {
+        boolean result = false;
+        if (isUnique) {
+            result |= get().contains(target);
+        }
+        return result;
+    }
+    
+    @Override
+    public boolean related(Invariant target) {
+  
+        return get().contains(target) ;
+    }
+    
+    // PRIVATE API
+    
+    @Override
+    public void set(Invariant target) {
+        this.target.add(target);
+    }
+    
+    @Override
+    public void remove(Invariant target) {
+        this.target.remove(target);
     }
 
 }

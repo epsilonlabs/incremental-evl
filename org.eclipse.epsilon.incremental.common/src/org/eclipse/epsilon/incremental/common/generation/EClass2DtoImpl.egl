@@ -28,9 +28,13 @@ import "Ecore2JavaTemplates.egl";
 package [%=qp%].trace.impl;
 
 import [%=qp%].trace.[%=ec.getName()%];
+import java.util.NoSuchElementException;
+
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelation;
 [%
 for (imp in ec.getRequriedImports(qp+".trace", "", "", true, true)) {%]
-import [%=imp%];    
+import [%=imp%];
 [%}%]
 
 /**
@@ -38,14 +42,16 @@ import [%=imp%];
  */
 public class [%=ec.name%]Impl implements [%=ec.name%] {
 
-[%for (ea in ec.getEAllAttributes()) {
+[%  // Craete a field for each attribute
+for (ea in ec.getEAllAttributes()) {
     var multi = "List";
     if (ea.isOrdered()) { multi = "Set"; }%]
     /** The [%=ea.name%] */
     private [%=ea.getGetterReturnType(multi)%] [%=ea.name%];
 
 [%}%]
-[%for (er in ec.getEAllReferences()) {%]
+[%  // Craete a field for each reference
+for (er in ec.getEAllReferences()) {%]
     /** The [%=er.name%] relation */
     private final [%=er.getEContainingClass().name%]Has[%=er.name.firstToUpperCase()%] [%=er.name%];
 
@@ -54,7 +60,7 @@ public class [%=ec.name%]Impl implements [%=ec.name%] {
      * Instantiates a new [%=ec.getName()%]. The [%=ec.getName()%] is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public [%=ec.getName()%]Impl([%=ec.getConstructorParameters(true)%]) {
+    public [%=ec.getName()%]Impl([%=ec.getConstructorParameters(true)%]) throws TraceModelDuplicateRelation {
 [%for (index in ec.getIndexAttributes()) {%]
         this.[%=index.name%] = [%=index.name%];
 [%}%]
@@ -66,9 +72,13 @@ public class [%=ec.name%]Impl implements [%=ec.name%] {
 [%}%]
 [%var container = ec.getContainerReference().at(2);
 if (container.isDefined()) {%]
-        container.[%=container.name%]().create(this);
+        if (!container.[%=container.name%]().create(this)) {
+            throw new TraceModelDuplicateRelation();
+        };
 [%} else if (ec.getContainerReference().at(0).isDefined()) {%]
-        container.[%=ec.getContainerReference().at(0).name%]().create(this);
+        if (!container.[%=ec.getContainerReference().at(0).name%]().create(this){
+            throw new TraceModelDuplicateRelation();
+        };
 [%}%]
     }
     
@@ -104,50 +114,105 @@ if (container.isDefined()) {%]
  */
 for (er in ec.getEAllReferences().select(er | er.isContainment())) {
     if (not er.getEReferenceType().isAbstract()) {%]
-    [%=er.getEReferenceType().factoryMethod()%]
+    [%=er.getEReferenceType().factoryMethod(er, false)%]
 [%  } else {
         var subClasses = er.getEReferenceType().getEAllSubclasses();
-        for (sc in subClasses) {%]
-    [%=sc.factoryMethod()%]
+        for (sc in subClasses.select(sc | not sc.isAbstract())) {%]
+    [%=sc.factoryMethod(er, true)%]
             
 [%      }%]
 [%  }%]
                   
 [%}%]
+    @Override
+    public boolean sameIdentityAs(final [%=ec.name%] other) {
+        if (other == null) {
+            return false;
+        }
+[%for (index in ec.getIndexAttributes()) {%]
+        if (get[%=index.name.firstToUpperCase()%]() == null) {
+            if (other.get[%=index.name.firstToUpperCase()%]() != null)
+                return false;
+        } else if (!get[%=index.name.firstToUpperCase()%]().equals(other.get[%=index.name.firstToUpperCase()%]()))
+            return false;
+[%}%]
+        return true;
+    }
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof [%=ec.name%]Impl))
+            return false;
+        [%=ec.name%]Impl other = ([%=ec.name%]Impl) obj;
+        if (!sameIdentityAs(other))
+            return false;
 [%
-// FIXME We need Equals and Hash!
-/*
-  @Override
-  public boolean sameIdentityAs(final Cargo other) {
-    return other != null && trackingId.sameValueAs(other.trackingId);
+container = ec.getContainerReference().at(0);
+if (container.isDefined()) {%]
+        if ([%=container.name%].get() == null) {
+            if (other.[%=container.name%].get() != null)
+                return false;
+        } else if (![%=container.name%].get().equals(other.[%=container.name%].get()))
+            return false;
+[%}%]
+        return true; 
   }
 
-  @Override
-  public boolean equals(final Object object) {
-    if (this == object) return true;
-    if (object == null || getClass() != object.getClass()) return false;
-
-    final Cargo other = (Cargo) object;
-    return sameIdentityAs(other);
-  }
-
-  @Override
-  public int hashCode() {
-    return trackingId.hashCode();
-  }
-*/
-%] 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+[%if (container.isDefined()) {%]
+        result = prime * result + (([%=container.name%].get() == null) ? 0 : [%=container.name%].get().hashCode());
+[%}%]
+[%for (index in ec.getIndexAttributes()) {%]
+        result = prime * result + (([%=index.name%] == null) ? 0 : [%=index.name%].hashCode());
+[%}%]
+        return result;
+    }
 
 }
 [%
 @template
-operation EClass factoryMethod() {
+operation EClass factoryMethod(ref : EReference, subClass : Boolean) {
     var params = self.getEAttributeParameters().includingAll(self.getRequiredFeatureParameters());
     var vars = self.getIndexAttributes().includingAll(self.getRequiredFeatures()).collect(a | a.name).including("this");%]
 @Override
-public [%=self.name%] create[%=self.name%]([%=params.concat(", ")%]) {
-    return new [%=self.name%]Impl([%=vars.concat(", ")%]);
+public [%=self.name%] create[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException {
+        try {
+            return new [%=self.name%]Impl([%=vars.concat(", ")%]);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        }
+        [%=self.name%] [%=self.name.firstToLowerCase()%] = null;
+[%  if (ref.isMany()) {%]        
+        try {
+            [%=self.name.firstToLowerCase()%] = this.[%=ref.name%].get().stream()
+[%// Need to cast for subclasses
+if (subClass) {%]
+                .map([%=self.name%].class::cast)
+[%}%]
+[%for (index in self.getIndexAttributes()) {%]
+                .filter(mt -> mt.get[%=index.name.firstToUpperCase()%]().equals([%=index.name%]))
+[%}%]
+                .findFirst()
+                .get();
+        } catch (NoSuchElementException ex) {
+            throw new EolIncrementalExecutionException("Error creating trace model element. Requested [%=self.name%] was "
+                    + "duplicate but previous one was not found.");
+        }
+[%  } else {%]
+        [%=self.name.firstToLowerCase()%] = this.[%=ref.name%].get();
+        if ([%=self.name.firstToLowerCase()%] == null) {
+            throw new EolIncrementalExecutionException("Error creating trace model element. Requested [%=self.name%] was "
+                    + "duplicate but previous one was not found.");
+        }
+[%}%]
+        return [%=self.name.firstToLowerCase()%];
 }      
 [%}
 %]

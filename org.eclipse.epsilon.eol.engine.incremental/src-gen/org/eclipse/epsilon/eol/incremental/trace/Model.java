@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-08.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,9 +11,16 @@
  ******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.trace;
 
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.trace.ModelElement;    
 import org.eclipse.epsilon.eol.incremental.trace.ModelType;    
 
+/**
+ * The Model defines the access methods for the EClass features.
+ * Additionally, the Model extends IdElement acts as the root entity of the AGGREGATE of its
+ * container references. That is, elements contained in the Model must be
+ * created through this interface.
+ */
 public interface Model extends IdElement {
 
     /**
@@ -36,7 +43,22 @@ public interface Model extends IdElement {
      */
     void setName(String value);
             
-    ModelHasElements elements();            
-    ModelHasTypes types();            
-
+    /** The elements reference. */
+    ModelHasElements elements();
+                
+    /** The types reference. */
+    ModelHasTypes types();
+                
+ 
+    /**
+     * Model has same identity in the aggregate.
+     */
+    public boolean sameIdentityAs(final Model other);
+    
+    /** The ModelElement Factory. */
+    ModelElement createModelElement(String uri) throws EolIncrementalExecutionException;       
+   
+    /** The ModelType Factory. */
+    ModelType createModelType(String name) throws EolIncrementalExecutionException;       
+   
 }

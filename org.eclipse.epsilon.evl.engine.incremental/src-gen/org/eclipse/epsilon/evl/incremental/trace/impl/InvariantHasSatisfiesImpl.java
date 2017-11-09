@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,11 +18,14 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of satisfies reference. 
+ * Implementation of InvariantHasSatisfies reference. 
  */
 public class InvariantHasSatisfiesImpl extends Feature implements InvariantHasSatisfies {
     
+    /** The source(s) of the reference */
     protected Invariant source;
+    
+    /** The target(s) of the reference */
     protected Satisfies target;
     
     /**
@@ -35,41 +38,17 @@ public class InvariantHasSatisfiesImpl extends Feature implements InvariantHasSa
         this.source = source;
     }
     
+    // PUBLIC API
+        
     @Override
     public Satisfies get() {
         return target;
     }
     
     @Override
-    public void set(Satisfies target) {
-        this.target = target;
-    }
-    
-    @Override
-    public void remove(Satisfies target) {
-        this.target = null;
-    }
-    
-    @Override
-    public boolean conflict(Satisfies  target) {
-        boolean result = false;
-        result |= get() != null;
-        return result;
-    }
-    
-    @Override
-    public boolean related(Satisfies target) {
-  
-        return target.equals(this.target) ;
-    }
-    
-    @Override
     public boolean create(Satisfies target) {
         if (conflict(target)) {
             return false;
-        }
-        if (related(target)) {
-            return true;
         }
         set(target);
         return true;
@@ -82,6 +61,31 @@ public class InvariantHasSatisfiesImpl extends Feature implements InvariantHasSa
         }
         remove(target);
         return true;
+    }
+    
+    @Override
+    public boolean conflict(Satisfies target) {
+        boolean result = false;
+        result |= get() != null;
+        return result;
+    }
+    
+    @Override
+    public boolean related(Satisfies target) {
+  
+        return target.equals(this.target) ;
+    }
+    
+    // PRIVATE API
+    
+    @Override
+    public void set(Satisfies target) {
+        this.target = target;
+    }
+    
+    @Override
+    public void remove(Satisfies target) {
+        this.target = null;
     }
 
 }

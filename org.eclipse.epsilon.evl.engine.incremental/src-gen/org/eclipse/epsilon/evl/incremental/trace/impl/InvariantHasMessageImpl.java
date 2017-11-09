@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,11 +18,14 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of message reference. 
+ * Implementation of InvariantHasMessage reference. 
  */
 public class InvariantHasMessageImpl extends Feature implements InvariantHasMessage {
     
+    /** The source(s) of the reference */
     protected Invariant source;
+    
+    /** The target(s) of the reference */
     protected Message target;
     
     /**
@@ -35,33 +38,11 @@ public class InvariantHasMessageImpl extends Feature implements InvariantHasMess
         this.source = source;
     }
     
+    // PUBLIC API
+        
     @Override
     public Message get() {
         return target;
-    }
-    
-    @Override
-    public void set(Message target) {
-        this.target = target;
-    }
-    
-    @Override
-    public void remove(Message target) {
-        this.target = null;
-    }
-    
-    @Override
-    public boolean conflict(Message  target) {
-        boolean result = false;
-        result |= get() != null;
-        result &= target.invariant().get() != null;
-        return result;
-    }
-    
-    @Override
-    public boolean related(Message target) {
-  
-        return target.equals(this.target) & source.equals(target.invariant().get());
     }
     
     @Override
@@ -69,10 +50,10 @@ public class InvariantHasMessageImpl extends Feature implements InvariantHasMess
         if (conflict(target)) {
             return false;
         }
-        if (related(target)) {
-            return true;
-        }
         target.invariant().set(source);
+        if (related(target)) {
+            return false;
+        }
         set(target);
         return true;
     }
@@ -85,6 +66,32 @@ public class InvariantHasMessageImpl extends Feature implements InvariantHasMess
         target.invariant().remove(source);
         remove(target);
         return true;
+    }
+    
+    @Override
+    public boolean conflict(Message target) {
+        boolean result = false;
+        result |= get() != null;
+        result |= target.invariant().get() != null;
+        return result;
+    }
+    
+    @Override
+    public boolean related(Message target) {
+  
+        return target.equals(this.target) & source.equals(target.invariant().get());
+    }
+    
+    // PRIVATE API
+    
+    @Override
+    public void set(Message target) {
+        this.target = target;
+    }
+    
+    @Override
+    public void remove(Message target) {
+        this.target = null;
     }
 
 }

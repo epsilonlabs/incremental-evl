@@ -19,8 +19,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({EolTraceModelTests.ExecutionTraceTests.class,
-                     EolTraceModelTests.AllInstancesAccessTests.class,
+@Suite.SuiteClasses({EolTraceModelTests.AllInstancesAccessTests.class,
                      EolTraceModelTests.PropertyAccessTests.class,
                      EolTraceModelTests.PropertyTests.class,
                      EolTraceModelTests.ModelElementTests.class,
@@ -28,97 +27,6 @@ import org.junit.runners.Suite;
                      EolTraceModelTests.ModelTests.class})
 public class EolTraceModelTests {
 
-    
-    public static class ExecutionTraceTests extends EasyMockSupport {
-    
-        @Rule
-        public EasyMockRule rule = new EasyMockRule(this);
-
-        /** Mock the target of the execution reference. */
-        @Mock
-        private Execution executionMock1;
-        
-        /** Mock the target of the execution reference. */
-        @Mock
-        private Execution executionMock2;
-        
-        
-        /** Mock the target of the model reference. */
-        @Mock
-        private Model modelMock1;
-        
-        /** Mock the target of the model reference. */
-        @Mock
-        private Model modelMock2;
-        
-        
-        private ExecutionTrace classUnderTest;
-        
-        @Test
-        public void testExecutionTraceInstantiation() {
-            classUnderTest = new ExecutionTraceImpl();
-	    }
-	    
-// protected region IgnoreExecutionTraceAttributes on begin
-	    @Ignore
-// protected region IgnoreExecutionTraceAttributes end	    
-	    @Test
-        public void testExecutionTraceAttributes() {
-            classUnderTest = new ExecutionTraceImpl();
-// protected region ExecutionTraceAttributes on begin
-            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
-// protected region ExecutionTraceAttributes end
-        }
-
-        @Test
-        public void testExecutionTraceCreateExecution() {
-            classUnderTest = new ExecutionTraceImpl();
-              
-            boolean result = classUnderTest.execution().create(executionMock1);
-            assertTrue(result);
-            result = classUnderTest.execution().create(executionMock2);
-            
-            assertTrue(result);
-           
-            result = classUnderTest.execution().create(executionMock1);
-            assertTrue(result);
-        }
-        
-        @Test
-        public void testExecutionTraceDestroyExecution() {
-            classUnderTest = new ExecutionTraceImpl();
-            classUnderTest.execution().create(executionMock1);
-            boolean result = classUnderTest.execution().destroy(executionMock1);
-            assertTrue(result);
-            assertThat(classUnderTest.execution().get(), not(hasItem(executionMock1)));
-            result = classUnderTest.execution().destroy(executionMock2);
-            assertFalse(result);
-        }
-        @Test
-        public void testExecutionTraceCreateModel() {
-            classUnderTest = new ExecutionTraceImpl();
-              
-            boolean result = classUnderTest.model().create(modelMock1);
-            assertTrue(result);
-            result = classUnderTest.model().create(modelMock2);
-            
-            assertTrue(result);
-           
-            result = classUnderTest.model().create(modelMock1);
-            assertTrue(result);
-        }
-        
-        @Test
-        public void testExecutionTraceDestroyModel() {
-            classUnderTest = new ExecutionTraceImpl();
-            classUnderTest.model().create(modelMock1);
-            boolean result = classUnderTest.model().destroy(modelMock1);
-            assertTrue(result);
-            assertThat(classUnderTest.model().get(), not(hasItem(modelMock1)));
-            result = classUnderTest.model().destroy(modelMock2);
-            assertFalse(result);
-        }
-    }
     
     public static class AllInstancesAccessTests extends EasyMockSupport {
     
@@ -139,7 +47,6 @@ public class EolTraceModelTests {
         /** Allow the target mock to populate the reference */
         private ExecutionHasAccesses executionHasAccesses2;
         
-        
         /** Mock the target of the type reference. */
         @Mock
         private ModelType modelTypeMock1;
@@ -148,17 +55,17 @@ public class EolTraceModelTests {
         @Mock
         private ModelType modelTypeMock2;
         
-        
         private AllInstancesAccess classUnderTest;
         
         @Test
-        public void testAllInstancesAccessInstantiation() {
+        public void testAllInstancesAccessInstantiation() throws Exception {
             executionHasAccesses1 = new ExecutionHasAccessesImpl(executionMock1);
             expect(executionMock1.accesses()).andReturn(executionHasAccesses1).anyTimes();
             replay(executionMock1);
-            classUnderTest = new AllInstancesAccessImpl(executionMock1);
+            ModelType _type = mock(ModelType.class);
+            classUnderTest = new AllInstancesAccessImpl(_type, executionMock1);
             assertThat(classUnderTest.execution().get(), is(executionMock1));
-            Queue<Access> values = classUnderTest.execution().get().accesses().get();
+            Queue<Access> values = executionMock1.accesses().get();
             assertThat(values, hasItem(classUnderTest));
 	    }
 	    
@@ -166,29 +73,25 @@ public class EolTraceModelTests {
 	    @Ignore
 // protected region IgnoreAllInstancesAccessAttributes end	    
 	    @Test
-        public void testAllInstancesAccessAttributes() {
+        public void testAllInstancesAccessAttributes() throws Exception {
             executionHasAccesses1 = new ExecutionHasAccessesImpl(executionMock1);
             expect(executionMock1.accesses()).andReturn(executionHasAccesses1).anyTimes();
             replay(executionMock1);
-            classUnderTest = new AllInstancesAccessImpl(executionMock1);
+            ModelType _type = mock(ModelType.class);
+            classUnderTest = new AllInstancesAccessImpl(_type, executionMock1);
 // protected region AllInstancesAccessAttributes on begin
-            // TODO Add test code for parameters (to hard to generate correct code for any type).       
-            boolean isKindOf = true;
-			classUnderTest.setOfKind(isKindOf);
-			assertTrue(classUnderTest.getOfKind());
-			isKindOf = false;
-			classUnderTest.setOfKind(isKindOf);
-			assertFalse(classUnderTest.getOfKind());
+            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region AllInstancesAccessAttributes end
         }
 
         
         @Test
-        public void testAllInstancesAccessCreateExecutionConflict() {
+        public void testAllInstancesAccessCreateExecutionConflict() throws Exception {
             executionHasAccesses1 = new ExecutionHasAccessesImpl(executionMock1);
             expect(executionMock1.accesses()).andReturn(executionHasAccesses1).anyTimes();
             replay(executionMock1);
-            classUnderTest = new AllInstancesAccessImpl(executionMock1);
+            ModelType _type = mock(ModelType.class);
+            classUnderTest = new AllInstancesAccessImpl(_type, executionMock1);
             executionHasAccesses2 = new ExecutionHasAccessesImpl(executionMock2);
             expect(executionMock2.accesses()).andReturn(executionHasAccesses2).anyTimes();
             replay(executionMock2);
@@ -198,21 +101,23 @@ public class EolTraceModelTests {
         }
         
         @Test
-        public void testAllInstancesAccessDestroyExecution() {
+        public void testAllInstancesAccessDestroyExecution() throws Exception {
             executionHasAccesses1 = new ExecutionHasAccessesImpl(executionMock1);
             expect(executionMock1.accesses()).andReturn(executionHasAccesses1).anyTimes();
             replay(executionMock1);
-            classUnderTest = new AllInstancesAccessImpl(executionMock1);
+            ModelType _type = mock(ModelType.class);
+            classUnderTest = new AllInstancesAccessImpl(_type, executionMock1);
             boolean result = classUnderTest.execution().destroy(executionMock1);
             assertTrue(result);
         }
         
         @Test
-        public void testAllInstancesAccessDestroyAndCreateExecution() {
+        public void testAllInstancesAccessDestroyAndCreateExecution() throws Exception {
             executionHasAccesses1 = new ExecutionHasAccessesImpl(executionMock1);
             expect(executionMock1.accesses()).andReturn(executionHasAccesses1).anyTimes();
             replay(executionMock1);
-            classUnderTest = new AllInstancesAccessImpl(executionMock1);
+            ModelType _type = mock(ModelType.class);
+            classUnderTest = new AllInstancesAccessImpl(_type, executionMock1);
             executionHasAccesses2 = new ExecutionHasAccessesImpl(executionMock2);
             expect(executionMock2.accesses()).andReturn(executionHasAccesses2).anyTimes();
             replay(executionMock2);
@@ -222,38 +127,35 @@ public class EolTraceModelTests {
             result = classUnderTest.execution().create(executionMock2);
             assertTrue(result);
             result = classUnderTest.execution().create(executionMock2);
-            assertTrue(result);
+            assertFalse(result);
             result = classUnderTest.execution().create(executionMock1);
             assertFalse(result);
         }
         
         @Test
-        public void testAllInstancesAccessCreateModelType() {
+        public void testAllInstancesAccessCreateModelType() throws Exception {
             executionHasAccesses1 = new ExecutionHasAccessesImpl(executionMock1);
             expect(executionMock1.accesses()).andReturn(executionHasAccesses1).anyTimes();
             replay(executionMock1);
-            classUnderTest = new AllInstancesAccessImpl(executionMock1);
-              
-            boolean result = classUnderTest.type().create(modelTypeMock1);
-            assertTrue(result);
+            ModelType _type = mock(ModelType.class);
+            classUnderTest = new AllInstancesAccessImpl(_type, executionMock1);
+            boolean result;
             result = classUnderTest.type().create(modelTypeMock2);
-            
-            assertTrue(result);
-           
-            result = classUnderTest.type().create(modelTypeMock1);
-            assertTrue(result);
+            assertFalse(result);
+            result = classUnderTest.type().create(_type);
+            assertFalse(result);
         }
         
         @Test
-        public void testAllInstancesAccessDestroyModelType() {
+        public void testAllInstancesAccessDestroyModelType() throws Exception {
             executionHasAccesses1 = new ExecutionHasAccessesImpl(executionMock1);
             expect(executionMock1.accesses()).andReturn(executionHasAccesses1).anyTimes();
             replay(executionMock1);
-            classUnderTest = new AllInstancesAccessImpl(executionMock1);
-            classUnderTest.type().create(modelTypeMock1);
-            boolean result = classUnderTest.type().destroy(modelTypeMock1);
+            ModelType _type = mock(ModelType.class);
+            classUnderTest = new AllInstancesAccessImpl(_type, executionMock1);
+            boolean result = classUnderTest.type().destroy(_type);
             assertTrue(result);
-            assertThat(classUnderTest.type().get(), not(hasItem(modelTypeMock1)));
+            assertThat(classUnderTest.type().get(), is(nullValue()));
             result = classUnderTest.type().destroy(modelTypeMock2);
             assertFalse(result);
         }
@@ -278,7 +180,6 @@ public class EolTraceModelTests {
         /** Allow the target mock to populate the reference */
         private ExecutionHasAccesses executionHasAccesses2;
         
-        
         /** Mock the target of the property reference. */
         @Mock
         private Property propertyMock1;
@@ -287,17 +188,17 @@ public class EolTraceModelTests {
         @Mock
         private Property propertyMock2;
         
-        
         private PropertyAccess classUnderTest;
         
         @Test
-        public void testPropertyAccessInstantiation() {
+        public void testPropertyAccessInstantiation() throws Exception {
             executionHasAccesses1 = new ExecutionHasAccessesImpl(executionMock1);
             expect(executionMock1.accesses()).andReturn(executionHasAccesses1).anyTimes();
             replay(executionMock1);
-            classUnderTest = new PropertyAccessImpl(executionMock1);
+            Property _property = mock(Property.class);
+            classUnderTest = new PropertyAccessImpl(_property, executionMock1);
             assertThat(classUnderTest.execution().get(), is(executionMock1));
-            Queue<Access> values = classUnderTest.execution().get().accesses().get();
+            Queue<Access> values = executionMock1.accesses().get();
             assertThat(values, hasItem(classUnderTest));
 	    }
 	    
@@ -305,11 +206,12 @@ public class EolTraceModelTests {
 	    @Ignore
 // protected region IgnorePropertyAccessAttributes end	    
 	    @Test
-        public void testPropertyAccessAttributes() {
+        public void testPropertyAccessAttributes() throws Exception {
             executionHasAccesses1 = new ExecutionHasAccessesImpl(executionMock1);
             expect(executionMock1.accesses()).andReturn(executionHasAccesses1).anyTimes();
             replay(executionMock1);
-            classUnderTest = new PropertyAccessImpl(executionMock1);
+            Property _property = mock(Property.class);
+            classUnderTest = new PropertyAccessImpl(_property, executionMock1);
 // protected region PropertyAccessAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region PropertyAccessAttributes end
@@ -317,11 +219,12 @@ public class EolTraceModelTests {
 
         
         @Test
-        public void testPropertyAccessCreateExecutionConflict() {
+        public void testPropertyAccessCreateExecutionConflict() throws Exception {
             executionHasAccesses1 = new ExecutionHasAccessesImpl(executionMock1);
             expect(executionMock1.accesses()).andReturn(executionHasAccesses1).anyTimes();
             replay(executionMock1);
-            classUnderTest = new PropertyAccessImpl(executionMock1);
+            Property _property = mock(Property.class);
+            classUnderTest = new PropertyAccessImpl(_property, executionMock1);
             executionHasAccesses2 = new ExecutionHasAccessesImpl(executionMock2);
             expect(executionMock2.accesses()).andReturn(executionHasAccesses2).anyTimes();
             replay(executionMock2);
@@ -331,21 +234,23 @@ public class EolTraceModelTests {
         }
         
         @Test
-        public void testPropertyAccessDestroyExecution() {
+        public void testPropertyAccessDestroyExecution() throws Exception {
             executionHasAccesses1 = new ExecutionHasAccessesImpl(executionMock1);
             expect(executionMock1.accesses()).andReturn(executionHasAccesses1).anyTimes();
             replay(executionMock1);
-            classUnderTest = new PropertyAccessImpl(executionMock1);
+            Property _property = mock(Property.class);
+            classUnderTest = new PropertyAccessImpl(_property, executionMock1);
             boolean result = classUnderTest.execution().destroy(executionMock1);
             assertTrue(result);
         }
         
         @Test
-        public void testPropertyAccessDestroyAndCreateExecution() {
+        public void testPropertyAccessDestroyAndCreateExecution() throws Exception {
             executionHasAccesses1 = new ExecutionHasAccessesImpl(executionMock1);
             expect(executionMock1.accesses()).andReturn(executionHasAccesses1).anyTimes();
             replay(executionMock1);
-            classUnderTest = new PropertyAccessImpl(executionMock1);
+            Property _property = mock(Property.class);
+            classUnderTest = new PropertyAccessImpl(_property, executionMock1);
             executionHasAccesses2 = new ExecutionHasAccessesImpl(executionMock2);
             expect(executionMock2.accesses()).andReturn(executionHasAccesses2).anyTimes();
             replay(executionMock2);
@@ -355,35 +260,33 @@ public class EolTraceModelTests {
             result = classUnderTest.execution().create(executionMock2);
             assertTrue(result);
             result = classUnderTest.execution().create(executionMock2);
-            assertTrue(result);
+            assertFalse(result);
             result = classUnderTest.execution().create(executionMock1);
             assertFalse(result);
         }
         
         @Test
-        public void testPropertyAccessCreateProperty() {
+        public void testPropertyAccessCreateProperty() throws Exception {
             executionHasAccesses1 = new ExecutionHasAccessesImpl(executionMock1);
             expect(executionMock1.accesses()).andReturn(executionHasAccesses1).anyTimes();
             replay(executionMock1);
-            classUnderTest = new PropertyAccessImpl(executionMock1);
-              
-            boolean result = classUnderTest.property().create(propertyMock1);
-            assertTrue(result);
+            Property _property = mock(Property.class);
+            classUnderTest = new PropertyAccessImpl(_property, executionMock1);
+            boolean result;
             result = classUnderTest.property().create(propertyMock2);
             assertFalse(result);
-           
-            result = classUnderTest.property().create(propertyMock1);
-            assertTrue(result);
+            result = classUnderTest.property().create(_property);
+            assertFalse(result);
         }
         
         @Test
-        public void testPropertyAccessDestroyProperty() {
+        public void testPropertyAccessDestroyProperty() throws Exception {
             executionHasAccesses1 = new ExecutionHasAccessesImpl(executionMock1);
             expect(executionMock1.accesses()).andReturn(executionHasAccesses1).anyTimes();
             replay(executionMock1);
-            classUnderTest = new PropertyAccessImpl(executionMock1);
-            classUnderTest.property().create(propertyMock1);
-            boolean result = classUnderTest.property().destroy(propertyMock1);
+            Property _property = mock(Property.class);
+            classUnderTest = new PropertyAccessImpl(_property, executionMock1);
+            boolean result = classUnderTest.property().destroy(_property);
             assertTrue(result);
             assertThat(classUnderTest.property().get(), is(nullValue()));
             result = classUnderTest.property().destroy(propertyMock2);
@@ -410,17 +313,16 @@ public class EolTraceModelTests {
         /** Allow the target mock to populate the reference */
         private ModelElementHasProperties modelElementHasProperties2;
         
-        
         private Property classUnderTest;
         
         @Test
-        public void testPropertyInstantiation() {
+        public void testPropertyInstantiation() throws Exception {
             modelElementHasProperties1 = new ModelElementHasPropertiesImpl(modelElementMock1);
             expect(modelElementMock1.properties()).andReturn(modelElementHasProperties1).anyTimes();
             replay(modelElementMock1);
             classUnderTest = new PropertyImpl("name", modelElementMock1);
             assertThat(classUnderTest.element().get(), is(modelElementMock1));
-            Queue<Property> values = classUnderTest.element().get().properties().get();
+            Queue<Property> values = modelElementMock1.properties().get();
             assertThat(values, hasItem(classUnderTest));
 	    }
 	    
@@ -428,7 +330,7 @@ public class EolTraceModelTests {
 	    @Ignore
 // protected region IgnorePropertyAttributes end	    
 	    @Test
-        public void testPropertyAttributes() {
+        public void testPropertyAttributes() throws Exception {
             modelElementHasProperties1 = new ModelElementHasPropertiesImpl(modelElementMock1);
             expect(modelElementMock1.properties()).andReturn(modelElementHasProperties1).anyTimes();
             replay(modelElementMock1);
@@ -440,7 +342,7 @@ public class EolTraceModelTests {
 
         
         @Test
-        public void testPropertyCreateElementConflict() {
+        public void testPropertyCreateElementConflict() throws Exception {
             modelElementHasProperties1 = new ModelElementHasPropertiesImpl(modelElementMock1);
             expect(modelElementMock1.properties()).andReturn(modelElementHasProperties1).anyTimes();
             replay(modelElementMock1);
@@ -454,7 +356,7 @@ public class EolTraceModelTests {
         }
         
         @Test
-        public void testPropertyDestroyElement() {
+        public void testPropertyDestroyElement() throws Exception {
             modelElementHasProperties1 = new ModelElementHasPropertiesImpl(modelElementMock1);
             expect(modelElementMock1.properties()).andReturn(modelElementHasProperties1).anyTimes();
             replay(modelElementMock1);
@@ -464,7 +366,7 @@ public class EolTraceModelTests {
         }
         
         @Test
-        public void testPropertyDestroyAndCreateElement() {
+        public void testPropertyDestroyAndCreateElement() throws Exception {
             modelElementHasProperties1 = new ModelElementHasPropertiesImpl(modelElementMock1);
             expect(modelElementMock1.properties()).andReturn(modelElementHasProperties1).anyTimes();
             replay(modelElementMock1);
@@ -478,7 +380,7 @@ public class EolTraceModelTests {
             result = classUnderTest.element().create(modelElementMock2);
             assertTrue(result);
             result = classUnderTest.element().create(modelElementMock2);
-            assertTrue(result);
+            assertFalse(result);
             result = classUnderTest.element().create(modelElementMock1);
             assertFalse(result);
         }
@@ -504,7 +406,6 @@ public class EolTraceModelTests {
         /** Allow the target mock to populate the reference */
         private ModelHasElements modelHasElements2;
         
-        
         /** Mock the target of the properties reference. */
         @Mock
         private Property propertyMock1;
@@ -519,17 +420,16 @@ public class EolTraceModelTests {
         /** Allow the target mock to populate the reference */
         private PropertyHasElement propertyHasElement2;
         
-        
         private ModelElement classUnderTest;
         
         @Test
-        public void testModelElementInstantiation() {
+        public void testModelElementInstantiation() throws Exception {
             modelHasElements1 = new ModelHasElementsImpl(modelMock1);
             expect(modelMock1.elements()).andReturn(modelHasElements1).anyTimes();
             replay(modelMock1);
             classUnderTest = new ModelElementImpl("uri", modelMock1);
             assertThat(classUnderTest.model().get(), is(modelMock1));
-            Queue<ModelElement> values = classUnderTest.model().get().elements().get();
+            Queue<ModelElement> values = modelMock1.elements().get();
             assertThat(values, hasItem(classUnderTest));
 	    }
 	    
@@ -537,7 +437,7 @@ public class EolTraceModelTests {
 	    @Ignore
 // protected region IgnoreModelElementAttributes end	    
 	    @Test
-        public void testModelElementAttributes() {
+        public void testModelElementAttributes() throws Exception {
             modelHasElements1 = new ModelHasElementsImpl(modelMock1);
             expect(modelMock1.elements()).andReturn(modelHasElements1).anyTimes();
             replay(modelMock1);
@@ -549,7 +449,7 @@ public class EolTraceModelTests {
 
         
         @Test
-        public void testModelElementCreateModelConflict() {
+        public void testModelElementCreateModelConflict() throws Exception {
             modelHasElements1 = new ModelHasElementsImpl(modelMock1);
             expect(modelMock1.elements()).andReturn(modelHasElements1).anyTimes();
             replay(modelMock1);
@@ -563,7 +463,7 @@ public class EolTraceModelTests {
         }
         
         @Test
-        public void testModelElementDestroyModel() {
+        public void testModelElementDestroyModel() throws Exception {
             modelHasElements1 = new ModelHasElementsImpl(modelMock1);
             expect(modelMock1.elements()).andReturn(modelHasElements1).anyTimes();
             replay(modelMock1);
@@ -573,7 +473,7 @@ public class EolTraceModelTests {
         }
         
         @Test
-        public void testModelElementDestroyAndCreateModel() {
+        public void testModelElementDestroyAndCreateModel() throws Exception {
             modelHasElements1 = new ModelHasElementsImpl(modelMock1);
             expect(modelMock1.elements()).andReturn(modelHasElements1).anyTimes();
             replay(modelMock1);
@@ -587,13 +487,13 @@ public class EolTraceModelTests {
             result = classUnderTest.model().create(modelMock2);
             assertTrue(result);
             result = classUnderTest.model().create(modelMock2);
-            assertTrue(result);
+            assertFalse(result);
             result = classUnderTest.model().create(modelMock1);
             assertFalse(result);
         }
         
         @Test
-        public void testModelElementCreateProperty() {
+        public void testModelElementCreateProperty() throws Exception {
             modelHasElements1 = new ModelHasElementsImpl(modelMock1);
             expect(modelMock1.elements()).andReturn(modelHasElements1).anyTimes();
             replay(modelMock1);
@@ -601,22 +501,20 @@ public class EolTraceModelTests {
             propertyHasElement1 = new PropertyHasElementImpl(propertyMock1);
             expect(propertyMock1.element()).andReturn(propertyHasElement1).anyTimes();
             replay(propertyMock1);
-              
-            boolean result = classUnderTest.properties().create(propertyMock1);
-            assertTrue(result);
             propertyHasElement2 = new PropertyHasElementImpl(propertyMock2);
             expect(propertyMock2.element()).andReturn(propertyHasElement2).anyTimes();
             replay(propertyMock2);
-            result = classUnderTest.properties().create(propertyMock2);
-            
-            assertTrue(result);
-           
+            boolean result;
             result = classUnderTest.properties().create(propertyMock1);
             assertTrue(result);
+            result = classUnderTest.properties().create(propertyMock2);
+            assertTrue(result);
+            result = classUnderTest.properties().create(propertyMock1);
+            assertFalse(result);
         }
         
         @Test
-        public void testModelElementDestroyProperty() {
+        public void testModelElementDestroyProperty() throws Exception {
             modelHasElements1 = new ModelHasElementsImpl(modelMock1);
             expect(modelMock1.elements()).andReturn(modelHasElements1).anyTimes();
             replay(modelMock1);
@@ -655,17 +553,16 @@ public class EolTraceModelTests {
         /** Allow the target mock to populate the reference */
         private ModelHasTypes modelHasTypes2;
         
-        
         private ModelType classUnderTest;
         
         @Test
-        public void testModelTypeInstantiation() {
+        public void testModelTypeInstantiation() throws Exception {
             modelHasTypes1 = new ModelHasTypesImpl(modelMock1);
             expect(modelMock1.types()).andReturn(modelHasTypes1).anyTimes();
             replay(modelMock1);
             classUnderTest = new ModelTypeImpl("name", modelMock1);
             assertThat(classUnderTest.model().get(), is(modelMock1));
-            Queue<ModelType> values = classUnderTest.model().get().types().get();
+            Queue<ModelType> values = modelMock1.types().get();
             assertThat(values, hasItem(classUnderTest));
 	    }
 	    
@@ -673,7 +570,7 @@ public class EolTraceModelTests {
 	    @Ignore
 // protected region IgnoreModelTypeAttributes end	    
 	    @Test
-        public void testModelTypeAttributes() {
+        public void testModelTypeAttributes() throws Exception {
             modelHasTypes1 = new ModelHasTypesImpl(modelMock1);
             expect(modelMock1.types()).andReturn(modelHasTypes1).anyTimes();
             replay(modelMock1);
@@ -685,7 +582,7 @@ public class EolTraceModelTests {
 
         
         @Test
-        public void testModelTypeCreateModelConflict() {
+        public void testModelTypeCreateModelConflict() throws Exception {
             modelHasTypes1 = new ModelHasTypesImpl(modelMock1);
             expect(modelMock1.types()).andReturn(modelHasTypes1).anyTimes();
             replay(modelMock1);
@@ -699,7 +596,7 @@ public class EolTraceModelTests {
         }
         
         @Test
-        public void testModelTypeDestroyModel() {
+        public void testModelTypeDestroyModel() throws Exception {
             modelHasTypes1 = new ModelHasTypesImpl(modelMock1);
             expect(modelMock1.types()).andReturn(modelHasTypes1).anyTimes();
             replay(modelMock1);
@@ -709,7 +606,7 @@ public class EolTraceModelTests {
         }
         
         @Test
-        public void testModelTypeDestroyAndCreateModel() {
+        public void testModelTypeDestroyAndCreateModel() throws Exception {
             modelHasTypes1 = new ModelHasTypesImpl(modelMock1);
             expect(modelMock1.types()).andReturn(modelHasTypes1).anyTimes();
             replay(modelMock1);
@@ -723,7 +620,7 @@ public class EolTraceModelTests {
             result = classUnderTest.model().create(modelMock2);
             assertTrue(result);
             result = classUnderTest.model().create(modelMock2);
-            assertTrue(result);
+            assertFalse(result);
             result = classUnderTest.model().create(modelMock1);
             assertFalse(result);
         }
@@ -749,7 +646,6 @@ public class EolTraceModelTests {
         /** Allow the target mock to populate the reference */
         private ModelElementHasModel modelElementHasModel2;
         
-        
         /** Mock the target of the types reference. */
         @Mock
         private ModelType modelTypeMock1;
@@ -764,48 +660,66 @@ public class EolTraceModelTests {
         /** Allow the target mock to populate the reference */
         private ModelTypeHasModel modelTypeHasModel2;
         
+        /** Mock the container. */
+        @Mock
+        private ExecutionTrace containerMock;
         
+        /** Allow the container mock to populate the reference */
+        private ExecutionTraceHasModel executionTraceHasModel1;
+
         private Model classUnderTest;
         
         @Test
-        public void testModelInstantiation() {
-            classUnderTest = new ModelImpl("name");
+        public void testModelInstantiation() throws Exception {
+            executionTraceHasModel1 = new ExecutionTraceHasModelImpl(containerMock);
+            expect(containerMock.model()).andReturn(executionTraceHasModel1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new ModelImpl("name", containerMock);
+            Queue<Model> values = containerMock.model().get();
+            assertThat(values, hasItem(classUnderTest));
 	    }
 	    
 // protected region IgnoreModelAttributes on begin
 	    @Ignore
 // protected region IgnoreModelAttributes end	    
 	    @Test
-        public void testModelAttributes() {
-            classUnderTest = new ModelImpl("name");
+        public void testModelAttributes() throws Exception {
+            executionTraceHasModel1 = new ExecutionTraceHasModelImpl(containerMock);
+            expect(containerMock.model()).andReturn(executionTraceHasModel1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new ModelImpl("name", containerMock);
 // protected region ModelAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region ModelAttributes end
         }
 
         @Test
-        public void testModelCreateModelElement() {
-            classUnderTest = new ModelImpl("name");
+        public void testModelCreateModelElement() throws Exception {
+            executionTraceHasModel1 = new ExecutionTraceHasModelImpl(containerMock);
+            expect(containerMock.model()).andReturn(executionTraceHasModel1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new ModelImpl("name", containerMock);
             modelElementHasModel1 = new ModelElementHasModelImpl(modelElementMock1);
             expect(modelElementMock1.model()).andReturn(modelElementHasModel1).anyTimes();
             replay(modelElementMock1);
-              
-            boolean result = classUnderTest.elements().create(modelElementMock1);
-            assertTrue(result);
             modelElementHasModel2 = new ModelElementHasModelImpl(modelElementMock2);
             expect(modelElementMock2.model()).andReturn(modelElementHasModel2).anyTimes();
             replay(modelElementMock2);
-            result = classUnderTest.elements().create(modelElementMock2);
-            
-            assertTrue(result);
-           
+            boolean result;
             result = classUnderTest.elements().create(modelElementMock1);
             assertTrue(result);
+            result = classUnderTest.elements().create(modelElementMock2);
+            assertTrue(result);
+            result = classUnderTest.elements().create(modelElementMock1);
+            assertFalse(result);
         }
         
         @Test
-        public void testModelDestroyModelElement() {
-            classUnderTest = new ModelImpl("name");
+        public void testModelDestroyModelElement() throws Exception {
+            executionTraceHasModel1 = new ExecutionTraceHasModelImpl(containerMock);
+            expect(containerMock.model()).andReturn(executionTraceHasModel1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new ModelImpl("name", containerMock);
             modelElementHasModel1 = new ModelElementHasModelImpl(modelElementMock1);
             expect(modelElementMock1.model()).andReturn(modelElementHasModel1).anyTimes();
             replay(modelElementMock1);
@@ -820,28 +734,32 @@ public class EolTraceModelTests {
             assertFalse(result);
         }
         @Test
-        public void testModelCreateModelType() {
-            classUnderTest = new ModelImpl("name");
+        public void testModelCreateModelType() throws Exception {
+            executionTraceHasModel1 = new ExecutionTraceHasModelImpl(containerMock);
+            expect(containerMock.model()).andReturn(executionTraceHasModel1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new ModelImpl("name", containerMock);
             modelTypeHasModel1 = new ModelTypeHasModelImpl(modelTypeMock1);
             expect(modelTypeMock1.model()).andReturn(modelTypeHasModel1).anyTimes();
             replay(modelTypeMock1);
-              
-            boolean result = classUnderTest.types().create(modelTypeMock1);
-            assertTrue(result);
             modelTypeHasModel2 = new ModelTypeHasModelImpl(modelTypeMock2);
             expect(modelTypeMock2.model()).andReturn(modelTypeHasModel2).anyTimes();
             replay(modelTypeMock2);
-            result = classUnderTest.types().create(modelTypeMock2);
-            
-            assertTrue(result);
-           
+            boolean result;
             result = classUnderTest.types().create(modelTypeMock1);
             assertTrue(result);
+            result = classUnderTest.types().create(modelTypeMock2);
+            assertTrue(result);
+            result = classUnderTest.types().create(modelTypeMock1);
+            assertFalse(result);
         }
         
         @Test
-        public void testModelDestroyModelType() {
-            classUnderTest = new ModelImpl("name");
+        public void testModelDestroyModelType() throws Exception {
+            executionTraceHasModel1 = new ExecutionTraceHasModelImpl(containerMock);
+            expect(containerMock.model()).andReturn(executionTraceHasModel1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new ModelImpl("name", containerMock);
             modelTypeHasModel1 = new ModelTypeHasModelImpl(modelTypeMock1);
             expect(modelTypeMock1.model()).andReturn(modelTypeHasModel1).anyTimes();
             replay(modelTypeMock1);

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,11 +18,14 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of limits reference. 
+ * Implementation of GuardHasLimits reference. 
  */
 public class GuardHasLimitsImpl extends Feature implements GuardHasLimits {
     
+    /** The source(s) of the reference */
     protected Guard source;
+    
+    /** The target(s) of the reference */
     protected GuardedElement target;
     
     /**
@@ -35,33 +38,11 @@ public class GuardHasLimitsImpl extends Feature implements GuardHasLimits {
         this.source = source;
     }
     
+    // PUBLIC API
+        
     @Override
     public GuardedElement get() {
         return target;
-    }
-    
-    @Override
-    public void set(GuardedElement target) {
-        this.target = target;
-    }
-    
-    @Override
-    public void remove(GuardedElement target) {
-        this.target = null;
-    }
-    
-    @Override
-    public boolean conflict(GuardedElement  target) {
-        boolean result = false;
-        result |= get() != null;
-        result &= target.guard().get() != null;
-        return result;
-    }
-    
-    @Override
-    public boolean related(GuardedElement target) {
-  
-        return target.equals(this.target) & source.equals(target.guard().get());
     }
     
     @Override
@@ -69,10 +50,10 @@ public class GuardHasLimitsImpl extends Feature implements GuardHasLimits {
         if (conflict(target)) {
             return false;
         }
-        if (related(target)) {
-            return true;
-        }
         target.guard().set(source);
+        if (related(target)) {
+            return false;
+        }
         set(target);
         return true;
     }
@@ -85,6 +66,32 @@ public class GuardHasLimitsImpl extends Feature implements GuardHasLimits {
         target.guard().remove(source);
         remove(target);
         return true;
+    }
+    
+    @Override
+    public boolean conflict(GuardedElement target) {
+        boolean result = false;
+        result |= get() != null;
+        result |= target.guard().get() != null;
+        return result;
+    }
+    
+    @Override
+    public boolean related(GuardedElement target) {
+  
+        return target.equals(this.target) & source.equals(target.guard().get());
+    }
+    
+    // PRIVATE API
+    
+    @Override
+    public void set(GuardedElement target) {
+        this.target = target;
+    }
+    
+    @Override
+    public void remove(GuardedElement target) {
+        this.target = null;
     }
 
 }

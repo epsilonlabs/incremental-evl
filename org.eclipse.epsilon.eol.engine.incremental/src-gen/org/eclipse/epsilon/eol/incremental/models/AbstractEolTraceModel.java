@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-08.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -30,13 +30,13 @@ public abstract class AbstractEolTraceModel extends Model implements ITraceModel
  
     private static final Set<String> KNOWN_TYPES = Collections.unmodifiableSet(
             new HashSet<String>(Arrays.asList(
-                    new String[] {"ExecutionTrace","Execution","Access","AllInstancesAccess","PropertyAccess","Property","ModelElement","ModelType","Model"}
+                    new String[] {"ExecutionTrace","Module","ModuleElement","Execution","Access","AllInstancesAccess","PropertyAccess","Property","ModelElement","ModelType","Model"}
                 ))
             );
     
     private static final Set<String> INSTANTIATABLE_TYPES = Collections.unmodifiableSet(
             new HashSet<String>(Arrays.asList(
-                    new String[] {"ExecutionTrace","Execution","Access","AllInstancesAccess","PropertyAccess","Property","ModelElement","ModelType","Model"}
+                    new String[] {"ExecutionTrace","Module","ModuleElement","Execution","Access","AllInstancesAccess","PropertyAccess","Property","ModelElement","ModelType","Model"}
                 ))
             );
     
@@ -44,6 +44,8 @@ public abstract class AbstractEolTraceModel extends Model implements ITraceModel
     static {
         TYPE_HIERARCHY = new HashMap<String, Set<String>>();    
         TYPE_HIERARCHY.put("ExecutionTrace", new HashSet<String>(Arrays.asList(new String[]{"IdElement","ExecutionTrace"})));    
+        TYPE_HIERARCHY.put("Module", new HashSet<String>(Arrays.asList(new String[]{"IdElement","Module"})));    
+        TYPE_HIERARCHY.put("ModuleElement", new HashSet<String>(Arrays.asList(new String[]{"IdElement","ModuleElement"})));    
         TYPE_HIERARCHY.put("Execution", new HashSet<String>(Arrays.asList(new String[]{"IdElement","Execution"})));    
         TYPE_HIERARCHY.put("Access", new HashSet<String>(Arrays.asList(new String[]{"IdElement","Access"})));    
         TYPE_HIERARCHY.put("AllInstancesAccess", new HashSet<String>(Arrays.asList(new String[]{"IdElement","Access","AllInstancesAccess"})));    
@@ -57,7 +59,9 @@ public abstract class AbstractEolTraceModel extends Model implements ITraceModel
     private static final Map<String, Set<String>> TYPE_PROPERTIES;
     static {
         TYPE_PROPERTIES = new HashMap<String, Set<String>>();    
-        TYPE_PROPERTIES.put("ExecutionTrace", new HashSet<String>(Arrays.asList(new String[]{"id","execution","model"})));    
+        TYPE_PROPERTIES.put("ExecutionTrace", new HashSet<String>(Arrays.asList(new String[]{"id","model","module"})));    
+        TYPE_PROPERTIES.put("Module", new HashSet<String>(Arrays.asList(new String[]{"id","source","modules"})));    
+        TYPE_PROPERTIES.put("ModuleElement", new HashSet<String>(Arrays.asList(new String[]{"id","module"})));    
         TYPE_PROPERTIES.put("Execution", new HashSet<String>(Arrays.asList(new String[]{"id","accesses"})));    
         TYPE_PROPERTIES.put("Access", new HashSet<String>(Arrays.asList(new String[]{"id","execution"})));    
         TYPE_PROPERTIES.put("AllInstancesAccess", new HashSet<String>(Arrays.asList(new String[]{"id","execution","ofKind","type"})));    
@@ -90,6 +94,14 @@ public abstract class AbstractEolTraceModel extends Model implements ITraceModel
         {
             if (instance instanceof ExecutionTrace) {
                 type = ExecutionTrace.class;
+            }
+            
+            else if (instance instanceof Module) {
+                type = Module.class;
+            }
+            
+            else if (instance instanceof ModuleElement) {
+                type = ModuleElement.class;
             }
             
             else if (instance instanceof Execution) {
@@ -164,6 +176,14 @@ public abstract class AbstractEolTraceModel extends Model implements ITraceModel
 	            result = TYPE_HIERARCHY.get("ExecutionTrace").contains(type);
 	        }
 
+	        else if  (instance instanceof Module) {
+	            result = TYPE_HIERARCHY.get("Module").contains(type);
+	        }
+
+	        else if  (instance instanceof ModuleElement) {
+	            result = TYPE_HIERARCHY.get("ModuleElement").contains(type);
+	        }
+
 	        else if  (instance instanceof Execution) {
 	            result = TYPE_HIERARCHY.get("Execution").contains(type);
 	        }
@@ -208,6 +228,14 @@ public abstract class AbstractEolTraceModel extends Model implements ITraceModel
 	            result = "ExecutionTrace".equals(type);
 	        }
 
+	        else if  (instance instanceof Module) {
+	            result = "Module".equals(type);
+	        }
+
+	        else if  (instance instanceof ModuleElement) {
+	            result = "ModuleElement".equals(type);
+	        }
+
 	        else if  (instance instanceof Execution) {
 	            result = "Execution".equals(type);
 	        }
@@ -250,6 +278,14 @@ public abstract class AbstractEolTraceModel extends Model implements ITraceModel
         
 	        if  (instance instanceof ExecutionTrace) {
 	            result = TYPE_PROPERTIES.get("ExecutionTrace").contains(property);
+	        }
+        
+	        else if  (instance instanceof Module) {
+	            result = TYPE_PROPERTIES.get("Module").contains(property);
+	        }
+        
+	        else if  (instance instanceof ModuleElement) {
+	            result = TYPE_PROPERTIES.get("ModuleElement").contains(property);
 	        }
         
 	        else if  (instance instanceof Execution) {

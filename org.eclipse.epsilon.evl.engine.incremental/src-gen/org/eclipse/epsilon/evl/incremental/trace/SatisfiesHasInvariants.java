@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-08.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -9,11 +9,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  ******************************************************************************/
-package org.eclipse.epsilon.eol.incremental.trace;
+package org.eclipse.epsilon.evl.incremental.trace;
 
 import java.util.Queue;
 
-public interface ExecutionTraceHasExecution {
+import org.eclipse.epsilon.evl.incremental.trace.Invariant;
+
+public interface SatisfiesHasInvariants {
 
     // PUBLIC API
     
@@ -22,27 +24,27 @@ public interface ExecutionTraceHasExecution {
     /**
      * Get the value(s) for the reference
      */
-    Queue<Execution> get();
+    Queue<Invariant> get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the
      * relation already existed. 
-     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(Execution)}).
+     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(Invariant)}).
      * If the reference has an opposite, that relation is also craeted.
      *
-     * @see ExecutionHasAccesses#conflict(Execution)
-     * @see ExecutionHasAccesses#related(Execution)
+     * @see ExecutionHasAccesses#conflict(Invariant)
+     * @see ExecutionHasAccesses#related(Invariant)
      */
-    boolean create(Execution target);
+    boolean create(Invariant target);
     
     /**
      * Destroy a reference to the target element. Returns true, if the reference existed
      * and was properly destroyed. If the reference has an opposite, that relation
      * is also destroyed.
      *
-     * @see ExecutionHasAccesses#related(Execution)
+     * @see ExecutionHasAccesses#related(Invariant)
      */    
-    boolean destroy(Execution target);
+    boolean destroy(Invariant target);
     
     /**
      * Determines if there is a conflict with a possible target. Conflicts can only arise for if
@@ -66,12 +68,12 @@ public interface ExecutionTraceHasExecution {
      *      </ul>
      *  </li>
      */
-    boolean conflict(Execution target);
+    boolean conflict(Invariant target);
     
     /**
      * Returns true if the target is already related via this reference.
      */
-    boolean related(Execution target);
+    boolean related(Invariant target);
 
     // PRIVATE API
 
@@ -79,15 +81,15 @@ public interface ExecutionTraceHasExecution {
      * Set a new value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#create(Execution)
+     * @see ExecutionHasAccesses#create(Invariant)
      */
-    void set(Execution target);
+    void set(Invariant target);
 
     /**
      * Remove a value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#destroy(Execution)
+     * @see ExecutionHasAccesses#destroy(Invariant)
      */
-    void remove(Execution target);
+    void remove(Invariant target);
 }

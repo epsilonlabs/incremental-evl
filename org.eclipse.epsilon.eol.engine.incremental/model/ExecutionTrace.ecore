@@ -6,19 +6,31 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
         changeable="false" iD="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ExecutionTrace" eSuperTypes="#//IdElement">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="execution" upperBound="-1"
-        eType="#//Execution" containment="true">
-      <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
-        <details key="edge" value="true"/>
-      </eAnnotations>
-    </eStructuralFeatures>
+  <eClassifiers xsi:type="ecore:EClass" name="ExecutionTrace" abstract="true" eSuperTypes="#//IdElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="model" upperBound="-1"
         eType="#//Model" containment="true">
       <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
         <details key="edge" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="module" upperBound="-1"
+        eType="#//Module" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Module" abstract="true" eSuperTypes="#//IdElement">
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//Module/source">
+      <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="source" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="modules" upperBound="-1"
+        eType="#//ModuleElement" containment="true" eOpposite="#//ModuleElement/module">
+      <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
+        <details key="edge" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModuleElement" abstract="true" eSuperTypes="#//IdElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="module" lowerBound="1"
+        eType="#//Module" eOpposite="#//Module/modules"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Execution" abstract="true" eSuperTypes="#//IdElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="accesses" lowerBound="1"
@@ -34,7 +46,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AllInstancesAccess" eSuperTypes="#//Access">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ofKind" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="type" upperBound="-1" eType="#//ModelType"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1" eType="#//ModelType"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PropertyAccess" eSuperTypes="#//Access">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

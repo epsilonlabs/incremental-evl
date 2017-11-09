@@ -11,6 +11,8 @@ import org.eclipse.epsilon.eol.incremental.trace.Property;
  *  - ModelType
  *  - ModelElement
  *  - ModelProperty
+ *  
+ * The model is the root entity, as the ids of the other entities are unique only inside the aggregate.  
  * @author Horacio Hoyos Rodriguez
  *
  */

@@ -55,7 +55,7 @@ operation EClass testClass() {
         private [%=self.name%] classUnderTest;
         
         @Test
-        public void test[%=self.name%]Instantiation() {
+        public void test[%=self.name%]Instantiation() throws Exception {
 [%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container)%]
 [%  if (container.isDefined()) {%]
             assertThat(classUnderTest.[%=container.name%]().get(), is([%=container.getEReferenceType().name.firstToLowerCase()%]Mock1));
@@ -81,7 +81,7 @@ operation EClass testClass() {
 	    @Ignore
 [%=out.stopPreserve()%]	    
 	    @Test
-        public void test[%=self.name%]Attributes() {
+        public void test[%=self.name%]Attributes() throws Exception {
 [%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container)%]
 [%=out.startPreserve(self.name + "Attributes", true)%]
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
@@ -92,7 +92,7 @@ operation EClass testClass() {
         var mockContainer = container.getEReferenceType().name.firstToLowerCase() + "Mock";
         %]        
         @Test
-        public void test[%=self.name%]Create[%=container.name.firstToUpperCase()%]Conflict() {
+        public void test[%=self.name%]Create[%=container.name.firstToUpperCase()%]Conflict() throws Exception {
 [%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container)%]
 [%      if (containment.isDefined()) {%]
             [%=contReferenceVar%]2 = new [%=contReferenceClass%]Impl([%=mockContainer%]2);
@@ -104,14 +104,14 @@ operation EClass testClass() {
         }
         
         @Test
-        public void test[%=self.name%]Destroy[%=container.name.firstToUpperCase()%]() {
+        public void test[%=self.name%]Destroy[%=container.name.firstToUpperCase()%]() throws Exception {
 [%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container)%]
             boolean result = classUnderTest.[%=container.name%]().destroy([%=mockContainer%]1);
             assertTrue(result);
         }
         
         @Test
-        public void test[%=self.name%]DestroyAndCreate[%=container.name.firstToUpperCase()%]() {
+        public void test[%=self.name%]DestroyAndCreate[%=container.name.firstToUpperCase()%]() throws Exception {
 [%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container)%]
 [%      if (containment.isDefined()) {%]
             [%=contReferenceVar%]2 = new [%=contReferenceClass%]Impl([%=mockContainer%]2);
@@ -123,7 +123,7 @@ operation EClass testClass() {
             result = classUnderTest.[%=container.name%]().create([%=mockContainer%]2);
             assertTrue(result);
             result = classUnderTest.[%=container.name%]().create([%=mockContainer%]2);
-            assertTrue(result);
+            assertFalse(result);
             result = classUnderTest.[%=container.name%]().create([%=mockContainer%]1);
             assertFalse(result);
         }
@@ -145,7 +145,7 @@ operation EClass testClass() {
         }
         %]
         @Test
-        public void test[%=self.name%]Create[%=er.getEReferenceType().name%]() {
+        public void test[%=self.name%]Create[%=er.getEReferenceType().name%]() throws Exception {
 [%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container)%]
 [%      if (er.getEOpposite().isDefined()) {%]
             [%=oppVar%]1 = new [%=oppClass%]Impl([%=erTargetMock%]1);
@@ -169,11 +169,11 @@ operation EClass testClass() {
             assertFalse(result);
 [%      }%]
             result = classUnderTest.[%=er.name%]().create([%=mockTarget%]);
-            assertTrue(result);
+            assertFalse(result);
         }
         
         @Test
-        public void test[%=self.name%]Destroy[%=er.getEReferenceType().name%]() {
+        public void test[%=self.name%]Destroy[%=er.getEReferenceType().name%]() throws Exception {
 [%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container)%]
 [%      if (er.getEOpposite().isDefined()) {%]
             [%=oppVar%]1 = new [%=oppClass%]Impl([%=erTargetMock%]1);

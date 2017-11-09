@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,7 +12,13 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
 
+import org.eclipse.epsilon.evl.incremental.trace.Satisfies;
+
 public interface InvariantHasSatisfies {
+
+    // PUBLIC API
+    
+    boolean isUnique();
     
     /**
      * Get the value(s) for the reference
@@ -20,44 +26,69 @@ public interface InvariantHasSatisfies {
     Satisfies get();
 
     /**
-	 * Set a new value for the reference. Although public, this method should be only accessed by
-	 * classes in the same package or extrange behavoir can be observed.
-	 */
-    void set(Satisfies target);
-
-    /**
-     * Remove a value for the reference. Although public, this method should be only accessed by
-     * classes in the same package or extrange behavoir can be observed.
-     */
-    void remove(Satisfies target);
-    
-    /**
-     * Determines if there is a conflict with a possible target.
-     * Returns true if the opposite reference is already set, or if this refernce is single-valued
-     * and is already set.
-     */
-    boolean conflict(Satisfies target);
-    
-    /**
-     * Retruns true if the target is already related via this reference.
-     */
-    boolean related(Satisfies target);
-    
-    /**
-     * Create a reference to the target element. Returns true if the relation was created.
-     * Single-valued references can only be set if not set.
-     * Unique Multi-valued references can only be set if not set before.
-     * If the reference has an opposite, the refletive relation
-     * is also created.
+     * Create a reference to the target element. Returns true if the relation was created or if the
+     * relation already existed. 
+     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(Satisfies)}).
+     * If the reference has an opposite, that relation is also craeted.
+     *
+     * @see ExecutionHasAccesses#conflict(Satisfies)
+     * @see ExecutionHasAccesses#related(Satisfies)
      */
     boolean create(Satisfies target);
     
     /**
      * Destroy a reference to the target element. Returns true, if the reference existed
-     * and was properly destroyed. If the reference has an opposite, the refletive relation
+     * and was properly destroyed. If the reference has an opposite, that relation
      * is also destroyed.
+     *
+     * @see ExecutionHasAccesses#related(Satisfies)
      */    
     boolean destroy(Satisfies target);
     
+    /**
+     * Determines if there is a conflict with a possible target. Conflicts can only arise for if
+     * the reference has an opposite and for unique multi-valued references. Conflicts enforce
+     * that the application destroys relations before creating new ones. This helps mantain data
+     * integrity. Retruns true if there is a conflict. Conflicts are determined by:
+     * <ul>
+     *  <li>If the relation is many-to-many, there is no conflict.<li>
+     *  <li>If the relation is one-to-one there is a conflict if the target is already part of
+     *      another relation, i.e. target.oppoiste != null.</li>
+     *  <li>If the relation is one-to-many:
+     *      <ul>
+     *          <li>If the relation is not containment and non-unique, there is no conflict.<li>
+     *          <li>If the relation is not-containment and unique, there is conflict if the target
+     *              is already related to the source.<li>
+     *          <li>If the relation is containment and non-unique, there is a conflict if the target
+     *              is contained elsewhere, i.e. target.oppoiste != null</li>
+     *          <li>If the relation is containment and unique, there is a conflict if the target is
+     *              contained elsewhere, i.e. target.oppoiste != null, or if the target is already
+     *              related to the source.</li>
+     *      </ul>
+     *  </li>
+     */
+    boolean conflict(Satisfies target);
+    
+    /**
+     * Returns true if the target is already related via this reference.
+     */
+    boolean related(Satisfies target);
 
+    // PRIVATE API
+
+    /**
+     * Set a new value for the reference. This method should be only accessed by classes in the
+     * relation.
+     *
+     * @see ExecutionHasAccesses#create(Satisfies)
+     */
+    void set(Satisfies target);
+
+    /**
+     * Remove a value for the reference. This method should be only accessed by classes in the
+     * relation.
+     *
+     * @see ExecutionHasAccesses#destroy(Satisfies)
+     */
+    void remove(Satisfies target);
 }

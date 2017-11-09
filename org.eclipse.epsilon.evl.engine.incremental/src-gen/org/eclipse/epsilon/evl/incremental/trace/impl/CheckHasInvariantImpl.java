@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,11 +18,14 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of invariant reference. 
+ * Implementation of CheckHasInvariant reference. 
  */
 public class CheckHasInvariantImpl extends Feature implements CheckHasInvariant {
     
+    /** The source(s) of the reference */
     protected Check source;
+    
+    /** The target(s) of the reference */
     protected Invariant target;
     
     /**
@@ -35,33 +38,11 @@ public class CheckHasInvariantImpl extends Feature implements CheckHasInvariant 
         this.source = source;
     }
     
+    // PUBLIC API
+        
     @Override
     public Invariant get() {
         return target;
-    }
-    
-    @Override
-    public void set(Invariant target) {
-        this.target = target;
-    }
-    
-    @Override
-    public void remove(Invariant target) {
-        this.target = null;
-    }
-    
-    @Override
-    public boolean conflict(Invariant  target) {
-        boolean result = false;
-        result |= get() != null;
-        result &= target.check().get() != null;
-        return result;
-    }
-    
-    @Override
-    public boolean related(Invariant target) {
-  
-        return target.equals(this.target) & source.equals(target.check().get());
     }
     
     @Override
@@ -69,10 +50,10 @@ public class CheckHasInvariantImpl extends Feature implements CheckHasInvariant 
         if (conflict(target)) {
             return false;
         }
-        if (related(target)) {
-            return true;
-        }
         target.check().set(source);
+        if (related(target)) {
+            return false;
+        }
         set(target);
         return true;
     }
@@ -85,6 +66,32 @@ public class CheckHasInvariantImpl extends Feature implements CheckHasInvariant 
         target.check().remove(source);
         remove(target);
         return true;
+    }
+    
+    @Override
+    public boolean conflict(Invariant target) {
+        boolean result = false;
+        result |= get() != null;
+        result |= target.check().get() != null;
+        return result;
+    }
+    
+    @Override
+    public boolean related(Invariant target) {
+  
+        return target.equals(this.target) & source.equals(target.check().get());
+    }
+    
+    // PRIVATE API
+    
+    @Override
+    public void set(Invariant target) {
+        this.target = target;
+    }
+    
+    @Override
+    public void remove(Invariant target) {
+        this.target = null;
     }
 
 }

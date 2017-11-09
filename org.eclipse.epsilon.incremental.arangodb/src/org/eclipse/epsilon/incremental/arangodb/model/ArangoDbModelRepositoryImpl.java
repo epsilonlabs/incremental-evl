@@ -3,10 +3,9 @@ package org.eclipse.epsilon.incremental.arangodb.model;
 import java.util.Collection;
 
 import org.eclipse.epsilon.eol.incremental.models.Repository;
-import org.eclipse.epsilon.eol.incremental.models.Specification;
 import org.eclipse.epsilon.eol.incremental.trace.Model;
 
-public class ModelRepositoryImpl implements Repository<Model> {
+public class ArangoDbModelRepositoryImpl implements Repository<Model> {
 
 	@Override
 	public void add(Model item) {
@@ -32,16 +31,16 @@ public class ModelRepositoryImpl implements Repository<Model> {
 		throw new UnsupportedOperationException("Unimplemented Method    Repository<Model>.remove invoked.");
 	}
 
-	@Override
-	public void remove(Specification specification) {
-		// TODO Implement Repository<Model>.remove
-		throw new UnsupportedOperationException("Unimplemented Method    Repository<Model>.remove invoked.");
-	}
-
-	@Override
-	public Collection<Model> query(Specification specification) {
-		// TODO Implement Repository<Model>.query
-		throw new UnsupportedOperationException("Unimplemented Method    Repository<Model>.query invoked.");
-	}
+//	@Override
+//	public void remove(Specification specification) {
+//		// TODO Implement Repository<Model>.remove
+//		throw new UnsupportedOperationException("Unimplemented Method    Repository<Model>.remove invoked.");
+//	}
+//
+//	@Override
+//	public Collection<Model> query(Specification specification) {
+//		// TODO Implement Repository<Model>.query
+//		throw new UnsupportedOperationException("Unimplemented Method    Repository<Model>.query invoked.");
+//	}
 
 }

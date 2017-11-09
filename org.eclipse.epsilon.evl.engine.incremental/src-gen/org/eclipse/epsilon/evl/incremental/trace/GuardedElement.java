@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,11 +11,21 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
-import org.eclipse.epsilon.eol.incremental.trace.Execution;    
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.evl.incremental.trace.Guard;    
 
-public interface GuardedElement extends Execution {
+/**
+ * The GuardedElement defines the access methods for the EClass features.
+ * Additionally, the GuardedElement acts as the root entity of the AGGREGATE of its
+ * container references. That is, elements contained in the GuardedElement must be
+ * created through this interface.
+ */
+public interface GuardedElement {
 
-    GuardedElementHasGuard guard();            
-
+    /** The guard reference. */
+    GuardedElementHasGuard guard();
+                
+    /** The Guard Factory. */
+    Guard createGuard() throws EolIncrementalExecutionException;       
+   
 }

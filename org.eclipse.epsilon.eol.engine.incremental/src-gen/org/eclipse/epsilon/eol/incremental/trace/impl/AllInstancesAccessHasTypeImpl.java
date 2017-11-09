@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-08.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,8 +11,6 @@
  ******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.trace.impl;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import org.eclipse.epsilon.eol.incremental.trace.AllInstancesAccess;
 import org.eclipse.epsilon.eol.incremental.trace.ModelType;
 import org.eclipse.epsilon.eol.incremental.trace.AllInstancesAccessHasType;
@@ -28,7 +26,7 @@ public class AllInstancesAccessHasTypeImpl extends Feature implements AllInstanc
     protected AllInstancesAccess source;
     
     /** The target(s) of the reference */
-    protected Queue<ModelType> target =  new ConcurrentLinkedQueue<ModelType>();
+    protected ModelType target;
     
     /**
      * Instantiates a new AllInstancesAccessHasType.
@@ -43,15 +41,12 @@ public class AllInstancesAccessHasTypeImpl extends Feature implements AllInstanc
     // PUBLIC API
         
     @Override
-    public Queue<ModelType> get() {
+    public ModelType get() {
         return target;
     }
     
     @Override
     public boolean create(ModelType target) {
-        if (isUnique && related(target)) {
-            return true;
-        }
         if (conflict(target)) {
             return false;
         }
@@ -71,28 +66,26 @@ public class AllInstancesAccessHasTypeImpl extends Feature implements AllInstanc
     @Override
     public boolean conflict(ModelType target) {
         boolean result = false;
-        if (isUnique) {
-            result |= get().contains(target);
-        }
+        result |= get() != null;
         return result;
     }
     
     @Override
     public boolean related(ModelType target) {
   
-        return get().contains(target) ;
+        return target.equals(this.target) ;
     }
     
     // PRIVATE API
     
     @Override
     public void set(ModelType target) {
-        this.target.add(target);
+        this.target = target;
     }
     
     @Override
     public void remove(ModelType target) {
-        this.target.remove(target);
+        this.target = null;
     }
 
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,11 +18,14 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of check reference. 
+ * Implementation of InvariantHasCheck reference. 
  */
 public class InvariantHasCheckImpl extends Feature implements InvariantHasCheck {
     
+    /** The source(s) of the reference */
     protected Invariant source;
+    
+    /** The target(s) of the reference */
     protected Check target;
     
     /**
@@ -35,33 +38,11 @@ public class InvariantHasCheckImpl extends Feature implements InvariantHasCheck 
         this.source = source;
     }
     
+    // PUBLIC API
+        
     @Override
     public Check get() {
         return target;
-    }
-    
-    @Override
-    public void set(Check target) {
-        this.target = target;
-    }
-    
-    @Override
-    public void remove(Check target) {
-        this.target = null;
-    }
-    
-    @Override
-    public boolean conflict(Check  target) {
-        boolean result = false;
-        result |= get() != null;
-        result &= target.invariant().get() != null;
-        return result;
-    }
-    
-    @Override
-    public boolean related(Check target) {
-  
-        return target.equals(this.target) & source.equals(target.invariant().get());
     }
     
     @Override
@@ -69,10 +50,10 @@ public class InvariantHasCheckImpl extends Feature implements InvariantHasCheck 
         if (conflict(target)) {
             return false;
         }
-        if (related(target)) {
-            return true;
-        }
         target.invariant().set(source);
+        if (related(target)) {
+            return false;
+        }
         set(target);
         return true;
     }
@@ -85,6 +66,32 @@ public class InvariantHasCheckImpl extends Feature implements InvariantHasCheck 
         target.invariant().remove(source);
         remove(target);
         return true;
+    }
+    
+    @Override
+    public boolean conflict(Check target) {
+        boolean result = false;
+        result |= get() != null;
+        result |= target.invariant().get() != null;
+        return result;
+    }
+    
+    @Override
+    public boolean related(Check target) {
+  
+        return target.equals(this.target) & source.equals(target.invariant().get());
+    }
+    
+    // PRIVATE API
+    
+    @Override
+    public void set(Check target) {
+        this.target = target;
+    }
+    
+    @Override
+    public void remove(Check target) {
+        this.target = null;
     }
 
 }

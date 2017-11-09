@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-03.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,11 +11,30 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.trace.AllInstancesAccess;    
 import org.eclipse.epsilon.eol.incremental.trace.Execution;    
+import org.eclipse.epsilon.eol.incremental.trace.ModelType;    
+import org.eclipse.epsilon.eol.incremental.trace.Property;    
+import org.eclipse.epsilon.eol.incremental.trace.PropertyAccess;    
 import org.eclipse.epsilon.evl.incremental.trace.Invariant;    
 
+/**
+ * The Message defines the access methods for the EClass features.
+ * Additionally, the Message extends Execution acts as the root entity of the AGGREGATE of its
+ * container references. That is, elements contained in the Message must be
+ * created through this interface.
+ */
 public interface Message extends Execution {
 
-    MessageHasInvariant invariant();            
-
+    /** The invariant reference. */
+    MessageHasInvariant invariant();
+                
+ 
+    /**
+     * Message has same identity in the aggregate.
+     */
+    public boolean sameIdentityAs(final Message other);
+    
+   
 }

@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.models.ITraceModel;
-import org.eclipse.epsilon.incremental.trace.eol.Trace;
+import org.eclipse.epsilon.eol.incremental.trace.ExecutionTrace;
 
 /**
  * The manager holds the reference to the Trace Model, keeps a queue of model changes and flushes the changes
@@ -126,7 +126,7 @@ public interface IEolExecutionTraceManager {
 	 * @return the property
 	 * @throws EolIncrementalExecutionException 
 	 */
-	List<Trace> findExecutionTraces(String objectId, String propertyName) throws EolIncrementalExecutionException;
+	List<ExecutionTrace> findExecutionTraces(String objectId, String propertyName) throws EolIncrementalExecutionException;
 	
 	/**
 	 * Gets the execution traces related to this element. This allows coarse grained incremental execution for
@@ -135,7 +135,7 @@ public interface IEolExecutionTraceManager {
 	 * @param objectId the model object id
 	 * @return the element trace
 	 */
-	List<Trace> findExecutionTraces(String objectId) throws EolIncrementalExecutionException;
+	List<ExecutionTrace> findExecutionTraces(String objectId) throws EolIncrementalExecutionException;
 	
 	/**
 	 * Remove the trace information related to a specific object. This should be invoked when an element is deleted

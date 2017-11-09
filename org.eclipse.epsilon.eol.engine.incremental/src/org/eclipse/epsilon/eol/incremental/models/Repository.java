@@ -12,7 +12,5 @@ public interface Repository<T> {
 
     void remove(T item);
 
-    void remove(Specification specification);
-
-    Collection<T> query(Specification specification);
+    //Collection<T> query(Specification specification);
 }

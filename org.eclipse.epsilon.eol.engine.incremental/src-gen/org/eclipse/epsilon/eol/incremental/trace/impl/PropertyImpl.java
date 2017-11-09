@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-08.
+ * This file was automatically generated on: 2017-11-09.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,9 +12,13 @@
 package org.eclipse.epsilon.eol.incremental.trace.impl;
 
 import org.eclipse.epsilon.eol.incremental.trace.Property;
+import java.util.NoSuchElementException;
+
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.eol.incremental.trace.ModelElement;
 import org.eclipse.epsilon.eol.incremental.trace.PropertyHasElement;
-
+import org.eclipse.epsilon.eol.incremental.trace.impl.PropertyHasElementImpl;
 
 /**
  * Implementation of Property. 
@@ -34,11 +38,12 @@ public class PropertyImpl implements Property {
      * Instantiates a new Property. The Property is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public PropertyImpl(String name,
-                        ModelElement container) {
+    public PropertyImpl(String name, ModelElement container) throws TraceModelDuplicateRelation {
         this.name = name;
-        element = new PropertyHasElementImpl(this);
-        element.create(container);
+        this.element = new PropertyHasElementImpl(this);
+        if (!container.properties().create(this)) {
+            throw new TraceModelDuplicateRelation();
+        };
     }
     
     @Override
@@ -67,6 +72,46 @@ public class PropertyImpl implements Property {
     public PropertyHasElement element() {
         return element;
     }
- 
+
+    @Override
+    public boolean sameIdentityAs(final Property other) {
+        if (other == null) {
+            return false;
+        }
+        if (getName() == null) {
+            if (other.getName() != null)
+                return false;
+        } else if (!getName().equals(other.getName()))
+            return false;
+        return true;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof PropertyImpl))
+            return false;
+        PropertyImpl other = (PropertyImpl) obj;
+        if (!sameIdentityAs(other))
+            return false;
+        if (element.get() == null) {
+            if (other.element.get() != null)
+                return false;
+        } else if (!element.get().equals(other.element.get()))
+            return false;
+        return true; 
+  }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((element.get() == null) ? 0 : element.get().hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
 
 }
