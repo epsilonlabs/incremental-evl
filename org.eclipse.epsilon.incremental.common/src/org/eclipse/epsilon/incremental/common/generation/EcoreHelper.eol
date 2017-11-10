@@ -169,7 +169,9 @@ operation EClass getContainerReference() : Sequence {
     var opposite;
     if (container.isUndefined()) {
         //Containment might not have an opposite, we assume elements can only be contained by one other relation
-        opposite = EReference.all.selectOne(er | er.isContainment() and (er.getEReferenceType() == self));
+        opposite = EReference.all.selectOne(er | er.isContainment() and
+                (er.getEReferenceType() == self) or
+                (self.getEAllSuperTypes().includes(er.getEReferenceType()))); // And a reference to a superType?
         if (opposite.isDefined()) {
             type = opposite.getEContainingClass();
         }
