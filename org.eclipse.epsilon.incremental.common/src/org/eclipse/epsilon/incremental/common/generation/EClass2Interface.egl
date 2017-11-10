@@ -76,7 +76,6 @@ for (er in ec.getEReferences()) {
  * If the EReferenceType is abstract, we add factory methods for each of the subclasses of the
  * EReferenceType. We only look for classes in the EClass Package
  */
-ec.name.println("Factory "); 
 for (er in ec.getEAllReferences().select(er | er.isContainment())) {
     if (not er.getEReferenceType().isAbstract()) {%]
     [%=er.getEReferenceType().factorySignature()%]

@@ -71,11 +71,12 @@ for (er in ec.getEAllReferences()) {%]
 [%  }%]
 [%}%]
 [%var container = ec.getContainerReference().at(2);
+var containment = ec.getContainerReference().at(0);
 if (container.isDefined()) {%]
         if (!container.[%=container.name%]().create(this)) {
             throw new TraceModelDuplicateRelation();
         };
-[%} else if (ec.getContainerReference().at(0).isDefined()) {%]
+[%} else if (containment.isDefined()) {%]
         if (!container.[%=ec.getContainerReference().at(0).name%]().create(this){
             throw new TraceModelDuplicateRelation();
         };
@@ -179,26 +180,38 @@ if (container.isDefined()) {%]
 [%
 @template
 operation EClass factoryMethod(ref : EReference, subClass : Boolean) {
+    var instanceName = self.name.firstToLowerCase();
     var params = self.getEAttributeParameters().includingAll(self.getRequiredFeatureParameters());
-    var vars = self.getIndexAttributes().includingAll(self.getRequiredFeatures()).collect(a | a.name).including("this");%]
+    var vars = self.getIndexAttributes().includingAll(self.getRequiredFeatures()).collect(a | a.name);
+    var container = self.getContainerReference().at(2);
+    var containment = self.getContainerReference().at(0);
+    if (container.isDefined()) {
+        vars.add("this");
+    }%]
 @Override
 public [%=self.name%] create[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException {
+    [%=self.name%] [%=instanceName%] = null;
+    try {
+        [%=instanceName%] = new [%=self.name%]Impl([%=vars.concat(", ")%]);
+[% if (containment.isDefined()) {%]        
+        this.[%=container.name%]().create([%=instanceName%]);
+[%  }%]
+    } catch (TraceModelDuplicateRelation e) {
+        // Pass
+    } finally {
+	    if ([%=instanceName%] != null) {
+	        return [%=instanceName%];
+	    }
+[%  if (ref.isMany()) {%]
         try {
-            return new [%=self.name%]Impl([%=vars.concat(", ")%]);
-        } catch (TraceModelDuplicateRelation e) {
-            // Pass
-        }
-        [%=self.name%] [%=self.name.firstToLowerCase()%] = null;
-[%  if (ref.isMany()) {%]        
-        try {
-            [%=self.name.firstToLowerCase()%] = this.[%=ref.name%].get().stream()
+            [%=instanceName%] = this.[%=ref.name%].get().stream()
 [%// Need to cast for subclasses
-if (subClass) {%]
+        if (subClass) {%]
                 .map([%=self.name%].class::cast)
-[%}%]
-[%for (index in self.getIndexAttributes()) {%]
+[%      }%]
+[%      for (index in self.getIndexAttributes()) {%]
                 .filter(mt -> mt.get[%=index.name.firstToUpperCase()%]().equals([%=index.name%]))
-[%}%]
+[%      }%]
                 .findFirst()
                 .get();
         } catch (NoSuchElementException ex) {
@@ -206,13 +219,14 @@ if (subClass) {%]
                     + "duplicate but previous one was not found.");
         }
 [%  } else {%]
-        [%=self.name.firstToLowerCase()%] = this.[%=ref.name%].get();
-        if ([%=self.name.firstToLowerCase()%] == null) {
+        [%=instanceName%]  = this.[%=ref.name%].get();
+        if ([%=instanceName%]  == null) {
             throw new EolIncrementalExecutionException("Error creating trace model element. Requested [%=self.name%] was "
                     + "duplicate but previous one was not found.");
         }
-[%}%]
-        return [%=self.name.firstToLowerCase()%];
+[%  }%]
+    }
+    return [%=self.name.firstToLowerCase()%];
 }      
 [%}
 %]

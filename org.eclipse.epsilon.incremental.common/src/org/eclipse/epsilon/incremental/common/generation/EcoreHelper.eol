@@ -100,7 +100,7 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
     }
     for (er in self.getEAllReferences().select(er | er.isContainment())) {
         var type = er.getEReferenceType();
-        basePackage.println("factory types ");
+        //basePackage.println("factory types ");
         var erqp = type.getCorrectPackage(basePackage, self);
         if (type.isAbstract()) {
             var subClasses = er.getEReferenceType().getEAllSubclasses();
@@ -132,11 +132,11 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
     if (isImpl) {
 		var containerType = self.getContainerReference().at(1);
 		if (containerType.isDefined()) {
-		    var fullpath = basePackage + ".";
+		    var fullpath = basePackage;
 		    if (containerType.getEPackage() <> self.getEPackage()) {
 		        fullpath = basePackage.replace("." + self.getEPackage().name + ".", "." + containerType.getEPackage().name + ".");
 		    }
-		    imports.add(fullpath + containerType.getJavaTypeName(typePrefix, typeSufix));
+		    imports.add(fullpath  + "." + containerType.getJavaTypeName(typePrefix, typeSufix));
 		}
     }
     for (ec in self.getESuperTypes().select(st | not (isImpl and st.isAbstract()))) {
@@ -148,16 +148,16 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
 }
 
 operation EClass getCorrectPackage(basePackage, baseClass : EClass) : String {
-    "getCorrectPackage".println();
-    self.name.println("class ");
+    //"getCorrectPackage".println();
+    //self.name.println("class ");
     var pack = self.getEPackage().name;
-    pack.println("in ");
-    baseClass.name.println("against ");
-    baseClass.getEPackage().name.println("in ");
-    basePackage.println("was ");
+    //pack.println("in ");
+    //baseClass.name.println("against ");
+    //baseClass.getEPackage().name.println("in ");
+    //basePackage.println("was ");
     var erqp = basePackage.replace("." + baseClass.getEPackage().name + ".", "." + pack + ".");
-    erqp.println("returns ");
-    "getCorrectPackage END".println();
+    //erqp.println("returns ");
+    //"getCorrectPackage END".println();
     return erqp;
 }
 
