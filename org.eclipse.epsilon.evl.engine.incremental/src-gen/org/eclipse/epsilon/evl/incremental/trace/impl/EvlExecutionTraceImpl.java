@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-09.
+ * This file was automatically generated on: 2017-11-10.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -71,13 +71,15 @@ public class EvlExecutionTraceImpl implements EvlExecutionTrace {
 
     @Override
     public Model createModel(String name) throws EolIncrementalExecutionException {
-            try {
-                return new ModelImpl(name, this);
-            } catch (TraceModelDuplicateRelation e) {
-                // Pass
-            }
-            Model model = null;
-            
+        Model model = null;
+        try {
+            model = new ModelImpl(name, this);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (model != null) {
+    	        return model;
+    	    }
             try {
                 model = this.model.get().stream()
                     .filter(mt -> mt.getName().equals(name))
@@ -87,18 +89,21 @@ public class EvlExecutionTraceImpl implements EvlExecutionTrace {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested Model was "
                         + "duplicate but previous one was not found.");
             }
-            return model;
+        }
+        return model;
     }      
                   
     @Override
     public EvlModule createEvlModule(String source) throws EolIncrementalExecutionException {
-            try {
-                return new EvlModuleImpl(source, this);
-            } catch (TraceModelDuplicateRelation e) {
-                // Pass
-            }
-            EvlModule evlModule = null;
-            
+        EvlModule evlModule = null;
+        try {
+            evlModule = new EvlModuleImpl(source, this);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (evlModule != null) {
+    	        return evlModule;
+    	    }
             try {
                 evlModule = this.module.get().stream()
                     .map(EvlModule.class::cast)
@@ -109,7 +114,8 @@ public class EvlExecutionTraceImpl implements EvlExecutionTrace {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested EvlModule was "
                         + "duplicate but previous one was not found.");
             }
-            return evlModule;
+        }
+        return evlModule;
     }      
             
                   

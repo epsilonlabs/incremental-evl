@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-09.
+ * This file was automatically generated on: 2017-11-10.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,8 +16,9 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.eol.incremental.trace.ModuleHasModules;
-import org.eclipse.epsilon.eol.incremental.trace.impl.ModuleHasModulesImpl;
+import org.eclipse.epsilon.eol.incremental.trace.ExecutionTrace;
+import org.eclipse.epsilon.eol.incremental.trace.ModuleHasModuleElements;
+import org.eclipse.epsilon.eol.incremental.trace.impl.ModuleHasModuleElementsImpl;
 import org.eclipse.epsilon.evl.incremental.trace.Context;
 import org.eclipse.epsilon.evl.incremental.trace.impl.ContextImpl;
 
@@ -32,16 +33,19 @@ public class EvlModuleImpl implements EvlModule {
     /** The source */
     private String source;
 
-    /** The modules relation */
-    private final ModuleHasModules modules;
+    /** The moduleElements relation */
+    private final ModuleHasModuleElements moduleElements;
 
     /**
      * Instantiates a new EvlModule. The EvlModule is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public EvlModuleImpl(String source) throws TraceModelDuplicateRelation {
+    public EvlModuleImpl(String source, ExecutionTrace container) throws TraceModelDuplicateRelation {
         this.source = source;
-        this.modules = new ModuleHasModulesImpl(this);
+        this.moduleElements = new ModuleHasModuleElementsImpl(this);
+        if (!container.module().create(this)) {
+            throw new TraceModelDuplicateRelation();
+        };
     }
     
     @Override
@@ -67,21 +71,25 @@ public class EvlModuleImpl implements EvlModule {
     }   
      
     @Override
-    public ModuleHasModules modules() {
-        return modules;
+    public ModuleHasModuleElements moduleElements() {
+        return moduleElements;
     }
 
     @Override
     public Context createContext() throws EolIncrementalExecutionException {
-            try {
-                return new ContextImpl(this);
-            } catch (TraceModelDuplicateRelation e) {
-                // Pass
-            }
-            Context context = null;
+        Context context = null;
+        try {
+            context = new ContextImpl(this);
             
+            this.moduleElements().create(context);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (context != null) {
+    	        return context;
+    	    }
             try {
-                context = this.modules.get().stream()
+                context = this.moduleElements.get().stream()
                     .map(Context.class::cast)
                     .findFirst()
                     .get();
@@ -89,7 +97,8 @@ public class EvlModuleImpl implements EvlModule {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested Context was "
                         + "duplicate but previous one was not found.");
             }
-            return context;
+        }
+        return context;
     }      
             
                   

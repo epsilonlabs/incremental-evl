@@ -1,6 +1,5 @@
 package org.eclipse.epsilon.eol.engine.incremental.trace;
 
-
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertFalse;

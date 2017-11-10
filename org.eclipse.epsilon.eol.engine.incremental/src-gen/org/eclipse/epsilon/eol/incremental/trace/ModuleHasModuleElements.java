@@ -11,10 +11,11 @@
  ******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.trace;
 
+import java.util.Queue;
 
-import org.eclipse.epsilon.eol.incremental.trace.Model;
+import org.eclipse.epsilon.eol.incremental.trace.ModuleElement;
 
-public interface ModelTypeHasModel {
+public interface ModuleHasModuleElements {
 
     // PUBLIC API
     
@@ -23,27 +24,27 @@ public interface ModelTypeHasModel {
     /**
      * Get the value(s) for the reference
      */
-    Model get();
+    Queue<ModuleElement> get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the
      * relation already existed. 
-     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(Model)}).
+     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(ModuleElement)}).
      * If the reference has an opposite, that relation is also craeted.
      *
-     * @see ExecutionHasAccesses#conflict(Model)
-     * @see ExecutionHasAccesses#related(Model)
+     * @see ExecutionHasAccesses#conflict(ModuleElement)
+     * @see ExecutionHasAccesses#related(ModuleElement)
      */
-    boolean create(Model target);
+    boolean create(ModuleElement target);
     
     /**
      * Destroy a reference to the target element. Returns true, if the reference existed
      * and was properly destroyed. If the reference has an opposite, that relation
      * is also destroyed.
      *
-     * @see ExecutionHasAccesses#related(Model)
+     * @see ExecutionHasAccesses#related(ModuleElement)
      */    
-    boolean destroy(Model target);
+    boolean destroy(ModuleElement target);
     
     /**
      * Determines if there is a conflict with a possible target. Conflicts can only arise for if
@@ -67,12 +68,12 @@ public interface ModelTypeHasModel {
      *      </ul>
      *  </li>
      */
-    boolean conflict(Model target);
+    boolean conflict(ModuleElement target);
     
     /**
      * Returns true if the target is already related via this reference.
      */
-    boolean related(Model target);
+    boolean related(ModuleElement target);
 
     // PRIVATE API
 
@@ -80,15 +81,15 @@ public interface ModelTypeHasModel {
      * Set a new value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#create(Model)
+     * @see ExecutionHasAccesses#create(ModuleElement)
      */
-    void set(Model target);
+    void set(ModuleElement target);
 
     /**
      * Remove a value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#destroy(Model)
+     * @see ExecutionHasAccesses#destroy(ModuleElement)
      */
-    void remove(Model target);
+    void remove(ModuleElement target);
 }

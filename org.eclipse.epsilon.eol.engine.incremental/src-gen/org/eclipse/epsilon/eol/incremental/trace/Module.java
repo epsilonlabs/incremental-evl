@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-09.
+ * This file was automatically generated on: 2017-11-10.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -41,8 +41,8 @@ public interface Module extends IdElement {
      */
     void setSource(String value);
             
-    /** The modules reference. */
-    ModuleHasModules modules();
+    /** The moduleElements reference. */
+    ModuleHasModuleElements moduleElements();
                 
    
 }

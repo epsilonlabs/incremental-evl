@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-09.
+ * This file was automatically generated on: 2017-11-10.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -90,13 +90,17 @@ public class ModelImpl implements Model {
 
     @Override
     public ModelElement createModelElement(String uri) throws EolIncrementalExecutionException {
-            try {
-                return new ModelElementImpl(uri, this);
-            } catch (TraceModelDuplicateRelation e) {
-                // Pass
-            }
-            ModelElement modelElement = null;
+        ModelElement modelElement = null;
+        try {
+            modelElement = new ModelElementImpl(uri, this);
             
+            this.elements().create(modelElement);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (modelElement != null) {
+    	        return modelElement;
+    	    }
             try {
                 modelElement = this.elements.get().stream()
                     .filter(mt -> mt.getUri().equals(uri))
@@ -106,18 +110,23 @@ public class ModelImpl implements Model {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelElement was "
                         + "duplicate but previous one was not found.");
             }
-            return modelElement;
+        }
+        return modelElement;
     }      
                   
     @Override
     public ModelType createModelType(String name) throws EolIncrementalExecutionException {
-            try {
-                return new ModelTypeImpl(name, this);
-            } catch (TraceModelDuplicateRelation e) {
-                // Pass
-            }
-            ModelType modelType = null;
+        ModelType modelType = null;
+        try {
+            modelType = new ModelTypeImpl(name, this);
             
+            this.types().create(modelType);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (modelType != null) {
+    	        return modelType;
+    	    }
             try {
                 modelType = this.types.get().stream()
                     .filter(mt -> mt.getName().equals(name))
@@ -127,7 +136,8 @@ public class ModelImpl implements Model {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelType was "
                         + "duplicate but previous one was not found.");
             }
-            return modelType;
+        }
+        return modelType;
     }      
                   
     @Override

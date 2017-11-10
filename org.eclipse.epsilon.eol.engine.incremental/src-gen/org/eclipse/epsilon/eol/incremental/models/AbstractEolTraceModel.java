@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-09.
+ * This file was automatically generated on: 2017-11-10.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -60,7 +60,7 @@ public abstract class AbstractEolTraceModel extends Model implements ITraceModel
     static {
         TYPE_PROPERTIES = new HashMap<String, Set<String>>();    
         TYPE_PROPERTIES.put("ExecutionTrace", new HashSet<String>(Arrays.asList(new String[]{"id","model","module"})));    
-        TYPE_PROPERTIES.put("Module", new HashSet<String>(Arrays.asList(new String[]{"id","source","modules"})));    
+        TYPE_PROPERTIES.put("Module", new HashSet<String>(Arrays.asList(new String[]{"id","source","moduleElements"})));    
         TYPE_PROPERTIES.put("ModuleElement", new HashSet<String>(Arrays.asList(new String[]{"id","module"})));    
         TYPE_PROPERTIES.put("Execution", new HashSet<String>(Arrays.asList(new String[]{"id","accesses"})));    
         TYPE_PROPERTIES.put("Access", new HashSet<String>(Arrays.asList(new String[]{"id","execution"})));    

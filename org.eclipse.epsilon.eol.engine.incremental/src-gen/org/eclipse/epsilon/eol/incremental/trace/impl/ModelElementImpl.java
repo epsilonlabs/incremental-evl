@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-09.
+ * This file was automatically generated on: 2017-11-10.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -88,13 +88,17 @@ public class ModelElementImpl implements ModelElement {
 
     @Override
     public Property createProperty(String name) throws EolIncrementalExecutionException {
-            try {
-                return new PropertyImpl(name, this);
-            } catch (TraceModelDuplicateRelation e) {
-                // Pass
-            }
-            Property property = null;
+        Property property = null;
+        try {
+            property = new PropertyImpl(name, this);
             
+            this.properties().create(property);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (property != null) {
+    	        return property;
+    	    }
             try {
                 property = this.properties.get().stream()
                     .filter(mt -> mt.getName().equals(name))
@@ -104,7 +108,8 @@ public class ModelElementImpl implements ModelElement {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested Property was "
                         + "duplicate but previous one was not found.");
             }
-            return property;
+        }
+        return property;
     }      
                   
     @Override

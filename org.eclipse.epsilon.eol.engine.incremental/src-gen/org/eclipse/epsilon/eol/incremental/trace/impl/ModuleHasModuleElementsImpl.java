@@ -13,29 +13,29 @@ package org.eclipse.epsilon.eol.incremental.trace.impl;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import org.eclipse.epsilon.eol.incremental.trace.ExecutionTrace;
-import org.eclipse.epsilon.eol.incremental.trace.Model;
-import org.eclipse.epsilon.eol.incremental.trace.ExecutionTraceHasModel;
+import org.eclipse.epsilon.eol.incremental.trace.Module;
+import org.eclipse.epsilon.eol.incremental.trace.ModuleElement;
+import org.eclipse.epsilon.eol.incremental.trace.ModuleHasModuleElements;
 import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of ExecutionTraceHasModel reference. 
+ * Implementation of ModuleHasModuleElements reference. 
  */
-public class ExecutionTraceHasModelImpl extends Feature implements ExecutionTraceHasModel {
+public class ModuleHasModuleElementsImpl extends Feature implements ModuleHasModuleElements {
     
     /** The source(s) of the reference */
-    protected ExecutionTrace source;
+    protected Module source;
     
     /** The target(s) of the reference */
-    protected Queue<Model> target =  new ConcurrentLinkedQueue<Model>();
+    protected Queue<ModuleElement> target =  new ConcurrentLinkedQueue<ModuleElement>();
     
     /**
-     * Instantiates a new ExecutionTraceHasModel.
+     * Instantiates a new ModuleHasModuleElements.
      *
      * @param source the source of the reference
      */
-    public ExecutionTraceHasModelImpl (ExecutionTrace source) {
+    public ModuleHasModuleElementsImpl (Module source) {
         super(true);
         this.source = source;
     }
@@ -43,13 +43,17 @@ public class ExecutionTraceHasModelImpl extends Feature implements ExecutionTrac
     // PUBLIC API
         
     @Override
-    public Queue<Model> get() {
+    public Queue<ModuleElement> get() {
         return target;
     }
     
     @Override
-    public boolean create(Model target) {
+    public boolean create(ModuleElement target) {
         if (conflict(target)) {
+            return false;
+        }
+        target.module().set(source);
+        if (related(target)) {
             return false;
         }
         set(target);
@@ -57,38 +61,40 @@ public class ExecutionTraceHasModelImpl extends Feature implements ExecutionTrac
     }
 
     @Override
-    public boolean destroy(Model target) {
+    public boolean destroy(ModuleElement target) {
         if (!related(target)) {
             return false;
         }
+        target.module().remove(source);
         remove(target);
         return true;
     }
     
     @Override
-    public boolean conflict(Model target) {
+    public boolean conflict(ModuleElement target) {
         boolean result = false;
         if (isUnique) {
             result |= get().contains(target);
         }
+        result |= target.module().get() != null;
         return result;
     }
     
     @Override
-    public boolean related(Model target) {
+    public boolean related(ModuleElement target) {
   
-        return get().contains(target) ;
+        return get().contains(target) & source.equals(target.module().get());
     }
     
     // PRIVATE API
     
     @Override
-    public void set(Model target) {
+    public void set(ModuleElement target) {
         this.target.add(target);
     }
     
     @Override
-    public void remove(Model target) {
+    public void remove(ModuleElement target) {
         this.target.remove(target);
     }
 

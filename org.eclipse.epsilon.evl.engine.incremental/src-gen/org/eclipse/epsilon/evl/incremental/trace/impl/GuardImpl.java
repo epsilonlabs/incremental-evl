@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-09.
+ * This file was automatically generated on: 2017-11-10.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -91,13 +91,17 @@ public class GuardImpl implements Guard {
 
     @Override
     public AllInstancesAccess createAllInstancesAccess(ModelType type) throws EolIncrementalExecutionException {
-            try {
-                return new AllInstancesAccessImpl(type, this);
-            } catch (TraceModelDuplicateRelation e) {
-                // Pass
-            }
-            AllInstancesAccess allInstancesAccess = null;
+        AllInstancesAccess allInstancesAccess = null;
+        try {
+            allInstancesAccess = new AllInstancesAccessImpl(type, this);
             
+            this.accesses().create(allInstancesAccess);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (allInstancesAccess != null) {
+    	        return allInstancesAccess;
+    	    }
             try {
                 allInstancesAccess = this.accesses.get().stream()
                     .map(AllInstancesAccess.class::cast)
@@ -107,18 +111,23 @@ public class GuardImpl implements Guard {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested AllInstancesAccess was "
                         + "duplicate but previous one was not found.");
             }
-            return allInstancesAccess;
+        }
+        return allInstancesAccess;
     }      
             
     @Override
     public PropertyAccess createPropertyAccess(Property property) throws EolIncrementalExecutionException {
-            try {
-                return new PropertyAccessImpl(property, this);
-            } catch (TraceModelDuplicateRelation e) {
-                // Pass
-            }
-            PropertyAccess propertyAccess = null;
+        PropertyAccess propertyAccess = null;
+        try {
+            propertyAccess = new PropertyAccessImpl(property, this);
             
+            this.accesses().create(propertyAccess);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (propertyAccess != null) {
+    	        return propertyAccess;
+    	    }
             try {
                 propertyAccess = this.accesses.get().stream()
                     .map(PropertyAccess.class::cast)
@@ -128,7 +137,8 @@ public class GuardImpl implements Guard {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested PropertyAccess was "
                         + "duplicate but previous one was not found.");
             }
-            return propertyAccess;
+        }
+        return propertyAccess;
     }      
             
                   

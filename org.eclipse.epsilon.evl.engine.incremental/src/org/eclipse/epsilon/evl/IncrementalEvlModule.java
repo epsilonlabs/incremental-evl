@@ -36,7 +36,6 @@ import org.eclipse.epsilon.evl.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.parse.EvlParser;
-import org.eclipse.epsilon.incremental.trace.eol.Trace;
 
 
 /**

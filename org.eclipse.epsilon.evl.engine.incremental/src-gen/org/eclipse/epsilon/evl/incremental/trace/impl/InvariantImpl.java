@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-09.
+ * This file was automatically generated on: 2017-11-10.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -61,7 +61,8 @@ public class InvariantImpl implements Invariant {
      * Instantiates a new Invariant. The Invariant is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public InvariantImpl(Context container) throws TraceModelDuplicateRelation {
+    public InvariantImpl(String name, Context container) throws TraceModelDuplicateRelation {
+        this.name = name;
         this.guard = new GuardedElementHasGuardImpl(this);
         this.check = new InvariantHasCheckImpl(this);
         this.message = new InvariantHasMessageImpl(this);
@@ -115,66 +116,88 @@ public class InvariantImpl implements Invariant {
 
     @Override
     public Guard createGuard() throws EolIncrementalExecutionException {
-            try {
-                return new GuardImpl(this);
-            } catch (TraceModelDuplicateRelation e) {
-                // Pass
-            }
-            Guard guard = null;
-            guard = this.guard.get();
-            if (guard == null) {
+        Guard guard = null;
+        try {
+            guard = new GuardImpl(this);
+            
+            this.guard().create(guard);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (guard != null) {
+    	        return guard;
+    	    }
+            guard  = this.guard.get();
+            if (guard  == null) {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested Guard was "
                         + "duplicate but previous one was not found.");
             }
-            return guard;
+        }
+        return guard;
     }      
                   
     @Override
     public Check createCheck() throws EolIncrementalExecutionException {
-            try {
-                return new CheckImpl(this);
-            } catch (TraceModelDuplicateRelation e) {
-                // Pass
-            }
-            Check check = null;
-            check = this.check.get();
-            if (check == null) {
+        Check check = null;
+        try {
+            check = new CheckImpl(this);
+            
+            this.check().create(check);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (check != null) {
+    	        return check;
+    	    }
+            check  = this.check.get();
+            if (check  == null) {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested Check was "
                         + "duplicate but previous one was not found.");
             }
-            return check;
+        }
+        return check;
     }      
                   
     @Override
     public Message createMessage() throws EolIncrementalExecutionException {
-            try {
-                return new MessageImpl(this);
-            } catch (TraceModelDuplicateRelation e) {
-                // Pass
-            }
-            Message message = null;
-            message = this.message.get();
-            if (message == null) {
+        Message message = null;
+        try {
+            message = new MessageImpl(this);
+            
+            this.message().create(message);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (message != null) {
+    	        return message;
+    	    }
+            message  = this.message.get();
+            if (message  == null) {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested Message was "
                         + "duplicate but previous one was not found.");
             }
-            return message;
+        }
+        return message;
     }      
                   
     @Override
     public Satisfies createSatisfies() throws EolIncrementalExecutionException {
-            try {
-                return new SatisfiesImpl(this);
-            } catch (TraceModelDuplicateRelation e) {
-                // Pass
-            }
-            Satisfies satisfies = null;
-            satisfies = this.satisfies.get();
-            if (satisfies == null) {
+        Satisfies satisfies = null;
+        try {
+            satisfies = new SatisfiesImpl(this);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (satisfies != null) {
+    	        return satisfies;
+    	    }
+            satisfies  = this.satisfies.get();
+            if (satisfies  == null) {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested Satisfies was "
                         + "duplicate but previous one was not found.");
             }
-            return satisfies;
+        }
+        return satisfies;
     }      
                   
     @Override
@@ -182,6 +205,11 @@ public class InvariantImpl implements Invariant {
         if (other == null) {
             return false;
         }
+        if (getName() == null) {
+            if (other.getName() != null)
+                return false;
+        } else if (!getName().equals(other.getName()))
+            return false;
         return true;
     }
 
@@ -203,6 +231,7 @@ public class InvariantImpl implements Invariant {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
 

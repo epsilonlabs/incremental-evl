@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-09.
+ * This file was automatically generated on: 2017-11-10.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -50,7 +50,7 @@ public class ModuleElementHasModuleImpl extends Feature implements ModuleElement
         if (conflict(target)) {
             return false;
         }
-        target.modules().set(source);
+        target.moduleElements().set(source);
         if (related(target)) {
             return false;
         }
@@ -63,7 +63,7 @@ public class ModuleElementHasModuleImpl extends Feature implements ModuleElement
         if (!related(target)) {
             return false;
         }
-        target.modules().remove(source);
+        target.moduleElements().remove(source);
         remove(target);
         return true;
     }
@@ -72,14 +72,14 @@ public class ModuleElementHasModuleImpl extends Feature implements ModuleElement
     public boolean conflict(Module target) {
         boolean result = false;
         result |= get() != null;
-        result |= target.modules().isUnique() && target.modules().get().contains(source);
+        result |= target.moduleElements().isUnique() && target.moduleElements().get().contains(source);
         return result;
     }
     
     @Override
     public boolean related(Module target) {
   
-        return target.equals(this.target) & target.modules().get().contains(source);
+        return target.equals(this.target) & target.moduleElements().get().contains(source);
     }
     
     // PRIVATE API

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-09.
+ * This file was automatically generated on: 2017-11-10.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -41,6 +41,6 @@ public interface Context extends GuardedElement, ModuleElement {
     Guard createGuard() throws EolIncrementalExecutionException;       
    
     /** The Invariant Factory. */
-    Invariant createInvariant() throws EolIncrementalExecutionException;       
+    Invariant createInvariant(String name) throws EolIncrementalExecutionException;       
    
 }

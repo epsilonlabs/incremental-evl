@@ -122,11 +122,11 @@ public class EvlTraceModelTests {
         @Rule
         public EasyMockRule rule = new EasyMockRule(this);
 
-        /** Mock the target of the modules reference. */
+        /** Mock the target of the moduleElements reference. */
         @Mock
         private ModuleElement moduleElementMock1;
         
-        /** Mock the target of the modules reference. */
+        /** Mock the target of the moduleElements reference. */
         @Mock
         private ModuleElement moduleElementMock2;
         
@@ -136,11 +136,23 @@ public class EvlTraceModelTests {
         /** Allow the target mock to populate the reference */
         private ModuleElementHasModule moduleElementHasModule2;
         
+        /** Mock the container. */
+        @Mock
+        private ExecutionTrace containerMock;
+        
+        /** Allow the container mock to populate the reference */
+        private ExecutionTraceHasModule executionTraceHasModule1;
+
         private EvlModule classUnderTest;
         
         @Test
         public void testEvlModuleInstantiation() throws Exception {
-            classUnderTest = new EvlModuleImpl("source");
+            executionTraceHasModule1 = new ExecutionTraceHasModuleImpl(containerMock);
+            expect(containerMock.module()).andReturn(executionTraceHasModule1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new EvlModuleImpl("source", containerMock);
+            Queue<Module> values = containerMock.module().get();
+            assertThat(values, hasItem(classUnderTest));
 	    }
 	    
 // protected region IgnoreEvlModuleAttributes on begin
@@ -148,7 +160,10 @@ public class EvlTraceModelTests {
 // protected region IgnoreEvlModuleAttributes end	    
 	    @Test
         public void testEvlModuleAttributes() throws Exception {
-            classUnderTest = new EvlModuleImpl("source");
+            executionTraceHasModule1 = new ExecutionTraceHasModuleImpl(containerMock);
+            expect(containerMock.module()).andReturn(executionTraceHasModule1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new EvlModuleImpl("source", containerMock);
 // protected region EvlModuleAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region EvlModuleAttributes end
@@ -156,7 +171,10 @@ public class EvlTraceModelTests {
 
         @Test
         public void testEvlModuleCreateModuleElement() throws Exception {
-            classUnderTest = new EvlModuleImpl("source");
+            executionTraceHasModule1 = new ExecutionTraceHasModuleImpl(containerMock);
+            expect(containerMock.module()).andReturn(executionTraceHasModule1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new EvlModuleImpl("source", containerMock);
             moduleElementHasModule1 = new ModuleElementHasModuleImpl(moduleElementMock1);
             expect(moduleElementMock1.module()).andReturn(moduleElementHasModule1).anyTimes();
             replay(moduleElementMock1);
@@ -164,28 +182,31 @@ public class EvlTraceModelTests {
             expect(moduleElementMock2.module()).andReturn(moduleElementHasModule2).anyTimes();
             replay(moduleElementMock2);
             boolean result;
-            result = classUnderTest.modules().create(moduleElementMock1);
+            result = classUnderTest.moduleElements().create(moduleElementMock1);
             assertTrue(result);
-            result = classUnderTest.modules().create(moduleElementMock2);
+            result = classUnderTest.moduleElements().create(moduleElementMock2);
             assertTrue(result);
-            result = classUnderTest.modules().create(moduleElementMock1);
+            result = classUnderTest.moduleElements().create(moduleElementMock1);
             assertFalse(result);
         }
         
         @Test
         public void testEvlModuleDestroyModuleElement() throws Exception {
-            classUnderTest = new EvlModuleImpl("source");
+            executionTraceHasModule1 = new ExecutionTraceHasModuleImpl(containerMock);
+            expect(containerMock.module()).andReturn(executionTraceHasModule1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new EvlModuleImpl("source", containerMock);
             moduleElementHasModule1 = new ModuleElementHasModuleImpl(moduleElementMock1);
             expect(moduleElementMock1.module()).andReturn(moduleElementHasModule1).anyTimes();
             replay(moduleElementMock1);
-            classUnderTest.modules().create(moduleElementMock1);
-            boolean result = classUnderTest.modules().destroy(moduleElementMock1);
+            classUnderTest.moduleElements().create(moduleElementMock1);
+            boolean result = classUnderTest.moduleElements().destroy(moduleElementMock1);
             assertTrue(result);
-            assertThat(classUnderTest.modules().get(), not(hasItem(moduleElementMock1)));
+            assertThat(classUnderTest.moduleElements().get(), not(hasItem(moduleElementMock1)));
             moduleElementHasModule2 = new ModuleElementHasModuleImpl(moduleElementMock2);
             expect(moduleElementMock2.module()).andReturn(moduleElementHasModule2).anyTimes();
             replay(moduleElementMock2);
-            result = classUnderTest.modules().destroy(moduleElementMock2);
+            result = classUnderTest.moduleElements().destroy(moduleElementMock2);
             assertFalse(result);
         }
     }
@@ -218,10 +239,10 @@ public class EvlTraceModelTests {
         private Module moduleMock2;
         
         /** Allow the target mock to populate the reference */
-        private ModuleHasModules moduleHasModules1;
+        private ModuleHasModuleElements moduleHasModuleElements1;
         
         /** Allow the target mock to populate the reference */
-        private ModuleHasModules moduleHasModules2;
+        private ModuleHasModuleElements moduleHasModuleElements2;
         
         /** Mock the target of the constraints reference. */
         @Mock
@@ -243,12 +264,12 @@ public class EvlTraceModelTests {
         
         @Test
         public void testContextInstantiation() throws Exception {
-            moduleHasModules1 = new ModuleHasModulesImpl(moduleMock1);
-            expect(moduleMock1.modules()).andReturn(moduleHasModules1).anyTimes();
+            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
+            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
             replay(moduleMock1);
             classUnderTest = new ContextImpl(moduleMock1);
             assertThat(classUnderTest.module().get(), is(moduleMock1));
-            Queue<ModuleElement> values = moduleMock1.modules().get();
+            Queue<ModuleElement> values = moduleMock1.moduleElements().get();
             assertThat(values, hasItem(classUnderTest));
 	    }
 	    
@@ -257,8 +278,8 @@ public class EvlTraceModelTests {
 // protected region IgnoreContextAttributes end	    
 	    @Test
         public void testContextAttributes() throws Exception {
-            moduleHasModules1 = new ModuleHasModulesImpl(moduleMock1);
-            expect(moduleMock1.modules()).andReturn(moduleHasModules1).anyTimes();
+            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
+            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
             replay(moduleMock1);
             classUnderTest = new ContextImpl(moduleMock1);
 // protected region ContextAttributes on begin
@@ -269,12 +290,12 @@ public class EvlTraceModelTests {
         
         @Test
         public void testContextCreateModuleConflict() throws Exception {
-            moduleHasModules1 = new ModuleHasModulesImpl(moduleMock1);
-            expect(moduleMock1.modules()).andReturn(moduleHasModules1).anyTimes();
+            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
+            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
             replay(moduleMock1);
             classUnderTest = new ContextImpl(moduleMock1);
-            moduleHasModules2 = new ModuleHasModulesImpl(moduleMock2);
-            expect(moduleMock2.modules()).andReturn(moduleHasModules2).anyTimes();
+            moduleHasModuleElements2 = new ModuleHasModuleElementsImpl(moduleMock2);
+            expect(moduleMock2.moduleElements()).andReturn(moduleHasModuleElements2).anyTimes();
             replay(moduleMock2);
         
             boolean result = classUnderTest.module().create(moduleMock2);
@@ -283,8 +304,8 @@ public class EvlTraceModelTests {
         
         @Test
         public void testContextDestroyModule() throws Exception {
-            moduleHasModules1 = new ModuleHasModulesImpl(moduleMock1);
-            expect(moduleMock1.modules()).andReturn(moduleHasModules1).anyTimes();
+            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
+            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
             replay(moduleMock1);
             classUnderTest = new ContextImpl(moduleMock1);
             boolean result = classUnderTest.module().destroy(moduleMock1);
@@ -293,12 +314,12 @@ public class EvlTraceModelTests {
         
         @Test
         public void testContextDestroyAndCreateModule() throws Exception {
-            moduleHasModules1 = new ModuleHasModulesImpl(moduleMock1);
-            expect(moduleMock1.modules()).andReturn(moduleHasModules1).anyTimes();
+            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
+            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
             replay(moduleMock1);
             classUnderTest = new ContextImpl(moduleMock1);
-            moduleHasModules2 = new ModuleHasModulesImpl(moduleMock2);
-            expect(moduleMock2.modules()).andReturn(moduleHasModules2).anyTimes();
+            moduleHasModuleElements2 = new ModuleHasModuleElementsImpl(moduleMock2);
+            expect(moduleMock2.moduleElements()).andReturn(moduleHasModuleElements2).anyTimes();
             replay(moduleMock2);
   
             boolean result = classUnderTest.module().destroy(moduleMock1);
@@ -313,8 +334,8 @@ public class EvlTraceModelTests {
         
         @Test
         public void testContextCreateGuard() throws Exception {
-            moduleHasModules1 = new ModuleHasModulesImpl(moduleMock1);
-            expect(moduleMock1.modules()).andReturn(moduleHasModules1).anyTimes();
+            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
+            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
             replay(moduleMock1);
             classUnderTest = new ContextImpl(moduleMock1);
             guardHasLimits1 = new GuardHasLimitsImpl(guardMock1);
@@ -334,8 +355,8 @@ public class EvlTraceModelTests {
         
         @Test
         public void testContextDestroyGuard() throws Exception {
-            moduleHasModules1 = new ModuleHasModulesImpl(moduleMock1);
-            expect(moduleMock1.modules()).andReturn(moduleHasModules1).anyTimes();
+            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
+            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
             replay(moduleMock1);
             classUnderTest = new ContextImpl(moduleMock1);
             guardHasLimits1 = new GuardHasLimitsImpl(guardMock1);
@@ -353,8 +374,8 @@ public class EvlTraceModelTests {
         }
         @Test
         public void testContextCreateInvariant() throws Exception {
-            moduleHasModules1 = new ModuleHasModulesImpl(moduleMock1);
-            expect(moduleMock1.modules()).andReturn(moduleHasModules1).anyTimes();
+            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
+            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
             replay(moduleMock1);
             classUnderTest = new ContextImpl(moduleMock1);
             boolean result;
@@ -368,8 +389,8 @@ public class EvlTraceModelTests {
         
         @Test
         public void testContextDestroyInvariant() throws Exception {
-            moduleHasModules1 = new ModuleHasModulesImpl(moduleMock1);
-            expect(moduleMock1.modules()).andReturn(moduleHasModules1).anyTimes();
+            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
+            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
             replay(moduleMock1);
             classUnderTest = new ContextImpl(moduleMock1);
             classUnderTest.constraints().create(invariantMock1);
@@ -381,8 +402,8 @@ public class EvlTraceModelTests {
         }
         @Test
         public void testContextCreateModelElement() throws Exception {
-            moduleHasModules1 = new ModuleHasModulesImpl(moduleMock1);
-            expect(moduleMock1.modules()).andReturn(moduleHasModules1).anyTimes();
+            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
+            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
             replay(moduleMock1);
             classUnderTest = new ContextImpl(moduleMock1);
             boolean result;
@@ -396,8 +417,8 @@ public class EvlTraceModelTests {
         
         @Test
         public void testContextDestroyModelElement() throws Exception {
-            moduleHasModules1 = new ModuleHasModulesImpl(moduleMock1);
-            expect(moduleMock1.modules()).andReturn(moduleHasModules1).anyTimes();
+            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
+            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
             replay(moduleMock1);
             classUnderTest = new ContextImpl(moduleMock1);
             classUnderTest.context().create(modelElementMock1);
@@ -478,7 +499,7 @@ public class EvlTraceModelTests {
             contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
             expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantImpl(containerMock);
+            classUnderTest = new InvariantImpl("name", containerMock);
             Queue<Invariant> values = containerMock.constraints().get();
             assertThat(values, hasItem(classUnderTest));
 	    }
@@ -491,7 +512,7 @@ public class EvlTraceModelTests {
             contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
             expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantImpl(containerMock);
+            classUnderTest = new InvariantImpl("name", containerMock);
 // protected region InvariantAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region InvariantAttributes end
@@ -502,7 +523,7 @@ public class EvlTraceModelTests {
             contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
             expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantImpl(containerMock);
+            classUnderTest = new InvariantImpl("name", containerMock);
             guardHasLimits1 = new GuardHasLimitsImpl(guardMock1);
             expect(guardMock1.limits()).andReturn(guardHasLimits1).anyTimes();
             replay(guardMock1);
@@ -523,7 +544,7 @@ public class EvlTraceModelTests {
             contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
             expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantImpl(containerMock);
+            classUnderTest = new InvariantImpl("name", containerMock);
             guardHasLimits1 = new GuardHasLimitsImpl(guardMock1);
             expect(guardMock1.limits()).andReturn(guardHasLimits1).anyTimes();
             replay(guardMock1);
@@ -542,7 +563,7 @@ public class EvlTraceModelTests {
             contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
             expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantImpl(containerMock);
+            classUnderTest = new InvariantImpl("name", containerMock);
             checkHasInvariant1 = new CheckHasInvariantImpl(checkMock1);
             expect(checkMock1.invariant()).andReturn(checkHasInvariant1).anyTimes();
             replay(checkMock1);
@@ -563,7 +584,7 @@ public class EvlTraceModelTests {
             contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
             expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantImpl(containerMock);
+            classUnderTest = new InvariantImpl("name", containerMock);
             checkHasInvariant1 = new CheckHasInvariantImpl(checkMock1);
             expect(checkMock1.invariant()).andReturn(checkHasInvariant1).anyTimes();
             replay(checkMock1);
@@ -582,7 +603,7 @@ public class EvlTraceModelTests {
             contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
             expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantImpl(containerMock);
+            classUnderTest = new InvariantImpl("name", containerMock);
             messageHasInvariant1 = new MessageHasInvariantImpl(messageMock1);
             expect(messageMock1.invariant()).andReturn(messageHasInvariant1).anyTimes();
             replay(messageMock1);
@@ -603,7 +624,7 @@ public class EvlTraceModelTests {
             contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
             expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantImpl(containerMock);
+            classUnderTest = new InvariantImpl("name", containerMock);
             messageHasInvariant1 = new MessageHasInvariantImpl(messageMock1);
             expect(messageMock1.invariant()).andReturn(messageHasInvariant1).anyTimes();
             replay(messageMock1);
@@ -622,7 +643,7 @@ public class EvlTraceModelTests {
             contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
             expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantImpl(containerMock);
+            classUnderTest = new InvariantImpl("name", containerMock);
             boolean result;
             result = classUnderTest.satisfies().create(satisfiesMock1);
             assertTrue(result);
@@ -637,7 +658,7 @@ public class EvlTraceModelTests {
             contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
             expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantImpl(containerMock);
+            classUnderTest = new InvariantImpl("name", containerMock);
             classUnderTest.satisfies().create(satisfiesMock1);
             boolean result = classUnderTest.satisfies().destroy(satisfiesMock1);
             assertTrue(result);

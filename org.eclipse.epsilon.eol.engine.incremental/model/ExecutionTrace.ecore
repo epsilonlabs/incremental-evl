@@ -21,7 +21,7 @@
       <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="source" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="modules" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="moduleElements" upperBound="-1"
         eType="#//ModuleElement" containment="true" eOpposite="#//ModuleElement/module">
       <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
         <details key="edge" value="true"/>
@@ -30,7 +30,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModuleElement" abstract="true" eSuperTypes="#//IdElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="module" lowerBound="1"
-        eType="#//Module" eOpposite="#//Module/modules"/>
+        eType="#//Module" eOpposite="#//Module/moduleElements"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Execution" abstract="true" eSuperTypes="#//IdElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="accesses" lowerBound="1"

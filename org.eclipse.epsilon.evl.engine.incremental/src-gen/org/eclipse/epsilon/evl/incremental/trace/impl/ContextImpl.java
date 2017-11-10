@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-09.
+ * This file was automatically generated on: 2017-11-10.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -60,7 +60,7 @@ public class ContextImpl implements Context {
         this.module = new ModuleElementHasModuleImpl(this);
         this.constraints = new ContextHasConstraintsImpl(this);
         this.context = new ContextHasContextImpl(this);
-        if (!container.modules().create(this)) {
+        if (!container.moduleElements().create(this)) {
             throw new TraceModelDuplicateRelation();
         };
     }
@@ -98,38 +98,48 @@ public class ContextImpl implements Context {
 
     @Override
     public Guard createGuard() throws EolIncrementalExecutionException {
-            try {
-                return new GuardImpl(this);
-            } catch (TraceModelDuplicateRelation e) {
-                // Pass
-            }
-            Guard guard = null;
-            guard = this.guard.get();
-            if (guard == null) {
+        Guard guard = null;
+        try {
+            guard = new GuardImpl(this);
+            
+            this.guard().create(guard);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (guard != null) {
+    	        return guard;
+    	    }
+            guard  = this.guard.get();
+            if (guard  == null) {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested Guard was "
                         + "duplicate but previous one was not found.");
             }
-            return guard;
+        }
+        return guard;
     }      
                   
     @Override
-    public Invariant createInvariant() throws EolIncrementalExecutionException {
-            try {
-                return new InvariantImpl(this);
-            } catch (TraceModelDuplicateRelation e) {
-                // Pass
-            }
-            Invariant invariant = null;
-            
+    public Invariant createInvariant(String name) throws EolIncrementalExecutionException {
+        Invariant invariant = null;
+        try {
+            invariant = new InvariantImpl(name, this);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (invariant != null) {
+    	        return invariant;
+    	    }
             try {
                 invariant = this.constraints.get().stream()
+                    .filter(mt -> mt.getName().equals(name))
                     .findFirst()
                     .get();
             } catch (NoSuchElementException ex) {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested Invariant was "
                         + "duplicate but previous one was not found.");
             }
-            return invariant;
+        }
+        return invariant;
     }      
                   
     @Override

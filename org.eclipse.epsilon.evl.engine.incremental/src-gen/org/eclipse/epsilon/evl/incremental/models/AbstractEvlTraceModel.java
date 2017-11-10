@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-09.
+ * This file was automatically generated on: 2017-11-10.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -60,7 +60,7 @@ public abstract class AbstractEvlTraceModel extends AbstractEolTraceModel implem
     static {
         TYPE_PROPERTIES = new HashMap<String, Set<String>>();    
         TYPE_PROPERTIES.put("EvlExecutionTrace", new HashSet<String>(Arrays.asList(new String[]{"id","model","module"})));    
-        TYPE_PROPERTIES.put("EvlModule", new HashSet<String>(Arrays.asList(new String[]{"id","source","modules"})));    
+        TYPE_PROPERTIES.put("EvlModule", new HashSet<String>(Arrays.asList(new String[]{"id","source","moduleElements"})));    
         TYPE_PROPERTIES.put("GuardedElement", new HashSet<String>(Arrays.asList(new String[]{"guard"})));    
         TYPE_PROPERTIES.put("Context", new HashSet<String>(Arrays.asList(new String[]{"guard","id","module","constraints","context"})));    
         TYPE_PROPERTIES.put("Invariant", new HashSet<String>(Arrays.asList(new String[]{"guard","name","result","check","message","satisfies"})));    

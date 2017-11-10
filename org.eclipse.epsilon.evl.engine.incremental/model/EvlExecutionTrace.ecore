@@ -23,6 +23,9 @@
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Invariant" eSuperTypes="#//GuardedElement">
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//Invariant/name">
+      <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="result" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
