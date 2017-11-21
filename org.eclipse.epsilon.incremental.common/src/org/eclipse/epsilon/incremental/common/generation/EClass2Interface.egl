@@ -30,17 +30,17 @@ package [%=qp%].trace;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 [%
-for (imp in ec.getRequriedImports(qp+".trace", "", "")) {%]
+for (imp in ec.getRequriedImports(qp+".trace", interPrefix, interSufix, classPrefix, classSufix)) {%]
 import [%=imp%];    
 [%}%]
 
 /**
  * The [%=ec.name%] defines the access methods for the EClass features.
- * Additionally, the [%=ec.getInterfaceName()%] acts as the root entity of the AGGREGATE of its
+ * Additionally, the [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] acts as the root entity of the AGGREGATE of its
  * container references. That is, elements contained in the [%=ec.name%] must be
  * created through this interface.
  */
-public interface [%=ec.getInterfaceName()%] {
+public interface [%=ec.getFullInterfaceName(interPrefix, interSufix)%] {
 
 [%
 for (ea in ec.getEAttributes()) {
@@ -58,10 +58,9 @@ for (ea in ec.getEAttributes()) {
             
 [%}%]
 [%
-for (er in ec.getEReferences()) {
-    var featureType = ec.name + "Has" + er.name.firstToUpperCase();%]
+for (er in ec.getEReferences()) {%]
     /** The [%=er.name%] reference. */
-    [%=featureType%] [%=er.name%]();
+    [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] [%=er.name%]();
                 
 [%
 }%]
@@ -69,7 +68,7 @@ for (er in ec.getEReferences()) {
     /**
      * [%=ec.name%] has same identity in the aggregate.
      */
-    public boolean sameIdentityAs(final [%=ec.name%] other);
+    public boolean sameIdentityAs(final [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] other);
     
 [%}%]
 [%/* Factory Methods
@@ -78,12 +77,12 @@ for (er in ec.getEReferences()) {
  */
 for (er in ec.getEAllReferences().select(er | er.isContainment())) {
     if (not er.getEReferenceType().isAbstract()) {%]
-    [%=er.getEReferenceType().factorySignature()%]
+    [%=er.getEReferenceType().factorySignature(interPrefix, interSufix)%]
 [%  } else {
         var subClasses = er.getEReferenceType().getEAllSubclasses()
             .select(sc | (sc.getEPackage() == ec.getEPackage()) and not sc.isAbstract());
         for (sc in subClasses) {%]
-    [%=sc.factorySignature()%]
+    [%=sc.factorySignature(interPrefix, interSufix)%]
             
 [%      }%]
 [%  }%]
@@ -93,9 +92,9 @@ for (er in ec.getEAllReferences().select(er | er.isContainment())) {
 }
 [%
 @template
-operation EClass factorySignature() {
-    var params = self.getEAttributeParameters().includingAll(self.getRequiredFeatureParameters());%]
+operation EClass factorySignature(interPrefix:String, interSufix:String) {
+    var params = self.getEAttributeParameters().includingAll(self.getRequiredFeatureParameters(interPrefix, interSufix));%]
 /** The [%=self.name%] Factory. */
-[%=self.name%] create[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException;       
+[%=self.getJavaInterfaceName(interPrefix, interSufix)%] create[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException;       
 [%}
 %]

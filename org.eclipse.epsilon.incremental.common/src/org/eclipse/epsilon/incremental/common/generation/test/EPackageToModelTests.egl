@@ -39,7 +39,7 @@ var testClassesList = testClasses.concat(",\n");
 public class [%=ep.name.firstToUpperCase()%]TraceModelTests {
 
 [%for (ec in ep.getEClassifiers().select(c | not c.isAbstract() and not c.isInterface())) {%]
-[%=ec.testClass()%]
+[%=ec.testClass(interPrefix, interSufix, classPrefix, classSufix)%]
 [%}%]
 
 }

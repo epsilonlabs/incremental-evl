@@ -14,7 +14,7 @@ import "Ecore2JavaTemplates.egl";
 /**
  * Generation of Java Interface from an EReference.
  */
-var targetType = er.getEReferenceType().name;
+var targetType = er.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix);
 var pack = er.getEReferenceType().getEPackage().name;
 var erqp = qp.replace("." + er.getEContainingClass().getEPackage().name + ".", "." + pack + ".");
 %]
@@ -37,7 +37,7 @@ import java.util.Queue;
 
 import [%=erqp%].trace.[%=targetType%];
 
-public interface [%=featureType%] {
+public interface [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] {
 
     // PUBLIC API
     

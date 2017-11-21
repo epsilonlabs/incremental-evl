@@ -19,16 +19,16 @@ import "EcoreHelper.eol";
  * required references (mult = [1..1]). The containment must be reachable via opposite.
  */
 @template
-operation EClass getConstructorParameters(signature : Boolean) {
+operation EClass getConstructorParameters(signature : Boolean, interPrefix:String, interSufix:String) {
     // Index attributes
     var results : Sequence = new Sequence();
     results.addAll(self.getEAttributeParameters());
     // Requried references
-    results.addAll(self.getRequiredFeatureParameters());
+    results.addAll(self.getRequiredFeatureParameters(interPrefix, interSufix));
     // Container
     var containerType = self.getContainerReference().at(1);
     if (containerType.isDefined()) {
-        results.add(containerType.name + " container");
+        results.add(containerType.getJavaInterfaceName(interPrefix, interSufix) + " container");
     }
 	if (signature) {
 %][%=results.concat(", ")%]
@@ -40,14 +40,13 @@ operation EClass getConstructorParameters(signature : Boolean) {
 // Get the java interface name of an EClass, correctly extending interfaces defined for the EClass
 // super types.
 @template
-operation EClass getInterfaceName() {
+operation EClass getFullInterfaceName(interPrefix, interSufix) {
     if (self.getESuperTypes().isEmpty()) {%]
-[%=self.name%][%
+[%=self.getJavaInterfaceName(interPrefix, interSufix)%][%
     } else {%]
-[%=self.name%] extends [%=self.getESuperTypes().collect(ec | ec.name).concat(", ")%][%
+[%=self.getJavaInterfaceName(interPrefix, interSufix)%] extends [%=self.getESuperTypes().collect(ec | ec.getJavaInterfaceName(interPrefix, interSufix)).concat(", ")%][%
     }
 }
-
 
 @template
 operation EStructuralFeature makeGetterDoc() {%]

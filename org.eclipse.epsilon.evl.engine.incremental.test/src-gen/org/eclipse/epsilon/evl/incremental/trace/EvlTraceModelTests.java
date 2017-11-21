@@ -21,768 +21,881 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({EvlTraceModelTests.EvlExecutionTraceTests.class,
-                     EvlTraceModelTests.EvlModuleTests.class,
-                     EvlTraceModelTests.ContextTests.class,
-                     EvlTraceModelTests.InvariantTests.class,
-                     EvlTraceModelTests.GuardTests.class,
-                     EvlTraceModelTests.CheckTests.class,
-                     EvlTraceModelTests.MessageTests.class,
-                     EvlTraceModelTests.SatisfiesTests.class})
+@Suite.SuiteClasses({EvlTraceModelTests.EvlModuleExecutionTests.class,
+                     EvlTraceModelTests.EvlModuleTraceTests.class,
+                     EvlTraceModelTests.ContextTraceTests.class,
+                     EvlTraceModelTests.InvariantTraceTests.class,
+                     EvlTraceModelTests.GuardTraceTests.class,
+                     EvlTraceModelTests.CheckTraceTests.class,
+                     EvlTraceModelTests.MessageTraceTests.class,
+                     EvlTraceModelTests.SatisfiesTraceTests.class})
 public class EvlTraceModelTests {
 
     
-    public static class EvlExecutionTraceTests extends EasyMockSupport {
+    public static class EvlModuleExecutionTests extends EasyMockSupport {
     
         @Rule
         public EasyMockRule rule = new EasyMockRule(this);
 
-        /** Mock the target of the model reference. */
+        /** Mock the target of the module reference. */
         @Mock
-        private Model modelMock1;
-        
-        /** Mock the target of the model reference. */
-        @Mock
-        private Model modelMock2;
+        private IModuleTrace moduleTraceMock1;
         
         /** Mock the target of the module reference. */
         @Mock
-        private Module moduleMock1;
+        private IModuleTrace moduleTraceMock2;
         
-        /** Mock the target of the module reference. */
+        /** Mock the target of the model reference. */
         @Mock
-        private Module moduleMock2;
+        private IModelTrace modelTraceMock1;
         
-        private EvlExecutionTrace classUnderTest;
+        /** Mock the target of the model reference. */
+        @Mock
+        private IModelTrace modelTraceMock2;
+        
+        /** Mock the target of the executions reference. */
+        @Mock
+        private IExecutionTrace executionTraceMock1;
+        
+        /** Mock the target of the executions reference. */
+        @Mock
+        private IExecutionTrace executionTraceMock2;
+        
+        /** Mock the target of the moduleElements reference. */
+        @Mock
+        private IModuleElementTrace moduleElementTraceMock1;
+        
+        /** Mock the target of the moduleElements reference. */
+        @Mock
+        private IModuleElementTrace moduleElementTraceMock2;
+        
+        private EvlModuleExecution classUnderTest;
         
         @Test
-        public void testEvlExecutionTraceInstantiation() throws Exception {
-            classUnderTest = new EvlExecutionTraceImpl();
+        public void testEvlModuleExecutionInstantiation() throws Exception {
+            classUnderTest = new EvlModuleExecution();
 	    }
 	    
-// protected region IgnoreEvlExecutionTraceAttributes on begin
+// protected region IgnoreEvlModuleExecutionAttributes on begin
 	    @Ignore
-// protected region IgnoreEvlExecutionTraceAttributes end	    
+// protected region IgnoreEvlModuleExecutionAttributes end	    
 	    @Test
-        public void testEvlExecutionTraceAttributes() throws Exception {
-            classUnderTest = new EvlExecutionTraceImpl();
-// protected region EvlExecutionTraceAttributes on begin
+        public void testEvlModuleExecutionAttributes() throws Exception {
+            classUnderTest = new EvlModuleExecution();
+// protected region EvlModuleExecutionAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
-// protected region EvlExecutionTraceAttributes end
+// protected region EvlModuleExecutionAttributes end
         }
 
         @Test
-        public void testEvlExecutionTraceCreateModel() throws Exception {
-            classUnderTest = new EvlExecutionTraceImpl();
+        public void testEvlModuleExecutionCreateModuleTrace() throws Exception {
+            classUnderTest = new EvlModuleExecution();
             boolean result;
-            result = classUnderTest.model().create(modelMock1);
+            result = classUnderTest.module().create(moduleTraceMock1);
             assertTrue(result);
-            result = classUnderTest.model().create(modelMock2);
-            assertTrue(result);
-            result = classUnderTest.model().create(modelMock1);
+            result = classUnderTest.module().create(moduleTraceMock2);
+            assertFalse(result);
+            result = classUnderTest.module().create(moduleTraceMock1);
             assertFalse(result);
         }
         
         @Test
-        public void testEvlExecutionTraceDestroyModel() throws Exception {
-            classUnderTest = new EvlExecutionTraceImpl();
-            classUnderTest.model().create(modelMock1);
-            boolean result = classUnderTest.model().destroy(modelMock1);
+        public void testEvlModuleExecutionDestroyModuleTrace() throws Exception {
+            classUnderTest = new EvlModuleExecution();
+            classUnderTest.module().create(moduleTraceMock1);
+            boolean result = classUnderTest.module().destroy(moduleTraceMock1);
             assertTrue(result);
-            assertThat(classUnderTest.model().get(), not(hasItem(modelMock1)));
-            result = classUnderTest.model().destroy(modelMock2);
+            assertThat(classUnderTest.module().get(), is(nullValue()));
+            result = classUnderTest.module().destroy(moduleTraceMock2);
             assertFalse(result);
         }
         @Test
-        public void testEvlExecutionTraceCreateModule() throws Exception {
-            classUnderTest = new EvlExecutionTraceImpl();
+        public void testEvlModuleExecutionCreateModelTrace() throws Exception {
+            classUnderTest = new EvlModuleExecution();
             boolean result;
-            result = classUnderTest.module().create(moduleMock1);
+            result = classUnderTest.model().create(modelTraceMock1);
             assertTrue(result);
-            result = classUnderTest.module().create(moduleMock2);
+            result = classUnderTest.model().create(modelTraceMock2);
             assertTrue(result);
-            result = classUnderTest.module().create(moduleMock1);
+            result = classUnderTest.model().create(modelTraceMock1);
             assertFalse(result);
         }
         
         @Test
-        public void testEvlExecutionTraceDestroyModule() throws Exception {
-            classUnderTest = new EvlExecutionTraceImpl();
-            classUnderTest.module().create(moduleMock1);
-            boolean result = classUnderTest.module().destroy(moduleMock1);
+        public void testEvlModuleExecutionDestroyModelTrace() throws Exception {
+            classUnderTest = new EvlModuleExecution();
+            classUnderTest.model().create(modelTraceMock1);
+            boolean result = classUnderTest.model().destroy(modelTraceMock1);
             assertTrue(result);
-            assertThat(classUnderTest.module().get(), not(hasItem(moduleMock1)));
-            result = classUnderTest.module().destroy(moduleMock2);
+            assertThat(classUnderTest.model().get(), not(hasItem(modelTraceMock1)));
+            result = classUnderTest.model().destroy(modelTraceMock2);
+            assertFalse(result);
+        }
+        @Test
+        public void testEvlModuleExecutionCreateExecutionTrace() throws Exception {
+            classUnderTest = new EvlModuleExecution();
+            boolean result;
+            result = classUnderTest.executions().create(executionTraceMock1);
+            assertTrue(result);
+            result = classUnderTest.executions().create(executionTraceMock2);
+            assertTrue(result);
+            result = classUnderTest.executions().create(executionTraceMock1);
+            assertFalse(result);
+        }
+        
+        @Test
+        public void testEvlModuleExecutionDestroyExecutionTrace() throws Exception {
+            classUnderTest = new EvlModuleExecution();
+            classUnderTest.executions().create(executionTraceMock1);
+            boolean result = classUnderTest.executions().destroy(executionTraceMock1);
+            assertTrue(result);
+            assertThat(classUnderTest.executions().get(), not(hasItem(executionTraceMock1)));
+            result = classUnderTest.executions().destroy(executionTraceMock2);
+            assertFalse(result);
+        }
+        @Test
+        public void testEvlModuleExecutionCreateModuleElementTrace() throws Exception {
+            classUnderTest = new EvlModuleExecution();
+            boolean result;
+            result = classUnderTest.moduleElements().create(moduleElementTraceMock1);
+            assertTrue(result);
+            result = classUnderTest.moduleElements().create(moduleElementTraceMock2);
+            assertTrue(result);
+            result = classUnderTest.moduleElements().create(moduleElementTraceMock1);
+            assertFalse(result);
+        }
+        
+        @Test
+        public void testEvlModuleExecutionDestroyModuleElementTrace() throws Exception {
+            classUnderTest = new EvlModuleExecution();
+            classUnderTest.moduleElements().create(moduleElementTraceMock1);
+            boolean result = classUnderTest.moduleElements().destroy(moduleElementTraceMock1);
+            assertTrue(result);
+            assertThat(classUnderTest.moduleElements().get(), not(hasItem(moduleElementTraceMock1)));
+            result = classUnderTest.moduleElements().destroy(moduleElementTraceMock2);
             assertFalse(result);
         }
     }
     
-    public static class EvlModuleTests extends EasyMockSupport {
+    public static class EvlModuleTraceTests extends EasyMockSupport {
     
         @Rule
         public EasyMockRule rule = new EasyMockRule(this);
 
-        /** Mock the target of the moduleElements reference. */
+        /** Mock the container. */
         @Mock
-        private ModuleElement moduleElementMock1;
+        private IModuleExecution containerMock;
         
-        /** Mock the target of the moduleElements reference. */
+        /** Allow the container mock to populate the reference */
+        private IModuleExecutionHasModule moduleExecution1;
+
+        private EvlModuleTrace classUnderTest;
+        
+        @Test
+        public void testEvlModuleTraceInstantiation() throws Exception {
+            moduleExecution1 = new ModuleExecutionHasModule(containerMock);
+            expect(containerMock.module()).andReturn(moduleExecution1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new EvlModuleTrace("source", containerMock);
+            assertThat(containerMock.module().get(), is(classUnderTest));
+	    }
+	    
+// protected region IgnoreEvlModuleTraceAttributes on begin
+	    @Ignore
+// protected region IgnoreEvlModuleTraceAttributes end	    
+	    @Test
+        public void testEvlModuleTraceAttributes() throws Exception {
+            moduleExecution1 = new ModuleExecutionHasModule(containerMock);
+            expect(containerMock.module()).andReturn(moduleExecution1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new EvlModuleTrace("source", containerMock);
+// protected region EvlModuleTraceAttributes on begin
+            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
+// protected region EvlModuleTraceAttributes end
+        }
+
+    }
+    
+    public static class ContextTraceTests extends EasyMockSupport {
+    
+        @Rule
+        public EasyMockRule rule = new EasyMockRule(this);
+
+        /** Mock the target of the guard reference. */
         @Mock
-        private ModuleElement moduleElementMock2;
+        private IGuardTrace guardTraceMock1;
+        
+        /** Mock the target of the guard reference. */
+        @Mock
+        private IGuardTrace guardTraceMock2;
         
         /** Allow the target mock to populate the reference */
-        private ModuleElementHasModule moduleElementHasModule1;
+        private IGuardTraceHasLimits guardTrace1;
         
         /** Allow the target mock to populate the reference */
-        private ModuleElementHasModule moduleElementHasModule2;
+        private IGuardTraceHasLimits guardTrace2;
+        
+        /** Mock the target of the accesses reference. */
+        @Mock
+        private IAccess accessMock1;
+        
+        /** Mock the target of the accesses reference. */
+        @Mock
+        private IAccess accessMock2;
+        
+        /** Allow the target mock to populate the reference */
+        private IAccessHasExecution access1;
+        
+        /** Allow the target mock to populate the reference */
+        private IAccessHasExecution access2;
+        
+        /** Mock the target of the module reference. */
+        @Mock
+        private IModuleTrace moduleTraceMock1;
+        
+        /** Mock the target of the module reference. */
+        @Mock
+        private IModuleTrace moduleTraceMock2;
+        
+        /** Mock the target of the constraints reference. */
+        @Mock
+        private IInvariantTrace invariantTraceMock1;
+        
+        /** Mock the target of the constraints reference. */
+        @Mock
+        private IInvariantTrace invariantTraceMock2;
+        
+        /** Allow the target mock to populate the reference */
+        private IInvariantTraceHasInvariantContext invariantTrace1;
+        
+        /** Allow the target mock to populate the reference */
+        private IInvariantTraceHasInvariantContext invariantTrace2;
+        
+        /** Mock the target of the context reference. */
+        @Mock
+        private IModuleElementTrace moduleElementTraceMock1;
+        
+        /** Mock the target of the context reference. */
+        @Mock
+        private IModuleElementTrace moduleElementTraceMock2;
         
         /** Mock the container. */
         @Mock
-        private ExecutionTrace containerMock;
+        private IModuleExecution containerMock;
         
         /** Allow the container mock to populate the reference */
-        private ExecutionTraceHasModule executionTraceHasModule1;
+        private IModuleExecutionHasModuleElements moduleExecution1;
 
-        private EvlModule classUnderTest;
+        private ContextTrace classUnderTest;
         
         @Test
-        public void testEvlModuleInstantiation() throws Exception {
-            executionTraceHasModule1 = new ExecutionTraceHasModuleImpl(containerMock);
-            expect(containerMock.module()).andReturn(executionTraceHasModule1).anyTimes();
+        public void testContextTraceInstantiation() throws Exception {
+            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
+            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new EvlModuleImpl("source", containerMock);
-            Queue<Module> values = containerMock.module().get();
+            classUnderTest = new ContextTrace("kind", containerMock);
+            Queue<IModuleElementTrace> values = containerMock.moduleElements().get();
             assertThat(values, hasItem(classUnderTest));
 	    }
 	    
-// protected region IgnoreEvlModuleAttributes on begin
+// protected region IgnoreContextTraceAttributes on begin
 	    @Ignore
-// protected region IgnoreEvlModuleAttributes end	    
+// protected region IgnoreContextTraceAttributes end	    
 	    @Test
-        public void testEvlModuleAttributes() throws Exception {
-            executionTraceHasModule1 = new ExecutionTraceHasModuleImpl(containerMock);
-            expect(containerMock.module()).andReturn(executionTraceHasModule1).anyTimes();
+        public void testContextTraceAttributes() throws Exception {
+            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
+            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new EvlModuleImpl("source", containerMock);
-// protected region EvlModuleAttributes on begin
+            classUnderTest = new ContextTrace("kind", containerMock);
+// protected region ContextTraceAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
-// protected region EvlModuleAttributes end
+// protected region ContextTraceAttributes end
         }
 
         @Test
-        public void testEvlModuleCreateModuleElement() throws Exception {
-            executionTraceHasModule1 = new ExecutionTraceHasModuleImpl(containerMock);
-            expect(containerMock.module()).andReturn(executionTraceHasModule1).anyTimes();
+        public void testContextTraceCreateGuardTrace() throws Exception {
+            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
+            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new EvlModuleImpl("source", containerMock);
-            moduleElementHasModule1 = new ModuleElementHasModuleImpl(moduleElementMock1);
-            expect(moduleElementMock1.module()).andReturn(moduleElementHasModule1).anyTimes();
-            replay(moduleElementMock1);
-            moduleElementHasModule2 = new ModuleElementHasModuleImpl(moduleElementMock2);
-            expect(moduleElementMock2.module()).andReturn(moduleElementHasModule2).anyTimes();
-            replay(moduleElementMock2);
+            classUnderTest = new ContextTrace("kind", containerMock);
+            guardTrace1 = new GuardTraceHasLimits(guardTraceMock1);
+            expect(guardTraceMock1.limits()).andReturn(guardTrace1).anyTimes();
+            replay(guardTraceMock1);
+            guardTrace2 = new GuardTraceHasLimits(guardTraceMock2);
+            expect(guardTraceMock2.limits()).andReturn(guardTrace2).anyTimes();
+            replay(guardTraceMock2);
             boolean result;
-            result = classUnderTest.moduleElements().create(moduleElementMock1);
+            result = classUnderTest.guard().create(guardTraceMock1);
             assertTrue(result);
-            result = classUnderTest.moduleElements().create(moduleElementMock2);
-            assertTrue(result);
-            result = classUnderTest.moduleElements().create(moduleElementMock1);
+            result = classUnderTest.guard().create(guardTraceMock2);
+            assertFalse(result);
+            result = classUnderTest.guard().create(guardTraceMock1);
             assertFalse(result);
         }
         
         @Test
-        public void testEvlModuleDestroyModuleElement() throws Exception {
-            executionTraceHasModule1 = new ExecutionTraceHasModuleImpl(containerMock);
-            expect(containerMock.module()).andReturn(executionTraceHasModule1).anyTimes();
+        public void testContextTraceDestroyGuardTrace() throws Exception {
+            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
+            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new EvlModuleImpl("source", containerMock);
-            moduleElementHasModule1 = new ModuleElementHasModuleImpl(moduleElementMock1);
-            expect(moduleElementMock1.module()).andReturn(moduleElementHasModule1).anyTimes();
-            replay(moduleElementMock1);
-            classUnderTest.moduleElements().create(moduleElementMock1);
-            boolean result = classUnderTest.moduleElements().destroy(moduleElementMock1);
+            classUnderTest = new ContextTrace("kind", containerMock);
+            guardTrace1 = new GuardTraceHasLimits(guardTraceMock1);
+            expect(guardTraceMock1.limits()).andReturn(guardTrace1).anyTimes();
+            replay(guardTraceMock1);
+            classUnderTest.guard().create(guardTraceMock1);
+            boolean result = classUnderTest.guard().destroy(guardTraceMock1);
             assertTrue(result);
-            assertThat(classUnderTest.moduleElements().get(), not(hasItem(moduleElementMock1)));
-            moduleElementHasModule2 = new ModuleElementHasModuleImpl(moduleElementMock2);
-            expect(moduleElementMock2.module()).andReturn(moduleElementHasModule2).anyTimes();
-            replay(moduleElementMock2);
-            result = classUnderTest.moduleElements().destroy(moduleElementMock2);
+            assertThat(classUnderTest.guard().get(), is(nullValue()));
+            guardTrace2 = new GuardTraceHasLimits(guardTraceMock2);
+            expect(guardTraceMock2.limits()).andReturn(guardTrace2).anyTimes();
+            replay(guardTraceMock2);
+            result = classUnderTest.guard().destroy(guardTraceMock2);
+            assertFalse(result);
+        }
+        @Test
+        public void testContextTraceCreateAccess() throws Exception {
+            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
+            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new ContextTrace("kind", containerMock);
+            access1 = new AccessHasExecution(accessMock1);
+            expect(accessMock1.execution()).andReturn(access1).anyTimes();
+            replay(accessMock1);
+            access2 = new AccessHasExecution(accessMock2);
+            expect(accessMock2.execution()).andReturn(access2).anyTimes();
+            replay(accessMock2);
+            boolean result;
+            result = classUnderTest.accesses().create(accessMock1);
+            assertTrue(result);
+            result = classUnderTest.accesses().create(accessMock2);
+            assertTrue(result);
+            result = classUnderTest.accesses().create(accessMock1);
+            assertFalse(result);
+        }
+        
+        @Test
+        public void testContextTraceDestroyAccess() throws Exception {
+            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
+            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new ContextTrace("kind", containerMock);
+            access1 = new AccessHasExecution(accessMock1);
+            expect(accessMock1.execution()).andReturn(access1).anyTimes();
+            replay(accessMock1);
+            classUnderTest.accesses().create(accessMock1);
+            boolean result = classUnderTest.accesses().destroy(accessMock1);
+            assertTrue(result);
+            assertThat(classUnderTest.accesses().get(), not(hasItem(accessMock1)));
+            access2 = new AccessHasExecution(accessMock2);
+            expect(accessMock2.execution()).andReturn(access2).anyTimes();
+            replay(accessMock2);
+            result = classUnderTest.accesses().destroy(accessMock2);
+            assertFalse(result);
+        }
+        @Test
+        public void testContextTraceCreateModuleTrace() throws Exception {
+            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
+            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new ContextTrace("kind", containerMock);
+            boolean result;
+            result = classUnderTest.module().create(moduleTraceMock1);
+            assertTrue(result);
+            result = classUnderTest.module().create(moduleTraceMock2);
+            assertTrue(result);
+            result = classUnderTest.module().create(moduleTraceMock1);
+            assertFalse(result);
+        }
+        
+        @Test
+        public void testContextTraceDestroyModuleTrace() throws Exception {
+            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
+            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new ContextTrace("kind", containerMock);
+            classUnderTest.module().create(moduleTraceMock1);
+            boolean result = classUnderTest.module().destroy(moduleTraceMock1);
+            assertTrue(result);
+            assertThat(classUnderTest.module().get(), not(hasItem(moduleTraceMock1)));
+            result = classUnderTest.module().destroy(moduleTraceMock2);
+            assertFalse(result);
+        }
+        @Test
+        public void testContextTraceCreateInvariantTrace() throws Exception {
+            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
+            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new ContextTrace("kind", containerMock);
+            invariantTrace1 = new InvariantTraceHasInvariantContext(invariantTraceMock1);
+            expect(invariantTraceMock1.invariantContext()).andReturn(invariantTrace1).anyTimes();
+            replay(invariantTraceMock1);
+            invariantTrace2 = new InvariantTraceHasInvariantContext(invariantTraceMock2);
+            expect(invariantTraceMock2.invariantContext()).andReturn(invariantTrace2).anyTimes();
+            replay(invariantTraceMock2);
+            boolean result;
+            result = classUnderTest.constraints().create(invariantTraceMock1);
+            assertTrue(result);
+            result = classUnderTest.constraints().create(invariantTraceMock2);
+            assertTrue(result);
+            result = classUnderTest.constraints().create(invariantTraceMock1);
+            assertFalse(result);
+        }
+        
+        @Test
+        public void testContextTraceDestroyInvariantTrace() throws Exception {
+            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
+            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new ContextTrace("kind", containerMock);
+            invariantTrace1 = new InvariantTraceHasInvariantContext(invariantTraceMock1);
+            expect(invariantTraceMock1.invariantContext()).andReturn(invariantTrace1).anyTimes();
+            replay(invariantTraceMock1);
+            classUnderTest.constraints().create(invariantTraceMock1);
+            boolean result = classUnderTest.constraints().destroy(invariantTraceMock1);
+            assertTrue(result);
+            assertThat(classUnderTest.constraints().get(), not(hasItem(invariantTraceMock1)));
+            invariantTrace2 = new InvariantTraceHasInvariantContext(invariantTraceMock2);
+            expect(invariantTraceMock2.invariantContext()).andReturn(invariantTrace2).anyTimes();
+            replay(invariantTraceMock2);
+            result = classUnderTest.constraints().destroy(invariantTraceMock2);
+            assertFalse(result);
+        }
+        @Test
+        public void testContextTraceCreateModuleElementTrace() throws Exception {
+            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
+            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new ContextTrace("kind", containerMock);
+            boolean result;
+            result = classUnderTest.context().create(moduleElementTraceMock1);
+            assertTrue(result);
+            result = classUnderTest.context().create(moduleElementTraceMock2);
+            assertTrue(result);
+            result = classUnderTest.context().create(moduleElementTraceMock1);
+            assertFalse(result);
+        }
+        
+        @Test
+        public void testContextTraceDestroyModuleElementTrace() throws Exception {
+            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
+            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            replay(containerMock);
+            classUnderTest = new ContextTrace("kind", containerMock);
+            classUnderTest.context().create(moduleElementTraceMock1);
+            boolean result = classUnderTest.context().destroy(moduleElementTraceMock1);
+            assertTrue(result);
+            assertThat(classUnderTest.context().get(), not(hasItem(moduleElementTraceMock1)));
+            result = classUnderTest.context().destroy(moduleElementTraceMock2);
             assertFalse(result);
         }
     }
     
-    public static class ContextTests extends EasyMockSupport {
+    public static class InvariantTraceTests extends EasyMockSupport {
     
         @Rule
         public EasyMockRule rule = new EasyMockRule(this);
 
         /** Mock the target of the guard reference. */
         @Mock
-        private Guard guardMock1;
+        private IGuardTrace guardTraceMock1;
         
         /** Mock the target of the guard reference. */
         @Mock
-        private Guard guardMock2;
+        private IGuardTrace guardTraceMock2;
         
         /** Allow the target mock to populate the reference */
-        private GuardHasLimits guardHasLimits1;
+        private IGuardTraceHasLimits guardTrace1;
         
         /** Allow the target mock to populate the reference */
-        private GuardHasLimits guardHasLimits2;
+        private IGuardTraceHasLimits guardTrace2;
         
-        /** Mock the target of the module reference. */
+        /** Mock the target of the check reference. */
         @Mock
-        private Module moduleMock1;
+        private ICheckTrace checkTraceMock1;
         
-        /** Mock the target of the module reference. */
+        /** Mock the target of the check reference. */
         @Mock
-        private Module moduleMock2;
+        private ICheckTrace checkTraceMock2;
         
         /** Allow the target mock to populate the reference */
-        private ModuleHasModuleElements moduleHasModuleElements1;
+        private ICheckTraceHasInvariant checkTrace1;
         
         /** Allow the target mock to populate the reference */
-        private ModuleHasModuleElements moduleHasModuleElements2;
+        private ICheckTraceHasInvariant checkTrace2;
         
-        /** Mock the target of the constraints reference. */
+        /** Mock the target of the message reference. */
         @Mock
-        private Invariant invariantMock1;
+        private IMessageTrace messageTraceMock1;
         
-        /** Mock the target of the constraints reference. */
+        /** Mock the target of the message reference. */
         @Mock
-        private Invariant invariantMock2;
+        private IMessageTrace messageTraceMock2;
         
-        /** Mock the target of the context reference. */
+        /** Allow the target mock to populate the reference */
+        private IMessageTraceHasInvariant messageTrace1;
+        
+        /** Allow the target mock to populate the reference */
+        private IMessageTraceHasInvariant messageTrace2;
+        
+        /** Mock the target of the satisfies reference. */
         @Mock
-        private ModelElement modelElementMock1;
+        private ISatisfiesTrace satisfiesTraceMock1;
         
-        /** Mock the target of the context reference. */
+        /** Mock the target of the satisfies reference. */
         @Mock
-        private ModelElement modelElementMock2;
+        private ISatisfiesTrace satisfiesTraceMock2;
         
-        private Context classUnderTest;
+        /** Mock the target of the invariantContext reference. */
+        @Mock
+        private IContextTrace contextTraceMock1;
+        
+        /** Mock the target of the invariantContext reference. */
+        @Mock
+        private IContextTrace contextTraceMock2;
+        
+        /** Allow the target mock to populate the reference */
+        private IContextTraceHasConstraints contextTrace1;
+        
+        /** Allow the target mock to populate the reference */
+        private IContextTraceHasConstraints contextTrace2;
+        
+        private InvariantTrace classUnderTest;
         
         @Test
-        public void testContextInstantiation() throws Exception {
-            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
-            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
-            replay(moduleMock1);
-            classUnderTest = new ContextImpl(moduleMock1);
-            assertThat(classUnderTest.module().get(), is(moduleMock1));
-            Queue<ModuleElement> values = moduleMock1.moduleElements().get();
+        public void testInvariantTraceInstantiation() throws Exception {
+            contextTrace1 = new ContextTraceHasConstraints(contextTraceMock1);
+            expect(contextTraceMock1.constraints()).andReturn(contextTrace1).anyTimes();
+            replay(contextTraceMock1);
+            classUnderTest = new InvariantTrace("name", contextTraceMock1);
+            assertThat(classUnderTest.invariantContext().get(), is(contextTraceMock1));
+            Queue<IInvariantTrace> values = contextTraceMock1.constraints().get();
             assertThat(values, hasItem(classUnderTest));
 	    }
 	    
-// protected region IgnoreContextAttributes on begin
+// protected region IgnoreInvariantTraceAttributes on begin
 	    @Ignore
-// protected region IgnoreContextAttributes end	    
+// protected region IgnoreInvariantTraceAttributes end	    
 	    @Test
-        public void testContextAttributes() throws Exception {
-            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
-            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
-            replay(moduleMock1);
-            classUnderTest = new ContextImpl(moduleMock1);
-// protected region ContextAttributes on begin
+        public void testInvariantTraceAttributes() throws Exception {
+            contextTrace1 = new ContextTraceHasConstraints(contextTraceMock1);
+            expect(contextTraceMock1.constraints()).andReturn(contextTrace1).anyTimes();
+            replay(contextTraceMock1);
+            classUnderTest = new InvariantTrace("name", contextTraceMock1);
+// protected region InvariantTraceAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
-// protected region ContextAttributes end
+// protected region InvariantTraceAttributes end
         }
 
         
         @Test
-        public void testContextCreateModuleConflict() throws Exception {
-            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
-            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
-            replay(moduleMock1);
-            classUnderTest = new ContextImpl(moduleMock1);
-            moduleHasModuleElements2 = new ModuleHasModuleElementsImpl(moduleMock2);
-            expect(moduleMock2.moduleElements()).andReturn(moduleHasModuleElements2).anyTimes();
-            replay(moduleMock2);
+        public void testInvariantTraceCreateInvariantContextConflict() throws Exception {
+            contextTrace1 = new ContextTraceHasConstraints(contextTraceMock1);
+            expect(contextTraceMock1.constraints()).andReturn(contextTrace1).anyTimes();
+            replay(contextTraceMock1);
+            classUnderTest = new InvariantTrace("name", contextTraceMock1);
+            contextTrace2 = new ContextTraceHasConstraints(contextTraceMock2);
+            expect(contextTraceMock2.constraints()).andReturn(contextTrace2).anyTimes();
+            replay(contextTraceMock2);
         
-            boolean result = classUnderTest.module().create(moduleMock2);
+            boolean result = classUnderTest.invariantContext().create(contextTraceMock2);
             assertFalse(result);
         }
         
         @Test
-        public void testContextDestroyModule() throws Exception {
-            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
-            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
-            replay(moduleMock1);
-            classUnderTest = new ContextImpl(moduleMock1);
-            boolean result = classUnderTest.module().destroy(moduleMock1);
+        public void testInvariantTraceDestroyInvariantContext() throws Exception {
+            contextTrace1 = new ContextTraceHasConstraints(contextTraceMock1);
+            expect(contextTraceMock1.constraints()).andReturn(contextTrace1).anyTimes();
+            replay(contextTraceMock1);
+            classUnderTest = new InvariantTrace("name", contextTraceMock1);
+            boolean result = classUnderTest.invariantContext().destroy(contextTraceMock1);
             assertTrue(result);
         }
         
         @Test
-        public void testContextDestroyAndCreateModule() throws Exception {
-            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
-            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
-            replay(moduleMock1);
-            classUnderTest = new ContextImpl(moduleMock1);
-            moduleHasModuleElements2 = new ModuleHasModuleElementsImpl(moduleMock2);
-            expect(moduleMock2.moduleElements()).andReturn(moduleHasModuleElements2).anyTimes();
-            replay(moduleMock2);
+        public void testInvariantTraceDestroyAndCreateInvariantContext() throws Exception {
+            contextTrace1 = new ContextTraceHasConstraints(contextTraceMock1);
+            expect(contextTraceMock1.constraints()).andReturn(contextTrace1).anyTimes();
+            replay(contextTraceMock1);
+            classUnderTest = new InvariantTrace("name", contextTraceMock1);
+            contextTrace2 = new ContextTraceHasConstraints(contextTraceMock2);
+            expect(contextTraceMock2.constraints()).andReturn(contextTrace2).anyTimes();
+            replay(contextTraceMock2);
   
-            boolean result = classUnderTest.module().destroy(moduleMock1);
+            boolean result = classUnderTest.invariantContext().destroy(contextTraceMock1);
             assertTrue(result);
-            result = classUnderTest.module().create(moduleMock2);
+            result = classUnderTest.invariantContext().create(contextTraceMock2);
             assertTrue(result);
-            result = classUnderTest.module().create(moduleMock2);
+            result = classUnderTest.invariantContext().create(contextTraceMock2);
             assertFalse(result);
-            result = classUnderTest.module().create(moduleMock1);
+            result = classUnderTest.invariantContext().create(contextTraceMock1);
             assertFalse(result);
         }
         
         @Test
-        public void testContextCreateGuard() throws Exception {
-            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
-            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
-            replay(moduleMock1);
-            classUnderTest = new ContextImpl(moduleMock1);
-            guardHasLimits1 = new GuardHasLimitsImpl(guardMock1);
-            expect(guardMock1.limits()).andReturn(guardHasLimits1).anyTimes();
-            replay(guardMock1);
-            guardHasLimits2 = new GuardHasLimitsImpl(guardMock2);
-            expect(guardMock2.limits()).andReturn(guardHasLimits2).anyTimes();
-            replay(guardMock2);
+        public void testInvariantTraceCreateGuardTrace() throws Exception {
+            contextTrace1 = new ContextTraceHasConstraints(contextTraceMock1);
+            expect(contextTraceMock1.constraints()).andReturn(contextTrace1).anyTimes();
+            replay(contextTraceMock1);
+            classUnderTest = new InvariantTrace("name", contextTraceMock1);
+            guardTrace1 = new GuardTraceHasLimits(guardTraceMock1);
+            expect(guardTraceMock1.limits()).andReturn(guardTrace1).anyTimes();
+            replay(guardTraceMock1);
+            guardTrace2 = new GuardTraceHasLimits(guardTraceMock2);
+            expect(guardTraceMock2.limits()).andReturn(guardTrace2).anyTimes();
+            replay(guardTraceMock2);
             boolean result;
-            result = classUnderTest.guard().create(guardMock1);
+            result = classUnderTest.guard().create(guardTraceMock1);
             assertTrue(result);
-            result = classUnderTest.guard().create(guardMock2);
+            result = classUnderTest.guard().create(guardTraceMock2);
             assertFalse(result);
-            result = classUnderTest.guard().create(guardMock1);
+            result = classUnderTest.guard().create(guardTraceMock1);
             assertFalse(result);
         }
         
         @Test
-        public void testContextDestroyGuard() throws Exception {
-            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
-            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
-            replay(moduleMock1);
-            classUnderTest = new ContextImpl(moduleMock1);
-            guardHasLimits1 = new GuardHasLimitsImpl(guardMock1);
-            expect(guardMock1.limits()).andReturn(guardHasLimits1).anyTimes();
-            replay(guardMock1);
-            classUnderTest.guard().create(guardMock1);
-            boolean result = classUnderTest.guard().destroy(guardMock1);
+        public void testInvariantTraceDestroyGuardTrace() throws Exception {
+            contextTrace1 = new ContextTraceHasConstraints(contextTraceMock1);
+            expect(contextTraceMock1.constraints()).andReturn(contextTrace1).anyTimes();
+            replay(contextTraceMock1);
+            classUnderTest = new InvariantTrace("name", contextTraceMock1);
+            guardTrace1 = new GuardTraceHasLimits(guardTraceMock1);
+            expect(guardTraceMock1.limits()).andReturn(guardTrace1).anyTimes();
+            replay(guardTraceMock1);
+            classUnderTest.guard().create(guardTraceMock1);
+            boolean result = classUnderTest.guard().destroy(guardTraceMock1);
             assertTrue(result);
             assertThat(classUnderTest.guard().get(), is(nullValue()));
-            guardHasLimits2 = new GuardHasLimitsImpl(guardMock2);
-            expect(guardMock2.limits()).andReturn(guardHasLimits2).anyTimes();
-            replay(guardMock2);
-            result = classUnderTest.guard().destroy(guardMock2);
+            guardTrace2 = new GuardTraceHasLimits(guardTraceMock2);
+            expect(guardTraceMock2.limits()).andReturn(guardTrace2).anyTimes();
+            replay(guardTraceMock2);
+            result = classUnderTest.guard().destroy(guardTraceMock2);
             assertFalse(result);
         }
         @Test
-        public void testContextCreateInvariant() throws Exception {
-            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
-            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
-            replay(moduleMock1);
-            classUnderTest = new ContextImpl(moduleMock1);
+        public void testInvariantTraceCreateCheckTrace() throws Exception {
+            contextTrace1 = new ContextTraceHasConstraints(contextTraceMock1);
+            expect(contextTraceMock1.constraints()).andReturn(contextTrace1).anyTimes();
+            replay(contextTraceMock1);
+            classUnderTest = new InvariantTrace("name", contextTraceMock1);
+            checkTrace1 = new CheckTraceHasInvariant(checkTraceMock1);
+            expect(checkTraceMock1.invariant()).andReturn(checkTrace1).anyTimes();
+            replay(checkTraceMock1);
+            checkTrace2 = new CheckTraceHasInvariant(checkTraceMock2);
+            expect(checkTraceMock2.invariant()).andReturn(checkTrace2).anyTimes();
+            replay(checkTraceMock2);
             boolean result;
-            result = classUnderTest.constraints().create(invariantMock1);
+            result = classUnderTest.check().create(checkTraceMock1);
             assertTrue(result);
-            result = classUnderTest.constraints().create(invariantMock2);
-            assertTrue(result);
-            result = classUnderTest.constraints().create(invariantMock1);
+            result = classUnderTest.check().create(checkTraceMock2);
+            assertFalse(result);
+            result = classUnderTest.check().create(checkTraceMock1);
             assertFalse(result);
         }
         
         @Test
-        public void testContextDestroyInvariant() throws Exception {
-            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
-            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
-            replay(moduleMock1);
-            classUnderTest = new ContextImpl(moduleMock1);
-            classUnderTest.constraints().create(invariantMock1);
-            boolean result = classUnderTest.constraints().destroy(invariantMock1);
-            assertTrue(result);
-            assertThat(classUnderTest.constraints().get(), not(hasItem(invariantMock1)));
-            result = classUnderTest.constraints().destroy(invariantMock2);
-            assertFalse(result);
-        }
-        @Test
-        public void testContextCreateModelElement() throws Exception {
-            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
-            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
-            replay(moduleMock1);
-            classUnderTest = new ContextImpl(moduleMock1);
-            boolean result;
-            result = classUnderTest.context().create(modelElementMock1);
-            assertTrue(result);
-            result = classUnderTest.context().create(modelElementMock2);
-            assertTrue(result);
-            result = classUnderTest.context().create(modelElementMock1);
-            assertFalse(result);
-        }
-        
-        @Test
-        public void testContextDestroyModelElement() throws Exception {
-            moduleHasModuleElements1 = new ModuleHasModuleElementsImpl(moduleMock1);
-            expect(moduleMock1.moduleElements()).andReturn(moduleHasModuleElements1).anyTimes();
-            replay(moduleMock1);
-            classUnderTest = new ContextImpl(moduleMock1);
-            classUnderTest.context().create(modelElementMock1);
-            boolean result = classUnderTest.context().destroy(modelElementMock1);
-            assertTrue(result);
-            assertThat(classUnderTest.context().get(), not(hasItem(modelElementMock1)));
-            result = classUnderTest.context().destroy(modelElementMock2);
-            assertFalse(result);
-        }
-    }
-    
-    public static class InvariantTests extends EasyMockSupport {
-    
-        @Rule
-        public EasyMockRule rule = new EasyMockRule(this);
-
-        /** Mock the target of the guard reference. */
-        @Mock
-        private Guard guardMock1;
-        
-        /** Mock the target of the guard reference. */
-        @Mock
-        private Guard guardMock2;
-        
-        /** Allow the target mock to populate the reference */
-        private GuardHasLimits guardHasLimits1;
-        
-        /** Allow the target mock to populate the reference */
-        private GuardHasLimits guardHasLimits2;
-        
-        /** Mock the target of the check reference. */
-        @Mock
-        private Check checkMock1;
-        
-        /** Mock the target of the check reference. */
-        @Mock
-        private Check checkMock2;
-        
-        /** Allow the target mock to populate the reference */
-        private CheckHasInvariant checkHasInvariant1;
-        
-        /** Allow the target mock to populate the reference */
-        private CheckHasInvariant checkHasInvariant2;
-        
-        /** Mock the target of the message reference. */
-        @Mock
-        private Message messageMock1;
-        
-        /** Mock the target of the message reference. */
-        @Mock
-        private Message messageMock2;
-        
-        /** Allow the target mock to populate the reference */
-        private MessageHasInvariant messageHasInvariant1;
-        
-        /** Allow the target mock to populate the reference */
-        private MessageHasInvariant messageHasInvariant2;
-        
-        /** Mock the target of the satisfies reference. */
-        @Mock
-        private Satisfies satisfiesMock1;
-        
-        /** Mock the target of the satisfies reference. */
-        @Mock
-        private Satisfies satisfiesMock2;
-        
-        /** Mock the container. */
-        @Mock
-        private Context containerMock;
-        
-        /** Allow the container mock to populate the reference */
-        private ContextHasConstraints contextHasConstraints1;
-
-        private Invariant classUnderTest;
-        
-        @Test
-        public void testInvariantInstantiation() throws Exception {
-            contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
-            expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
-            replay(containerMock);
-            classUnderTest = new InvariantImpl("name", containerMock);
-            Queue<Invariant> values = containerMock.constraints().get();
-            assertThat(values, hasItem(classUnderTest));
-	    }
-	    
-// protected region IgnoreInvariantAttributes on begin
-	    @Ignore
-// protected region IgnoreInvariantAttributes end	    
-	    @Test
-        public void testInvariantAttributes() throws Exception {
-            contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
-            expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
-            replay(containerMock);
-            classUnderTest = new InvariantImpl("name", containerMock);
-// protected region InvariantAttributes on begin
-            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
-// protected region InvariantAttributes end
-        }
-
-        @Test
-        public void testInvariantCreateGuard() throws Exception {
-            contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
-            expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
-            replay(containerMock);
-            classUnderTest = new InvariantImpl("name", containerMock);
-            guardHasLimits1 = new GuardHasLimitsImpl(guardMock1);
-            expect(guardMock1.limits()).andReturn(guardHasLimits1).anyTimes();
-            replay(guardMock1);
-            guardHasLimits2 = new GuardHasLimitsImpl(guardMock2);
-            expect(guardMock2.limits()).andReturn(guardHasLimits2).anyTimes();
-            replay(guardMock2);
-            boolean result;
-            result = classUnderTest.guard().create(guardMock1);
-            assertTrue(result);
-            result = classUnderTest.guard().create(guardMock2);
-            assertFalse(result);
-            result = classUnderTest.guard().create(guardMock1);
-            assertFalse(result);
-        }
-        
-        @Test
-        public void testInvariantDestroyGuard() throws Exception {
-            contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
-            expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
-            replay(containerMock);
-            classUnderTest = new InvariantImpl("name", containerMock);
-            guardHasLimits1 = new GuardHasLimitsImpl(guardMock1);
-            expect(guardMock1.limits()).andReturn(guardHasLimits1).anyTimes();
-            replay(guardMock1);
-            classUnderTest.guard().create(guardMock1);
-            boolean result = classUnderTest.guard().destroy(guardMock1);
-            assertTrue(result);
-            assertThat(classUnderTest.guard().get(), is(nullValue()));
-            guardHasLimits2 = new GuardHasLimitsImpl(guardMock2);
-            expect(guardMock2.limits()).andReturn(guardHasLimits2).anyTimes();
-            replay(guardMock2);
-            result = classUnderTest.guard().destroy(guardMock2);
-            assertFalse(result);
-        }
-        @Test
-        public void testInvariantCreateCheck() throws Exception {
-            contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
-            expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
-            replay(containerMock);
-            classUnderTest = new InvariantImpl("name", containerMock);
-            checkHasInvariant1 = new CheckHasInvariantImpl(checkMock1);
-            expect(checkMock1.invariant()).andReturn(checkHasInvariant1).anyTimes();
-            replay(checkMock1);
-            checkHasInvariant2 = new CheckHasInvariantImpl(checkMock2);
-            expect(checkMock2.invariant()).andReturn(checkHasInvariant2).anyTimes();
-            replay(checkMock2);
-            boolean result;
-            result = classUnderTest.check().create(checkMock1);
-            assertTrue(result);
-            result = classUnderTest.check().create(checkMock2);
-            assertFalse(result);
-            result = classUnderTest.check().create(checkMock1);
-            assertFalse(result);
-        }
-        
-        @Test
-        public void testInvariantDestroyCheck() throws Exception {
-            contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
-            expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
-            replay(containerMock);
-            classUnderTest = new InvariantImpl("name", containerMock);
-            checkHasInvariant1 = new CheckHasInvariantImpl(checkMock1);
-            expect(checkMock1.invariant()).andReturn(checkHasInvariant1).anyTimes();
-            replay(checkMock1);
-            classUnderTest.check().create(checkMock1);
-            boolean result = classUnderTest.check().destroy(checkMock1);
+        public void testInvariantTraceDestroyCheckTrace() throws Exception {
+            contextTrace1 = new ContextTraceHasConstraints(contextTraceMock1);
+            expect(contextTraceMock1.constraints()).andReturn(contextTrace1).anyTimes();
+            replay(contextTraceMock1);
+            classUnderTest = new InvariantTrace("name", contextTraceMock1);
+            checkTrace1 = new CheckTraceHasInvariant(checkTraceMock1);
+            expect(checkTraceMock1.invariant()).andReturn(checkTrace1).anyTimes();
+            replay(checkTraceMock1);
+            classUnderTest.check().create(checkTraceMock1);
+            boolean result = classUnderTest.check().destroy(checkTraceMock1);
             assertTrue(result);
             assertThat(classUnderTest.check().get(), is(nullValue()));
-            checkHasInvariant2 = new CheckHasInvariantImpl(checkMock2);
-            expect(checkMock2.invariant()).andReturn(checkHasInvariant2).anyTimes();
-            replay(checkMock2);
-            result = classUnderTest.check().destroy(checkMock2);
+            checkTrace2 = new CheckTraceHasInvariant(checkTraceMock2);
+            expect(checkTraceMock2.invariant()).andReturn(checkTrace2).anyTimes();
+            replay(checkTraceMock2);
+            result = classUnderTest.check().destroy(checkTraceMock2);
             assertFalse(result);
         }
         @Test
-        public void testInvariantCreateMessage() throws Exception {
-            contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
-            expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
-            replay(containerMock);
-            classUnderTest = new InvariantImpl("name", containerMock);
-            messageHasInvariant1 = new MessageHasInvariantImpl(messageMock1);
-            expect(messageMock1.invariant()).andReturn(messageHasInvariant1).anyTimes();
-            replay(messageMock1);
-            messageHasInvariant2 = new MessageHasInvariantImpl(messageMock2);
-            expect(messageMock2.invariant()).andReturn(messageHasInvariant2).anyTimes();
-            replay(messageMock2);
+        public void testInvariantTraceCreateMessageTrace() throws Exception {
+            contextTrace1 = new ContextTraceHasConstraints(contextTraceMock1);
+            expect(contextTraceMock1.constraints()).andReturn(contextTrace1).anyTimes();
+            replay(contextTraceMock1);
+            classUnderTest = new InvariantTrace("name", contextTraceMock1);
+            messageTrace1 = new MessageTraceHasInvariant(messageTraceMock1);
+            expect(messageTraceMock1.invariant()).andReturn(messageTrace1).anyTimes();
+            replay(messageTraceMock1);
+            messageTrace2 = new MessageTraceHasInvariant(messageTraceMock2);
+            expect(messageTraceMock2.invariant()).andReturn(messageTrace2).anyTimes();
+            replay(messageTraceMock2);
             boolean result;
-            result = classUnderTest.message().create(messageMock1);
+            result = classUnderTest.message().create(messageTraceMock1);
             assertTrue(result);
-            result = classUnderTest.message().create(messageMock2);
+            result = classUnderTest.message().create(messageTraceMock2);
             assertFalse(result);
-            result = classUnderTest.message().create(messageMock1);
+            result = classUnderTest.message().create(messageTraceMock1);
             assertFalse(result);
         }
         
         @Test
-        public void testInvariantDestroyMessage() throws Exception {
-            contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
-            expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
-            replay(containerMock);
-            classUnderTest = new InvariantImpl("name", containerMock);
-            messageHasInvariant1 = new MessageHasInvariantImpl(messageMock1);
-            expect(messageMock1.invariant()).andReturn(messageHasInvariant1).anyTimes();
-            replay(messageMock1);
-            classUnderTest.message().create(messageMock1);
-            boolean result = classUnderTest.message().destroy(messageMock1);
+        public void testInvariantTraceDestroyMessageTrace() throws Exception {
+            contextTrace1 = new ContextTraceHasConstraints(contextTraceMock1);
+            expect(contextTraceMock1.constraints()).andReturn(contextTrace1).anyTimes();
+            replay(contextTraceMock1);
+            classUnderTest = new InvariantTrace("name", contextTraceMock1);
+            messageTrace1 = new MessageTraceHasInvariant(messageTraceMock1);
+            expect(messageTraceMock1.invariant()).andReturn(messageTrace1).anyTimes();
+            replay(messageTraceMock1);
+            classUnderTest.message().create(messageTraceMock1);
+            boolean result = classUnderTest.message().destroy(messageTraceMock1);
             assertTrue(result);
             assertThat(classUnderTest.message().get(), is(nullValue()));
-            messageHasInvariant2 = new MessageHasInvariantImpl(messageMock2);
-            expect(messageMock2.invariant()).andReturn(messageHasInvariant2).anyTimes();
-            replay(messageMock2);
-            result = classUnderTest.message().destroy(messageMock2);
+            messageTrace2 = new MessageTraceHasInvariant(messageTraceMock2);
+            expect(messageTraceMock2.invariant()).andReturn(messageTrace2).anyTimes();
+            replay(messageTraceMock2);
+            result = classUnderTest.message().destroy(messageTraceMock2);
             assertFalse(result);
         }
         @Test
-        public void testInvariantCreateSatisfies() throws Exception {
-            contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
-            expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
-            replay(containerMock);
-            classUnderTest = new InvariantImpl("name", containerMock);
+        public void testInvariantTraceCreateSatisfiesTrace() throws Exception {
+            contextTrace1 = new ContextTraceHasConstraints(contextTraceMock1);
+            expect(contextTraceMock1.constraints()).andReturn(contextTrace1).anyTimes();
+            replay(contextTraceMock1);
+            classUnderTest = new InvariantTrace("name", contextTraceMock1);
             boolean result;
-            result = classUnderTest.satisfies().create(satisfiesMock1);
+            result = classUnderTest.satisfies().create(satisfiesTraceMock1);
             assertTrue(result);
-            result = classUnderTest.satisfies().create(satisfiesMock2);
+            result = classUnderTest.satisfies().create(satisfiesTraceMock2);
             assertFalse(result);
-            result = classUnderTest.satisfies().create(satisfiesMock1);
+            result = classUnderTest.satisfies().create(satisfiesTraceMock1);
             assertFalse(result);
         }
         
         @Test
-        public void testInvariantDestroySatisfies() throws Exception {
-            contextHasConstraints1 = new ContextHasConstraintsImpl(containerMock);
-            expect(containerMock.constraints()).andReturn(contextHasConstraints1).anyTimes();
-            replay(containerMock);
-            classUnderTest = new InvariantImpl("name", containerMock);
-            classUnderTest.satisfies().create(satisfiesMock1);
-            boolean result = classUnderTest.satisfies().destroy(satisfiesMock1);
+        public void testInvariantTraceDestroySatisfiesTrace() throws Exception {
+            contextTrace1 = new ContextTraceHasConstraints(contextTraceMock1);
+            expect(contextTraceMock1.constraints()).andReturn(contextTrace1).anyTimes();
+            replay(contextTraceMock1);
+            classUnderTest = new InvariantTrace("name", contextTraceMock1);
+            classUnderTest.satisfies().create(satisfiesTraceMock1);
+            boolean result = classUnderTest.satisfies().destroy(satisfiesTraceMock1);
             assertTrue(result);
             assertThat(classUnderTest.satisfies().get(), is(nullValue()));
-            result = classUnderTest.satisfies().destroy(satisfiesMock2);
+            result = classUnderTest.satisfies().destroy(satisfiesTraceMock2);
             assertFalse(result);
         }
     }
     
-    public static class GuardTests extends EasyMockSupport {
+    public static class GuardTraceTests extends EasyMockSupport {
     
         @Rule
         public EasyMockRule rule = new EasyMockRule(this);
 
         /** Mock the target of the accesses reference. */
         @Mock
-        private Access accessMock1;
+        private IAccess accessMock1;
         
         /** Mock the target of the accesses reference. */
         @Mock
-        private Access accessMock2;
+        private IAccess accessMock2;
         
         /** Allow the target mock to populate the reference */
-        private AccessHasExecution accessHasExecution1;
+        private IAccessHasExecution access1;
         
         /** Allow the target mock to populate the reference */
-        private AccessHasExecution accessHasExecution2;
+        private IAccessHasExecution access2;
         
         /** Mock the target of the limits reference. */
         @Mock
-        private GuardedElement guardedElementMock1;
+        private IGuardedElementTrace guardedElementTraceMock1;
         
         /** Mock the target of the limits reference. */
         @Mock
-        private GuardedElement guardedElementMock2;
+        private IGuardedElementTrace guardedElementTraceMock2;
         
         /** Allow the target mock to populate the reference */
-        private GuardedElementHasGuard guardedElementHasGuard1;
+        private IGuardedElementTraceHasGuard guardedElementTrace1;
         
         /** Allow the target mock to populate the reference */
-        private GuardedElementHasGuard guardedElementHasGuard2;
+        private IGuardedElementTraceHasGuard guardedElementTrace2;
         
-        private Guard classUnderTest;
+        private GuardTrace classUnderTest;
         
         @Test
-        public void testGuardInstantiation() throws Exception {
-            guardedElementHasGuard1 = new GuardedElementHasGuardImpl(guardedElementMock1);
-            expect(guardedElementMock1.guard()).andReturn(guardedElementHasGuard1).anyTimes();
-            replay(guardedElementMock1);
-            classUnderTest = new GuardImpl(guardedElementMock1);
-            assertThat(classUnderTest.limits().get(), is(guardedElementMock1));
-            assertThat(guardedElementMock1.guard().get(), is(classUnderTest));
+        public void testGuardTraceInstantiation() throws Exception {
+            guardedElementTrace1 = new GuardedElementTraceHasGuard(guardedElementTraceMock1);
+            expect(guardedElementTraceMock1.guard()).andReturn(guardedElementTrace1).anyTimes();
+            replay(guardedElementTraceMock1);
+            classUnderTest = new GuardTrace(guardedElementTraceMock1);
+            assertThat(classUnderTest.limits().get(), is(guardedElementTraceMock1));
+            assertThat(guardedElementTraceMock1.guard().get(), is(classUnderTest));
 	    }
 	    
-// protected region IgnoreGuardAttributes on begin
+// protected region IgnoreGuardTraceAttributes on begin
 	    @Ignore
-// protected region IgnoreGuardAttributes end	    
+// protected region IgnoreGuardTraceAttributes end	    
 	    @Test
-        public void testGuardAttributes() throws Exception {
-            guardedElementHasGuard1 = new GuardedElementHasGuardImpl(guardedElementMock1);
-            expect(guardedElementMock1.guard()).andReturn(guardedElementHasGuard1).anyTimes();
-            replay(guardedElementMock1);
-            classUnderTest = new GuardImpl(guardedElementMock1);
-// protected region GuardAttributes on begin
+        public void testGuardTraceAttributes() throws Exception {
+            guardedElementTrace1 = new GuardedElementTraceHasGuard(guardedElementTraceMock1);
+            expect(guardedElementTraceMock1.guard()).andReturn(guardedElementTrace1).anyTimes();
+            replay(guardedElementTraceMock1);
+            classUnderTest = new GuardTrace(guardedElementTraceMock1);
+// protected region GuardTraceAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
-// protected region GuardAttributes end
+// protected region GuardTraceAttributes end
         }
 
         
         @Test
-        public void testGuardCreateLimitsConflict() throws Exception {
-            guardedElementHasGuard1 = new GuardedElementHasGuardImpl(guardedElementMock1);
-            expect(guardedElementMock1.guard()).andReturn(guardedElementHasGuard1).anyTimes();
-            replay(guardedElementMock1);
-            classUnderTest = new GuardImpl(guardedElementMock1);
-            guardedElementHasGuard2 = new GuardedElementHasGuardImpl(guardedElementMock2);
-            expect(guardedElementMock2.guard()).andReturn(guardedElementHasGuard2).anyTimes();
-            replay(guardedElementMock2);
+        public void testGuardTraceCreateLimitsConflict() throws Exception {
+            guardedElementTrace1 = new GuardedElementTraceHasGuard(guardedElementTraceMock1);
+            expect(guardedElementTraceMock1.guard()).andReturn(guardedElementTrace1).anyTimes();
+            replay(guardedElementTraceMock1);
+            classUnderTest = new GuardTrace(guardedElementTraceMock1);
+            guardedElementTrace2 = new GuardedElementTraceHasGuard(guardedElementTraceMock2);
+            expect(guardedElementTraceMock2.guard()).andReturn(guardedElementTrace2).anyTimes();
+            replay(guardedElementTraceMock2);
         
-            boolean result = classUnderTest.limits().create(guardedElementMock2);
+            boolean result = classUnderTest.limits().create(guardedElementTraceMock2);
             assertFalse(result);
         }
         
         @Test
-        public void testGuardDestroyLimits() throws Exception {
-            guardedElementHasGuard1 = new GuardedElementHasGuardImpl(guardedElementMock1);
-            expect(guardedElementMock1.guard()).andReturn(guardedElementHasGuard1).anyTimes();
-            replay(guardedElementMock1);
-            classUnderTest = new GuardImpl(guardedElementMock1);
-            boolean result = classUnderTest.limits().destroy(guardedElementMock1);
+        public void testGuardTraceDestroyLimits() throws Exception {
+            guardedElementTrace1 = new GuardedElementTraceHasGuard(guardedElementTraceMock1);
+            expect(guardedElementTraceMock1.guard()).andReturn(guardedElementTrace1).anyTimes();
+            replay(guardedElementTraceMock1);
+            classUnderTest = new GuardTrace(guardedElementTraceMock1);
+            boolean result = classUnderTest.limits().destroy(guardedElementTraceMock1);
             assertTrue(result);
         }
         
         @Test
-        public void testGuardDestroyAndCreateLimits() throws Exception {
-            guardedElementHasGuard1 = new GuardedElementHasGuardImpl(guardedElementMock1);
-            expect(guardedElementMock1.guard()).andReturn(guardedElementHasGuard1).anyTimes();
-            replay(guardedElementMock1);
-            classUnderTest = new GuardImpl(guardedElementMock1);
-            guardedElementHasGuard2 = new GuardedElementHasGuardImpl(guardedElementMock2);
-            expect(guardedElementMock2.guard()).andReturn(guardedElementHasGuard2).anyTimes();
-            replay(guardedElementMock2);
+        public void testGuardTraceDestroyAndCreateLimits() throws Exception {
+            guardedElementTrace1 = new GuardedElementTraceHasGuard(guardedElementTraceMock1);
+            expect(guardedElementTraceMock1.guard()).andReturn(guardedElementTrace1).anyTimes();
+            replay(guardedElementTraceMock1);
+            classUnderTest = new GuardTrace(guardedElementTraceMock1);
+            guardedElementTrace2 = new GuardedElementTraceHasGuard(guardedElementTraceMock2);
+            expect(guardedElementTraceMock2.guard()).andReturn(guardedElementTrace2).anyTimes();
+            replay(guardedElementTraceMock2);
   
-            boolean result = classUnderTest.limits().destroy(guardedElementMock1);
+            boolean result = classUnderTest.limits().destroy(guardedElementTraceMock1);
             assertTrue(result);
-            result = classUnderTest.limits().create(guardedElementMock2);
+            result = classUnderTest.limits().create(guardedElementTraceMock2);
             assertTrue(result);
-            result = classUnderTest.limits().create(guardedElementMock2);
+            result = classUnderTest.limits().create(guardedElementTraceMock2);
             assertFalse(result);
-            result = classUnderTest.limits().create(guardedElementMock1);
+            result = classUnderTest.limits().create(guardedElementTraceMock1);
             assertFalse(result);
         }
         
         @Test
-        public void testGuardCreateAccess() throws Exception {
-            guardedElementHasGuard1 = new GuardedElementHasGuardImpl(guardedElementMock1);
-            expect(guardedElementMock1.guard()).andReturn(guardedElementHasGuard1).anyTimes();
-            replay(guardedElementMock1);
-            classUnderTest = new GuardImpl(guardedElementMock1);
-            accessHasExecution1 = new AccessHasExecutionImpl(accessMock1);
-            expect(accessMock1.execution()).andReturn(accessHasExecution1).anyTimes();
+        public void testGuardTraceCreateAccess() throws Exception {
+            guardedElementTrace1 = new GuardedElementTraceHasGuard(guardedElementTraceMock1);
+            expect(guardedElementTraceMock1.guard()).andReturn(guardedElementTrace1).anyTimes();
+            replay(guardedElementTraceMock1);
+            classUnderTest = new GuardTrace(guardedElementTraceMock1);
+            access1 = new AccessHasExecution(accessMock1);
+            expect(accessMock1.execution()).andReturn(access1).anyTimes();
             replay(accessMock1);
-            accessHasExecution2 = new AccessHasExecutionImpl(accessMock2);
-            expect(accessMock2.execution()).andReturn(accessHasExecution2).anyTimes();
+            access2 = new AccessHasExecution(accessMock2);
+            expect(accessMock2.execution()).andReturn(access2).anyTimes();
             replay(accessMock2);
             boolean result;
             result = classUnderTest.accesses().create(accessMock1);
@@ -794,141 +907,141 @@ public class EvlTraceModelTests {
         }
         
         @Test
-        public void testGuardDestroyAccess() throws Exception {
-            guardedElementHasGuard1 = new GuardedElementHasGuardImpl(guardedElementMock1);
-            expect(guardedElementMock1.guard()).andReturn(guardedElementHasGuard1).anyTimes();
-            replay(guardedElementMock1);
-            classUnderTest = new GuardImpl(guardedElementMock1);
-            accessHasExecution1 = new AccessHasExecutionImpl(accessMock1);
-            expect(accessMock1.execution()).andReturn(accessHasExecution1).anyTimes();
+        public void testGuardTraceDestroyAccess() throws Exception {
+            guardedElementTrace1 = new GuardedElementTraceHasGuard(guardedElementTraceMock1);
+            expect(guardedElementTraceMock1.guard()).andReturn(guardedElementTrace1).anyTimes();
+            replay(guardedElementTraceMock1);
+            classUnderTest = new GuardTrace(guardedElementTraceMock1);
+            access1 = new AccessHasExecution(accessMock1);
+            expect(accessMock1.execution()).andReturn(access1).anyTimes();
             replay(accessMock1);
             classUnderTest.accesses().create(accessMock1);
             boolean result = classUnderTest.accesses().destroy(accessMock1);
             assertTrue(result);
             assertThat(classUnderTest.accesses().get(), not(hasItem(accessMock1)));
-            accessHasExecution2 = new AccessHasExecutionImpl(accessMock2);
-            expect(accessMock2.execution()).andReturn(accessHasExecution2).anyTimes();
+            access2 = new AccessHasExecution(accessMock2);
+            expect(accessMock2.execution()).andReturn(access2).anyTimes();
             replay(accessMock2);
             result = classUnderTest.accesses().destroy(accessMock2);
             assertFalse(result);
         }
     }
     
-    public static class CheckTests extends EasyMockSupport {
+    public static class CheckTraceTests extends EasyMockSupport {
     
         @Rule
         public EasyMockRule rule = new EasyMockRule(this);
 
         /** Mock the target of the accesses reference. */
         @Mock
-        private Access accessMock1;
+        private IAccess accessMock1;
         
         /** Mock the target of the accesses reference. */
         @Mock
-        private Access accessMock2;
+        private IAccess accessMock2;
         
         /** Allow the target mock to populate the reference */
-        private AccessHasExecution accessHasExecution1;
+        private IAccessHasExecution access1;
         
         /** Allow the target mock to populate the reference */
-        private AccessHasExecution accessHasExecution2;
+        private IAccessHasExecution access2;
         
         /** Mock the target of the invariant reference. */
         @Mock
-        private Invariant invariantMock1;
+        private IInvariantTrace invariantTraceMock1;
         
         /** Mock the target of the invariant reference. */
         @Mock
-        private Invariant invariantMock2;
+        private IInvariantTrace invariantTraceMock2;
         
         /** Allow the target mock to populate the reference */
-        private InvariantHasCheck invariantHasCheck1;
+        private IInvariantTraceHasCheck invariantTrace1;
         
         /** Allow the target mock to populate the reference */
-        private InvariantHasCheck invariantHasCheck2;
+        private IInvariantTraceHasCheck invariantTrace2;
         
-        private Check classUnderTest;
+        private CheckTrace classUnderTest;
         
         @Test
-        public void testCheckInstantiation() throws Exception {
-            invariantHasCheck1 = new InvariantHasCheckImpl(invariantMock1);
-            expect(invariantMock1.check()).andReturn(invariantHasCheck1).anyTimes();
-            replay(invariantMock1);
-            classUnderTest = new CheckImpl(invariantMock1);
-            assertThat(classUnderTest.invariant().get(), is(invariantMock1));
-            assertThat(invariantMock1.check().get(), is(classUnderTest));
+        public void testCheckTraceInstantiation() throws Exception {
+            invariantTrace1 = new InvariantTraceHasCheck(invariantTraceMock1);
+            expect(invariantTraceMock1.check()).andReturn(invariantTrace1).anyTimes();
+            replay(invariantTraceMock1);
+            classUnderTest = new CheckTrace(invariantTraceMock1);
+            assertThat(classUnderTest.invariant().get(), is(invariantTraceMock1));
+            assertThat(invariantTraceMock1.check().get(), is(classUnderTest));
 	    }
 	    
-// protected region IgnoreCheckAttributes on begin
+// protected region IgnoreCheckTraceAttributes on begin
 	    @Ignore
-// protected region IgnoreCheckAttributes end	    
+// protected region IgnoreCheckTraceAttributes end	    
 	    @Test
-        public void testCheckAttributes() throws Exception {
-            invariantHasCheck1 = new InvariantHasCheckImpl(invariantMock1);
-            expect(invariantMock1.check()).andReturn(invariantHasCheck1).anyTimes();
-            replay(invariantMock1);
-            classUnderTest = new CheckImpl(invariantMock1);
-// protected region CheckAttributes on begin
+        public void testCheckTraceAttributes() throws Exception {
+            invariantTrace1 = new InvariantTraceHasCheck(invariantTraceMock1);
+            expect(invariantTraceMock1.check()).andReturn(invariantTrace1).anyTimes();
+            replay(invariantTraceMock1);
+            classUnderTest = new CheckTrace(invariantTraceMock1);
+// protected region CheckTraceAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
-// protected region CheckAttributes end
+// protected region CheckTraceAttributes end
         }
 
         
         @Test
-        public void testCheckCreateInvariantConflict() throws Exception {
-            invariantHasCheck1 = new InvariantHasCheckImpl(invariantMock1);
-            expect(invariantMock1.check()).andReturn(invariantHasCheck1).anyTimes();
-            replay(invariantMock1);
-            classUnderTest = new CheckImpl(invariantMock1);
-            invariantHasCheck2 = new InvariantHasCheckImpl(invariantMock2);
-            expect(invariantMock2.check()).andReturn(invariantHasCheck2).anyTimes();
-            replay(invariantMock2);
+        public void testCheckTraceCreateInvariantConflict() throws Exception {
+            invariantTrace1 = new InvariantTraceHasCheck(invariantTraceMock1);
+            expect(invariantTraceMock1.check()).andReturn(invariantTrace1).anyTimes();
+            replay(invariantTraceMock1);
+            classUnderTest = new CheckTrace(invariantTraceMock1);
+            invariantTrace2 = new InvariantTraceHasCheck(invariantTraceMock2);
+            expect(invariantTraceMock2.check()).andReturn(invariantTrace2).anyTimes();
+            replay(invariantTraceMock2);
         
-            boolean result = classUnderTest.invariant().create(invariantMock2);
+            boolean result = classUnderTest.invariant().create(invariantTraceMock2);
             assertFalse(result);
         }
         
         @Test
-        public void testCheckDestroyInvariant() throws Exception {
-            invariantHasCheck1 = new InvariantHasCheckImpl(invariantMock1);
-            expect(invariantMock1.check()).andReturn(invariantHasCheck1).anyTimes();
-            replay(invariantMock1);
-            classUnderTest = new CheckImpl(invariantMock1);
-            boolean result = classUnderTest.invariant().destroy(invariantMock1);
+        public void testCheckTraceDestroyInvariant() throws Exception {
+            invariantTrace1 = new InvariantTraceHasCheck(invariantTraceMock1);
+            expect(invariantTraceMock1.check()).andReturn(invariantTrace1).anyTimes();
+            replay(invariantTraceMock1);
+            classUnderTest = new CheckTrace(invariantTraceMock1);
+            boolean result = classUnderTest.invariant().destroy(invariantTraceMock1);
             assertTrue(result);
         }
         
         @Test
-        public void testCheckDestroyAndCreateInvariant() throws Exception {
-            invariantHasCheck1 = new InvariantHasCheckImpl(invariantMock1);
-            expect(invariantMock1.check()).andReturn(invariantHasCheck1).anyTimes();
-            replay(invariantMock1);
-            classUnderTest = new CheckImpl(invariantMock1);
-            invariantHasCheck2 = new InvariantHasCheckImpl(invariantMock2);
-            expect(invariantMock2.check()).andReturn(invariantHasCheck2).anyTimes();
-            replay(invariantMock2);
+        public void testCheckTraceDestroyAndCreateInvariant() throws Exception {
+            invariantTrace1 = new InvariantTraceHasCheck(invariantTraceMock1);
+            expect(invariantTraceMock1.check()).andReturn(invariantTrace1).anyTimes();
+            replay(invariantTraceMock1);
+            classUnderTest = new CheckTrace(invariantTraceMock1);
+            invariantTrace2 = new InvariantTraceHasCheck(invariantTraceMock2);
+            expect(invariantTraceMock2.check()).andReturn(invariantTrace2).anyTimes();
+            replay(invariantTraceMock2);
   
-            boolean result = classUnderTest.invariant().destroy(invariantMock1);
+            boolean result = classUnderTest.invariant().destroy(invariantTraceMock1);
             assertTrue(result);
-            result = classUnderTest.invariant().create(invariantMock2);
+            result = classUnderTest.invariant().create(invariantTraceMock2);
             assertTrue(result);
-            result = classUnderTest.invariant().create(invariantMock2);
+            result = classUnderTest.invariant().create(invariantTraceMock2);
             assertFalse(result);
-            result = classUnderTest.invariant().create(invariantMock1);
+            result = classUnderTest.invariant().create(invariantTraceMock1);
             assertFalse(result);
         }
         
         @Test
-        public void testCheckCreateAccess() throws Exception {
-            invariantHasCheck1 = new InvariantHasCheckImpl(invariantMock1);
-            expect(invariantMock1.check()).andReturn(invariantHasCheck1).anyTimes();
-            replay(invariantMock1);
-            classUnderTest = new CheckImpl(invariantMock1);
-            accessHasExecution1 = new AccessHasExecutionImpl(accessMock1);
-            expect(accessMock1.execution()).andReturn(accessHasExecution1).anyTimes();
+        public void testCheckTraceCreateAccess() throws Exception {
+            invariantTrace1 = new InvariantTraceHasCheck(invariantTraceMock1);
+            expect(invariantTraceMock1.check()).andReturn(invariantTrace1).anyTimes();
+            replay(invariantTraceMock1);
+            classUnderTest = new CheckTrace(invariantTraceMock1);
+            access1 = new AccessHasExecution(accessMock1);
+            expect(accessMock1.execution()).andReturn(access1).anyTimes();
             replay(accessMock1);
-            accessHasExecution2 = new AccessHasExecutionImpl(accessMock2);
-            expect(accessMock2.execution()).andReturn(accessHasExecution2).anyTimes();
+            access2 = new AccessHasExecution(accessMock2);
+            expect(accessMock2.execution()).andReturn(access2).anyTimes();
             replay(accessMock2);
             boolean result;
             result = classUnderTest.accesses().create(accessMock1);
@@ -940,141 +1053,141 @@ public class EvlTraceModelTests {
         }
         
         @Test
-        public void testCheckDestroyAccess() throws Exception {
-            invariantHasCheck1 = new InvariantHasCheckImpl(invariantMock1);
-            expect(invariantMock1.check()).andReturn(invariantHasCheck1).anyTimes();
-            replay(invariantMock1);
-            classUnderTest = new CheckImpl(invariantMock1);
-            accessHasExecution1 = new AccessHasExecutionImpl(accessMock1);
-            expect(accessMock1.execution()).andReturn(accessHasExecution1).anyTimes();
+        public void testCheckTraceDestroyAccess() throws Exception {
+            invariantTrace1 = new InvariantTraceHasCheck(invariantTraceMock1);
+            expect(invariantTraceMock1.check()).andReturn(invariantTrace1).anyTimes();
+            replay(invariantTraceMock1);
+            classUnderTest = new CheckTrace(invariantTraceMock1);
+            access1 = new AccessHasExecution(accessMock1);
+            expect(accessMock1.execution()).andReturn(access1).anyTimes();
             replay(accessMock1);
             classUnderTest.accesses().create(accessMock1);
             boolean result = classUnderTest.accesses().destroy(accessMock1);
             assertTrue(result);
             assertThat(classUnderTest.accesses().get(), not(hasItem(accessMock1)));
-            accessHasExecution2 = new AccessHasExecutionImpl(accessMock2);
-            expect(accessMock2.execution()).andReturn(accessHasExecution2).anyTimes();
+            access2 = new AccessHasExecution(accessMock2);
+            expect(accessMock2.execution()).andReturn(access2).anyTimes();
             replay(accessMock2);
             result = classUnderTest.accesses().destroy(accessMock2);
             assertFalse(result);
         }
     }
     
-    public static class MessageTests extends EasyMockSupport {
+    public static class MessageTraceTests extends EasyMockSupport {
     
         @Rule
         public EasyMockRule rule = new EasyMockRule(this);
 
         /** Mock the target of the accesses reference. */
         @Mock
-        private Access accessMock1;
+        private IAccess accessMock1;
         
         /** Mock the target of the accesses reference. */
         @Mock
-        private Access accessMock2;
+        private IAccess accessMock2;
         
         /** Allow the target mock to populate the reference */
-        private AccessHasExecution accessHasExecution1;
+        private IAccessHasExecution access1;
         
         /** Allow the target mock to populate the reference */
-        private AccessHasExecution accessHasExecution2;
+        private IAccessHasExecution access2;
         
         /** Mock the target of the invariant reference. */
         @Mock
-        private Invariant invariantMock1;
+        private IInvariantTrace invariantTraceMock1;
         
         /** Mock the target of the invariant reference. */
         @Mock
-        private Invariant invariantMock2;
+        private IInvariantTrace invariantTraceMock2;
         
         /** Allow the target mock to populate the reference */
-        private InvariantHasMessage invariantHasMessage1;
+        private IInvariantTraceHasMessage invariantTrace1;
         
         /** Allow the target mock to populate the reference */
-        private InvariantHasMessage invariantHasMessage2;
+        private IInvariantTraceHasMessage invariantTrace2;
         
-        private Message classUnderTest;
+        private MessageTrace classUnderTest;
         
         @Test
-        public void testMessageInstantiation() throws Exception {
-            invariantHasMessage1 = new InvariantHasMessageImpl(invariantMock1);
-            expect(invariantMock1.message()).andReturn(invariantHasMessage1).anyTimes();
-            replay(invariantMock1);
-            classUnderTest = new MessageImpl(invariantMock1);
-            assertThat(classUnderTest.invariant().get(), is(invariantMock1));
-            assertThat(invariantMock1.message().get(), is(classUnderTest));
+        public void testMessageTraceInstantiation() throws Exception {
+            invariantTrace1 = new InvariantTraceHasMessage(invariantTraceMock1);
+            expect(invariantTraceMock1.message()).andReturn(invariantTrace1).anyTimes();
+            replay(invariantTraceMock1);
+            classUnderTest = new MessageTrace(invariantTraceMock1);
+            assertThat(classUnderTest.invariant().get(), is(invariantTraceMock1));
+            assertThat(invariantTraceMock1.message().get(), is(classUnderTest));
 	    }
 	    
-// protected region IgnoreMessageAttributes on begin
+// protected region IgnoreMessageTraceAttributes on begin
 	    @Ignore
-// protected region IgnoreMessageAttributes end	    
+// protected region IgnoreMessageTraceAttributes end	    
 	    @Test
-        public void testMessageAttributes() throws Exception {
-            invariantHasMessage1 = new InvariantHasMessageImpl(invariantMock1);
-            expect(invariantMock1.message()).andReturn(invariantHasMessage1).anyTimes();
-            replay(invariantMock1);
-            classUnderTest = new MessageImpl(invariantMock1);
-// protected region MessageAttributes on begin
+        public void testMessageTraceAttributes() throws Exception {
+            invariantTrace1 = new InvariantTraceHasMessage(invariantTraceMock1);
+            expect(invariantTraceMock1.message()).andReturn(invariantTrace1).anyTimes();
+            replay(invariantTraceMock1);
+            classUnderTest = new MessageTrace(invariantTraceMock1);
+// protected region MessageTraceAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
-// protected region MessageAttributes end
+// protected region MessageTraceAttributes end
         }
 
         
         @Test
-        public void testMessageCreateInvariantConflict() throws Exception {
-            invariantHasMessage1 = new InvariantHasMessageImpl(invariantMock1);
-            expect(invariantMock1.message()).andReturn(invariantHasMessage1).anyTimes();
-            replay(invariantMock1);
-            classUnderTest = new MessageImpl(invariantMock1);
-            invariantHasMessage2 = new InvariantHasMessageImpl(invariantMock2);
-            expect(invariantMock2.message()).andReturn(invariantHasMessage2).anyTimes();
-            replay(invariantMock2);
+        public void testMessageTraceCreateInvariantConflict() throws Exception {
+            invariantTrace1 = new InvariantTraceHasMessage(invariantTraceMock1);
+            expect(invariantTraceMock1.message()).andReturn(invariantTrace1).anyTimes();
+            replay(invariantTraceMock1);
+            classUnderTest = new MessageTrace(invariantTraceMock1);
+            invariantTrace2 = new InvariantTraceHasMessage(invariantTraceMock2);
+            expect(invariantTraceMock2.message()).andReturn(invariantTrace2).anyTimes();
+            replay(invariantTraceMock2);
         
-            boolean result = classUnderTest.invariant().create(invariantMock2);
+            boolean result = classUnderTest.invariant().create(invariantTraceMock2);
             assertFalse(result);
         }
         
         @Test
-        public void testMessageDestroyInvariant() throws Exception {
-            invariantHasMessage1 = new InvariantHasMessageImpl(invariantMock1);
-            expect(invariantMock1.message()).andReturn(invariantHasMessage1).anyTimes();
-            replay(invariantMock1);
-            classUnderTest = new MessageImpl(invariantMock1);
-            boolean result = classUnderTest.invariant().destroy(invariantMock1);
+        public void testMessageTraceDestroyInvariant() throws Exception {
+            invariantTrace1 = new InvariantTraceHasMessage(invariantTraceMock1);
+            expect(invariantTraceMock1.message()).andReturn(invariantTrace1).anyTimes();
+            replay(invariantTraceMock1);
+            classUnderTest = new MessageTrace(invariantTraceMock1);
+            boolean result = classUnderTest.invariant().destroy(invariantTraceMock1);
             assertTrue(result);
         }
         
         @Test
-        public void testMessageDestroyAndCreateInvariant() throws Exception {
-            invariantHasMessage1 = new InvariantHasMessageImpl(invariantMock1);
-            expect(invariantMock1.message()).andReturn(invariantHasMessage1).anyTimes();
-            replay(invariantMock1);
-            classUnderTest = new MessageImpl(invariantMock1);
-            invariantHasMessage2 = new InvariantHasMessageImpl(invariantMock2);
-            expect(invariantMock2.message()).andReturn(invariantHasMessage2).anyTimes();
-            replay(invariantMock2);
+        public void testMessageTraceDestroyAndCreateInvariant() throws Exception {
+            invariantTrace1 = new InvariantTraceHasMessage(invariantTraceMock1);
+            expect(invariantTraceMock1.message()).andReturn(invariantTrace1).anyTimes();
+            replay(invariantTraceMock1);
+            classUnderTest = new MessageTrace(invariantTraceMock1);
+            invariantTrace2 = new InvariantTraceHasMessage(invariantTraceMock2);
+            expect(invariantTraceMock2.message()).andReturn(invariantTrace2).anyTimes();
+            replay(invariantTraceMock2);
   
-            boolean result = classUnderTest.invariant().destroy(invariantMock1);
+            boolean result = classUnderTest.invariant().destroy(invariantTraceMock1);
             assertTrue(result);
-            result = classUnderTest.invariant().create(invariantMock2);
+            result = classUnderTest.invariant().create(invariantTraceMock2);
             assertTrue(result);
-            result = classUnderTest.invariant().create(invariantMock2);
+            result = classUnderTest.invariant().create(invariantTraceMock2);
             assertFalse(result);
-            result = classUnderTest.invariant().create(invariantMock1);
+            result = classUnderTest.invariant().create(invariantTraceMock1);
             assertFalse(result);
         }
         
         @Test
-        public void testMessageCreateAccess() throws Exception {
-            invariantHasMessage1 = new InvariantHasMessageImpl(invariantMock1);
-            expect(invariantMock1.message()).andReturn(invariantHasMessage1).anyTimes();
-            replay(invariantMock1);
-            classUnderTest = new MessageImpl(invariantMock1);
-            accessHasExecution1 = new AccessHasExecutionImpl(accessMock1);
-            expect(accessMock1.execution()).andReturn(accessHasExecution1).anyTimes();
+        public void testMessageTraceCreateAccess() throws Exception {
+            invariantTrace1 = new InvariantTraceHasMessage(invariantTraceMock1);
+            expect(invariantTraceMock1.message()).andReturn(invariantTrace1).anyTimes();
+            replay(invariantTraceMock1);
+            classUnderTest = new MessageTrace(invariantTraceMock1);
+            access1 = new AccessHasExecution(accessMock1);
+            expect(accessMock1.execution()).andReturn(access1).anyTimes();
             replay(accessMock1);
-            accessHasExecution2 = new AccessHasExecutionImpl(accessMock2);
-            expect(accessMock2.execution()).andReturn(accessHasExecution2).anyTimes();
+            access2 = new AccessHasExecution(accessMock2);
+            expect(accessMock2.execution()).andReturn(access2).anyTimes();
             replay(accessMock2);
             boolean result;
             result = classUnderTest.accesses().create(accessMock1);
@@ -1086,97 +1199,97 @@ public class EvlTraceModelTests {
         }
         
         @Test
-        public void testMessageDestroyAccess() throws Exception {
-            invariantHasMessage1 = new InvariantHasMessageImpl(invariantMock1);
-            expect(invariantMock1.message()).andReturn(invariantHasMessage1).anyTimes();
-            replay(invariantMock1);
-            classUnderTest = new MessageImpl(invariantMock1);
-            accessHasExecution1 = new AccessHasExecutionImpl(accessMock1);
-            expect(accessMock1.execution()).andReturn(accessHasExecution1).anyTimes();
+        public void testMessageTraceDestroyAccess() throws Exception {
+            invariantTrace1 = new InvariantTraceHasMessage(invariantTraceMock1);
+            expect(invariantTraceMock1.message()).andReturn(invariantTrace1).anyTimes();
+            replay(invariantTraceMock1);
+            classUnderTest = new MessageTrace(invariantTraceMock1);
+            access1 = new AccessHasExecution(accessMock1);
+            expect(accessMock1.execution()).andReturn(access1).anyTimes();
             replay(accessMock1);
             classUnderTest.accesses().create(accessMock1);
             boolean result = classUnderTest.accesses().destroy(accessMock1);
             assertTrue(result);
             assertThat(classUnderTest.accesses().get(), not(hasItem(accessMock1)));
-            accessHasExecution2 = new AccessHasExecutionImpl(accessMock2);
-            expect(accessMock2.execution()).andReturn(accessHasExecution2).anyTimes();
+            access2 = new AccessHasExecution(accessMock2);
+            expect(accessMock2.execution()).andReturn(access2).anyTimes();
             replay(accessMock2);
             result = classUnderTest.accesses().destroy(accessMock2);
             assertFalse(result);
         }
     }
     
-    public static class SatisfiesTests extends EasyMockSupport {
+    public static class SatisfiesTraceTests extends EasyMockSupport {
     
         @Rule
         public EasyMockRule rule = new EasyMockRule(this);
 
         /** Mock the target of the invariants reference. */
         @Mock
-        private Invariant invariantMock1;
+        private IInvariantTrace invariantTraceMock1;
         
         /** Mock the target of the invariants reference. */
         @Mock
-        private Invariant invariantMock2;
+        private IInvariantTrace invariantTraceMock2;
         
         /** Mock the container. */
         @Mock
-        private Invariant containerMock;
+        private IInvariantTrace containerMock;
         
         /** Allow the container mock to populate the reference */
-        private InvariantHasSatisfies invariantHasSatisfies1;
+        private IInvariantTraceHasSatisfies invariantTrace1;
 
-        private Satisfies classUnderTest;
+        private SatisfiesTrace classUnderTest;
         
         @Test
-        public void testSatisfiesInstantiation() throws Exception {
-            invariantHasSatisfies1 = new InvariantHasSatisfiesImpl(containerMock);
-            expect(containerMock.satisfies()).andReturn(invariantHasSatisfies1).anyTimes();
+        public void testSatisfiesTraceInstantiation() throws Exception {
+            invariantTrace1 = new InvariantTraceHasSatisfies(containerMock);
+            expect(containerMock.satisfies()).andReturn(invariantTrace1).anyTimes();
             replay(containerMock);
-            classUnderTest = new SatisfiesImpl(containerMock);
+            classUnderTest = new SatisfiesTrace(containerMock);
             assertThat(containerMock.satisfies().get(), is(classUnderTest));
 	    }
 	    
-// protected region IgnoreSatisfiesAttributes on begin
+// protected region IgnoreSatisfiesTraceAttributes on begin
 	    @Ignore
-// protected region IgnoreSatisfiesAttributes end	    
+// protected region IgnoreSatisfiesTraceAttributes end	    
 	    @Test
-        public void testSatisfiesAttributes() throws Exception {
-            invariantHasSatisfies1 = new InvariantHasSatisfiesImpl(containerMock);
-            expect(containerMock.satisfies()).andReturn(invariantHasSatisfies1).anyTimes();
+        public void testSatisfiesTraceAttributes() throws Exception {
+            invariantTrace1 = new InvariantTraceHasSatisfies(containerMock);
+            expect(containerMock.satisfies()).andReturn(invariantTrace1).anyTimes();
             replay(containerMock);
-            classUnderTest = new SatisfiesImpl(containerMock);
-// protected region SatisfiesAttributes on begin
+            classUnderTest = new SatisfiesTrace(containerMock);
+// protected region SatisfiesTraceAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
-// protected region SatisfiesAttributes end
+// protected region SatisfiesTraceAttributes end
         }
 
         @Test
-        public void testSatisfiesCreateInvariant() throws Exception {
-            invariantHasSatisfies1 = new InvariantHasSatisfiesImpl(containerMock);
-            expect(containerMock.satisfies()).andReturn(invariantHasSatisfies1).anyTimes();
+        public void testSatisfiesTraceCreateInvariantTrace() throws Exception {
+            invariantTrace1 = new InvariantTraceHasSatisfies(containerMock);
+            expect(containerMock.satisfies()).andReturn(invariantTrace1).anyTimes();
             replay(containerMock);
-            classUnderTest = new SatisfiesImpl(containerMock);
+            classUnderTest = new SatisfiesTrace(containerMock);
             boolean result;
-            result = classUnderTest.invariants().create(invariantMock1);
+            result = classUnderTest.invariants().create(invariantTraceMock1);
             assertTrue(result);
-            result = classUnderTest.invariants().create(invariantMock2);
+            result = classUnderTest.invariants().create(invariantTraceMock2);
             assertTrue(result);
-            result = classUnderTest.invariants().create(invariantMock1);
+            result = classUnderTest.invariants().create(invariantTraceMock1);
             assertFalse(result);
         }
         
         @Test
-        public void testSatisfiesDestroyInvariant() throws Exception {
-            invariantHasSatisfies1 = new InvariantHasSatisfiesImpl(containerMock);
-            expect(containerMock.satisfies()).andReturn(invariantHasSatisfies1).anyTimes();
+        public void testSatisfiesTraceDestroyInvariantTrace() throws Exception {
+            invariantTrace1 = new InvariantTraceHasSatisfies(containerMock);
+            expect(containerMock.satisfies()).andReturn(invariantTrace1).anyTimes();
             replay(containerMock);
-            classUnderTest = new SatisfiesImpl(containerMock);
-            classUnderTest.invariants().create(invariantMock1);
-            boolean result = classUnderTest.invariants().destroy(invariantMock1);
+            classUnderTest = new SatisfiesTrace(containerMock);
+            classUnderTest.invariants().create(invariantTraceMock1);
+            boolean result = classUnderTest.invariants().destroy(invariantTraceMock1);
             assertTrue(result);
-            assertThat(classUnderTest.invariants().get(), not(hasItem(invariantMock1)));
-            result = classUnderTest.invariants().destroy(invariantMock2);
+            assertThat(classUnderTest.invariants().get(), not(hasItem(invariantTraceMock1)));
+            result = classUnderTest.invariants().destroy(invariantTraceMock2);
             assertFalse(result);
         }
     }

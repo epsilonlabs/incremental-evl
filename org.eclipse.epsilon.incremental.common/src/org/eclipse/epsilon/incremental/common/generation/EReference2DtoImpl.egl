@@ -13,8 +13,8 @@
  * A template to generate an implementation of an EClass that can be used as a DTO.
  */
 import "Ecore2JavaTemplates.egl";
-var sourceType = er.getEContainingClass().name;
-var targetType = er.getEReferenceType().name;
+var sourceType = er.getEContainingClass().getJavaInterfaceName(interPrefix, interSufix);
+var targetType = er.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix);
 var unique = "true";
 if (not er.isUnique()) { unique = "false";}
 var opposite;
@@ -45,14 +45,14 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 [%}%]
 import [%=qp%].trace.[%=sourceType%];
 import [%=erqp%].trace.[%=targetType%];
-import [%=qp%].trace.[%=featureType%];
+import [%=qp%].trace.[%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%];
 import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of [%=featureType%] reference. 
+ * Implementation of [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] reference. 
  */
-public class [%=featureType%]Impl extends Feature implements [%=featureType%] {
+public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends Feature implements [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] {
     
     /** The source(s) of the reference */
     protected [%=sourceType%] source;
@@ -66,11 +66,11 @@ public class [%=featureType%]Impl extends Feature implements [%=featureType%] {
 [%}%]
     
     /**
-     * Instantiates a new [%=featureType%].
+     * Instantiates a new [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%].
      *
      * @param source the source of the reference
      */
-    public [%=featureType%]Impl ([%=sourceType%] source) {
+    public [%=er.getRelationJavaClassName(classPrefix, classSufix)%] ([%=sourceType%] source) {
         super([%=unique%]);
         this.source = source;
     }

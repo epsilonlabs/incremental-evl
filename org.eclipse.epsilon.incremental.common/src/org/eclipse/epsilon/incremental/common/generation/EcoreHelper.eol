@@ -1,29 +1,50 @@
-
-operation EClass getJavaTypeName(typePrefix, typeSufix) {
-	
-	return typePrefix + self.getName() + typeSufix;
+/** Get the Name for the Java Interface for the EClass */
+@cached
+operation EClass getJavaInterfaceName(interPrefix:String, interSufix:String) {
+    
+    return interPrefix + self.name + interSufix;
 }
 
-operation EReference getJavaTypeName(typePrefix, typeSufix) {
-	
-	return typePrefix + self.getName().firstToUpperCase() + typeSufix;
+/** Get the Name for the Java Class for the EClass */
+@cached
+operation EClass getJavaClassName(classPrefix:String, classSufix:String) {
+    
+    return classPrefix + self.name + classSufix;
+}
+
+/** Get the Name for the Java Interface for the EReference */
+@cached
+operation EReference getRelationJavaInterfaceName(interPrefix:String, interSufix:String) {
+    
+    return interPrefix + self.getEContainingClass().name  + "Has" + self.name.firstToUpperCase() + interSufix;
+}
+
+/** Get the Name for the Java Class for the EReference */
+@cached
+operation EReference getRelationJavaClassName(classPrefix:String, classSufix:String) {
+    
+    return classPrefix + self.getEContainingClass().name  + "Has" + self.name.firstToUpperCase() + classSufix;
 }
 
 // Get all EDataTypes that are not java.lang.* and all EClasses that are not
 // in the same pacakge. Assumes other packages are generated in the same
 // base package
-operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeSufix:String) : Sequence {
-    return self.getRequriedImports(basePackage, typePrefix, typeSufix, false);
+operation EClass getRequriedImports(basePackage:String, interPrefix:String, interSufix:String,
+                                    classPrefix:String, classSufix:String) : Sequence {
+    return self.getRequriedImports(basePackage, interPrefix, interSufix, classPrefix, classSufix, false);
 }
 /**
  * If isImpl is True, it will also add concrete implementations of the collections imports
  */
-operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeSufix:String, isImpl:Boolean) : Sequence {
-    return self.getRequriedImports(basePackage, typePrefix, typeSufix, false, false);
+operation EClass getRequriedImports(basePackage:String, interPrefix:String, interSufix:String,
+                                    classPrefix:String, classSufix:String,
+                                    isImpl:Boolean) : Sequence {
+    return self.getRequriedImports(basePackage, interPrefix, interSufix, classPrefix, classSufix, false, false);
 }
 
-operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeSufix:String,
-                                    isImpl:Boolean, flatten:Boolean) : Sequence {
+operation EClass getRequriedImports(basePackage:String, interPrefix:String, interSufix:String,
+                                    classPrefix:String, classSufix:String, isImpl:Boolean,
+                                    flatten:Boolean) : Sequence {
     var imports : Set;
     var eas;
     var ers;
@@ -49,9 +70,9 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
                 var subClasses = er.getEReferenceType().getEAllSubclasses();
 		        for (sc in subClasses) {
 		            erqp = sc.getCorrectPackage(basePackage, self);
-		            imports.add(erqp + "." + sc.getJavaTypeName(typePrefix, typeSufix));
+		            imports.add(erqp + "." + sc.getJavaInterfaceName(interPrefix, interSufix));
 	                if (isImpl and not sc.isAbstract()) {
-	                    imports.add(erqp + ".impl." + sc.getJavaTypeName(typePrefix, "Impl"));
+	                    imports.add(erqp + ".impl." + sc.getJavaClassName(classPrefix, classSufix));
 	                }
 	                // Add imports for the constructor 
 	                for (ea in sc.getIndexAttributes()) {
@@ -59,27 +80,28 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
 	                }
 	                for (er in sc.getRequiredFeatures()) {
 	                   var rferqp = er.getEReferenceType().getCorrectPackage(basePackage, self);
-	                   imports.add(rferqp + "." + er.getEReferenceType().getJavaTypeName(typePrefix, typeSufix));
+	                   imports.add(rferqp + "." + er.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix));
 	                }
 		        }
             }
             else {
-                imports.add(erqp + "." + type.getJavaTypeName(typePrefix, typeSufix));
+                imports.add(erqp + "." + type.getJavaInterfaceName(interPrefix, interSufix));
                 if (isImpl) {
-                    imports.add(erqp + ".impl." + type.getJavaTypeName(typePrefix, "Impl"));
+                    imports.add(erqp + ".impl." + type.getJavaClassName(classPrefix, classSufix));
                 }
             }
         }
         else {
-            imports.add(erqp + "." + type.getJavaTypeName(typePrefix, typeSufix));
+            imports.add(erqp + "." + type.getJavaInterfaceName(interPrefix, interSufix));
         }
         if (flatten) {
             if (er.getEContainingClass().getEPackage() <> self.getEPackage()) {
                 erqp = er.getEContainingClass().getCorrectPackage(basePackage, self);
-                imports.add(erqp + "." + er.getEContainingClass().name + "Has" + er.name.firstToUpperCase());
+                imports.add(erqp + "." + er.getRelationJavaInterfaceName(interPrefix, interSufix));
             }
             else {
-                imports.add(basePackage + "." + er.getEContainingClass().name + "Has" + er.name.firstToUpperCase());
+                //imports.add(basePackage + "." + er.getRelationJavaClassName(classPrefix, classSufix));
+                imports.add(basePackage + "." + er.getRelationJavaInterfaceName(interPrefix, interSufix));
             }
             
         }
@@ -87,16 +109,12 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
             //er.name.println("Adding impl import ");
             if (er.getEContainingClass().getEPackage() <> self.getEPackage()) {
                 erqp = er.getEContainingClass().getCorrectPackage(basePackage, self);
-                imports.add(erqp + ".impl." + er.getEContainingClass().name + "Has" + er.name.firstToUpperCase() + "Impl");
+                imports.add(erqp + ".impl." + er.getRelationJavaClassName(classPrefix, classSufix));
             }
             else {
-                imports.add(basePackage + ".impl." + er.getEContainingClass().name + "Has" + er.name.firstToUpperCase() + "Impl");
+                imports.add(basePackage + ".impl." + er.getRelationJavaClassName(classPrefix, classSufix));
             }
         }
-        //if (type.getEPackage() <> self.getEPackage()) {
-        //    imports.add(basePackage + "." + type.getJavaTypeName(typePrefix, typeSufix));
-        //}
-        //imports.addAll(er.getRequiredImports(isImpl));
     }
     for (er in self.getEAllReferences().select(er | er.isContainment())) {
         var type = er.getEReferenceType();
@@ -107,9 +125,9 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
             for (sc in subClasses) {
                 erqp = sc.getCorrectPackage(basePackage, self);
                 if (not sc.isAbstract()) {
-	                imports.add(erqp + "." + sc.getJavaTypeName(typePrefix, typeSufix));
+	                imports.add(erqp + "." + sc.getJavaInterfaceName(interPrefix, interSufix));
 	                if (isImpl) {
-	                    imports.add(erqp + ".impl." + sc.getJavaTypeName(typePrefix, "Impl"));
+	                    imports.add(erqp + ".impl." + sc.getJavaClassName(classPrefix, classSufix));
 	                }
 	            }
                 // Add imports for the constructor 
@@ -118,14 +136,14 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
                 }
                 for (er in sc.getRequiredFeatures()) {
                    var rferqp = er.getEReferenceType().getCorrectPackage(basePackage, self);
-                   imports.add(rferqp + "." + er.getEReferenceType().getJavaTypeName(typePrefix, typeSufix));
+                   imports.add(rferqp + "." + er.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix));
                 }
             }
         }
         else {
-            imports.add(erqp + "." + type.getJavaTypeName(typePrefix, typeSufix));
+            imports.add(erqp + "." + type.getJavaInterfaceName(interPrefix, interSufix));
             if (isImpl) {
-                imports.add(erqp + ".impl." + type.getJavaTypeName(typePrefix, "Impl"));
+                imports.add(erqp + ".impl." + type.getJavaClassName(classPrefix, classSufix));
             }
         }
     }
@@ -136,12 +154,12 @@ operation EClass getRequriedImports(basePackage:String, typePrefix:String, typeS
 		    if (containerType.getEPackage() <> self.getEPackage()) {
 		        fullpath = basePackage.replace("." + self.getEPackage().name + ".", "." + containerType.getEPackage().name + ".");
 		    }
-		    imports.add(fullpath  + "." + containerType.getJavaTypeName(typePrefix, typeSufix));
+		    imports.add(fullpath  + "." + containerType.getJavaInterfaceName(interPrefix, interSufix));
 		}
     }
     for (ec in self.getESuperTypes().select(st | not (isImpl and st.isAbstract()))) {
         if (ec.getEPackage() <> self.getEPackage()) {
-            imports.add("org.eclipse.epsilon." + ec.getEPackage().name + ".incremental.trace." + ec.getJavaTypeName(typePrefix, typeSufix));
+            imports.add("org.eclipse.epsilon." + ec.getEPackage().name + ".incremental.trace." + ec.getJavaInterfaceName(interPrefix, interSufix));
         }
     }
     return imports.sortBy(im | im);
@@ -170,8 +188,8 @@ operation EClass getContainerReference() : Sequence {
     if (container.isUndefined()) {
         //Containment might not have an opposite, we assume elements can only be contained by one other relation
         opposite = EReference.all.selectOne(er | er.isContainment() and
-                (er.getEReferenceType() == self) or
-                (self.getEAllSuperTypes().includes(er.getEReferenceType()))); // And a reference to a superType?
+                ((er.getEReferenceType() == self) or
+                (self.getEAllSuperTypes().includes(er.getEReferenceType())))); // And a reference to a superType?
         if (opposite.isDefined()) {
             type = opposite.getEContainingClass();
         }
@@ -229,10 +247,10 @@ operation EClass getEAttributeParameters() : Sequence {
 }
 
 @cached
-operation EClass getRequiredFeatureParameters() {
+operation EClass getRequiredFeatureParameters(interPrefix, interSufix) {
     var results : Sequence = new Sequence();
     for (er in self.getRequiredFeatures()) {
-        results.add(er.getEReferenceType().name + " " + er.name);
+        results.add(er.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix) + " " + er.name);
     }
     return results;
 }
