@@ -10,26 +10,43 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.execute;
 
-import java.util.Set;
-
 import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 
 public interface IEvlExecutionTraceManager extends IEolExecutionTraceManager {
 	
-	/**
-	 * During execution the manager queues the execution trace information. The trace information will be stored in 
-	 * the trace model after execution. Alternatively, the user can request that the temporal information be persisted.
-	 * Implementations are also free to provide additional strategies, e.g. persist information when the queue reaches
-	 * a given size.
-	 *
-	 * @param moduleElementID the moduleElement ID
-	 * @param modelId the model id
-	 * @param modelElementId the modelElement id
-	 * @param property the property
-	 * @param satisfiesModuleElementsIDs the ids of the module dependencies
-	 * @return true, if successful
-	 */
-	boolean addTraceInformation(String moduleElementID, String modelId, String modelElementId, String property,
-			Set<String> satisfiesModuleElementsIDs);
+	IEvlModuleExecutionRepository moduleExecutionTraces();
+	
+	IContextTraceRepository contextTraces();
+	
 
+	// FIXME These should go in the ContextTraceRepository
+	/**
+	 * Gets the property trace for the given property and element. This allows fine grained incremental execution for
+	 * models that can notify changes at the property level.
+	 * 
+	 * @param objectId the model object id
+	 * @param propertyName the property name
+	 *
+	 * @return the property
+	 * @throws EolIncrementalExecutionException 
+	 */
+	//List<ExecutionTrace> findExecutionTraces(String objectId, String propertyName) throws EolIncrementalExecutionException;
+	
+	/**
+	 * Gets the execution traces related to this element. This allows coarse grained incremental execution for
+	 * models that can notify changes at the element level.
+	 *
+	 * @param objectId the model object id
+	 * @return the element trace
+	 */
+	//List<ExecutionTrace> findExecutionTraces(String objectId) throws EolIncrementalExecutionException;
+	
+	/**
+	 * Remove the trace information related to a specific object. This should be invoked when an element is deleted
+	 * from the model.
+	 * 
+	 * @param objectId the id of the object for which the trace information should be deleted.
+	 * @throws EolIncrementalExecutionException
+	 */
+	//void removeTraceInformation(String objectId) throws EolIncrementalExecutionException;
 }

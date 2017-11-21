@@ -11,26 +11,13 @@
  *******************************************************************************/
 package org.eclipse.epsilon.evl.dom;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
-import org.eclipse.epsilon.eol.execute.introspection.recording.IPropertyAccess;
-import org.eclipse.epsilon.eol.execute.introspection.recording.PropertyAccessRecorder;
-import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
-import org.eclipse.epsilon.eol.incremental.execute.IModuleElementAccessListener;
-import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
-import org.eclipse.epsilon.eol.models.IModel;
-import org.eclipse.epsilon.evl.IncrementalEvlModule;
-import org.eclipse.epsilon.evl.dom.Constraint;
-import org.eclipse.epsilon.evl.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
-import org.eclipse.epsilon.evl.execute.introspection.recording.SatisfiesOperationInvocationRecorder;
+import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.trace.ConstraintTrace;
 
 /**
@@ -43,33 +30,31 @@ import org.eclipse.epsilon.evl.trace.ConstraintTrace;
 // FIXME this could be merged with the Constraint and use a flag
 public class TracedConstraint extends Constraint {
 	
-	//private final PropertyAccessRecorder recorder;
-	//private final SatisfiesOperationInvocationRecorder satisfiesRecorder;
-	//private ArrayList<IModuleElementAccessListener> accessListeners = new ArrayList<>();
-	
-	
-	public TracedConstraint(IncrementalEvlModule incrementalEvlModule, PropertyAccessRecorder recorder, 
-			SatisfiesOperationInvocationRecorder satisfiesRecoder) {
-		setModule(incrementalEvlModule);
-		//this.recorder = recorder;
-		//this.satisfiesRecorder = satisfiesRecoder;
-		//addAccessListener(satisfiesRecoder);
+	private IInvariantTrace trace;
+
+	public IInvariantTrace getTrace() {
+		return trace;
+	}
+
+	public void setTrace(IInvariantTrace trace) {
+		this.trace = trace;
 	}
 	
-//	public void addAccessListener(IModuleElementAccessListener listener) {
-//		accessListeners.add(listener);
-//	}
-//	
-//	public boolean removeAccessListener(IModuleElementAccessListener listener) {
-//		return accessListeners.remove(listener);
-//	}
+	public boolean appliesTo(Object object, IEvlContext context, final boolean checkType) throws EolRuntimeException{
+		if (checkType && !constraintContext.getAllOfSourceKind(context).contains(object)) return false;
+
+		if (guardBlock != null) {
+			return guardBlock.execute(context, Variable.createReadOnlyVariable("self", object));
+		}
+		else {
+			return true;
+		}
+	}
+	
 
 	@Override
 	public boolean check(Object self, IEvlContext context, boolean checkType) throws EolRuntimeException {
 		
-//		for (IModuleElementAccessListener listener : accessListeners ) {
-//			listener.accessed(self);
-//		}
 		// First look in the cache
 		if (context.getConstraintTrace().isChecked(this,self)){
 			return context.getConstraintTrace().isSatisfied(this,self);
@@ -82,10 +67,9 @@ public class TracedConstraint extends Constraint {
 		//removeOldUnsatisfiedConstraint(self, context);
 		
 		final UnsatisfiedConstraint unsatisfiedConstraint = preprocessCheck(self, context);
-		// Traces are added via notifications
-		//recorder.startRecording();
+		//((TracedExecutableBlock<?>)checkBlock).startRecording();
 		Boolean result = checkBlock.execute(context, false);
-		//recorder.stopRecording();
+		//((TracedExecutableBlock<?>)checkBlock).stopRecording();
 		boolean postResult = postprocessCheck(self, context, unsatisfiedConstraint, result);
 		return postResult;
 		

@@ -70,40 +70,22 @@ public interface IIncrementalModule {
 	public void onDelete(String objectId, Object object);
 
 	/**
-	 * Create an ID for a module element
-	 * 
-	 * For example, in EVL this id could be &lt;context&gt;:&lt;constraint&gt; and in ETL &lt;context&gt;:&lt;ruleName&gt;
-	 * 
-	 * @param moduleElement the ModuleElement for which an id must be created 
-	 * @return The ID for the module
-	 * @throws EolRuntimeException if the specific type of the ModuleElement is not supported by this module
-	 */
-	public String getModuleElementId(ModuleElement moduleElement) throws EolRuntimeException;
-
-	/**
-	 * Get a module element by ID
-	 * @param moduleElementId The ID of the element
-	 * @return The module element, null if the ID is not known to this module.
-	 */
-	public ModuleElement getModuleElementById(String moduleElementId);
-	
-	/**
 	 * Returns the set of models from which the module receives notification.
 	 * @return
 	 */
 	public Set<IIncrementalModel> getTargets();
 	
-	/**
-	 * Set the execution trace manager for this module.
-	 * @param manager
-	 */
-	public void setExecutionTraceManager(IEolExecutionTraceManager manager);
-	
-	/**
-	 * Get the execution trace manager associated to this module.
-	 * @return
-	 */
-	public IEolExecutionTraceManager getExecutionTraceManager();	
+//	/**
+//	 * Set the execution trace manager for this module.
+//	 * @param manager
+//	 */
+//	public void setExecutionTraceManager(IEolExecutionTraceManager manager);
+//	
+//	/**
+//	 * Get the execution trace manager associated to this module.
+//	 * @return
+//	 */
+//	public IEolExecutionTraceManager getExecutionTraceManager();	
 
 	/**
 	 * Set a flag to listen or not to model changes.

@@ -14,7 +14,7 @@ import org.eclipse.epsilon.eol.execute.context.IEolContext;
 
 public interface IEolIncrementalContext extends IEolContext {
 
-	void setTraceManager(IEolExecutionTraceManager traceManager);
+	void setExecutionTraceManager(IEolExecutionTraceManager traceManager);
 	
 	IEolExecutionTraceManager getExecutionTraceManager();
 

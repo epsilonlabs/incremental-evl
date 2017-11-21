@@ -7,7 +7,9 @@
             class="org.eclipse.epsilon.incremental.arangodb.execute.ArangoDbTraceManager"
             dialog="org.eclipse.epsilon.incremental.arangodb.dialog.ArangoDBConfiguration"
             icon="icons/ArangoDB.png"
-            label="ArangoDB Trace Manager">
+            label="ArangoDB Trace Manager"
+            stable="true"
+            type="ArangoDB">
       </executionTraceManager>
    </extension>
 

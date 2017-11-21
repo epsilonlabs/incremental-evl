@@ -13,7 +13,8 @@ Require-Bundle: com.arangodb.java-driver_4.2.3;bundle-version="4.2.3",
  org.eclipse.swt,
  org.eclipse.jface;bundle-version="3.12.2",
  org.eclipse.ui.workbench;bundle-version="3.108.3",
- org.eclipse.osgi;bundle-version="3.11.3"
+ org.eclipse.osgi;bundle-version="3.11.3",
+ org.eclipse.epsilon.evl.engine.incremental
 Export-Package: org.eclipse.epsilon.incremental.arangodb.dialog,
  org.eclipse.epsilon.incremental.arangodb.execute,
  org.eclipse.epsilon.incremental.arangodb.trace.impl

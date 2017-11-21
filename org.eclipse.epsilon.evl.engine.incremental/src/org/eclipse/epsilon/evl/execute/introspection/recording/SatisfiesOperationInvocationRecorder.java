@@ -1,54 +1,60 @@
 package org.eclipse.epsilon.evl.execute.introspection.recording;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.epsilon.eol.incremental.execute.IModuleElementAccessListener;
-import org.eclipse.epsilon.evl.dom.Constraint;
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
+import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
+import org.eclipse.epsilon.evl.incremental.trace.util.ContextTraceUtil;
 
-public class SatisfiesOperationInvocationRecorder implements IOperationInvocationRecorder, IModuleElementAccessListener {
+public class SatisfiesOperationInvocationRecorder extends AbstractRecorder<ISatisfiesTrace> implements ISatisfiesInvocationRecorder {
 	
-	private boolean recording = false;
-	private IOperationInvocations<SimpleOperationInvocation<Constraint>> currentOperationInvocations = new SimpleOperationInvocations();
-	private List<Constraint> satisfiesConstraints;
+	private final IInvariantTrace invariant;
 
-
-	@Override
-	public IOperationInvocations<SimpleOperationInvocation<Constraint>> getOperationInvocations() {
-		return currentOperationInvocations;
+	public SatisfiesOperationInvocationRecorder(IInvariantTrace invariant) {
+		super();
+		this.invariant = invariant;
 	}
 
 	@Override
-	public void startRecording() {
-		currentOperationInvocations.clear();
-		satisfiesConstraints.clear();
-		recording = true;
-
-	}
-
-	@Override
-	public void stopRecording() {
-		recording = false;
-	}
-
-	@Override
-	public void record(String operationName) {
+	public void record(boolean all, Collection<String> parameterValues) {
 		if (recording) {
-			currentOperationInvocations.add(createOperationAccess(operationName));
+			currentRecording.add(createSatisfies(all, parameterValues));
 		}
 	}
 
-	private SimpleOperationInvocation<Constraint> createOperationAccess(String operationName) {
-		SimpleOperationInvocation<Constraint> opIv = new SimpleOperationInvocation<Constraint>(operationName, satisfiesConstraints);
-		return opIv;
-	}
-
-	@Override
-	public void accessed(Object moduleElement) {
-		if (recording) {
-	 		if (moduleElement instanceof Constraint) {
-				satisfiesConstraints.add((Constraint) moduleElement);
+	private ISatisfiesTrace createSatisfies(boolean all, Collection<String> parameterValues) {
+		// Each parameter should be an Invariant name
+		IContextTrace context = invariant.invariantContext().get();
+		List<IInvariantTrace> invariants = new ArrayList<>();
+		for (Object p : parameterValues) {
+			assert p instanceof String;
+			String invariantName = (String) p;
+			IInvariantTrace  invariant = ContextTraceUtil.getInvariantIn(context, invariantName);
+			if (invariant == null) {
+				try {
+					invariant = context.createInvariantTrace((String) p);
+				} catch (EolIncrementalExecutionException e) {
+					throw new IllegalStateException(String.format("Uknown invariant for %s: %s", invariantName, p), e);
+				}
 			}
 		}
+		ISatisfiesTrace result = null;
+		try {
+			result = invariant.createSatisfiesTrace();
+		} catch (EolIncrementalExecutionException e) {
+			throw new IllegalStateException(e);
+		} finally {
+			for (IInvariantTrace i : invariants) {
+				result.invariants().create(i);
+			}
+			result.setAll(all);
+		}
+		return result;
 	}
+	
 
 }

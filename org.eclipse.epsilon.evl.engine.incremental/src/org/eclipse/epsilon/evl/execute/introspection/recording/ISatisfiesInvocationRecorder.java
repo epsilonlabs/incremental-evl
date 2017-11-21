@@ -10,34 +10,21 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.execute.introspection.recording;
 
+import java.util.Collection;
+
+import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 
 /**
  * The Interface IOperationInvocationAccessRecorder.
  */
-public interface IOperationInvocationRecorder {
+public interface ISatisfiesInvocationRecorder extends IRecorder<ISatisfiesTrace> {
 	
 	/**
-	 * Gets the operation invocations.
-	 *
-	 * @return the operation invocations
-	 */
-	public IOperationInvocations getOperationInvocations();
-	
-	/**
-	 * Start recording.
-	 */
-	public void startRecording();
-
-	/**
-	 * Stop recording.
-	 */
-	public void stopRecording();
-	
-	/**
-	 * Record.
-	 *
+	 * Record execution of an operation.
+	 * 
 	 * @param operationName the operation
+	 * @param invariantNames The parameters' values used for invocation
 	 */
-	void record(String operationName);
+	void record(boolean all, Collection<String> invariantNames);
 
 }
