@@ -15,7 +15,7 @@ operation EClass testClass(interPrefix, interSufix, classPrefix, classSufix) {
 	    contReferenceVar = containerClass.name.firstToLowerCase();
 	}%]
     
-    public static class [%=self.name%]Tests extends EasyMockSupport {
+    public static class [%=self.getJavaClassName(classPrefix, classSufix)%]Tests extends EasyMockSupport {
     
         @Rule
         public EasyMockRule rule = new EasyMockRule(this);
@@ -56,7 +56,7 @@ operation EClass testClass(interPrefix, interSufix, classPrefix, classSufix) {
         
         @Test
         public void test[%=self.name%]Instantiation() throws Exception {
-[%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container, classPrefix, classSufix)%]
+[%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container, interPrefix, interSufix, classPrefix, classSufix)%]
 [%  if (container.isDefined()) {%]
             assertThat(classUnderTest.[%=container.name%]().get(), is([%=container.getEReferenceType().name.firstToLowerCase()%]Mock1));
 [%  }
@@ -82,7 +82,7 @@ operation EClass testClass(interPrefix, interSufix, classPrefix, classSufix) {
 [%=out.stopPreserve()%]	    
 	    @Test
         public void test[%=self.name%]Attributes() throws Exception {
-[%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container, classPrefix, classSufix)%]
+[%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container, interPrefix, interSufix, classPrefix, classSufix)%]
 [%=out.startPreserve(self.name + "Attributes", true)%]
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 [%=out.stopPreserve()%]
@@ -93,7 +93,7 @@ operation EClass testClass(interPrefix, interSufix, classPrefix, classSufix) {
         %]        
         @Test
         public void test[%=self.name%]Create[%=container.name.firstToUpperCase()%]Conflict() throws Exception {
-[%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container, classPrefix, classSufix)%]
+[%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container, interPrefix, interSufix, classPrefix, classSufix)%]
 [%      if (containment.isDefined()) {%]
             [%=contReferenceVar%]2 = new [%=contReferenceClass%]([%=mockContainer%]2);
             expect([%=mockContainer%]2.[%=containment.name%]()).andReturn([%=contReferenceVar%]2).anyTimes();
@@ -105,14 +105,14 @@ operation EClass testClass(interPrefix, interSufix, classPrefix, classSufix) {
         
         @Test
         public void test[%=self.name%]Destroy[%=container.name.firstToUpperCase()%]() throws Exception {
-[%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container, classPrefix, classSufix)%]
+[%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container, interPrefix, interSufix, classPrefix, classSufix)%]
             boolean result = classUnderTest.[%=container.name%]().destroy([%=mockContainer%]1);
             assertTrue(result);
         }
         
         @Test
         public void test[%=self.name%]DestroyAndCreate[%=container.name.firstToUpperCase()%]() throws Exception {
-[%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container, classPrefix, classSufix)%]
+[%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container, interPrefix, interSufix, classPrefix, classSufix)%]
 [%      if (containment.isDefined()) {%]
             [%=contReferenceVar%]2 = new [%=contReferenceClass%]([%=mockContainer%]2);
             expect([%=mockContainer%]2.[%=containment.name%]()).andReturn([%=contReferenceVar%]2).anyTimes();
@@ -146,7 +146,7 @@ operation EClass testClass(interPrefix, interSufix, classPrefix, classSufix) {
         %]
         @Test
         public void test[%=self.name%]Create[%=er.getEReferenceType().name%]() throws Exception {
-[%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container, classPrefix, classSufix)%]
+[%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container, interPrefix, interSufix, classPrefix, classSufix)%]
 [%      if (er.getEOpposite().isDefined()) {%]
             [%=oppVar%]1 = new [%=oppClass%]([%=erTargetMock%]1);
             expect([%=erTargetMock%]1.[%=opp.name%]()).andReturn([%=oppVar%]1).anyTimes();
@@ -174,7 +174,7 @@ operation EClass testClass(interPrefix, interSufix, classPrefix, classSufix) {
         
         @Test
         public void test[%=self.name%]Destroy[%=er.getEReferenceType().name%]() throws Exception {
-[%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container, classPrefix, classSufix)%]
+[%=self.initClassUnderTest(containerClass, containment, contReferenceClass, contReferenceVar, container, interPrefix, interSufix, classPrefix, classSufix)%]
 [%      if (er.getEOpposite().isDefined()) {%]
             [%=oppVar%]1 = new [%=oppClass%]([%=erTargetMock%]1);
             expect([%=erTargetMock%]1.[%=opp.name%]()).andReturn([%=oppVar%]1).anyTimes();
@@ -203,7 +203,7 @@ operation EClass testClass(interPrefix, interSufix, classPrefix, classSufix) {
 [%}
 @template
 operation EClass initClassUnderTest(containerClass, containment, contReferenceClass,
-                                    contReferenceVar, container, classPrefix, classSufix) {
+                                    contReferenceVar, container, interPrefix, interSufix, classPrefix, classSufix) {
     var mockContainer; 
     if (containerClass.isDefined()) {
         if (container.isUndefined()) {
@@ -216,7 +216,7 @@ operation EClass initClassUnderTest(containerClass, containment, contReferenceCl
             replay([%=mockContainer%]);
 [%}%]
 [%for (rf in self.getRequiredFeatures()) {%]
-            [%=rf.getEReferenceType().name%] _[%=rf.name%] = mock([%=rf.getEReferenceType().name%].class);
+            [%=rf.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix)%] _[%=rf.name%] = mock([%=rf.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix)%].class);
 [%}%]
 [%  // Assumes all parameters are Strings!
     var params = self.getIndexAttributes().collect(a | '"' + a.name + '"');

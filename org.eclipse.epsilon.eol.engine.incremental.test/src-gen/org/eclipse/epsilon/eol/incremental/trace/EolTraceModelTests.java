@@ -63,7 +63,7 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelTypeTrace _type = mock(ModelTypeTrace.class);
+            IModelTypeTrace _type = mock(IModelTypeTrace.class);
             classUnderTest = new AllInstancesAccess(_type, executionTraceMock1);
             assertThat(classUnderTest.execution().get(), is(executionTraceMock1));
             Queue<IAccess> values = executionTraceMock1.accesses().get();
@@ -78,7 +78,7 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelTypeTrace _type = mock(ModelTypeTrace.class);
+            IModelTypeTrace _type = mock(IModelTypeTrace.class);
             classUnderTest = new AllInstancesAccess(_type, executionTraceMock1);
 // protected region AllInstancesAccessAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
@@ -91,7 +91,7 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelTypeTrace _type = mock(ModelTypeTrace.class);
+            IModelTypeTrace _type = mock(IModelTypeTrace.class);
             classUnderTest = new AllInstancesAccess(_type, executionTraceMock1);
             executionTrace2 = new ExecutionTraceHasAccesses(executionTraceMock2);
             expect(executionTraceMock2.accesses()).andReturn(executionTrace2).anyTimes();
@@ -106,7 +106,7 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelTypeTrace _type = mock(ModelTypeTrace.class);
+            IModelTypeTrace _type = mock(IModelTypeTrace.class);
             classUnderTest = new AllInstancesAccess(_type, executionTraceMock1);
             boolean result = classUnderTest.execution().destroy(executionTraceMock1);
             assertTrue(result);
@@ -117,7 +117,7 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelTypeTrace _type = mock(ModelTypeTrace.class);
+            IModelTypeTrace _type = mock(IModelTypeTrace.class);
             classUnderTest = new AllInstancesAccess(_type, executionTraceMock1);
             executionTrace2 = new ExecutionTraceHasAccesses(executionTraceMock2);
             expect(executionTraceMock2.accesses()).andReturn(executionTrace2).anyTimes();
@@ -138,7 +138,7 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelTypeTrace _type = mock(ModelTypeTrace.class);
+            IModelTypeTrace _type = mock(IModelTypeTrace.class);
             classUnderTest = new AllInstancesAccess(_type, executionTraceMock1);
             boolean result;
             result = classUnderTest.type().create(modelTypeTraceMock2);
@@ -152,7 +152,7 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelTypeTrace _type = mock(ModelTypeTrace.class);
+            IModelTypeTrace _type = mock(IModelTypeTrace.class);
             classUnderTest = new AllInstancesAccess(_type, executionTraceMock1);
             boolean result = classUnderTest.type().destroy(_type);
             assertTrue(result);
@@ -196,7 +196,7 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelElementTrace _modelElement = mock(ModelElementTrace.class);
+            IModelElementTrace _modelElement = mock(IModelElementTrace.class);
             classUnderTest = new ElementAccess(_modelElement, executionTraceMock1);
             assertThat(classUnderTest.execution().get(), is(executionTraceMock1));
             Queue<IAccess> values = executionTraceMock1.accesses().get();
@@ -211,7 +211,7 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelElementTrace _modelElement = mock(ModelElementTrace.class);
+            IModelElementTrace _modelElement = mock(IModelElementTrace.class);
             classUnderTest = new ElementAccess(_modelElement, executionTraceMock1);
 // protected region ElementAccessAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
@@ -224,7 +224,7 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelElementTrace _modelElement = mock(ModelElementTrace.class);
+            IModelElementTrace _modelElement = mock(IModelElementTrace.class);
             classUnderTest = new ElementAccess(_modelElement, executionTraceMock1);
             executionTrace2 = new ExecutionTraceHasAccesses(executionTraceMock2);
             expect(executionTraceMock2.accesses()).andReturn(executionTrace2).anyTimes();
@@ -239,7 +239,7 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelElementTrace _modelElement = mock(ModelElementTrace.class);
+            IModelElementTrace _modelElement = mock(IModelElementTrace.class);
             classUnderTest = new ElementAccess(_modelElement, executionTraceMock1);
             boolean result = classUnderTest.execution().destroy(executionTraceMock1);
             assertTrue(result);
@@ -250,7 +250,7 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelElementTrace _modelElement = mock(ModelElementTrace.class);
+            IModelElementTrace _modelElement = mock(IModelElementTrace.class);
             classUnderTest = new ElementAccess(_modelElement, executionTraceMock1);
             executionTrace2 = new ExecutionTraceHasAccesses(executionTraceMock2);
             expect(executionTraceMock2.accesses()).andReturn(executionTrace2).anyTimes();
@@ -271,7 +271,7 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelElementTrace _modelElement = mock(ModelElementTrace.class);
+            IModelElementTrace _modelElement = mock(IModelElementTrace.class);
             classUnderTest = new ElementAccess(_modelElement, executionTraceMock1);
             boolean result;
             result = classUnderTest.modelElement().create(modelElementTraceMock2);
@@ -285,7 +285,7 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelElementTrace _modelElement = mock(ModelElementTrace.class);
+            IModelElementTrace _modelElement = mock(IModelElementTrace.class);
             classUnderTest = new ElementAccess(_modelElement, executionTraceMock1);
             boolean result = classUnderTest.modelElement().destroy(_modelElement);
             assertTrue(result);
@@ -337,8 +337,8 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelElementTrace _modelElement = mock(ModelElementTrace.class);
-            PropertyTrace _property = mock(PropertyTrace.class);
+            IModelElementTrace _modelElement = mock(IModelElementTrace.class);
+            IPropertyTrace _property = mock(IPropertyTrace.class);
             classUnderTest = new PropertyAccess(_modelElement, _property, executionTraceMock1);
             assertThat(classUnderTest.execution().get(), is(executionTraceMock1));
             Queue<IAccess> values = executionTraceMock1.accesses().get();
@@ -353,8 +353,8 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelElementTrace _modelElement = mock(ModelElementTrace.class);
-            PropertyTrace _property = mock(PropertyTrace.class);
+            IModelElementTrace _modelElement = mock(IModelElementTrace.class);
+            IPropertyTrace _property = mock(IPropertyTrace.class);
             classUnderTest = new PropertyAccess(_modelElement, _property, executionTraceMock1);
 // protected region PropertyAccessAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
@@ -367,8 +367,8 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelElementTrace _modelElement = mock(ModelElementTrace.class);
-            PropertyTrace _property = mock(PropertyTrace.class);
+            IModelElementTrace _modelElement = mock(IModelElementTrace.class);
+            IPropertyTrace _property = mock(IPropertyTrace.class);
             classUnderTest = new PropertyAccess(_modelElement, _property, executionTraceMock1);
             executionTrace2 = new ExecutionTraceHasAccesses(executionTraceMock2);
             expect(executionTraceMock2.accesses()).andReturn(executionTrace2).anyTimes();
@@ -383,8 +383,8 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelElementTrace _modelElement = mock(ModelElementTrace.class);
-            PropertyTrace _property = mock(PropertyTrace.class);
+            IModelElementTrace _modelElement = mock(IModelElementTrace.class);
+            IPropertyTrace _property = mock(IPropertyTrace.class);
             classUnderTest = new PropertyAccess(_modelElement, _property, executionTraceMock1);
             boolean result = classUnderTest.execution().destroy(executionTraceMock1);
             assertTrue(result);
@@ -395,8 +395,8 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelElementTrace _modelElement = mock(ModelElementTrace.class);
-            PropertyTrace _property = mock(PropertyTrace.class);
+            IModelElementTrace _modelElement = mock(IModelElementTrace.class);
+            IPropertyTrace _property = mock(IPropertyTrace.class);
             classUnderTest = new PropertyAccess(_modelElement, _property, executionTraceMock1);
             executionTrace2 = new ExecutionTraceHasAccesses(executionTraceMock2);
             expect(executionTraceMock2.accesses()).andReturn(executionTrace2).anyTimes();
@@ -417,8 +417,8 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelElementTrace _modelElement = mock(ModelElementTrace.class);
-            PropertyTrace _property = mock(PropertyTrace.class);
+            IModelElementTrace _modelElement = mock(IModelElementTrace.class);
+            IPropertyTrace _property = mock(IPropertyTrace.class);
             classUnderTest = new PropertyAccess(_modelElement, _property, executionTraceMock1);
             boolean result;
             result = classUnderTest.modelElement().create(modelElementTraceMock2);
@@ -432,8 +432,8 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelElementTrace _modelElement = mock(ModelElementTrace.class);
-            PropertyTrace _property = mock(PropertyTrace.class);
+            IModelElementTrace _modelElement = mock(IModelElementTrace.class);
+            IPropertyTrace _property = mock(IPropertyTrace.class);
             classUnderTest = new PropertyAccess(_modelElement, _property, executionTraceMock1);
             boolean result = classUnderTest.modelElement().destroy(_modelElement);
             assertTrue(result);
@@ -446,8 +446,8 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelElementTrace _modelElement = mock(ModelElementTrace.class);
-            PropertyTrace _property = mock(PropertyTrace.class);
+            IModelElementTrace _modelElement = mock(IModelElementTrace.class);
+            IPropertyTrace _property = mock(IPropertyTrace.class);
             classUnderTest = new PropertyAccess(_modelElement, _property, executionTraceMock1);
             boolean result;
             result = classUnderTest.property().create(propertyTraceMock2);
@@ -461,8 +461,8 @@ public class EolTraceModelTests {
             executionTrace1 = new ExecutionTraceHasAccesses(executionTraceMock1);
             expect(executionTraceMock1.accesses()).andReturn(executionTrace1).anyTimes();
             replay(executionTraceMock1);
-            ModelElementTrace _modelElement = mock(ModelElementTrace.class);
-            PropertyTrace _property = mock(PropertyTrace.class);
+            IModelElementTrace _modelElement = mock(IModelElementTrace.class);
+            IPropertyTrace _property = mock(IPropertyTrace.class);
             classUnderTest = new PropertyAccess(_modelElement, _property, executionTraceMock1);
             boolean result = classUnderTest.property().destroy(_property);
             assertTrue(result);
