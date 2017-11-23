@@ -1,24 +1,33 @@
-package org.eclipse.epsilon.evl.execute.introspection.recording;
+package org.eclipse.epsilon.eol.incremental.execute.introspection.recording;
 
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.eol.incremental.trace.util.ModelUtil;
 import org.eclipse.epsilon.eol.models.IModel;
-import org.eclipse.epsilon.evl.execute.IEvlExecutionTraceManager;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
 
+/**
+ * A property access recorder that creates property access objects in the incremental execution trace model.
+ * 
+ * @author Horacio Hoyos Rodriguez
+ *
+ */
 public class PropertyAccessRecorder extends AbstractRecorder<IPropertyAccess> implements IPropertyAccessRecorder {
 	
-	private final IEvlExecutionTraceManager traceManager;
-	private final IEvlModuleExecution evlExecution;
+	// TODO. Should we get this from the context - TraceManager
+	private final IEolExecutionTraceManager traceManager;
+	private final IModuleExecution evlExecution;
+	
+	/** The ExecutionTrace for which property access is being recorded */
 	private final IExecutionTrace executionTrace;
 
-	public PropertyAccessRecorder(IEvlExecutionTraceManager traceManager, IEvlModuleExecution evlExecution,
+	public PropertyAccessRecorder(IEolExecutionTraceManager traceManager, IModuleExecution evlExecution,
 			IExecutionTrace executionTrace) {
 		super();
 		this.traceManager = traceManager;
@@ -33,12 +42,12 @@ public class PropertyAccessRecorder extends AbstractRecorder<IPropertyAccess> im
 		}
 	}
 
+	//TODO Do we need to make this thread safe?
 	private IPropertyAccess createPropertyAccess(IModel model, Object modelElement, String propertyName) {
 		
 		IModelTrace modelTrace = traceManager.modelTraces().getModelTraceByName(model.getName());
 		if (modelTrace == null) {
 			try {
-				//TODO Do we need to make this thread safe?
 				modelTrace = evlExecution.createModelTrace(model.getName());
 			} catch (EolIncrementalExecutionException e) {
 				throw new IllegalStateException(e);
@@ -54,18 +63,18 @@ public class PropertyAccessRecorder extends AbstractRecorder<IPropertyAccess> im
 				throw new IllegalStateException(e);
 			}
 		}
-		IPropertyTrace property = ModelUtil.findProperty(modelElementTrace, propertyName);
-		if (property == null) {
+		IPropertyTrace propertyTrace = ModelUtil.findProperty(modelElementTrace, propertyName);
+		if (propertyTrace == null) {
 			try {
-				property = modelElementTrace.createPropertyTrace(propertyName);
+				propertyTrace = modelElementTrace.createPropertyTrace(propertyName);
 			} catch (EolIncrementalExecutionException e) {
 				throw new IllegalStateException(e);
 			}
 		}
-		IPropertyAccess pa = traceManager.moduleExecutionTraces().getPropertyAccessFor(executionTrace, property);
+		IPropertyAccess pa = traceManager.moduleExecutionTraces().getPropertyAccessFor(executionTrace, propertyTrace);
 		if (pa == null) {
 			try {
-				pa = executionTrace.createPropertyAccess(modelElementTrace, property);
+				pa = executionTrace.createPropertyAccess(modelElementTrace, propertyTrace);
 			} catch (EolIncrementalExecutionException e) {
 				throw new IllegalStateException(e);
 			}

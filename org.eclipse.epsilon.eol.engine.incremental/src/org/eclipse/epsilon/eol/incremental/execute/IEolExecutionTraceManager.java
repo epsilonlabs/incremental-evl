@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.execute;
 
+import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
 import org.eclipse.epsilon.eol.incremental.trace.util.ModelUtil;
 
 /**
@@ -40,6 +41,12 @@ public interface IEolExecutionTraceManager {
 	 * @return
 	 */
 	IModelRepository modelTraces();
+	
+	/**
+	 * The repository of module executions. Each Epsilon language will return a specialised repository.
+	 * @return
+	 */
+	IEolModuleExecutionRepository<? extends IModuleExecution> moduleExecutionTraces();
 	
 	/**
 	 * Sets the size of the queue at which point the traces will be persisted in the trace model.

@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.evl.execute.introspection.recording;
+package org.eclipse.epsilon.eol.incremental.execute.introspection.recording;
 
 /**
  * Common functionality shared by all recorders.
@@ -27,6 +27,10 @@ public abstract class AbstractRecorder<T> {
 
 	public IRecordings<T> getRecordings() {
 		return currentRecording;
+	}
+
+	public boolean isRecording() {
+		return recording;
 	}
 
 }

@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.evl.execute.introspection.recording;
+package org.eclipse.epsilon.eol.incremental.execute.introspection.recording;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,6 +12,7 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.eol.models.IModel;
+import org.eclipse.epsilon.eol.models.ModelRepository;
 
 public class PropertyAccessExecutionListener implements IExecutionListener {
 	

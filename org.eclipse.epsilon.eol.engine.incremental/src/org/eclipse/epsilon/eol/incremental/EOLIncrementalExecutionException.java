@@ -10,12 +10,14 @@
  ******************************************************************************/
 package org.eclipse.epsilon.eol.incremental;
 
-
+/**
+ * En EOL exception that is caused by errors in the incremental execution functionality.
+ * 
+ * @author Horacio Hoyos Rodriguez
+ *
+ */
 public class EolIncrementalExecutionException extends Exception {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6474163903079549097L;
 
 	

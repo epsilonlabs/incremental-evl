@@ -1,21 +1,26 @@
-package org.eclipse.epsilon.evl.execute.introspection.recording;
+package org.eclipse.epsilon.eol.incremental.execute.introspection.recording;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
 import org.eclipse.epsilon.eol.incremental.trace.util.ModelUtil;
-import org.eclipse.epsilon.evl.execute.IEvlExecutionTraceManager;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
 
+/**
+ * An all instances invocation recorder that creates objects in the incremental execution trace model.
+ * @author Horacio Hoyos Rodriguez
+ *
+ */
 public class AllInstancesInvocationRecorder extends AbstractRecorder<IAllInstancesAccess> implements IAllInstancesInvocationRecorder {
 	
-	private final IEvlExecutionTraceManager traceManager;
+	private final IEolExecutionTraceManager traceManager;
 	private final IExecutionTrace executionTrace;
-	private final IEvlModuleExecution evlExecution;
+	private final IModuleExecution evlExecution;
 	
-	public AllInstancesInvocationRecorder(IEvlExecutionTraceManager traceManager, IEvlModuleExecution evlExecution,
+	public AllInstancesInvocationRecorder(IEolExecutionTraceManager traceManager, IModuleExecution evlExecution,
 			IExecutionTrace executionTrace) {
 		super();
 		this.traceManager = traceManager;
@@ -57,24 +62,25 @@ public class AllInstancesInvocationRecorder extends AbstractRecorder<IAllInstanc
 		}
 		try {
 			//TODO Do we need to make this thread safe?
+			// FIXME What is the default model name?
 			modelTrace = evlExecution.createModelTrace(modelName);
 		} catch (EolIncrementalExecutionException e) {
 			throw new IllegalStateException(e);
 		} finally {
 			traceManager.modelTraces().add(modelTrace);
 		}
-		IModelTypeTrace modelType = ModelUtil.findModelType(modelTrace, typeName);
-		if (modelType == null) {
+		IModelTypeTrace modelTypeTrace = ModelUtil.findModelType(modelTrace, typeName);
+		if (modelTypeTrace == null) {
 			try {
-				modelType = modelTrace.createModelTypeTrace(typeName);
+				modelTypeTrace = modelTrace.createModelTypeTrace(typeName);
 			} catch (EolIncrementalExecutionException e) {
 				throw new IllegalStateException(e);
 			}
 		}
-		IAllInstancesAccess allIns = traceManager.moduleExecutionTraces().getAllInstancesAccessFor(executionTrace, modelType);
+		IAllInstancesAccess allIns = traceManager.moduleExecutionTraces().getAllInstancesAccessFor(executionTrace, modelTypeTrace);
 		if (allIns == null) {
 			try {
-				allIns = executionTrace.createAllInstancesAccess(modelType);
+				allIns = executionTrace.createAllInstancesAccess(modelTypeTrace);
 			} catch (EolIncrementalExecutionException e) {
 				throw new IllegalStateException(e);
 			}

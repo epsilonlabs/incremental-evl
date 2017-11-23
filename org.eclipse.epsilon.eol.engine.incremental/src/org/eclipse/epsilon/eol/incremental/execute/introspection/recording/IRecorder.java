@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.evl.execute.introspection.recording;
+package org.eclipse.epsilon.eol.incremental.execute.introspection.recording;
 
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 
@@ -45,5 +45,12 @@ public interface IRecorder<T> {
 	 * recently started recording session.
 	 */
 	IRecordings<T> getRecordings();
+	
+	/**
+	 * State of the recorder
+	 * 
+	 * @return True if it is recording.
+	 */
+	boolean isRecording();
 
 }

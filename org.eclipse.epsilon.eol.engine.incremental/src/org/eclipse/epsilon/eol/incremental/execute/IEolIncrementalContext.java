@@ -12,6 +12,12 @@ package org.eclipse.epsilon.eol.incremental.execute;
 
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 
+/**
+ * An EOL Context that is aware of an {@link IEolExecutionTraceManager}. 
+ *  
+ * @author Horacio Hoyos Rodriguez
+ *
+ */
 public interface IEolIncrementalContext extends IEolContext {
 
 	void setExecutionTraceManager(IEolExecutionTraceManager traceManager);

@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.evl.execute.introspection.recording;
+package org.eclipse.epsilon.eol.incremental.execute.introspection.recording;
 
 import java.util.AbstractCollection;
 import java.util.Collection;
@@ -8,6 +8,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
+/**
+ * A base implementation of {@link IRecordings} that uses generics to facilitate implementations.
+ * 
+ * @author Horacio Hoyos Rodriguez
+ *
+ * @param <E> The specific type of records.
+ */
 public class Recordings<E> extends AbstractCollection<E> implements IRecordings<E> {
 	
 	private final Collection<E> storage = new LinkedList<E>();

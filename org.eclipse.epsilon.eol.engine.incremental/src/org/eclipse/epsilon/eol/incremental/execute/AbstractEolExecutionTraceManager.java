@@ -2,17 +2,27 @@ package org.eclipse.epsilon.eol.incremental.execute;
 
 import java.time.LocalDate;
 
+/**
+ * A base implementation of the IEolExecutionTraceManager.
+ * 
+ * @author Horacio Hoyos Rodriguez
+ *
+ */
 public abstract class AbstractEolExecutionTraceManager implements IEolExecutionTraceManager {
 
 	/** A flag to signal parallel persistance */
 	protected boolean inParallel;
 	
-	protected IModelRepository models;
+	/** The model repository */
+	protected IModelRepository modelRepository;
 
+	/** The maximum number of elements in the repositories before a {@link #persistTraceInformation()} is triggered. */
 	protected int flushSize;
 
+	/** The periodic time (in miliseconds) for a {@link #persistTraceInformation()} to be triggered. */
 	protected float timeOut;
 
+	/** Time of last flush */
 	protected LocalDate lastFlush;
 	
 	protected AbstractEolExecutionTraceManager() {
@@ -26,10 +36,10 @@ public abstract class AbstractEolExecutionTraceManager implements IEolExecutionT
 
 	@Override
 	public IModelRepository modelTraces() {
-		if (this.models == null) {
-			this.models = new EolModelRepository(inParallel);
+		if (this.modelRepository == null) {
+			this.modelRepository = new EolModelRepository(inParallel);
 		}
-		return models;
+		return modelRepository;
 	}
 
 	@Override
