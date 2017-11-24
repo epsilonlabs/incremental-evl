@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.execute;
 
-import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
 import org.eclipse.epsilon.eol.incremental.trace.util.ModelUtil;
 
 /**
@@ -27,7 +26,7 @@ import org.eclipse.epsilon.eol.incremental.trace.util.ModelUtil;
  * 
  * @author Horacio Hoyos Rodriguez
  */
-public interface IEolExecutionTraceManager {
+public interface IEolExecutionTraceManager<T> {
 	
 	/**
 	 * Instruct the manager to persist the model changes using a parallel execution.
@@ -40,13 +39,13 @@ public interface IEolExecutionTraceManager {
 	 * there find types, elements and properties (see @link {@link ModelUtil}).
 	 * @return
 	 */
-	IModelRepository modelTraces();
+	IModelTraceRepository modelTraces();
 	
 	/**
 	 * The repository of module executions. Each Epsilon language will return a specialised repository.
 	 * @return
 	 */
-	IEolModuleExecutionRepository<? extends IModuleExecution> moduleExecutionTraces();
+	IEolModuleExecutionRepository<T> moduleExecutionTraces();
 	
 	/**
 	 * Sets the size of the queue at which point the traces will be persisted in the trace model.

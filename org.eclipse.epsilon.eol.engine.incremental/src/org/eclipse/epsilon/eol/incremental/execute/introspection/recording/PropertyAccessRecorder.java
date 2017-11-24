@@ -18,16 +18,17 @@ import org.eclipse.epsilon.eol.models.IModel;
  * @author Horacio Hoyos Rodriguez
  *
  */
+@Deprecated
 public class PropertyAccessRecorder extends AbstractRecorder<IPropertyAccess> implements IPropertyAccessRecorder {
 	
 	// TODO. Should we get this from the context - TraceManager
-	private final IEolExecutionTraceManager traceManager;
+	private final IEolExecutionTraceManager<?> traceManager;
 	private final IModuleExecution evlExecution;
 	
 	/** The ExecutionTrace for which property access is being recorded */
 	private final IExecutionTrace executionTrace;
 
-	public PropertyAccessRecorder(IEolExecutionTraceManager traceManager, IModuleExecution evlExecution,
+	public PropertyAccessRecorder(IEolExecutionTraceManager<?> traceManager, IModuleExecution evlExecution,
 			IExecutionTrace executionTrace) {
 		super();
 		this.traceManager = traceManager;

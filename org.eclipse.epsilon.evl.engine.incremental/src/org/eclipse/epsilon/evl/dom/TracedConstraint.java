@@ -17,6 +17,7 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
+import org.eclipse.epsilon.evl.execute.context.TracedEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.trace.ConstraintTrace;
 
@@ -42,13 +43,13 @@ public class TracedConstraint extends Constraint {
 	
 	public boolean appliesTo(Object object, IEvlContext context, final boolean checkType) throws EolRuntimeException{
 		if (checkType && !constraintContext.getAllOfSourceKind(context).contains(object)) return false;
-
+		((TracedEvlContext)context).getTraceManager().getSatisfiesListener().aboutToExecute(this, context);
+		Boolean result = true;
 		if (guardBlock != null) {
-			return guardBlock.execute(context, Variable.createReadOnlyVariable("self", object));
+			result = guardBlock.execute(context, Variable.createReadOnlyVariable("self", object));
 		}
-		else {
-			return true;
-		}
+		((TracedEvlContext)context).getTraceManager().getSatisfiesListener().finishedExecuting(this, result, context);		
+		return result;
 	}
 	
 
@@ -60,8 +61,10 @@ public class TracedConstraint extends Constraint {
 			return context.getConstraintTrace().isSatisfied(this,self);
 		}
 		// Return immediately if constraint does not apply
-		if (!appliesTo(self, context, checkType))
+		if (!appliesTo(self, context, checkType)) {
+			trace.setResult(false);
 			return false;
+		}
 		
 		// FIXME Why remove?
 		//removeOldUnsatisfiedConstraint(self, context);
@@ -71,6 +74,7 @@ public class TracedConstraint extends Constraint {
 		Boolean result = checkBlock.execute(context, false);
 		//((TracedExecutableBlock<?>)checkBlock).stopRecording();
 		boolean postResult = postprocessCheck(self, context, unsatisfiedConstraint, result);
+		trace.setResult(postResult);
 		return postResult;
 		
 	}

@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.eclipse.epsilon.eol.incremental.execute.IEolModuleExecutionRepository;
 import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;
@@ -12,7 +13,7 @@ import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
 
-public class EvlModuleExecutionRepository implements IEvlModuleExecutionRepository {
+public class EvlModuleExecutionRepository implements IEolModuleExecutionRepository<IEvlModuleExecution> {
 	
 	private final Set<IEvlModuleExecution> extent;
 

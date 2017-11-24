@@ -1,41 +1,74 @@
 package org.eclipse.epsilon.evl.execute;
 
+
 import org.eclipse.epsilon.eol.incremental.execute.AbstractEolExecutionTraceManager;
-import org.eclipse.epsilon.eol.incremental.execute.EolModelRepository;
+import org.eclipse.epsilon.eol.incremental.execute.IEolModuleExecutionRepository;
+import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.AllInstancesInvocationExetionListener;
+import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
+import org.eclipse.epsilon.evl.execute.introspection.recording.SatisfiesInvocationExecutionListener;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
 
-public class AbstractEvlExecutionTraceManager extends AbstractEolExecutionTraceManager implements IEvlExecutionTraceManager {
+/**
+ * A base implementation of the {@link IEvlExecutionTraceManager}.
+ * 
+ * @author Horacio Hoyos Rodriguez
+ *
+ */
+public abstract class AbstractEvlExecutionTraceManager
+	extends AbstractEolExecutionTraceManager<IEvlModuleExecution> implements IEvlExecutionTraceManager<IEvlModuleExecution> {
 	
-	protected IEvlModuleExecutionRepository moduleExecutions;
+	/** Repository of module executions */
+	protected IEolModuleExecutionRepository<IEvlModuleExecution> moduleExecutionRepository;
 	
-	protected IContextTraceRepository contexTraces;
+	/** Repository of context traces */
+	protected IContextTraceRepository contexTraceRepository;
 	
+//	private PropertyAccessExecutionListener propertyAccessListener;// = new PropertyAccessExecutionListener();
+//	private AllInstancesInvocationExetionListener allInstancesListener;// = new AllInstancesInvocationExetionListener();
+	private SatisfiesInvocationExecutionListener satisfiesListener;// = new SatisfiesInvocationExecutionListener();
 	
-
-	public AbstractEvlExecutionTraceManager() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
 	@Override
-	public IEvlModuleExecutionRepository moduleExecutionTraces() {
-		if (this.moduleExecutions == null) {
-			this.moduleExecutions = new EvlModuleExecutionRepository(inParallel);
+	public IEolModuleExecutionRepository<IEvlModuleExecution> moduleExecutionTraces() {
+		if (this.moduleExecutionRepository == null) {
+			this.moduleExecutionRepository = new EvlModuleExecutionRepository(inParallel);
 		}
-		return moduleExecutions;
+		return moduleExecutionRepository;
 	}
 
 	@Override
 	public IContextTraceRepository contextTraces() {
-		if (this.contexTraces == null) {
-			this.contexTraces = new ContextTraceRepository(inParallel);
+		if (this.contexTraceRepository == null) {
+			this.contexTraceRepository = new ContextTraceRepository(inParallel);
 		}
-		return contexTraces;
+		return contexTraceRepository;
 	}
+	
+//	public void setPropertyAccessListener(PropertyAccessExecutionListener propertyAccessListener) {
+//		this.propertyAccessListener = propertyAccessListener;
+//	}
+//
+//	public void setAllInstancesListener(AllInstancesInvocationExetionListener allInstancesListener) {
+//		this.allInstancesListener = allInstancesListener;
+//	}
 
 	@Override
-	public boolean persistTraceInformation() {
-		// TODO Implement IEolExecutionTraceManager.persistTraceInformation
-		throw new UnsupportedOperationException("Unimplemented Method    IEolExecutionTraceManager.persistTraceInformation invoked.");
+	public void setSatisfiesListener(SatisfiesInvocationExecutionListener satisfiesListener) {
+		this.satisfiesListener = satisfiesListener;
+	}
+
+//	@Override
+//	public PropertyAccessExecutionListener getPropertyAccessListener() {
+//		return propertyAccessListener;
+//	}
+//
+//	@Override
+//	public AllInstancesInvocationExetionListener getAllInstancesListener() {
+//		return allInstancesListener;
+//	}
+
+	@Override
+	public SatisfiesInvocationExecutionListener getSatisfiesListener() {
+		return satisfiesListener;
 	}
 
 }

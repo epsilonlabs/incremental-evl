@@ -8,12 +8,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.epsilon.eol.incremental.trace.IModelTrace;
 
 /**
- * Implementation of the {@link IModelRepository} that only accesses elements in memory.
+ * Implementation of the {@link IModelTraceRepository} that only accesses elements in memory.
  * 
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class EolModelRepository implements IModelRepository {
+public class EolModelRepository implements IModelTraceRepository {
 	
 	private final Set<IModelTrace> extent;
 	

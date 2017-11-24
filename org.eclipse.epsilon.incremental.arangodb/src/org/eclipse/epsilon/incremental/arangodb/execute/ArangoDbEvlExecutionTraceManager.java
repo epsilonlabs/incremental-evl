@@ -33,6 +33,21 @@ public class ArangoDbEvlExecutionTraceManager extends AbstractEvlExecutionTraceM
 		return false;
 	}
 
+	public SatisfiesInvocationExecutionListener getSatisfiesListener() {
+		return null;
+	}
+
+	public AllInstancesInvocationExetionListener getAllInstancesListener() {
+		return null;
+	}
+
+	public PropertyAccessExecutionListener getPropertyAccessListener() {
+		return null;
+	}
+
+	public void setSatisfiesListener(SatisfiesInvocationExecutionListener satisfiesListener) {
+	}
+
 	
 
 }

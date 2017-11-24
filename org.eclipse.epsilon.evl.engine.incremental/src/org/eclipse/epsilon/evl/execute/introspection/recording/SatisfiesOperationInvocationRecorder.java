@@ -5,11 +5,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.AbstractRecorder;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 import org.eclipse.epsilon.evl.incremental.trace.util.ContextTraceUtil;
 
+@Deprecated
 public class SatisfiesOperationInvocationRecorder extends AbstractRecorder<ISatisfiesTrace> implements ISatisfiesInvocationRecorder {
 	
 	private final IInvariantTrace invariant;

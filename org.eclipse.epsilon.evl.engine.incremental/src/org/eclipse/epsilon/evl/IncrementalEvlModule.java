@@ -23,6 +23,9 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
+import org.eclipse.epsilon.eol.incremental.dom.TracedExecutableBlock;
+import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.AllInstancesInvocationExetionListener;
+import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.eol.models.IModel;
@@ -31,10 +34,11 @@ import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.dom.Fix;
 import org.eclipse.epsilon.evl.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.dom.TracedConstraintContext;
-import org.eclipse.epsilon.evl.dom.TracedExecutableBlock;
+import org.eclipse.epsilon.evl.dom.TracedGuardBlock;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
+import org.eclipse.epsilon.evl.execute.introspection.recording.SatisfiesInvocationExecutionListener;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
@@ -66,7 +70,7 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	 * after creation of the module (i.e. launch configuration execution). This allows for different
 	 * implementations of execution trace managers to be used for execution.
 	 */
-	private IEvlExecutionTraceManager etManager = null;
+	private IEvlExecutionTraceManager<IEvlModuleExecution> etManager = null;
 	
 	/**
 	 * The set of models which the module receives notification.
@@ -97,7 +101,7 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 		if (this.sourceUri != null) {
 			evlScripPath = this.sourceUri.toString();
 		}
-		evlExecution = etManager.moduleExecutionTraces().getEvlModuleExecutionForSource(evlScripPath);
+		evlExecution = (IEvlModuleExecution) etManager.moduleExecutionTraces().getEvlModuleExecutionForSource(evlScripPath);
 		evlModule = null;
 		if (evlExecution == null) {
 			try {
@@ -111,8 +115,17 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 				}
 			}
 		}
+		PropertyAccessExecutionListener proAccessListener = new PropertyAccessExecutionListener(etManager, evlExecution);
+		AllInstancesInvocationExetionListener allInvocListener = new AllInstancesInvocationExetionListener(etManager, evlExecution);
+		SatisfiesInvocationExecutionListener satisfiesListener = new SatisfiesInvocationExecutionListener();
+		context.getExecutorFactory().addExecutionListener(proAccessListener);
+		context.getExecutorFactory().addExecutionListener(allInvocListener);
+		context.getExecutorFactory().addExecutionListener(satisfiesListener);
+		etManager.setSatisfiesListener(satisfiesListener);
+		
 		// Perform evaluation
 		execute(getPre(), context);
+		
 		for (ConstraintContext conCtx : getConstraintContexts()) { 
 			conCtx.checkAll(context);	
 		}
@@ -141,14 +154,8 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 			case EvlParser.TITLE: return new ExecutableBlock<String>(String.class);
 			case EvlParser.MESSAGE: return createExecutableBlock(String.class);
 			case EvlParser.CHECK: return createExecutableBlock(Boolean.class);
-			case EvlParser.GUARD: return createExecutableBlock(Boolean.class);
+			case EvlParser.GUARD: return createGuardBlock();
 			case EvlParser.CONSTRAINT:
-				if (incrementalMode) {
-					return new TracedConstraint();
-				}
-				else {
-					return new Constraint();
-				}
 			case EvlParser.CRITIQUE:
 				if (incrementalMode) {
 					return new TracedConstraint();
@@ -171,43 +178,42 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	public ModuleElement createAst(AST cst, ModuleElement parentAst) {
 		ModuleElement result = super.createAst(cst, parentAst);
 		if (result != null) {
+			
 			switch (cst.getType()) {
 			case EvlParser.MESSAGE:
 				if (incrementalMode) {
-				assert result instanceof TracedExecutableBlock;
-				try {
-					createMessageTrace((TracedExecutableBlock<?>) result);
-				} catch (EolIncrementalExecutionException e) {
-					throw new IllegalStateException(e);
+					assert result instanceof TracedExecutableBlock;
+					TracedExecutableBlock<?> block = (TracedExecutableBlock<?>) result;
+					try {
+						createMessageTrace(block);
+					} catch (EolIncrementalExecutionException e) {
+						throw new IllegalStateException(e);
+					}
 				}
-			}
+				break;
 			case EvlParser.CHECK:
 				if (incrementalMode) {
 					assert result instanceof TracedExecutableBlock;
+					TracedExecutableBlock<?> block = (TracedExecutableBlock<?>) result;
 					try {
-						createCheckTrace((TracedExecutableBlock<?>) result);
+						createCheckTrace(block);
 					} catch (EolIncrementalExecutionException e) {
 						throw new IllegalStateException(e);
 					}
 				}
+				break;
 			case EvlParser.GUARD:
 				if (incrementalMode) {
-					assert result instanceof TracedExecutableBlock;
+					assert result instanceof TracedGuardBlock;
+					TracedGuardBlock block = (TracedGuardBlock) result;
 					try {
-						createGuardTrace((TracedExecutableBlock<?>) result);
+						createGuardTrace(block);
 					} catch (EolIncrementalExecutionException e) {
 						throw new IllegalStateException(e);
 					}
 				}
+				break;
 			case EvlParser.CONSTRAINT:
-				if (incrementalMode) {
-					assert result instanceof TracedConstraint;
-					try {
-						createConstraintTrace((TracedConstraint) result);
-					} catch (EolIncrementalExecutionException e) {
-						throw new IllegalStateException(e);
-					}
-				}
 			case EvlParser.CRITIQUE:
 				if (incrementalMode) {
 					assert result instanceof TracedConstraint;
@@ -217,6 +223,7 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 						throw new IllegalStateException(e);
 					}
 				}
+				break;
 			case EvlParser.CONTEXT:
 				if (incrementalMode) {
 					assert result instanceof TracedConstraintContext;
@@ -226,16 +233,17 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 						throw new IllegalStateException(e);
 					}
 				}
+				break;
 			}	
 		}
 		return result;
 	}
 
-	public IEvlExecutionTraceManager getExecutionTraceManager() {
+	public IEvlExecutionTraceManager<IEvlModuleExecution> getExecutionTraceManager() {
 		return etManager;
 	}
 
-	public void setExecutionTraceManager(IEvlExecutionTraceManager etManager) {
+	public void setExecutionTraceManager(IEvlExecutionTraceManager<IEvlModuleExecution> etManager) {
 		this.etManager = etManager;
 	}
 
@@ -247,6 +255,17 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 			return new ExecutableBlock<T>(clazz);
 		}
 	}
+
+	private ExecutableBlock<Boolean> createGuardBlock() {
+		if (incrementalMode) {
+			return new TracedGuardBlock(Boolean.class);
+		}
+		else {
+			return new ExecutableBlock<Boolean>(Boolean.class);
+		}
+	}
+	
+	
 	
 	/**
 	 * Create a new trace object for a ConstraintContext
@@ -302,6 +321,7 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	 * @param tracedGuard
 	 * @throws EolIncrementalExecutionException
 	 */
+	// FIXME We need a specialized TracedExecutableBlock for guards that can store the execution result!
 	private void createGuardTrace(TracedExecutableBlock<?> tracedGuard) throws EolIncrementalExecutionException {
 		ModuleElement guardedElement = tracedGuard.getParent();
 		IGuardTrace guard = null;
@@ -328,6 +348,11 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 			}
 		}
 		tracedGuard.setTrace(guard);
+//		tracedGuard.initAllAccessRecorder((TracedEvlContext) context);
+//		tracedGuard.initPropertyAccessRecorder((TracedEvlContext) context);
+//		if (guardedElement instanceof TracedConstraint) {
+//			tracedGuard.initSatisfiesOperationInvocationRecorder(((TracedConstraint) guardedElement).getTrace());
+//		}
 	}
 	
 	/**

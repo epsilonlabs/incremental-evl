@@ -8,7 +8,7 @@ import org.eclipse.epsilon.eol.incremental.trace.IModelTrace;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public interface IModelRepository extends IRepository<IModelTrace> {
+public interface IModelTraceRepository extends IRepository<IModelTrace> {
 	
 	/**
 	 * Search a model by name.

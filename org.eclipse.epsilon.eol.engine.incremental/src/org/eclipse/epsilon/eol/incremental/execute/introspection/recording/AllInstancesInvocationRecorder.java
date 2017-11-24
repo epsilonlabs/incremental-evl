@@ -14,6 +14,7 @@ import org.eclipse.epsilon.eol.incremental.trace.util.ModelUtil;
  * @author Horacio Hoyos Rodriguez
  *
  */
+@Deprecated
 public class AllInstancesInvocationRecorder extends AbstractRecorder<IAllInstancesAccess> implements IAllInstancesInvocationRecorder {
 	
 	private final IEolExecutionTraceManager traceManager;

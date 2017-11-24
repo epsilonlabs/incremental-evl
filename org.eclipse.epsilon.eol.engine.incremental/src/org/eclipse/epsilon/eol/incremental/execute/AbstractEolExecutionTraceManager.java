@@ -8,13 +8,13 @@ import java.time.LocalDate;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public abstract class AbstractEolExecutionTraceManager implements IEolExecutionTraceManager {
+public abstract class AbstractEolExecutionTraceManager<T> implements IEolExecutionTraceManager<T> {
 
 	/** A flag to signal parallel persistance */
 	protected boolean inParallel;
 	
 	/** The model repository */
-	protected IModelRepository modelRepository;
+	protected IModelTraceRepository modelRepository;
 
 	/** The maximum number of elements in the repositories before a {@link #persistTraceInformation()} is triggered. */
 	protected int flushSize;
@@ -35,7 +35,7 @@ public abstract class AbstractEolExecutionTraceManager implements IEolExecutionT
 	}
 
 	@Override
-	public IModelRepository modelTraces() {
+	public IModelTraceRepository modelTraces() {
 		if (this.modelRepository == null) {
 			this.modelRepository = new EolModelRepository(inParallel);
 		}

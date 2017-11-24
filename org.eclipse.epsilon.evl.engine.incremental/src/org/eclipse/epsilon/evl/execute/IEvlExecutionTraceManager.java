@@ -11,13 +11,21 @@
 package org.eclipse.epsilon.evl.execute;
 
 import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
+import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.AllInstancesInvocationExetionListener;
+import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
+import org.eclipse.epsilon.evl.execute.introspection.recording.SatisfiesInvocationExecutionListener;
 
-public interface IEvlExecutionTraceManager extends IEolExecutionTraceManager {
-	
-	IEvlModuleExecutionRepository moduleExecutionTraces();
+public interface IEvlExecutionTraceManager<T> extends IEolExecutionTraceManager<T> {
 	
 	IContextTraceRepository contextTraces();
-	
+
+	SatisfiesInvocationExecutionListener getSatisfiesListener();
+
+	AllInstancesInvocationExetionListener getAllInstancesListener();
+
+	PropertyAccessExecutionListener getPropertyAccessListener();
+
+	void setSatisfiesListener(SatisfiesInvocationExecutionListener satisfiesListener);
 
 	// FIXME These should go in the ContextTraceRepository
 	/**

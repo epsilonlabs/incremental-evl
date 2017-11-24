@@ -15,7 +15,7 @@ import org.easymock.EasyMockSupport;
 import org.easymock.Mock;
 import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.incremental.execute.IEolModuleExecutionRepository;
-import org.eclipse.epsilon.eol.incremental.execute.IModelRepository;
+import org.eclipse.epsilon.eol.incremental.execute.IModelTraceRepository;
 import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;
@@ -112,7 +112,7 @@ public class RecordingTests {
 			EasyMock.expect(model.getElementId(modelElement)).andReturn(elementId).anyTimes();
 			
 			// Model repo has no model by that name
-			IModelRepository modelRepoMock = createNiceMock(IModelRepository.class);  // Nice so it allows add()
+			IModelTraceRepository modelRepoMock = createNiceMock(IModelTraceRepository.class);  // Nice so it allows add()
 			EasyMock.expect(modelRepoMock.getModelTraceByName(modelName)).andReturn(null);
 			// The trace manager returns this mock
 			EasyMock.expect(traceManager.modelTraces()).andReturn(modelRepoMock).times(2);
@@ -200,7 +200,7 @@ public class RecordingTests {
 			EasyMock.expect(model.getName()).andReturn(modelName).anyTimes();
 			
 			// No trace for the model
-			IModelRepository modelRepoMock = createNiceMock(IModelRepository.class);  // Nice so it allows add()
+			IModelTraceRepository modelRepoMock = createNiceMock(IModelTraceRepository.class);  // Nice so it allows add()
 			EasyMock.expect(modelRepoMock.first()).andReturn(null);
 			// The trace manager returns this mock
 			EasyMock.expect(traceManager.modelTraces()).andReturn(modelRepoMock).times(2);
@@ -250,7 +250,7 @@ public class RecordingTests {
 			EasyMock.expect(model.getName()).andReturn(modelName).anyTimes();
 			
 			// No trace for the model
-			IModelRepository modelRepoMock = createNiceMock(IModelRepository.class);  // Nice so it allows add()
+			IModelTraceRepository modelRepoMock = createNiceMock(IModelTraceRepository.class);  // Nice so it allows add()
 			EasyMock.expect(modelRepoMock.getModelTraceByName(modelName)).andReturn(null);
 			// The trace manager returns this mock
 			EasyMock.expect(traceManager.modelTraces()).andReturn(modelRepoMock).times(2);

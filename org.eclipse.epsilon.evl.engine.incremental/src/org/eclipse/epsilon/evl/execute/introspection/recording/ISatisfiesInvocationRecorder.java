@@ -12,6 +12,7 @@ package org.eclipse.epsilon.evl.execute.introspection.recording;
 
 import java.util.Collection;
 
+import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.IRecorder;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 
 /**

@@ -33,50 +33,60 @@ public class TracedConstraintContext extends ConstraintContext {
 		this.trace = trace;
 	}
 	
-	/**
-	 * Create a trace for the 
-	 */
+	
 	@Override
 	public boolean appliesTo(Object object, IEvlContext context, final boolean checkType) throws EolRuntimeException {
 		final IModel owningModel = context.getModelRepository().getOwningModel(object);
 		if (checkType && !owningModel.isOfType(object, getTypeName())) {
 			return false;
 		}
-		// Add the ModelElementTrace
-		IEvlExecutionTraceManager unitOfWork = ((TracedEvlContext)context).getTraceManager();
-		IEvlModuleExecution evlExecution = ((TracedEvlContext)context).getEvlExecution();
-		IModelTrace model = unitOfWork.modelTraces().getModelTraceByName(owningModel.getName());
-		if (model == null) {
-			try {
-				model = evlExecution.createModelTrace(owningModel.getName());
-			} catch (EolIncrementalExecutionException e) {
-				throw new EolRuntimeException(e.getMessage(), this);
-			} finally {
-				unitOfWork.modelTraces().add(model);				
-			}
-		}
-		String elementUri = owningModel.getElementId(object);
-		IModelElementTrace modelElement = ModelUtil.findElement(model, elementUri);
-		if (modelElement == null) {
-			try {
-				modelElement = model.createModelElementTrace(elementUri);
-			} catch (EolIncrementalExecutionException e) {
-				throw new EolRuntimeException(e.getMessage(), this);
-			}
-		}
-		
-		IElementAccess eAccess = unitOfWork.contextTraces().getElementAccessFor(trace, modelElement);
-		if (eAccess == null) {
-			try {
-				eAccess = trace.createElementAccess(modelElement);
-			} catch (EolIncrementalExecutionException e) {
-				throw new EolRuntimeException(e.getMessage(), this);
-			}
-		}
+		createContextTrace(object, context, owningModel);
 		if (guardBlock != null) {
 			return guardBlock.execute(context, Variable.createReadOnlyVariable("self", object));
 		} else {
 			return true;
+		}
+	}
+
+	/**
+	 * Add an ElementAccessTrace for the ConstraintContext
+	 * 
+	 * @param modelElement	The model element for which the Context is being executed
+	 * @param context	The IEolContext of the execution
+	 * @param owningModel	The model that owns the element
+	 * @throws EolRuntimeException	If elements of the trace model can not be created.
+	 */
+	private void createContextTrace(Object modelElement, IEvlContext context, final IModel owningModel)
+			throws EolRuntimeException {
+		// Add the ModelElementTrace
+		IEvlExecutionTraceManager traceManager = ((TracedEvlContext)context).getTraceManager();
+		IEvlModuleExecution evlExecution = ((TracedEvlContext)context).getEvlExecution();
+		IModelTrace modelTrace = traceManager.modelTraces().getModelTraceByName(owningModel.getName());
+		if (modelTrace == null) {
+			try {
+				modelTrace = evlExecution.createModelTrace(owningModel.getName());
+			} catch (EolIncrementalExecutionException e) {
+				throw new EolRuntimeException(e.getMessage(), this);
+			} finally {
+				traceManager.modelTraces().add(modelTrace);				
+			}
+		}
+		String elementUri = owningModel.getElementId(modelElement);
+		IModelElementTrace modelElementTrace = ModelUtil.findElement(modelTrace, elementUri);
+		if (modelElementTrace == null) {
+			try {
+				modelElementTrace = modelTrace.createModelElementTrace(elementUri);
+			} catch (EolIncrementalExecutionException e) {
+				throw new EolRuntimeException(e.getMessage(), this);
+			}
+		}
+		IElementAccess eAccess = traceManager.contextTraces().getElementAccessFor(trace, modelElementTrace);
+		if (eAccess == null) {
+			try {
+				eAccess = trace.createElementAccess(modelElementTrace);
+			} catch (EolIncrementalExecutionException e) {
+				throw new EolRuntimeException(e.getMessage(), this);
+			}
 		}
 	}
 }
