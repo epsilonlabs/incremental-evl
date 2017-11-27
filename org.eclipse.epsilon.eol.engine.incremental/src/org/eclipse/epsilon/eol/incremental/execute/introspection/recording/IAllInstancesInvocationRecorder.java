@@ -9,6 +9,7 @@ import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;
  * @author Horacio Hoyos Rodriguez
  *
  */
+@Deprecated
 public interface IAllInstancesInvocationRecorder extends IRecorder<IAllInstancesAccess> {
 	
 	/** Record an all instances operation invocation. */ 

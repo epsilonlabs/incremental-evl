@@ -17,7 +17,6 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
-import org.eclipse.epsilon.eol.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.evl.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
@@ -119,6 +118,10 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 		}
 		
 	}
+	
+	public boolean done() {
+		return moduleElementStack.isEmpty();
+	}
 
 	private void record(boolean all, Collection<String> parameterValues, IInvariantTrace invariant) {
 		// Each parameter should be an Invariant name
@@ -135,6 +138,7 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 					throw new IllegalStateException(String.format("Uknown invariant for %s: %s", invariantName, p), e);
 				}
 			}
+			invariants.add(targetInvariant);
 		}
 		ISatisfiesTrace result = null;
 		try {

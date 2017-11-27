@@ -7,6 +7,7 @@ package org.eclipse.epsilon.eol.incremental.execute.introspection.recording;
  *
  * @param <T>
  */
+@Deprecated
 public abstract class AbstractRecorder<T> {
 
 	protected boolean recording = false;

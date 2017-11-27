@@ -15,6 +15,7 @@ import java.util.Set;
  *
  * @param <E> The specific type of records.
  */
+@Deprecated
 public class Recordings<E> extends AbstractCollection<E> implements IRecordings<E> {
 	
 	private final Collection<E> storage = new LinkedList<E>();

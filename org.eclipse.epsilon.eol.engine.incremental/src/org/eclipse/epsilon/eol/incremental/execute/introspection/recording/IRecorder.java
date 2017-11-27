@@ -19,6 +19,7 @@ import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
  * call {@link #getRecordings()} and store the resulting value 
  * before calling {@link #startRecording()}. 
  */
+@Deprecated
 public interface IRecorder<T> {
 
 	/**

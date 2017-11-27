@@ -24,7 +24,7 @@ import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
 import org.eclipse.epsilon.eol.incremental.dom.TracedExecutableBlock;
-import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.AllInstancesInvocationExetionListener;
+import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelation;
@@ -116,7 +116,7 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 			}
 		}
 		PropertyAccessExecutionListener proAccessListener = new PropertyAccessExecutionListener(etManager, evlExecution);
-		AllInstancesInvocationExetionListener allInvocListener = new AllInstancesInvocationExetionListener(etManager, evlExecution);
+		AllInstancesInvocationExecutionListener allInvocListener = new AllInstancesInvocationExecutionListener(etManager, evlExecution);
 		SatisfiesInvocationExecutionListener satisfiesListener = new SatisfiesInvocationExecutionListener();
 		context.getExecutorFactory().addExecutionListener(proAccessListener);
 		context.getExecutorFactory().addExecutionListener(allInvocListener);

@@ -27,7 +27,7 @@ import org.eclipse.epsilon.eol.incremental.trace.util.ModelUtil;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class AllInstancesInvocationExetionListener implements IExecutionListener {
+public class AllInstancesInvocationExecutionListener implements IExecutionListener {
 	
 	/** The name of the operations of interest */
 	public static final String[] SET_VALUES = new String[] { "all",
@@ -49,7 +49,7 @@ public class AllInstancesInvocationExetionListener implements IExecutionListener
 	private final IModuleExecution moduleExecution;
 	
 
-	public AllInstancesInvocationExetionListener(IEolExecutionTraceManager<?> traceManager,
+	public AllInstancesInvocationExecutionListener(IEolExecutionTraceManager<?> traceManager,
 			IModuleExecution moduleExecution) {
 		super();
 		this.traceManager = traceManager;
@@ -83,6 +83,10 @@ public class AllInstancesInvocationExetionListener implements IExecutionListener
 			}
 		}
 	}
+	
+	public boolean done() {
+		return moduleElementStack.isEmpty();
+	}
 
 	private void record(IExecutionTrace executionTrace, boolean isKind, String modelAndMetaClass) {
 		String modelName;
@@ -104,14 +108,16 @@ public class AllInstancesInvocationExetionListener implements IExecutionListener
 			// Assume one model (i.e the element type is not qualified)
 			modelTrace = traceManager.modelTraces().first();
 		}
-		try {
-			//TODO Do we need to make this thread safe?
-			// FIXME What is the default model name?
-			modelTrace = moduleExecution.createModelTrace(modelName);
-		} catch (EolIncrementalExecutionException e) {
-			throw new IllegalStateException(e);
-		} finally {
-			traceManager.modelTraces().add(modelTrace);
+		if (modelTrace == null) {
+			try {
+				//TODO Do we need to make this thread safe?
+				// FIXME What is the default model name?
+				modelTrace = moduleExecution.createModelTrace(modelName);
+			} catch (EolIncrementalExecutionException e) {
+				throw new IllegalStateException(e);
+			} finally {
+				traceManager.modelTraces().add(modelTrace);
+			}
 		}
 		IModelTypeTrace modelTypeTrace = ModelUtil.findModelType(modelTrace, typeName);
 		if (modelTypeTrace == null) {

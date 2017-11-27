@@ -3,7 +3,7 @@ package org.eclipse.epsilon.evl.execute;
 
 import org.eclipse.epsilon.eol.incremental.execute.AbstractEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.incremental.execute.IEolModuleExecutionRepository;
-import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.AllInstancesInvocationExetionListener;
+import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.eclipse.epsilon.evl.execute.introspection.recording.SatisfiesInvocationExecutionListener;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;

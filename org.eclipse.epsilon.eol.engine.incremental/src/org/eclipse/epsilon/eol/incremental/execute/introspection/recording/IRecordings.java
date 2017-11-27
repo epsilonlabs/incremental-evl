@@ -10,6 +10,7 @@ import java.util.Set;
  *
  * @param <E>
  */
+@Deprecated
 public interface IRecordings<E> extends Collection<E> {
 	
 	public Collection<? extends E> all();

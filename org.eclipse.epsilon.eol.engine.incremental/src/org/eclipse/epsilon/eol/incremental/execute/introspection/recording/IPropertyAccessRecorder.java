@@ -8,6 +8,7 @@ import org.eclipse.epsilon.eol.models.IModel;
  * @author Horacio Hoyos Rodriguez
  *
  */
+@Deprecated
 public interface IPropertyAccessRecorder extends IRecorder<IPropertyAccess> {
 	
 	/**
