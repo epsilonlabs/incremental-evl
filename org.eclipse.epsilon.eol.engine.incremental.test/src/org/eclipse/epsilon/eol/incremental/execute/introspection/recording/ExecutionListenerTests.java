@@ -1,8 +1,6 @@
 package org.eclipse.epsilon.eol.incremental.execute.introspection.recording;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.MatcherAssert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -11,10 +9,10 @@ import java.util.ArrayDeque;
 import org.easymock.EasyMock;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
-import org.easymock.IAnswer;
 import org.easymock.Mock;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.compile.context.EolCompilationContext;
+import org.eclipse.epsilon.eol.dom.Expression;
 import org.eclipse.epsilon.eol.dom.NameExpression;
 import org.eclipse.epsilon.eol.dom.OperationCallExpression;
 import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
@@ -25,11 +23,14 @@ import org.eclipse.epsilon.eol.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.incremental.execute.IEolModuleExecutionRepository;
 import org.eclipse.epsilon.eol.incremental.execute.IModelTraceRepository;
+import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IModelElementTraceHasProperties;
 import org.eclipse.epsilon.eol.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IModelTraceHasElements;
+import org.eclipse.epsilon.eol.incremental.trace.IModelTraceHasTypes;
+import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
 import org.eclipse.epsilon.eol.incremental.trace.IModuleExecutionHasModel;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;
@@ -60,11 +61,15 @@ public class ExecutionListenerTests {
         public EasyMockRule rule = new EasyMockRule(this);
 		
 		@Mock
-		private IAllInstancesInvocationRecorder recorder;
+		private IEolExecutionTraceManager<TestModuleExecution> traceManagerMock;
+		@Mock
+		private IModuleExecution evlExecutionMock;
+		@Mock
+		private IEolContext contextMock;
 		
 
 		
-		private AllInstancesInvocationExetionListener listener;
+		private AllInstancesInvocationExecutionListener listener;
 		
 		private OperationCallExpression ast;
 		
@@ -72,8 +77,7 @@ public class ExecutionListenerTests {
 		
 		@Before
 		public void setup() {
-			listener = new AllInstancesInvocationExetionListener();
-			listener.getRecorders().add(recorder);
+			listener = new AllInstancesInvocationExecutionListener(traceManagerMock, evlExecutionMock);
 			targetExpression = new NameExpression(typeName);
 			EolCompilationContext contextMock = new EolCompilationContext();
 			targetExpression.compile(contextMock);
@@ -81,116 +85,190 @@ public class ExecutionListenerTests {
 		
 		@Test
 		public void testFinishedNotAnOperationCallExpression() {
+			// 1. Trigger listener by executing a TracedExecutableBlock
+			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
+			IExecutionTrace executionTraceMock = mock(IExecutionTrace.class);
+			blockMock.setTrace(executionTraceMock);
+			listener.aboutToExecute(blockMock, contextMock);
+			// 2. Execute other expression
 			ModuleElement me = mock(ModuleElement.class);
 			listener.finishedExecuting(me, result, null);
 			replayAll();
+			// 3. Finish executing block
+			listener.finishedExecuting(blockMock, result, contextMock);
+			assertTrue(listener.done());
 			verifyAll();
 		}
 		
 		@Test
-		public void testFinishedNotAnALlOperationCallExpression() {
-			NameExpression nameExpression = new NameExpression("some");			
-			ast = new OperationCallExpression(targetExpression, nameExpression, params);
+		public void testFinishedNotAnAllOperationCallExpression() {
+			// 1. Trigger listener by executing a TracedExecutableBlock
+			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
+			IExecutionTrace executionTraceMock = mock(IExecutionTrace.class);
+			blockMock.setTrace(executionTraceMock);
+			listener.aboutToExecute(blockMock, contextMock);
+			// 2. Execute a non-all operation
+			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, "getOne", params);
 			listener.finishedExecuting(ast, result, null);
 			replayAll();
+			// 3. Finish executing block
+			listener.finishedExecuting(blockMock, result, contextMock);
+			assertTrue(listener.done());
 			verifyAll();
 		}
 		
 		@Test
-		public void testFinishedAllInvocation() {
-			NameExpression nameExpression = new NameExpression("all");
-			StringLiteral[] params = new StringLiteral[0];
-			ast = new OperationCallExpression(targetExpression, nameExpression, params);
-			listener.finishedExecuting(ast, result, null);
-			EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
-
-				@Override
-				public Object answer() throws Throwable {
-					// Verify arguments
-					assertThat(EasyMock.getCurrentArguments().length, is(2));
-					assertThat(EasyMock.getCurrentArguments()[0], is(true));
-					assertThat(EasyMock.getCurrentArguments()[1], is(typeName));
-					return null;
-				}
-			});
+		public void testFinishedAllInvocation() throws Exception {
+			// 1. Trigger listener by executing a TracedExecutableBlock
+			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
+			IExecutionTrace executionTraceMock = mock(IExecutionTrace.class);
+			blockMock.setTrace(executionTraceMock);
+			listener.aboutToExecute(blockMock, contextMock);
+			
+			// 2. Record invocations
+			recordExecutionTrace("modelA", "typeB", executionTraceMock);
 			replayAll();
-			listener.finishedExecuting(ast, result, null);
+			// Test
+			// 3. Execute all operation
+			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, "all", params);
+			listener.finishedExecuting(ast, "elements", null);
+			
+			// 4. Finish executing block
+			listener.finishedExecuting(blockMock, result, contextMock);
+			assertTrue(listener.done());
 			verifyAll();
 		}
 		
 		@Test
-		public void testFinishedAllInstancesInvocation() {
-			NameExpression nameExpression = new NameExpression("allInstances");
-			StringLiteral[] params = new StringLiteral[0];
-			ast = new OperationCallExpression(targetExpression, nameExpression, params);
-			listener.finishedExecuting(ast, result, null);
-			EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
-
-				@Override
-				public Object answer() throws Throwable {
-					// Verify arguments
-					assertThat(EasyMock.getCurrentArguments().length, is(2));
-					assertThat(EasyMock.getCurrentArguments()[0], is(true));
-					assertThat(EasyMock.getCurrentArguments()[1], is(typeName));
-					return null;
-				}
-			});
+		public void testFinishedAllInstancesInvocation() throws Exception {
+			// 1. Trigger listener by executing a TracedExecutableBlock
+			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
+			IExecutionTrace executionTraceMock = mock(IExecutionTrace.class);
+			blockMock.setTrace(executionTraceMock);
+			listener.aboutToExecute(blockMock, contextMock);
+			
+			// 2. Record invocations
+			recordExecutionTrace("modelA", "typeB", executionTraceMock);
 			replayAll();
-			listener.finishedExecuting(ast, result, null);
+			
+			// Test
+			// 3. Execute all operation
+			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, "allInstances", params);
+			listener.finishedExecuting(ast, "elements", null);
+//			EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
+//
+//				@Override
+//				public Object answer() throws Throwable {
+//					// Verify arguments
+//					assertThat(EasyMock.getCurrentArguments().length, is(2));
+//					assertThat(EasyMock.getCurrentArguments()[0], is(true));
+//					assertThat(EasyMock.getCurrentArguments()[1], is(typeName));
+//					return null;
+//				}
+//			});
+			// 4. Finish executing block
+			listener.finishedExecuting(blockMock, result, contextMock);
+			assertTrue(listener.done());
 			verifyAll();
 		}
 		
 		@Test
-		public void testFinishedAllOfKindInvocation() {
-			NameExpression nameExpression = new NameExpression("allOfKind");
-			StringLiteral[] params = new StringLiteral[0];
-			ast = new OperationCallExpression(targetExpression, nameExpression, params);
-			listener.finishedExecuting(ast, result, null);
-			EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
-
-				@Override
-				public Object answer() throws Throwable {
-					// Verify arguments
-					assertThat(EasyMock.getCurrentArguments().length, is(2));
-					assertThat(EasyMock.getCurrentArguments()[0], is(true));
-					assertThat(EasyMock.getCurrentArguments()[1], is(typeName));
-					return null;
-				}
-			});
+		public void testFinishedAllOfKindInvocation() throws Exception {
+			// 1. Trigger listener by executing a TracedExecutableBlock
+			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
+			IExecutionTrace executionTraceMock = mock(IExecutionTrace.class);
+			blockMock.setTrace(executionTraceMock);
+			listener.aboutToExecute(blockMock, contextMock);
+			
+			// 2. Record invocations
+			recordExecutionTrace("modelA", "typeB", executionTraceMock);
 			replayAll();
-			listener.finishedExecuting(ast, result, null);
+			
+			// Test
+			// 3. Execute all operation
+			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, "allOfKind", params);
+			listener.finishedExecuting(ast, "elements", null);
+			
+			// 4. Finish executing block
+			listener.finishedExecuting(blockMock, result, contextMock);
+			assertTrue(listener.done());
 			verifyAll();
 		}
 		
 		@Test
-		public void testFinishedAllOfTypeInvocation() {
-			NameExpression nameExpression = new NameExpression("allOfType");
-			StringLiteral[] params = new StringLiteral[0];
-			ast = new OperationCallExpression(targetExpression, nameExpression, params);
-			listener.finishedExecuting(ast, result, null);
-			EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
-
-				@Override
-				public Object answer() throws Throwable {
-					// Verify arguments
-					assertThat(EasyMock.getCurrentArguments().length, is(2));
-					assertThat(EasyMock.getCurrentArguments()[0], is(false));
-					assertThat(EasyMock.getCurrentArguments()[1], is(typeName));
-					return null;
-				}
-			});
+		public void testFinishedAllOfTypeInvocation() throws Exception {
+			// 1. Trigger listener by executing a TracedExecutableBlock
+			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
+			IExecutionTrace executionTraceMock = mock(IExecutionTrace.class);
+			blockMock.setTrace(executionTraceMock);
+			listener.aboutToExecute(blockMock, contextMock);
+			
+			// 2. Record invocations
+			recordExecutionTrace("modelA", "typeB", executionTraceMock);
 			replayAll();
-			listener.finishedExecuting(ast, result, null);
+			
+			// Test
+			// 3. Execute all operation
+			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, "allOfType", params);
+			listener.finishedExecuting(ast, "elements", null);
+			
+			// 4. Finish executing block
+			listener.finishedExecuting(blockMock, result, contextMock);
+			assertTrue(listener.done());
 			verifyAll();
+		}
+		
+		private void recordExecutionTrace(String modelName, String modelTypeName, IExecutionTrace executionTraceMock) throws Exception {
+			// Setup mocks
+			IModel model = mock(IModel.class);
+			IModelTraceRepository modelRepoMock = createNiceMock(IModelTraceRepository.class);  // Nice so it allows add()
+			IModelTrace modelTraceMock = mock(IModelTrace.class);
+			IModuleExecutionHasModel hasModel = createMock(IModuleExecutionHasModel.class);
+			IModelTraceHasTypes modelHasTypesMock = mock(IModelTraceHasTypes.class);
+			IAllInstancesAccess aa = createNiceMock(IAllInstancesAccess.class);
+			
+			EasyMock.expect(model.getName()).andReturn(modelName).anyTimes();
+			
+			// No trace for the model
+			if (!modelName.isEmpty()) {
+				EasyMock.expect(modelRepoMock.getModelTraceByName(modelName)).andReturn(null);
+			}
+			else {
+				EasyMock.expect(modelRepoMock.first()).andReturn(null);
+			}
+			// The trace manager returns this mock
+			EasyMock.expect(traceManagerMock.modelTraces()).andReturn(modelRepoMock).times(2);
+			
+			// Since not present, the evlExecution will need to create one
+			
+			EasyMock.expect(evlExecutionMock.createModelTrace(modelName)).andReturn(modelTraceMock);
+				// evlExecution has models
+			EasyMock.expect(evlExecutionMock.model()).andReturn(hasModel).anyTimes();
+						
+			// ModelTrace has no types
+			
+			EasyMock.expect(modelTraceMock.types()).andReturn(modelHasTypesMock);
+			EasyMock.expect(modelHasTypesMock.get()).andReturn(new ArrayDeque<>());
+						
+			// Since not present, the model trace will create a modelType
+			IModelTypeTrace typeTraceMock = mock(IModelTypeTrace.class);
+			EasyMock.expect(modelTraceMock.createModelTypeTrace(modelTypeName)).andReturn(typeTraceMock);
+			
+			// No traces for the type
+			@SuppressWarnings("unchecked")
+			IEolModuleExecutionRepository<TestModuleExecution> executionRepoMock = mock(IEolModuleExecutionRepository.class);
+			EasyMock.expect(traceManagerMock.moduleExecutionTraces()).andReturn((IEolModuleExecutionRepository) executionRepoMock);
+			EasyMock.expect(executionRepoMock.getAllInstancesAccessFor(executionTraceMock, typeTraceMock)).andReturn(null);
+			
+			// We need to create one
+			EasyMock.expect(executionTraceMock.createAllInstancesAccess(typeTraceMock)).andReturn(aa);
+		
 		}
 	}
 
 	public static class PropertyAccessExecutionListenerTest extends EasyMockSupport {
 		
-
-		//private final String propertyName = "someProperty";
 		private String modelName = "modelA";
-		
 		
 		@Rule
         public EasyMockRule rule = new EasyMockRule(this);
@@ -199,6 +277,7 @@ public class ExecutionListenerTests {
 		private IEolExecutionTraceManager<TestModuleExecution> traceManagerMock;
 		@Mock
 		private IModuleExecution evlExecutionMock;
+
 		
 		@Mock
 		private IEolContext contextMock;	// = mock(IEolContext.class);
@@ -230,6 +309,7 @@ public class ExecutionListenerTests {
 			String result = "someValue";
 			String instance = "someObject";
 			String propertyName = "someProperty";
+			String propertyvalue = "somePValue";
 			
 			// Init the listener
 			listener = new PropertyAccessExecutionListener(traceManagerMock, evlExecutionMock);
@@ -245,14 +325,53 @@ public class ExecutionListenerTests {
 			listener.finishedExecuting(objectValue, instance, null);
 			
 			// 3. Create the traced property call expression
-			PropertyCallExpression ast = createAccessPropCall(objectValue, propertyName );
-			// Record invocations
+			PropertyCallExpression ast = createPropertyAccessExpression(objectValue, propertyName );
+			
+			// 4. Record invocations
 			recordExecutionTrace(elementId, instance, propertyName, executionTraceMock);
 			// Test
 			replayAll();
-			// 4. Finish executing property access
+			
+			// 5. Finish executing property access, should trigger ExecutionTrace access
+			listener.finishedExecuting(ast, propertyvalue, contextMock);
+			// 6. Finish executing block
+			listener.finishedExecuting(blockMock, result, contextMock);
+			assertTrue(listener.done());
+			verifyAll();
+		}
+		
+		@Test
+		public void testNoPropertyAccess() throws Exception {
+			String elementId = "some/path/element";
+			String result = "someValue";
+			String instance = "someObject";
+			String propertyName = "someProperty";
+			
+			// Init the listener
+			listener = new PropertyAccessExecutionListener(traceManagerMock, evlExecutionMock);
+
+			// 1. Trigger listener by executing a TracedExecutableBlock
+			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
+			IExecutionTrace executionTraceMock = mock(IExecutionTrace.class);
+			blockMock.setTrace(executionTraceMock);
+			listener.aboutToExecute(blockMock, contextMock);
+			
+			// 2. Save the leftHand side result 1st.
+			StringLiteral objectValue = createLeftSideExpression("ObjectRef");
+			listener.finishedExecuting(objectValue, instance, null);
+			
+			//3. Create an operation call expression
+			NameExpression targetExpression = new NameExpression("modelA!typeB");
+			StringLiteral[] params = new StringLiteral[0];
+			OperationCallExpression ast = createOperationCallExpression(objectValue, "someOp", params);
+			
+			// 4. No record as there should be no ExecutionTrace access
+			
+			// Test
+			replayAll();
+			// 5. Finish executing property access, should trigger ExecutionTrace access
 			listener.finishedExecuting(ast, result, contextMock);
-			// 5. Finish executin block
+			// 6. Finish executing block
 			listener.finishedExecuting(blockMock, result, contextMock);
 			assertTrue(listener.done());
 			verifyAll();
@@ -327,9 +446,10 @@ public class ExecutionListenerTests {
 		 * @param instance
 		 * @param propertyName
 		 * @param executionTraceMock 
+		 * @param propertyvalue 
 		 * @throws EolIncrementalExecutionException
 		 */
-		public void recordExecutionTrace(String elementId, String instance, String propertyName, IExecutionTrace executionTraceMock)
+		private void recordExecutionTrace(String elementId, String instance, String propertyName, IExecutionTrace executionTraceMock)
 				throws EolIncrementalExecutionException {
 			
 			IModel modelMock = mock(IModel.class);
@@ -337,7 +457,7 @@ public class ExecutionListenerTests {
 			IModuleExecutionHasModel hasModelMock = mock(IModuleExecutionHasModel.class);
 			IModelTraceHasElements modelHasElementsMock = mock(IModelTraceHasElements.class);
 			IPropertyTrace propertyTraceMock = mock(IPropertyTrace.class);
-			IPropertyAccess pa = mock(IPropertyAccess.class);
+			IPropertyAccess pa = createNiceMock(IPropertyAccess.class);
 			IModelElementTrace elementTraceMock = mock(IModelElementTrace.class);
 			IModelElementTraceHasProperties elementHasPropMock = mock(IModelElementTraceHasProperties.class);
 			IEolModuleExecutionRepository<TestModuleExecution> executionRepoMock = mock(IEolModuleExecutionRepository.class);
@@ -398,7 +518,7 @@ public class ExecutionListenerTests {
 		 * @param objectValue
 		 * @return
 		 */
-		private PropertyCallExpression createAccessPropCall(StringLiteral objectValue, String propertyName) {
+		private PropertyCallExpression createPropertyAccessExpression(StringLiteral objectValue, String propertyName) {
 			PropertyCallExpression ast;
 			NameExpression propertyExp = new NameExpression(propertyName);
 			ast = new PropertyCallExpression(objectValue, propertyExp);
@@ -408,5 +528,14 @@ public class ExecutionListenerTests {
 			ast.setTargetExpression(objectValue);
 			return ast;
 		}
+		
+
+	}
+
+	public static OperationCallExpression createOperationCallExpression(Expression targetExpression,
+			String operationName, StringLiteral[] params) {
+		NameExpression nameExpression = new NameExpression(operationName);			
+		OperationCallExpression oce = new OperationCallExpression(targetExpression, nameExpression, params);
+		return oce;
 	}
 }
