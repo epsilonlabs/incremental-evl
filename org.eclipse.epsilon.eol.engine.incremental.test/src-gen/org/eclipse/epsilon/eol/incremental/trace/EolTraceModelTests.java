@@ -71,7 +71,7 @@ public class EolTraceModelTests {
 	    }
 	    
 // protected region IgnoreAllInstancesAccessAttributes on begin
-	    @Ignore
+	    //@Ignore
 // protected region IgnoreAllInstancesAccessAttributes end	    
 	    @Test
         public void testAllInstancesAccessAttributes() throws Exception {
@@ -81,7 +81,15 @@ public class EolTraceModelTests {
             IModelTypeTrace _type = mock(IModelTypeTrace.class);
             classUnderTest = new AllInstancesAccess(_type, executionTraceMock1);
 // protected region AllInstancesAccessAttributes on begin
-            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
+            String id = "ObjectId";
+            classUnderTest.setId(id);
+            assertThat(classUnderTest.getId(), is(id));
+            boolean kind = false;
+            classUnderTest.setOfKind(kind);
+            assertThat(classUnderTest.getOfKind(), is(kind));
+            kind = true;
+            classUnderTest.setOfKind(kind);
+            assertThat(classUnderTest.getOfKind(), is(kind));
 // protected region AllInstancesAccessAttributes end
         }
 
@@ -204,7 +212,7 @@ public class EolTraceModelTests {
 	    }
 	    
 // protected region IgnoreElementAccessAttributes on begin
-	    @Ignore
+	    //@Ignore
 // protected region IgnoreElementAccessAttributes end	    
 	    @Test
         public void testElementAccessAttributes() throws Exception {
@@ -214,7 +222,9 @@ public class EolTraceModelTests {
             IModelElementTrace _modelElement = mock(IModelElementTrace.class);
             classUnderTest = new ElementAccess(_modelElement, executionTraceMock1);
 // protected region ElementAccessAttributes on begin
-            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
+            String id = "ObjectId";
+            classUnderTest.setId(id);
+            assertThat(classUnderTest.getId(), is(id));
 // protected region ElementAccessAttributes end
         }
 
@@ -346,7 +356,7 @@ public class EolTraceModelTests {
 	    }
 	    
 // protected region IgnorePropertyAccessAttributes on begin
-	    @Ignore
+	    //@Ignore
 // protected region IgnorePropertyAccessAttributes end	    
 	    @Test
         public void testPropertyAccessAttributes() throws Exception {
@@ -357,7 +367,12 @@ public class EolTraceModelTests {
             IPropertyTrace _property = mock(IPropertyTrace.class);
             classUnderTest = new PropertyAccess(_modelElement, _property, executionTraceMock1);
 // protected region PropertyAccessAttributes on begin
-            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
+            String id = "ObjectId";
+            classUnderTest.setId(id);
+            assertThat(classUnderTest.getId(), is(id));
+            String name = "ObjectName";
+            classUnderTest.setValue(name);
+            assertThat(classUnderTest.getValue(), is(name));                    
 // protected region PropertyAccessAttributes end
         }
 
@@ -525,7 +540,7 @@ public class EolTraceModelTests {
 	    }
 	    
 // protected region IgnoreModelTraceAttributes on begin
-	    @Ignore
+	    //@Ignore
 // protected region IgnoreModelTraceAttributes end	    
 	    @Test
         public void testModelTraceAttributes() throws Exception {
@@ -534,7 +549,12 @@ public class EolTraceModelTests {
             replay(containerMock);
             classUnderTest = new ModelTrace("name", containerMock);
 // protected region ModelTraceAttributes on begin
-            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
+            String id = "ObjectId";
+            classUnderTest.setId(id);
+            assertThat(classUnderTest.getId(), is(id));
+            String name = "ObjectName";
+            classUnderTest.setName(name);
+            assertThat(classUnderTest.getName(), is(name));
 // protected region ModelTraceAttributes end
         }
 
@@ -653,7 +673,7 @@ public class EolTraceModelTests {
 	    }
 	    
 // protected region IgnoreModelTypeTraceAttributes on begin
-	    @Ignore
+	    //@Ignore
 // protected region IgnoreModelTypeTraceAttributes end	    
 	    @Test
         public void testModelTypeTraceAttributes() throws Exception {
@@ -662,7 +682,12 @@ public class EolTraceModelTests {
             replay(modelTraceMock1);
             classUnderTest = new ModelTypeTrace("name", modelTraceMock1);
 // protected region ModelTypeTraceAttributes on begin
-            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
+            String id = "ObjectId";
+            classUnderTest.setId(id);
+            assertThat(classUnderTest.getId(), is(id));
+            String name = "ObjectName";
+            classUnderTest.setName(name);
+            assertThat(classUnderTest.getName(), is(name));
 // protected region ModelTypeTraceAttributes end
         }
 
@@ -760,7 +785,7 @@ public class EolTraceModelTests {
 	    }
 	    
 // protected region IgnoreModelElementTraceAttributes on begin
-	    @Ignore
+	    //@Ignore
 // protected region IgnoreModelElementTraceAttributes end	    
 	    @Test
         public void testModelElementTraceAttributes() throws Exception {
@@ -769,7 +794,12 @@ public class EolTraceModelTests {
             replay(modelTraceMock1);
             classUnderTest = new ModelElementTrace("uri", modelTraceMock1);
 // protected region ModelElementTraceAttributes on begin
-            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
+            String id = "ObjectId";
+            classUnderTest.setId(id);
+            assertThat(classUnderTest.getId(), is(id));
+            String uri = "ObjectUri";
+            classUnderTest.setUri(uri);
+            assertThat(classUnderTest.getUri(), is(uri));                    
 // protected region ModelElementTraceAttributes end
         }
 
@@ -893,7 +923,7 @@ public class EolTraceModelTests {
 	    }
 	    
 // protected region IgnorePropertyTraceAttributes on begin
-	    @Ignore
+	    //@Ignore
 // protected region IgnorePropertyTraceAttributes end	    
 	    @Test
         public void testPropertyTraceAttributes() throws Exception {
@@ -902,7 +932,12 @@ public class EolTraceModelTests {
             replay(modelElementTraceMock1);
             classUnderTest = new PropertyTrace("name", modelElementTraceMock1);
 // protected region PropertyTraceAttributes on begin
-            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
+            String id = "ObjectId";
+            classUnderTest.setId(id);
+            assertThat(classUnderTest.getId(), is(id));
+            String name = "ObjectName";
+            classUnderTest.setName(name);
+            assertThat(classUnderTest.getName(), is(name));                    
 // protected region PropertyTraceAttributes end
         }
 

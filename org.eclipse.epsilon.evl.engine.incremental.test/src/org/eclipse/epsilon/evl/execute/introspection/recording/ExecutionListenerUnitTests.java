@@ -33,8 +33,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({	ExecutionListenerTests.SatisfiesInvocationExecutionListenerTest.class})
-public class ExecutionListenerTests {
+@SuiteClasses({	ExecutionListenerUnitTests.SatisfiesInvocationExecutionListenerTest.class})
+public class ExecutionListenerUnitTests {
 	
 	private interface TestModuleExecution extends IModuleExecution { }
 	
@@ -92,7 +92,7 @@ public class ExecutionListenerTests {
 			blockMock.setTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			// 2. Execute a non-satisfies operation
-			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, "getOne", new StringLiteral[0]);
+			ast = ExecutionListenerUnitTests.createOperationCallExpression(targetExpression, "getOne", new StringLiteral[0]);
 			listener.finishedExecuting(ast, result, null);
 			replayAll();
 			// 3. Finish executing block
@@ -117,7 +117,7 @@ public class ExecutionListenerTests {
 			replayAll();
 			
 			// 3. Execute a Satisfies operation
-			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, EvlOperationFactory.SATISFIES_OPERATION, params);
+			ast = ExecutionListenerUnitTests.createOperationCallExpression(targetExpression, EvlOperationFactory.SATISFIES_OPERATION, params);
 			// 4a. About to execute operation to register for argument resolution
 			listener.aboutToExecute(ast, contextMock);
 			// Test
@@ -151,7 +151,7 @@ public class ExecutionListenerTests {
 			replayAll();
 			
 			// 3. Execute a Satisfies operation
-			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, EvlOperationFactory.SATISFIES_ONE_OPERATION, params);
+			ast = ExecutionListenerUnitTests.createOperationCallExpression(targetExpression, EvlOperationFactory.SATISFIES_ONE_OPERATION, params);
 			// 4a. About to execute operation to register for argument resolution
 			listener.aboutToExecute(ast, contextMock);
 			// Test
@@ -188,7 +188,7 @@ public class ExecutionListenerTests {
 			replayAll();
 			
 			// 3. Execute a Satisfies operation
-			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, EvlOperationFactory.SATISFIES_ALL_OPERATION, params);
+			ast = ExecutionListenerUnitTests.createOperationCallExpression(targetExpression, EvlOperationFactory.SATISFIES_ALL_OPERATION, params);
 			// 4a. About to execute operation to register for argument resolution
 			listener.aboutToExecute(ast, contextMock);
 			// Test

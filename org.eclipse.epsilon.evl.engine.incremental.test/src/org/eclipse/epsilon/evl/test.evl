@@ -1,0 +1,58 @@
+context TypeA {
+
+    guard { "TypeA".println(); return true; }
+	
+	constraint UnGuardedSimple {
+	   check : true
+	}
+
+    constraint GuardedSimple {
+	
+        guard { var condition = true; return true; }
+
+		check {
+		  return not frameStack.get("condition").isDefined();
+		}
+    }
+
+	constraint GuardedWithMessage {
+		
+		guard { var condition = true; return true; }
+		    
+		check {
+		    if (frameStack.get("condition").isDefined()) throw "condition variable has leaked"; 
+		    var msg = "error";
+		    return false;
+		}
+		
+		message : msg
+	}
+
+	constraint UnguardedWithFix {
+		
+		check {
+			var msg = "error";
+			return false;
+		}
+		
+		fix {
+            guard { var condition = true; return true; }
+			title : "Fix " + msg
+			do {
+				blackboard.put("fix-do-executed", "true");
+				msg; // Check that the msg variable from the check part is visible
+				self; // Check that the self variable is visible
+			}
+		}
+		
+	}
+	
+	critique CritiqueSimple {
+        
+        check {
+            var msg = "error";
+            return false;
+        }
+    }
+	
+}
