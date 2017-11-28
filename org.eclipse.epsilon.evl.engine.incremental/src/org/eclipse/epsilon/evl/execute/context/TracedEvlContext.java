@@ -14,7 +14,6 @@ package org.eclipse.epsilon.evl.execute.context;
 import org.eclipse.epsilon.evl.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
 
-// TODO: Auto-generated Javadoc
 /**
  * An EVL Context that keeps a reference to the traceManager and current EVL Execution Trace.
  * 
@@ -24,28 +23,27 @@ import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
 public class TracedEvlContext extends EvlContext {
 	
 	/** The trace manager. */
-	private IEvlExecutionTraceManager traceManager;
+	private IEvlExecutionTraceManager<IEvlModuleExecution> traceManager;
 	
 	/** The evl execution. */
 	private IEvlModuleExecution evlExecution;
-	
 	
 	/**
 	 * Gets the trace manager.
 	 *
 	 * @return the trace manager
 	 */
-	public IEvlExecutionTraceManager getTraceManager() {
+	public IEvlExecutionTraceManager<IEvlModuleExecution> getTraceManager() {
 		return traceManager;
 	}
 	
 	/**
-	 * Sets the unit of work.
+	 * Sets the trace Manager.
 	 *
-	 * @param unitOfWork the new unit of work
+	 * @param traceManager the new unit of work
 	 */
-	public void setUnitOfWork(IEvlExecutionTraceManager unitOfWork) {
-		this.traceManager = unitOfWork;
+	public void setTraceManager(IEvlExecutionTraceManager<IEvlModuleExecution> traceManager) {
+		this.traceManager = traceManager;
 	}
 	
 	/**

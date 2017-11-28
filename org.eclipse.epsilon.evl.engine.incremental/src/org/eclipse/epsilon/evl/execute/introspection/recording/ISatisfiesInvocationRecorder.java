@@ -18,6 +18,7 @@ import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 /**
  * The Interface IOperationInvocationAccessRecorder.
  */
+@Deprecated
 public interface ISatisfiesInvocationRecorder extends IRecorder<ISatisfiesTrace> {
 	
 	/**

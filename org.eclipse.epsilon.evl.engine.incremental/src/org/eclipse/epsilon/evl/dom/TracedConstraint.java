@@ -15,10 +15,15 @@ import java.util.Iterator;
 
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.execute.context.TracedEvlContext;
+import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
 import org.eclipse.epsilon.evl.trace.ConstraintTrace;
 
 /**
@@ -40,7 +45,7 @@ public class TracedConstraint extends Constraint {
 	public void setTrace(IInvariantTrace trace) {
 		this.trace = trace;
 	}
-	
+
 	public boolean appliesTo(Object object, IEvlContext context, final boolean checkType) throws EolRuntimeException{
 		if (checkType && !constraintContext.getAllOfSourceKind(context).contains(object)) return false;
 		((TracedEvlContext)context).getTraceManager().getSatisfiesListener().aboutToExecute(this, context);
@@ -78,6 +83,73 @@ public class TracedConstraint extends Constraint {
 		return postResult;
 		
 	}
+	
+	/**
+	 * Create a new guard trace for the constraint
+	 * @param tracedGuard
+	 * @throws EolIncrementalExecutionException
+	 */
+	public boolean createGuardTrace() throws EolIncrementalExecutionException {
+		if (guardBlock == null) {
+			return false;
+		}
+		IGuardTrace guard = trace.guard().get();
+		if (guard == null) {
+			try {
+				guard = trace.createGuardTrace();
+				((TracedExecutableBlock<?>) guardBlock).setTrace(guard);
+				return true;
+			} catch (EolIncrementalExecutionException e) {
+				throw new EolIncrementalExecutionException("Can't create GuardTrace for Invariant " + getName() + ".");	
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Create a new check trace for the constraint
+	 * @param tracedCheck
+	 * @throws EolIncrementalExecutionException
+	 */
+	public boolean createCheckTrace() throws EolIncrementalExecutionException {
+		if (checkBlock == null) {
+			return false;
+		}
+		ICheckTrace check = trace.check().get();
+		if (check == null) {
+			try {
+				check = trace.createCheckTrace();
+				((TracedExecutableBlock<?>) checkBlock).setTrace(check);
+				return true;
+			} catch (EolIncrementalExecutionException e) {
+				throw new EolIncrementalExecutionException("Can't create GuardTrace for Invariant " + getName() + ".");	
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Create a new message trace for the constraint
+	 * @param tracedMessage
+	 * @throws EolIncrementalExecutionException
+	 */
+	public boolean createMessageTrace() throws EolIncrementalExecutionException {
+		if (messageBlock == null) {
+			return false;
+		}
+		IMessageTrace message = trace.message().get();
+		if (message == null) {
+			try {
+				message = trace.createMessageTrace();
+				((TracedExecutableBlock<?>) messageBlock).setTrace(message);
+				return true;
+			} catch (EolIncrementalExecutionException e) {
+				throw new EolIncrementalExecutionException("Can't create MessageTrace for Invariant " + getName() + ".");	
+			}
+		}
+		return false;
+	}
+	
 	
 	private void removeOldUnsatisfiedConstraint(Object self, IEvlContext context) {
 		Iterator<UnsatisfiedConstraint> it = context.getUnsatisfiedConstraints().iterator();
