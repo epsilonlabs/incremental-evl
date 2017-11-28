@@ -35,6 +35,18 @@ public interface IEolExecutionTraceManager<T> {
 	void setParallelPersist(boolean inParallel);
 	
 	/**
+	 * Sets the size of the queue at which point the traces will be persisted in the trace model.
+	 */
+	void setFlushQueueSize(int size);
+	
+	/**
+	 * Set the period time at which point the traces will be persisted in the trace model.
+	 * 
+	 * @param period the period, in miliseconds, at which the queue will be persisted
+	 */
+	void setFlushTimeout(float period);
+	
+	/**
 	 * The repository of models. Via the repository it is possible to get access to a specific ModelTrace and from
 	 * there find types, elements and properties (see @link {@link ModelUtil}).
 	 * @return
@@ -46,18 +58,6 @@ public interface IEolExecutionTraceManager<T> {
 	 * @return
 	 */
 	IEolModuleExecutionRepository<T> moduleExecutionTraces();
-	
-	/**
-	 * Sets the size of the queue at which point the traces will be persisted in the trace model.
-	 */
-	void setFlushQueueSize(int size);
-	
-	/**
-	 * Set the period time at which point the traces will be persisted in the trace model.
-	 * 
-	 * @param period the period, in miliseconds, at which the queue will be persisted
-	 */
-	void setFlushTimeout(float period);
 	
 	/**
 	 * Makes the trace manager persist any temporal trace information in the trace model.

@@ -14,11 +14,14 @@ import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;
  * @param <T> The specific type of module being traced.
  */
 public interface IEolModuleExecutionRepository<T> extends IRepository<T> {
-
+	
+	/** Get the Evl Module Exeution for the given file path (script) */
 	T getEvlModuleExecutionForSource(String string);
 
+	/** Get the property access trace for the given execution trace */
 	IPropertyAccess getPropertyAccessFor(IExecutionTrace executionTrace, IPropertyTrace property);
 
+	/** Get the all instances access trace for the given execution trace */
 	IAllInstancesAccess getAllInstancesAccessFor(IExecutionTrace executionTrace, IModelTypeTrace modelType);
 
 }

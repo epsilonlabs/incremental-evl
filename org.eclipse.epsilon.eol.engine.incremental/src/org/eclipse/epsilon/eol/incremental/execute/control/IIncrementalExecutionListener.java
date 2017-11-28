@@ -12,7 +12,7 @@ package org.eclipse.epsilon.eol.incremental.execute.control;
 
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.IRecorder;
-
+@Deprecated
 public interface IIncrementalExecutionListener extends IExecutionListener {
 
 	public boolean addRecorder(IRecorder<?> recorder);

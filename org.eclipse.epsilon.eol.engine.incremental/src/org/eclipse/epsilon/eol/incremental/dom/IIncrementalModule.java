@@ -12,8 +12,6 @@ package org.eclipse.epsilon.eol.incremental.dom;
 
 import java.util.Set;
 
-import org.eclipse.epsilon.common.module.ModuleElement;
-import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
@@ -38,9 +36,28 @@ public interface IIncrementalModule {
 	
 	public static final String ONLINE_MODE = "online";
 	
+	/**
+	 * Return the ExecutionTrace for the execution
+	 * @return
+	 */
+	public IModuleExecution getModuleExecution();
+	
+	/** 
+	 * Return the ExecutionTrace for the executed module
+	 * @return
+	 */
 	public IModuleTrace getModuleTrace();
 	
-	public IModuleExecution getModuleExecution();
+	/**
+	 * Returns the set of models from which the module receives notification.
+	 * @return
+	 */
+	public Set<IIncrementalModel> getTargets();
+	
+	/**
+	 * Set a flag to listen or not to model changes.
+	 */
+	public void listenToModelChanges(boolean listen);
 	
 	/**
 	 * Called to notify the module that the model has changed. Implementations would usually query the execution trace
@@ -52,7 +69,7 @@ public interface IIncrementalModule {
 	 * @param propertyName the name of the property that changed
 	 */
 	public void onChange(String objectId, Object object, String propertyName);
-	
+
 	/**
 	 * Called to notify the module that a new object has been created in the model. Implementations would usually find
 	 * the type of the newly created object and re-execute any statements of the module that are related to its type.
@@ -60,7 +77,7 @@ public interface IIncrementalModule {
 	 * @param object the object that has been created
 	 */
 	public void onCreate(Object object);
-	
+
 	/**
 	 * Called to notify the module that an object has been deleted from the model. Implementations would usually
 	 * query the execution trace model/store to test if the given object has a trace. If so, all elements of the
@@ -71,29 +88,6 @@ public interface IIncrementalModule {
 	 * 
 	 */
 	public void onDelete(String objectId, Object object);
-
-	/**
-	 * Returns the set of models from which the module receives notification.
-	 * @return
-	 */
-	public Set<IIncrementalModel> getTargets();
-	
-//	/**
-//	 * Set the execution trace manager for this module.
-//	 * @param manager
-//	 */
-//	public void setExecutionTraceManager(IEolExecutionTraceManager manager);
-//	
-//	/**
-//	 * Get the execution trace manager associated to this module.
-//	 * @return
-//	 */
-//	public IEolExecutionTraceManager getExecutionTraceManager();	
-
-	/**
-	 * Set a flag to listen or not to model changes.
-	 */
-	public void listenToModelChanges(boolean listen);
 	
 }
 
