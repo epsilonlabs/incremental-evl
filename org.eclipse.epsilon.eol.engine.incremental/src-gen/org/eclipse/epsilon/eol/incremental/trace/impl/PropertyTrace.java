@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -97,11 +97,13 @@ public class PropertyTrace implements IPropertyTrace {
         PropertyTrace other = (PropertyTrace) obj;
         if (!sameIdentityAs(other))
             return false;
+        // Will use element for equals
         if (element.get() == null) {
             if (other.element.get() != null)
                 return false;
-        } else if (!element.get().equals(other.element.get()))
+        }        else if (!element.get().equals(other.element.get())) {
             return false;
+        }
         return true; 
   }
 
@@ -109,8 +111,8 @@ public class PropertyTrace implements IPropertyTrace {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((element.get() == null) ? 0 : element.get().hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((element == null) ? 0 : element.hashCode());
         return result;
     }
 

@@ -500,7 +500,7 @@ public class ExecutionListenerTests {
 			EasyMock.expect(executionRepoMock.getPropertyAccessFor(executionTraceMock, propertyTraceMock)).andReturn(null);
 			
 			// We need to create one
-			EasyMock.expect(executionTraceMock.createPropertyAccess(elementTraceMock, propertyTraceMock)).andReturn(pa);
+			EasyMock.expect(executionTraceMock.createPropertyAccess(propertyTraceMock)).andReturn(pa);
 		}
 
 		/**

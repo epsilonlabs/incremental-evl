@@ -50,7 +50,7 @@ for (ea in ec.getEAttributes()) {
     }%]
     [%=ea.makeGetterDoc()%]
     [%=ea.makeGetterSignature(multi)%];[%
-    if (not ea.isMany()) {%]    
+    if (not ea.isMany() and not ec.getIndexAttributes().includes(ea)) {%]    
 
     [%=ea.makeSetterDoc()%]
     [%=ea.makeSetterSignature(multi)%];

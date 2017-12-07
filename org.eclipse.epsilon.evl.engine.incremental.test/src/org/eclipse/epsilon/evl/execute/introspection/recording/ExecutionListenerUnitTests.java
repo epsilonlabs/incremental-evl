@@ -24,7 +24,8 @@ import org.eclipse.epsilon.evl.incremental.trace.IContextTraceHasConstraints;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasInvariantContext;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
-import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasInvariants;
+import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasInvariant;
+import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasSatisfiedInvariants;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -170,7 +171,6 @@ public class ExecutionListenerUnitTests {
 		
 		@Test
 		public void testSatisfiesAllInvocation() throws Exception {
-			NameExpression nameExpression = new NameExpression(EvlOperationFactory.SATISFIES_ALL_OPERATION);
 			StringLiteral[] params = new StringLiteral[2];
 			String isNamed = "IsNamed";
 			String isTyped = "IsTyped";
@@ -211,7 +211,7 @@ public class ExecutionListenerUnitTests {
 			IContextTraceHasConstraints contextHasInvariants = mock(IContextTraceHasConstraints.class);
 			IInvariantTrace targetInvariantMock = mock(IInvariantTrace.class);
 			ISatisfiesTrace satisfiesMock = niceMock(ISatisfiesTrace.class);
-			ISatisfiesTraceHasInvariants satisfiesHasInvariantsMock = niceMock(ISatisfiesTraceHasInvariants.class);
+			ISatisfiesTraceHasSatisfiedInvariants satisfiesHasSatisfiedInvariantMock = niceMock(ISatisfiesTraceHasSatisfiedInvariants.class);
 			
 			EasyMock.expect(invariantHasContextMock.get()).andReturn(contextMock);
 			EasyMock.expect(executionTraceMock.invariantContext()).andReturn(invariantHasContextMock);
@@ -219,7 +219,7 @@ public class ExecutionListenerUnitTests {
 			EasyMock.expect(contextHasInvariants.get()).andReturn(new ArrayDeque<>()).times(params.length);
 			for (StringLiteral p : params) {
 				EasyMock.expect(contextMock.createInvariantTrace(p.getValue())).andReturn(targetInvariantMock);
-				EasyMock.expect(satisfiesMock.invariants()).andReturn(satisfiesHasInvariantsMock);
+				EasyMock.expect(satisfiesMock.satisfiedInvariants()).andReturn(satisfiesHasSatisfiedInvariantMock);
 			}
 			EasyMock.expect(executionTraceMock.createSatisfiesTrace()).andReturn(satisfiesMock);
 		}

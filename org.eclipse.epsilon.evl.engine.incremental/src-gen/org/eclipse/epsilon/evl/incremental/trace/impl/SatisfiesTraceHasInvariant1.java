@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-07.
+ * This file was automatically generated on: 2017-12-06.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,31 +11,29 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleElementTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IContextTraceHasContext;
+import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
+import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasInvariant1;
 import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of IContextTraceHasContext reference. 
+ * Implementation of ISatisfiesTraceHasInvariant1 reference. 
  */
-public class ContextTraceHasContext extends Feature implements IContextTraceHasContext {
+public class SatisfiesTraceHasInvariant1 extends Feature implements ISatisfiesTraceHasInvariant1 {
     
     /** The source(s) of the reference */
-    protected IContextTrace source;
+    protected ISatisfiesTrace source;
     
     /** The target(s) of the reference */
-    protected Queue<IModuleElementTrace> target =  new ConcurrentLinkedQueue<IModuleElementTrace>();
+    protected IInvariantTrace target;
     
     /**
-     * Instantiates a new IContextTraceHasContext.
+     * Instantiates a new ISatisfiesTraceHasInvariant1.
      *
      * @param source the source of the reference
      */
-    public ContextTraceHasContext (IContextTrace source) {
+    public SatisfiesTraceHasInvariant1 (ISatisfiesTrace source) {
         super(true);
         this.source = source;
     }
@@ -43,12 +41,12 @@ public class ContextTraceHasContext extends Feature implements IContextTraceHasC
     // PUBLIC API
         
     @Override
-    public Queue<IModuleElementTrace> get() {
+    public IInvariantTrace get() {
         return target;
     }
     
     @Override
-    public boolean create(IModuleElementTrace target) {
+    public boolean create(IInvariantTrace target) {
         if (conflict(target)) {
             return false;
         }
@@ -57,7 +55,7 @@ public class ContextTraceHasContext extends Feature implements IContextTraceHasC
     }
 
     @Override
-    public boolean destroy(IModuleElementTrace target) {
+    public boolean destroy(IInvariantTrace target) {
         if (!related(target)) {
             return false;
         }
@@ -66,30 +64,28 @@ public class ContextTraceHasContext extends Feature implements IContextTraceHasC
     }
     
     @Override
-    public boolean conflict(IModuleElementTrace target) {
+    public boolean conflict(IInvariantTrace target) {
         boolean result = false;
-        if (isUnique) {
-            result |= get().contains(target);
-        }
+        result |= get() != null;
         return result;
     }
     
     @Override
-    public boolean related(IModuleElementTrace target) {
+    public boolean related(IInvariantTrace target) {
   
-        return get().contains(target) ;
+        return target.equals(this.target) ;
     }
     
     // PRIVATE API
     
     @Override
-    public void set(IModuleElementTrace target) {
-        this.target.add(target);
+    public void set(IInvariantTrace target) {
+        this.target = target;
     }
     
     @Override
-    public void remove(IModuleElementTrace target) {
-        this.target.remove(target);
+    public void remove(IInvariantTrace target) {
+        this.target = null;
     }
 
 }

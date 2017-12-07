@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -33,16 +33,7 @@ public interface IModelElementTrace extends IIdElement {
      * <!-- protected region uri-getter-doc end --> 
      * @return the value of the '<em>Uri</em>' attribute.
      */
-    String getUri();    
-
-    /**
-     * Sets the value of the '{@link ModelElementTrace#Uri <em>Uri</em>}' attribute.
-     * <!-- protected region uri-setter-doc on begin -->
-     * <!-- protected region uri-setter-doc end --> 
-     * @param value the new value of the '<em>Uri/em>' attribute.
-     */
-    void setUri(String value);
-            
+    String getUri();            
     /** The model reference. */
     IModelElementTraceHasModel model();
                 

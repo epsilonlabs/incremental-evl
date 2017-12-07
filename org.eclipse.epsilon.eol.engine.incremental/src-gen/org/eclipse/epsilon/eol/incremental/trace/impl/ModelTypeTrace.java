@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -97,11 +97,13 @@ public class ModelTypeTrace implements IModelTypeTrace {
         ModelTypeTrace other = (ModelTypeTrace) obj;
         if (!sameIdentityAs(other))
             return false;
+        // Will use model for equals
         if (model.get() == null) {
             if (other.model.get() != null)
                 return false;
-        } else if (!model.get().equals(other.model.get()))
+        }        else if (!model.get().equals(other.model.get())) {
             return false;
+        }
         return true; 
   }
 
@@ -109,8 +111,8 @@ public class ModelTypeTrace implements IModelTypeTrace {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((model.get() == null) ? 0 : model.get().hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((model == null) ? 0 : model.hashCode());
         return result;
     }
 

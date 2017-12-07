@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -83,7 +83,7 @@ public class ContextTraceHasConstraints extends Feature implements IContextTrace
     @Override
     public boolean related(IInvariantTrace target) {
   
-        return get().contains(target) & source.equals(target.invariantContext().get());
+        return get().contains(target) && source.equals(target.invariantContext().get());
     }
     
     // PRIVATE API

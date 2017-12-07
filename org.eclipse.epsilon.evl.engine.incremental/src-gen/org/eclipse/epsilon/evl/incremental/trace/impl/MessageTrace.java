@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -133,10 +133,10 @@ public class MessageTrace implements IMessageTrace {
     }      
             
     @Override
-    public IPropertyAccess createPropertyAccess(IModelElementTrace modelElement, IPropertyTrace property) throws EolIncrementalExecutionException {
+    public IPropertyAccess createPropertyAccess(IPropertyTrace property) throws EolIncrementalExecutionException {
         IPropertyAccess propertyAccess = null;
         try {
-            propertyAccess = new PropertyAccess(modelElement, property, this);
+            propertyAccess = new PropertyAccess(property, this);
             
             this.accesses().create(propertyAccess);
         } catch (TraceModelDuplicateRelation e) {
@@ -148,7 +148,6 @@ public class MessageTrace implements IMessageTrace {
             try {
                 propertyAccess = this.accesses.get().stream()
                     .map(PropertyAccess.class::cast)
-                    .filter(item -> item.modelElement().get().equals(modelElement))
                     .filter(item -> item.property().get().equals(property))
                     .findFirst()
                     .get();
@@ -180,11 +179,13 @@ public class MessageTrace implements IMessageTrace {
         MessageTrace other = (MessageTrace) obj;
         if (!sameIdentityAs(other))
             return false;
+        // Will use invariant for equals
         if (invariant.get() == null) {
             if (other.invariant.get() != null)
                 return false;
-        } else if (!invariant.get().equals(other.invariant.get()))
+        }        else if (!invariant.get().equals(other.invariant.get())) {
             return false;
+        }
         return true; 
   }
 
@@ -192,7 +193,7 @@ public class MessageTrace implements IMessageTrace {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((invariant.get() == null) ? 0 : invariant.get().hashCode());
+        result = prime * result + ((invariant == null) ? 0 : invariant.hashCode());
         return result;
     }
 

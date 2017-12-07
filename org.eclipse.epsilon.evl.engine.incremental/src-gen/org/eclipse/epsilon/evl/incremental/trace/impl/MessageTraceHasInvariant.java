@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -79,7 +79,7 @@ public class MessageTraceHasInvariant extends Feature implements IMessageTraceHa
     @Override
     public boolean related(IInvariantTrace target) {
   
-        return target.equals(this.target) & source.equals(target.message().get());
+        return target.equals(this.target) && source.equals(target.message().get());
     }
     
     // PRIVATE API

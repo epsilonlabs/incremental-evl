@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,6 +12,12 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;    
+import org.eclipse.epsilon.eol.incremental.trace.IElementAccess;    
+import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;    
+import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;    
+import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;    
+import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;    
@@ -36,16 +42,7 @@ public interface IInvariantTrace extends IGuardedElementTrace {
      * <!-- protected region name-getter-doc end --> 
      * @return the value of the '<em>Name</em>' attribute.
      */
-    String getName();    
-
-    /**
-     * Sets the value of the '{@link InvariantTrace#Name <em>Name</em>}' attribute.
-     * <!-- protected region name-setter-doc on begin -->
-     * <!-- protected region name-setter-doc end --> 
-     * @param value the new value of the '<em>Name/em>' attribute.
-     */
-    void setName(String value);
-            
+    String getName();            
     /**
      * Returns the value of the '<em><b>Result</b></em>' attribute.
      * <!-- protected region result-getter-doc on begin -->
@@ -84,6 +81,7 @@ public interface IInvariantTrace extends IGuardedElementTrace {
      */
     public boolean sameIdentityAs(final IInvariantTrace other);
     
+   
     /** The GuardTrace Factory. */
     IGuardTrace createGuardTrace() throws EolIncrementalExecutionException;       
    

@@ -12,9 +12,7 @@
 package org.eclipse.epsilon.evl;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
@@ -82,14 +80,21 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	protected IEvlModuleTrace evlModuleTrace;
 	
 	/** The context. */
-	protected IEvlContext context = new TracedEvlContext();
+	protected IEvlContext context;
 	
+	
+	
+	public IncrementalEvlModule() {
+		super();
+		context = new TracedEvlContext();
+	}
+
 	@Override
 	public Object execute() throws EolRuntimeException {
 		if (!incrementalMode) {
 			return super.execute();
 		}
-		prepareContext(context);
+//		prepareContext(context);
 		context.setOperationFactory(new EvlOperationFactory());
 		context.getFrameStack().put(Variable.createReadOnlyVariable("thisModule", this));
 //		List<String> modelIds = this.getContext().getModelRepository().getModels().stream()
@@ -138,7 +143,9 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	}
 
 	/**
-	 * @return
+	 * The execution trace must be initialised after the traceManager has been assigned to the context
+	 * ({@link TracedEvlContext#setTraceManager(IEvlExecutionTraceManager)}).
+	 * 
 	 * @throws EolRuntimeException
 	 */
 	public void prepareExecutionTrace() throws EolRuntimeException {
@@ -148,7 +155,7 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 		if (evlExecution == null) {
 			try {
 				evlExecution = new EvlModuleExecution();
-				
+				((TracedEvlContext)getContext()).setEvlExecution(evlExecution);
 			} catch (TraceModelDuplicateRelation e) {
 				throw new EolRuntimeException("Error creating the execution trace for this module. " + e.getMessage());
 			} finally {

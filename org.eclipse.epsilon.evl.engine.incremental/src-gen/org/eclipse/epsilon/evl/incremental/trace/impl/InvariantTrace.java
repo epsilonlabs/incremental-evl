@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -196,6 +196,8 @@ public class InvariantTrace implements IInvariantTrace {
         ISatisfiesTrace satisfiesTrace = null;
         try {
             satisfiesTrace = new SatisfiesTrace(this);
+            
+            this.satisfies().create(satisfiesTrace);
         } catch (TraceModelDuplicateRelation e) {
             // Pass
         } finally {
@@ -235,11 +237,6 @@ public class InvariantTrace implements IInvariantTrace {
         InvariantTrace other = (InvariantTrace) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (invariantContext.get() == null) {
-            if (other.invariantContext.get() != null)
-                return false;
-        } else if (!invariantContext.get().equals(other.invariantContext.get()))
-            return false;
         return true; 
   }
 
@@ -247,7 +244,6 @@ public class InvariantTrace implements IInvariantTrace {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((invariantContext.get() == null) ? 0 : invariantContext.get().hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }

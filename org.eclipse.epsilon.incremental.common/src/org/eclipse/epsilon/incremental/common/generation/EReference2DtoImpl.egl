@@ -144,9 +144,9 @@ if (er.isMany()) {
 var targetRel = ";";
 if (opposite.isDefined()) {
     if (opp_many) {
-        targetRel = "& target." + opposite + "().get().contains(source);";
+        targetRel = "&& target." + opposite + "().get().contains(source);";
     } else {
-        targetRel = "& source.equals(target." + opposite + "().get());";
+        targetRel = "&& source.equals(target." + opposite + "().get());";
     }
 }%]  
         return [%=sourceRel%] [%=targetRel%]

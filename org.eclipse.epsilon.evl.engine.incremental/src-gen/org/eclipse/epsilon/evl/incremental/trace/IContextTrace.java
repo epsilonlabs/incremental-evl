@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,7 +14,6 @@ package org.eclipse.epsilon.evl.incremental.trace;
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;    
 import org.eclipse.epsilon.eol.incremental.trace.IElementAccess;    
-import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;    
 import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;    
 import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;    
 import org.eclipse.epsilon.eol.incremental.trace.IModuleElementTrace;    
@@ -29,7 +28,7 @@ import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
  * container references. That is, elements contained in the ContextTrace must be
  * created through this interface.
  */
-public interface IContextTrace extends IGuardedElementTrace, IExecutionTrace, IModuleElementTrace {
+public interface IContextTrace extends IGuardedElementTrace, IModuleElementTrace {
 
     /**
      * Returns the value of the '<em><b>Kind</b></em>' attribute.
@@ -41,16 +40,7 @@ public interface IContextTrace extends IGuardedElementTrace, IExecutionTrace, IM
      * <!-- protected region kind-getter-doc end --> 
      * @return the value of the '<em>Kind</em>' attribute.
      */
-    String getKind();    
-
-    /**
-     * Sets the value of the '{@link ContextTrace#Kind <em>Kind</em>}' attribute.
-     * <!-- protected region kind-setter-doc on begin -->
-     * <!-- protected region kind-setter-doc end --> 
-     * @param value the new value of the '<em>Kind/em>' attribute.
-     */
-    void setKind(String value);
-            
+    String getKind();            
     /** The constraints reference. */
     IContextTraceHasConstraints constraints();
                 
@@ -63,9 +53,9 @@ public interface IContextTrace extends IGuardedElementTrace, IExecutionTrace, IM
      */
     public boolean sameIdentityAs(final IContextTrace other);
     
+   
     /** The GuardTrace Factory. */
     IGuardTrace createGuardTrace() throws EolIncrementalExecutionException;       
-   
    
     /** The InvariantTrace Factory. */
     IInvariantTrace createInvariantTrace(String name) throws EolIncrementalExecutionException;       

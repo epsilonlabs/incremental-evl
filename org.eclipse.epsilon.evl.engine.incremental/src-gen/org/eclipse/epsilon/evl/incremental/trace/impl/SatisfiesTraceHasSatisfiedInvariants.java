@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,14 +15,14 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
-import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasInvariants;
+import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasSatisfiedInvariants;
 import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of ISatisfiesTraceHasInvariants reference. 
+ * Implementation of ISatisfiesTraceHasSatisfiedInvariants reference. 
  */
-public class SatisfiesTraceHasInvariants extends Feature implements ISatisfiesTraceHasInvariants {
+public class SatisfiesTraceHasSatisfiedInvariants extends Feature implements ISatisfiesTraceHasSatisfiedInvariants {
     
     /** The source(s) of the reference */
     protected ISatisfiesTrace source;
@@ -31,11 +31,11 @@ public class SatisfiesTraceHasInvariants extends Feature implements ISatisfiesTr
     protected Queue<IInvariantTrace> target =  new ConcurrentLinkedQueue<IInvariantTrace>();
     
     /**
-     * Instantiates a new ISatisfiesTraceHasInvariants.
+     * Instantiates a new ISatisfiesTraceHasSatisfiedInvariants.
      *
      * @param source the source of the reference
      */
-    public SatisfiesTraceHasInvariants (ISatisfiesTrace source) {
+    public SatisfiesTraceHasSatisfiedInvariants (ISatisfiesTrace source) {
         super(true);
         this.source = source;
     }

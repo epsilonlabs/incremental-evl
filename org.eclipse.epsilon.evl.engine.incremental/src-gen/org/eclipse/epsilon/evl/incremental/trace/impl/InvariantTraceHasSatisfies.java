@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -50,6 +50,10 @@ public class InvariantTraceHasSatisfies extends Feature implements IInvariantTra
         if (conflict(target)) {
             return false;
         }
+        target.invariant().set(source);
+        if (related(target)) {
+            return false;
+        }
         set(target);
         return true;
     }
@@ -59,6 +63,7 @@ public class InvariantTraceHasSatisfies extends Feature implements IInvariantTra
         if (!related(target)) {
             return false;
         }
+        target.invariant().remove(source);
         remove(target);
         return true;
     }
@@ -67,13 +72,14 @@ public class InvariantTraceHasSatisfies extends Feature implements IInvariantTra
     public boolean conflict(ISatisfiesTrace target) {
         boolean result = false;
         result |= get() != null;
+        result |= target.invariant().get() != null;
         return result;
     }
     
     @Override
     public boolean related(ISatisfiesTrace target) {
   
-        return target.equals(this.target) ;
+        return target.equals(this.target) && source.equals(target.invariant().get());
     }
     
     // PRIVATE API

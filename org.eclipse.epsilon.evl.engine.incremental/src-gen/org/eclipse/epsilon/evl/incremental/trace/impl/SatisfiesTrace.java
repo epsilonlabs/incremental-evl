@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -17,8 +17,10 @@ import java.util.NoSuchElementException;
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
-import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasInvariants;
-import org.eclipse.epsilon.evl.incremental.trace.impl.SatisfiesTraceHasInvariants;
+import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasInvariant;
+import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasSatisfiedInvariants;
+import org.eclipse.epsilon.evl.incremental.trace.impl.SatisfiesTraceHasInvariant;
+import org.eclipse.epsilon.evl.incremental.trace.impl.SatisfiesTraceHasSatisfiedInvariants;
 
 /**
  * Implementation of ISatisfiesTrace. 
@@ -28,15 +30,19 @@ public class SatisfiesTrace implements ISatisfiesTrace {
     /** The all */
     private boolean all;
 
-    /** The invariants relation */
-    private final ISatisfiesTraceHasInvariants invariants;
+    /** The invariant relation */
+    private final ISatisfiesTraceHasInvariant invariant;
+
+    /** The satisfiedInvariants relation */
+    private final ISatisfiesTraceHasSatisfiedInvariants satisfiedInvariants;
 
     /**
      * Instantiates a new SatisfiesTrace. The SatisfiesTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
     public SatisfiesTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
-        this.invariants = new SatisfiesTraceHasInvariants(this);
+        this.invariant = new SatisfiesTraceHasInvariant(this);
+        this.satisfiedInvariants = new SatisfiesTraceHasSatisfiedInvariants(this);
         if (!container.satisfies().create(this)) {
             throw new TraceModelDuplicateRelation();
         };
@@ -54,8 +60,13 @@ public class SatisfiesTrace implements ISatisfiesTrace {
     }   
      
     @Override
-    public ISatisfiesTraceHasInvariants invariants() {
-        return invariants;
+    public ISatisfiesTraceHasInvariant invariant() {
+        return invariant;
+    }
+
+    @Override
+    public ISatisfiesTraceHasSatisfiedInvariants satisfiedInvariants() {
+        return satisfiedInvariants;
     }
 
     @Override
@@ -77,6 +88,13 @@ public class SatisfiesTrace implements ISatisfiesTrace {
         SatisfiesTrace other = (SatisfiesTrace) obj;
         if (!sameIdentityAs(other))
             return false;
+        // Will use invariant for equals
+        if (invariant.get() == null) {
+            if (other.invariant.get() != null)
+                return false;
+        }        else if (!invariant.get().equals(other.invariant.get())) {
+            return false;
+        }
         return true; 
   }
 
@@ -84,6 +102,7 @@ public class SatisfiesTrace implements ISatisfiesTrace {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((invariant == null) ? 0 : invariant.hashCode());
         return result;
     }
 

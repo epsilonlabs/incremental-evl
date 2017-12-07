@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -79,7 +79,7 @@ public class PropertyTraceHasElement extends Feature implements IPropertyTraceHa
     @Override
     public boolean related(IModelElementTrace target) {
   
-        return target.equals(this.target) & target.properties().get().contains(source);
+        return target.equals(this.target) && target.properties().get().contains(source);
     }
     
     // PRIVATE API

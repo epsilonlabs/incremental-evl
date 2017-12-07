@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,7 +15,7 @@ import java.util.Queue;
 
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 
-public interface ISatisfiesTraceHasInvariants {
+public interface ISatisfiesTraceHasSatisfiedInvariants {
 
     // PUBLIC API
     

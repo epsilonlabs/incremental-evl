@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -104,11 +104,13 @@ public class AllInstancesAccess implements IAllInstancesAccess {
         AllInstancesAccess other = (AllInstancesAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (execution.get() == null) {
-            if (other.execution.get() != null)
+        // Will use type for equals
+        if (type.get() == null) {
+            if (other.type.get() != null)
                 return false;
-        } else if (!execution.get().equals(other.execution.get()))
+        }        else if (!type.get().equals(other.type.get())) {
             return false;
+        }
         return true; 
   }
 
@@ -116,7 +118,7 @@ public class AllInstancesAccess implements IAllInstancesAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((execution.get() == null) ? 0 : execution.get().hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
     }
 

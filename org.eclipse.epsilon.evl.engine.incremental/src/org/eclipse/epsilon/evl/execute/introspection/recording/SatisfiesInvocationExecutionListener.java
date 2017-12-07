@@ -147,7 +147,7 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 			throw new IllegalStateException(e);
 		} finally {
 			for (IInvariantTrace i : invariants) {
-				result.invariants().create(i);
+				result.satisfiedInvariants().create(i);
 			}
 			result.setAll(all);
 		}

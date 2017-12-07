@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,12 +18,9 @@ import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.eol.incremental.trace.IAccessHasExecution;
 import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccessHasModelElement;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccessHasProperty;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.eol.incremental.trace.impl.AccessHasExecution;
-import org.eclipse.epsilon.eol.incremental.trace.impl.PropertyAccessHasModelElement;
 import org.eclipse.epsilon.eol.incremental.trace.impl.PropertyAccessHasProperty;
 
 /**
@@ -40,9 +37,6 @@ public class PropertyAccess implements IPropertyAccess {
     /** The execution relation */
     private final IAccessHasExecution execution;
 
-    /** The modelElement relation */
-    private final IPropertyAccessHasModelElement modelElement;
-
     /** The property relation */
     private final IPropertyAccessHasProperty property;
 
@@ -50,10 +44,8 @@ public class PropertyAccess implements IPropertyAccess {
      * Instantiates a new PropertyAccess. The PropertyAccess is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public PropertyAccess(IModelElementTrace modelElement, IPropertyTrace property, IExecutionTrace container) throws TraceModelDuplicateRelation {
+    public PropertyAccess(IPropertyTrace property, IExecutionTrace container) throws TraceModelDuplicateRelation {
         this.execution = new AccessHasExecution(this);
-        this.modelElement = new PropertyAccessHasModelElement(this);
-        this.modelElement.create(modelElement);
         this.property = new PropertyAccessHasProperty(this);
         this.property.create(property);
         if (!container.accesses().create(this)) {
@@ -89,11 +81,6 @@ public class PropertyAccess implements IPropertyAccess {
     }
 
     @Override
-    public IPropertyAccessHasModelElement modelElement() {
-        return modelElement;
-    }
-
-    @Override
     public IPropertyAccessHasProperty property() {
         return property;
     }
@@ -117,11 +104,20 @@ public class PropertyAccess implements IPropertyAccess {
         PropertyAccess other = (PropertyAccess) obj;
         if (!sameIdentityAs(other))
             return false;
+        // Will use property for equals
+        if (property.get() == null) {
+            if (other.property.get() != null)
+                return false;
+        }        else if (!property.get().equals(other.property.get())) {
+            return false;
+        }
+        // Will use execution for equals
         if (execution.get() == null) {
             if (other.execution.get() != null)
                 return false;
-        } else if (!execution.get().equals(other.execution.get()))
+        }        else if (!execution.get().equals(other.execution.get())) {
             return false;
+        }
         return true; 
   }
 
@@ -129,7 +125,8 @@ public class PropertyAccess implements IPropertyAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((execution.get() == null) ? 0 : execution.get().hashCode());
+        result = prime * result + ((property == null) ? 0 : property.hashCode());
+        result = prime * result + ((execution == null) ? 0 : execution.hashCode());
         return result;
     }
 

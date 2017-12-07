@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -147,10 +147,10 @@ public class GuardTrace implements IGuardTrace {
     }      
             
     @Override
-    public IPropertyAccess createPropertyAccess(IModelElementTrace modelElement, IPropertyTrace property) throws EolIncrementalExecutionException {
+    public IPropertyAccess createPropertyAccess(IPropertyTrace property) throws EolIncrementalExecutionException {
         IPropertyAccess propertyAccess = null;
         try {
-            propertyAccess = new PropertyAccess(modelElement, property, this);
+            propertyAccess = new PropertyAccess(property, this);
             
             this.accesses().create(propertyAccess);
         } catch (TraceModelDuplicateRelation e) {
@@ -162,7 +162,6 @@ public class GuardTrace implements IGuardTrace {
             try {
                 propertyAccess = this.accesses.get().stream()
                     .map(PropertyAccess.class::cast)
-                    .filter(item -> item.modelElement().get().equals(modelElement))
                     .filter(item -> item.property().get().equals(property))
                     .findFirst()
                     .get();
@@ -194,11 +193,13 @@ public class GuardTrace implements IGuardTrace {
         GuardTrace other = (GuardTrace) obj;
         if (!sameIdentityAs(other))
             return false;
+        // Will use limits for equals
         if (limits.get() == null) {
             if (other.limits.get() != null)
                 return false;
-        } else if (!limits.get().equals(other.limits.get()))
+        }        else if (!limits.get().equals(other.limits.get())) {
             return false;
+        }
         return true; 
   }
 
@@ -206,7 +207,7 @@ public class GuardTrace implements IGuardTrace {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((limits.get() == null) ? 0 : limits.get().hashCode());
+        result = prime * result + ((limits == null) ? 0 : limits.hashCode());
         return result;
     }
 

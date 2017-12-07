@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-07.
+ * This file was automatically generated on: 2017-12-06.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -9,13 +9,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  ******************************************************************************/
-package org.eclipse.epsilon.eol.incremental.trace;
+package org.eclipse.epsilon.evl.incremental.trace;
 
-import java.util.Queue;
 
-import org.eclipse.epsilon.eol.incremental.trace.IModuleElementTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 
-public interface IModuleExecutionHasModuleElements {
+public interface ISatisfiesTraceHasInvariant1 {
 
     // PUBLIC API
     
@@ -24,27 +23,27 @@ public interface IModuleExecutionHasModuleElements {
     /**
      * Get the value(s) for the reference
      */
-    Queue<IModuleElementTrace> get();
+    IInvariantTrace get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the
      * relation already existed. 
-     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IModuleElementTrace)}).
+     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IInvariantTrace)}).
      * If the reference has an opposite, that relation is also craeted.
      *
-     * @see ExecutionHasAccesses#conflict(IModuleElementTrace)
-     * @see ExecutionHasAccesses#related(IModuleElementTrace)
+     * @see ExecutionHasAccesses#conflict(IInvariantTrace)
+     * @see ExecutionHasAccesses#related(IInvariantTrace)
      */
-    boolean create(IModuleElementTrace target);
+    boolean create(IInvariantTrace target);
     
     /**
      * Destroy a reference to the target element. Returns true, if the reference existed
      * and was properly destroyed. If the reference has an opposite, that relation
      * is also destroyed.
      *
-     * @see ExecutionHasAccesses#related(IModuleElementTrace)
+     * @see ExecutionHasAccesses#related(IInvariantTrace)
      */    
-    boolean destroy(IModuleElementTrace target);
+    boolean destroy(IInvariantTrace target);
     
     /**
      * Determines if there is a conflict with a possible target. Conflicts can only arise for if
@@ -68,12 +67,12 @@ public interface IModuleExecutionHasModuleElements {
      *      </ul>
      *  </li>
      */
-    boolean conflict(IModuleElementTrace target);
+    boolean conflict(IInvariantTrace target);
     
     /**
      * Returns true if the target is already related via this reference.
      */
-    boolean related(IModuleElementTrace target);
+    boolean related(IInvariantTrace target);
 
     // PRIVATE API
 
@@ -81,15 +80,15 @@ public interface IModuleExecutionHasModuleElements {
      * Set a new value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#create(IModuleElementTrace)
+     * @see ExecutionHasAccesses#create(IInvariantTrace)
      */
-    void set(IModuleElementTrace target);
+    void set(IInvariantTrace target);
 
     /**
      * Remove a value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#destroy(IModuleElementTrace)
+     * @see ExecutionHasAccesses#destroy(IInvariantTrace)
      */
-    void remove(IModuleElementTrace target);
+    void remove(IInvariantTrace target);
 }

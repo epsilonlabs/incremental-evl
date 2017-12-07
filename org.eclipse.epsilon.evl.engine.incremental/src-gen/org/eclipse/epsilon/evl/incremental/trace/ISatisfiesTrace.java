@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,6 +12,13 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;    
+import org.eclipse.epsilon.eol.incremental.trace.IElementAccess;    
+import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;    
+import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;    
+import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;    
+import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;    
+import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;    
 
 /**
@@ -20,7 +27,7 @@ import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
  * container references. That is, elements contained in the SatisfiesTrace must be
  * created through this interface.
  */
-public interface ISatisfiesTrace {
+public interface ISatisfiesTrace extends IExecutionTrace {
 
     /**
      * Returns the value of the '<em><b>All</b></em>' attribute.
@@ -42,8 +49,11 @@ public interface ISatisfiesTrace {
      */
     void setAll(boolean value);
             
-    /** The invariants reference. */
-    ISatisfiesTraceHasInvariants invariants();
+    /** The invariant reference. */
+    ISatisfiesTraceHasInvariant invariant();
+                
+    /** The satisfiedInvariants reference. */
+    ISatisfiesTraceHasSatisfiedInvariants satisfiedInvariants();
                 
  
     /**
@@ -51,4 +61,5 @@ public interface ISatisfiesTrace {
      */
     public boolean sameIdentityAs(final ISatisfiesTrace other);
     
+   
 }

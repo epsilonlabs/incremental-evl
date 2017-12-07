@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -32,16 +32,7 @@ public interface IModelTypeTrace extends IIdElement {
      * <!-- protected region name-getter-doc end --> 
      * @return the value of the '<em>Name</em>' attribute.
      */
-    String getName();    
-
-    /**
-     * Sets the value of the '{@link ModelTypeTrace#Name <em>Name</em>}' attribute.
-     * <!-- protected region name-setter-doc on begin -->
-     * <!-- protected region name-setter-doc end --> 
-     * @param value the new value of the '<em>Name/em>' attribute.
-     */
-    void setName(String value);
-            
+    String getName();            
     /** The model reference. */
     IModelTypeTraceHasModel model();
                 

@@ -260,6 +260,18 @@ operation EClass getRequiredFeatures() {
     return self.getEAllReferences().select(er | er.isRequired() and not er.isMany()).excluding(self.getContainerReference().at(0));
 }
 
+// Get the EReferences that should be used for equals/hashcode
+@cached
+operation EClass getEqualsReferences() {
+    var annot = self.getEannotation("https://eclipse.org/epsilon/incremental/equals");
+    var result : Bag;
+    if (annot.isUndefined()) {
+        return result;
+    }
+    result.addAll(annot.getReferences());
+    return result;
+}
+
 /**
  * Get the select methods information. If available, returns a Bag containing two Sequences. The 
  * first is the list of types in the path, the second is the list of attributes/references to match.

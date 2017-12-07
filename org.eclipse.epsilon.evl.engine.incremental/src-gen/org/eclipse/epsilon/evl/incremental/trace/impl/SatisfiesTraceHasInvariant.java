@@ -9,33 +9,31 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  ******************************************************************************/
-package org.eclipse.epsilon.eol.incremental.trace.impl;
+package org.eclipse.epsilon.evl.incremental.trace.impl;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
-import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleExecutionHasExecutions;
+import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
+import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasInvariant;
 import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of IModuleExecutionHasExecutions reference. 
+ * Implementation of ISatisfiesTraceHasInvariant reference. 
  */
-public class ModuleExecutionHasExecutions extends Feature implements IModuleExecutionHasExecutions {
+public class SatisfiesTraceHasInvariant extends Feature implements ISatisfiesTraceHasInvariant {
     
     /** The source(s) of the reference */
-    protected IModuleExecution source;
+    protected ISatisfiesTrace source;
     
     /** The target(s) of the reference */
-    protected Queue<IExecutionTrace> target =  new ConcurrentLinkedQueue<IExecutionTrace>();
+    protected IInvariantTrace target;
     
     /**
-     * Instantiates a new IModuleExecutionHasExecutions.
+     * Instantiates a new ISatisfiesTraceHasInvariant.
      *
      * @param source the source of the reference
      */
-    public ModuleExecutionHasExecutions (IModuleExecution source) {
+    public SatisfiesTraceHasInvariant (ISatisfiesTrace source) {
         super(true);
         this.source = source;
     }
@@ -43,13 +41,17 @@ public class ModuleExecutionHasExecutions extends Feature implements IModuleExec
     // PUBLIC API
         
     @Override
-    public Queue<IExecutionTrace> get() {
+    public IInvariantTrace get() {
         return target;
     }
     
     @Override
-    public boolean create(IExecutionTrace target) {
+    public boolean create(IInvariantTrace target) {
         if (conflict(target)) {
+            return false;
+        }
+        target.satisfies().set(source);
+        if (related(target)) {
             return false;
         }
         set(target);
@@ -57,39 +59,39 @@ public class ModuleExecutionHasExecutions extends Feature implements IModuleExec
     }
 
     @Override
-    public boolean destroy(IExecutionTrace target) {
+    public boolean destroy(IInvariantTrace target) {
         if (!related(target)) {
             return false;
         }
+        target.satisfies().remove(source);
         remove(target);
         return true;
     }
     
     @Override
-    public boolean conflict(IExecutionTrace target) {
+    public boolean conflict(IInvariantTrace target) {
         boolean result = false;
-        if (isUnique) {
-            result |= get().contains(target);
-        }
+        result |= get() != null;
+        result |= target.satisfies().get() != null;
         return result;
     }
     
     @Override
-    public boolean related(IExecutionTrace target) {
+    public boolean related(IInvariantTrace target) {
   
-        return get().contains(target) ;
+        return target.equals(this.target) && source.equals(target.satisfies().get());
     }
     
     // PRIVATE API
     
     @Override
-    public void set(IExecutionTrace target) {
-        this.target.add(target);
+    public void set(IInvariantTrace target) {
+        this.target = target;
     }
     
     @Override
-    public void remove(IExecutionTrace target) {
-        this.target.remove(target);
+    public void remove(IInvariantTrace target) {
+        this.target = null;
     }
 
 }

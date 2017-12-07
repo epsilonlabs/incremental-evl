@@ -93,7 +93,7 @@ if (container.isDefined()) {%]
         return [%=ea.name%];
     }
     
-[%  if (not ea.isMany()) {%]    
+[%  if (not ea.isMany() and not ec.getIndexAttributes().includes(ea)) {%]    
     @Override
     public [%=ea.makeSetterSignature(multi)%] {
         this.[%=ea.name%] = value;
@@ -152,14 +152,23 @@ for (er in ec.getEAllReferences().select(er | er.isContainment())) {
         if (!sameIdentityAs(other))
             return false;
 [%
-container = ec.getContainerReference().at(0);
-if (container.isDefined()) {%]
-        if ([%=container.name%].get() == null) {
-            if (other.[%=container.name%].get() != null)
+// Use only the EReferneces defined in the metamodel
+for (er in ec.getEqualsReferences()) {%]
+        // Will use [%=er.name%] for equals
+        if ([%=er.name%].get() == null) {
+            if (other.[%=er.name%].get() != null)
                 return false;
-        } else if (![%=container.name%].get().equals(other.[%=container.name%].get()))
+        }[%
+    if (er.isMany()) {%]
+        else if (Arrays.equals([%=er.name%].get().toArray(), other.[%=er.name%].get().toArray())) {
             return false;
-[%}%]
+        }
+[%  } else {%]
+        else if (![%=er.name%].get().equals(other.[%=er.name%].get())) {
+            return false;
+        }
+[%  }
+}%]
         return true; 
   }
 
@@ -167,10 +176,10 @@ if (container.isDefined()) {%]
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-[%if (container.isDefined()) {%]
-        result = prime * result + (([%=container.name%].get() == null) ? 0 : [%=container.name%].get().hashCode());
-[%}%]
 [%for (index in ec.getIndexAttributes()) {%]
+        result = prime * result + (([%=index.name%] == null) ? 0 : [%=index.name%].hashCode());
+[%}%]
+[%for (index in ec.getEqualsReferences()) {%]
         result = prime * result + (([%=index.name%] == null) ? 0 : [%=index.name%].hashCode());
 [%}%]
         return result;

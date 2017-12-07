@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -90,11 +90,20 @@ public class ElementAccess implements IElementAccess {
         ElementAccess other = (ElementAccess) obj;
         if (!sameIdentityAs(other))
             return false;
+        // Will use modelElement for equals
+        if (modelElement.get() == null) {
+            if (other.modelElement.get() != null)
+                return false;
+        }        else if (!modelElement.get().equals(other.modelElement.get())) {
+            return false;
+        }
+        // Will use execution for equals
         if (execution.get() == null) {
             if (other.execution.get() != null)
                 return false;
-        } else if (!execution.get().equals(other.execution.get()))
+        }        else if (!execution.get().equals(other.execution.get())) {
             return false;
+        }
         return true; 
   }
 
@@ -102,7 +111,8 @@ public class ElementAccess implements IElementAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((execution.get() == null) ? 0 : execution.get().hashCode());
+        result = prime * result + ((modelElement == null) ? 0 : modelElement.hashCode());
+        result = prime * result + ((execution == null) ? 0 : execution.hashCode());
         return result;
     }
 

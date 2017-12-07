@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-11-23.
+ * This file was automatically generated on: 2017-12-07.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -31,14 +31,5 @@ public interface IModuleTrace extends IIdElement {
      * <!-- protected region source-getter-doc end --> 
      * @return the value of the '<em>Source</em>' attribute.
      */
-    String getSource();    
-
-    /**
-     * Sets the value of the '{@link ModuleTrace#Source <em>Source</em>}' attribute.
-     * <!-- protected region source-setter-doc on begin -->
-     * <!-- protected region source-setter-doc end --> 
-     * @param value the new value of the '<em>Source/em>' attribute.
-     */
-    void setSource(String value);
-            
+    String getSource();            
 }

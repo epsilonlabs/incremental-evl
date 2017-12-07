@@ -121,7 +121,7 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 		IPropertyAccess pa = traceManager.moduleExecutionTraces().getPropertyAccessFor(executionTrace, propertyTrace);
 		if (pa == null) {
 			try {
-				pa = executionTrace.createPropertyAccess(modelElementTrace, propertyTrace);
+				pa = executionTrace.createPropertyAccess(propertyTrace);
 			} catch (EolIncrementalExecutionException e) {
 				throw new IllegalStateException(e);
 			}
