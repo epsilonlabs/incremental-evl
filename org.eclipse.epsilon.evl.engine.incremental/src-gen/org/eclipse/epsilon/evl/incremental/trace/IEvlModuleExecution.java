@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-07.
+ * This file was automatically generated on: 2017-12-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,10 +12,16 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;    
 import org.eclipse.epsilon.eol.incremental.trace.IModelTrace;    
 import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;    
+import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;    
+import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;    
+import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;    
+import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;    
+import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;    
 
 /**
  * The EvlModuleExecution defines the access methods for the EClass features.
@@ -39,7 +45,22 @@ public interface IEvlModuleExecution extends IModuleExecution {
     IModelTrace createModelTrace(String name) throws EolIncrementalExecutionException;       
    
     /** The ContextTrace Factory. */
-    IContextTrace createContextTrace(String kind) throws EolIncrementalExecutionException;       
+    IContextTrace createContextTrace(String kind, IModelElementTrace context) throws EolIncrementalExecutionException;       
+            
+    /** The InvariantTrace Factory. */
+    IInvariantTrace createInvariantTrace(String name) throws EolIncrementalExecutionException;       
+            
+    /** The GuardTrace Factory. */
+    IGuardTrace createGuardTrace() throws EolIncrementalExecutionException;       
+            
+    /** The CheckTrace Factory. */
+    ICheckTrace createCheckTrace() throws EolIncrementalExecutionException;       
+            
+    /** The MessageTrace Factory. */
+    IMessageTrace createMessageTrace() throws EolIncrementalExecutionException;       
+            
+    /** The SatisfiesTrace Factory. */
+    ISatisfiesTrace createSatisfiesTrace() throws EolIncrementalExecutionException;       
             
    
 }

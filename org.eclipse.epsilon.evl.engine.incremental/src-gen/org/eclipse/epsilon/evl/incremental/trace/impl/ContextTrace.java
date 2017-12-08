@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-07.
+ * This file was automatically generated on: 2017-12-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -17,20 +17,14 @@ import java.util.NoSuchElementException;
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;
-import org.eclipse.epsilon.eol.incremental.trace.IElementAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IExecutionTraceHasAccesses;
 import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleElementTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleElementTraceHasModule;
 import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.eol.incremental.trace.impl.AllInstancesAccess;
-import org.eclipse.epsilon.eol.incremental.trace.impl.ElementAccess;
 import org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionTraceHasAccesses;
-import org.eclipse.epsilon.eol.incremental.trace.impl.ModuleElementTraceHasModule;
 import org.eclipse.epsilon.eol.incremental.trace.impl.PropertyAccess;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTraceHasConstraints;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTraceHasContext;
@@ -54,14 +48,11 @@ public class ContextTrace implements IContextTrace {
     /** The kind */
     private String kind;
 
-    /** The guard relation */
-    private final IGuardedElementTraceHasGuard guard;
-
     /** The accesses relation */
     private final IExecutionTraceHasAccesses accesses;
 
-    /** The module relation */
-    private final IModuleElementTraceHasModule module;
+    /** The guard relation */
+    private final IGuardedElementTraceHasGuard guard;
 
     /** The constraints relation */
     private final IContextTraceHasConstraints constraints;
@@ -73,14 +64,14 @@ public class ContextTrace implements IContextTrace {
      * Instantiates a new ContextTrace. The ContextTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ContextTrace(String kind, IModuleExecution container) throws TraceModelDuplicateRelation {
+    public ContextTrace(String kind, IModelElementTrace context, IModuleExecution container) throws TraceModelDuplicateRelation {
         this.kind = kind;
-        this.guard = new GuardedElementTraceHasGuard(this);
         this.accesses = new ExecutionTraceHasAccesses(this);
-        this.module = new ModuleElementTraceHasModule(this);
+        this.guard = new GuardedElementTraceHasGuard(this);
         this.constraints = new ContextTraceHasConstraints(this);
         this.context = new ContextTraceHasContext(this);
-        if (!container.moduleElements().create(this)) {
+        this.context.create(context);
+        if (!container.executions().create(this)) {
             throw new TraceModelDuplicateRelation();
         };
     }
@@ -101,25 +92,14 @@ public class ContextTrace implements IContextTrace {
         return kind;
     }
     
-    
-    @Override
-    public void setKind(String value) {
-        this.kind = value;
-    }   
-     
-    @Override
-    public IGuardedElementTraceHasGuard guard() {
-        return guard;
-    }
-
     @Override
     public IExecutionTraceHasAccesses accesses() {
         return accesses;
     }
 
     @Override
-    public IModuleElementTraceHasModule module() {
-        return module;
+    public IGuardedElementTraceHasGuard guard() {
+        return guard;
     }
 
     @Override
@@ -132,28 +112,6 @@ public class ContextTrace implements IContextTrace {
         return context;
     }
 
-    @Override
-    public IGuardTrace createGuardTrace() throws EolIncrementalExecutionException {
-        IGuardTrace guardTrace = null;
-        try {
-            guardTrace = new GuardTrace(this);
-            
-            this.guard().create(guardTrace);
-        } catch (TraceModelDuplicateRelation e) {
-            // Pass
-        } finally {
-    	    if (guardTrace != null) {
-    	        return guardTrace;
-    	    }
-            guardTrace = this.guard.get();
-            if (guardTrace  == null) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested GuardTrace was "
-                        + "duplicate but previous one was not found.");
-            }
-        }
-        return guardTrace;
-    }      
-                  
     @Override
     public IAllInstancesAccess createAllInstancesAccess(IModelTypeTrace type) throws EolIncrementalExecutionException {
         IAllInstancesAccess allInstancesAccess = null;
@@ -179,33 +137,6 @@ public class ContextTrace implements IContextTrace {
             }
         }
         return allInstancesAccess;
-    }      
-            
-    @Override
-    public IElementAccess createElementAccess(IModelElementTrace modelElement) throws EolIncrementalExecutionException {
-        IElementAccess elementAccess = null;
-        try {
-            elementAccess = new ElementAccess(modelElement, this);
-            
-            this.accesses().create(elementAccess);
-        } catch (TraceModelDuplicateRelation e) {
-            // Pass
-        } finally {
-    	    if (elementAccess != null) {
-    	        return elementAccess;
-    	    }
-            try {
-                elementAccess = this.accesses.get().stream()
-                    .map(ElementAccess.class::cast)
-                    .filter(item -> item.modelElement().get().equals(modelElement))
-                    .findFirst()
-                    .get();
-            } catch (NoSuchElementException ex) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ElementAccess was "
-                        + "duplicate but previous one was not found.");
-            }
-        }
-        return elementAccess;
     }      
             
     @Override
@@ -235,6 +166,28 @@ public class ContextTrace implements IContextTrace {
         return propertyAccess;
     }      
             
+                  
+    @Override
+    public IGuardTrace createGuardTrace() throws EolIncrementalExecutionException {
+        IGuardTrace guardTrace = null;
+        try {
+            guardTrace = new GuardTrace(this);
+            
+            this.guard().create(guardTrace);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (guardTrace != null) {
+    	        return guardTrace;
+    	    }
+            guardTrace = this.guard.get();
+            if (guardTrace  == null) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested GuardTrace was "
+                        + "duplicate but previous one was not found.");
+            }
+        }
+        return guardTrace;
+    }      
                   
     @Override
     public IInvariantTrace createInvariantTrace(String name) throws EolIncrementalExecutionException {
@@ -286,6 +239,13 @@ public class ContextTrace implements IContextTrace {
         ContextTrace other = (ContextTrace) obj;
         if (!sameIdentityAs(other))
             return false;
+        // Will use context for equals
+        if (context.get() == null) {
+            if (other.context.get() != null)
+                return false;
+        }        else if (!context.get().equals(other.context.get())) {
+            return false;
+        }
         return true; 
   }
 
@@ -294,6 +254,7 @@ public class ContextTrace implements IContextTrace {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((kind == null) ? 0 : kind.hashCode());
+        result = prime * result + ((context == null) ? 0 : context.hashCode());
         return result;
     }
 

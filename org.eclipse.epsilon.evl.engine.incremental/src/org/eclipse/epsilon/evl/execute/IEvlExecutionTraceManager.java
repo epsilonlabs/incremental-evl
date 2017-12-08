@@ -19,8 +19,6 @@ public interface IEvlExecutionTraceManager<T> extends IEolExecutionTraceManager<
 
 	SatisfiesInvocationExecutionListener getSatisfiesListener();
 
-	void setSatisfiesListener(SatisfiesInvocationExecutionListener satisfiesListener);
-
 	// FIXME These should go in the ContextTraceRepository
 	/**
 	 * Gets the property trace for the given property and element. This allows fine grained incremental execution for

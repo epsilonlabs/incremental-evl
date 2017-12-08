@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.execute;
 
+import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
+import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
+import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
 import org.eclipse.epsilon.eol.incremental.trace.util.ModelUtil;
 
+// TODO: Auto-generated Javadoc
 /**
  * The manager holds the reference to the Trace Model, keeps a queue of model changes and flushes the changes
  * when the queue has a specific size, when the user requests a flush or when the ExL module finishes execution.
@@ -23,19 +27,23 @@ import org.eclipse.epsilon.eol.incremental.trace.util.ModelUtil;
  * Implementations are free to select the preferred persistence technology for the traces, e.g. a database, EMF
  * Resource, etc. Implementations are also free to implement a transaction mechanism.  
  *  
- * 
+ *
  * @author Horacio Hoyos Rodriguez
+ * @param <T> the generic type
  */
 public interface IEolExecutionTraceManager<T> {
 	
 	/**
 	 * Instruct the manager to persist the model changes using a parallel execution.
-	 * @param inParallel
+	 *
+	 * @param inParallel the new parallel persist
 	 */
 	void setParallelPersist(boolean inParallel);
 	
 	/**
 	 * Sets the size of the queue at which point the traces will be persisted in the trace model.
+	 *
+	 * @param size the new flush queue size
 	 */
 	void setFlushQueueSize(int size);
 	
@@ -49,20 +57,44 @@ public interface IEolExecutionTraceManager<T> {
 	/**
 	 * The repository of models. Via the repository it is possible to get access to a specific ModelTrace and from
 	 * there find types, elements and properties (see @link {@link ModelUtil}).
-	 * @return
+	 *
+	 * @return the i model trace repository
 	 */
 	IModelTraceRepository modelTraces();
 	
 	/**
 	 * The repository of module executions. Each Epsilon language will return a specialised repository.
-	 * @return
+	 *
+	 * @return the i eol module execution repository
 	 */
 	IEolModuleExecutionRepository<T> moduleExecutionTraces();
 	
 	/**
 	 * Makes the trace manager persist any temporal trace information in the trace model.
-	 * @return
+	 *
+	 * @return true, if successful
 	 */
 	boolean persistTraceInformation();
+
+	/**
+	 * Gets the property access listener.
+	 *
+	 * @return the property access listener
+	 */
+	PropertyAccessExecutionListener getPropertyAccessListener();
+
+	/**
+	 * Gets the all instances access listener.
+	 *
+	 * @return the all instances access listener
+	 */
+	AllInstancesInvocationExecutionListener getAllInstancesAccessListener();
+
+	/**
+	 * Inits the execution listeners.
+	 *
+	 * @param moduleExecution the module execution
+	 */
+	void initExecutionListeners(IModuleExecution moduleExecution);
 	
 }

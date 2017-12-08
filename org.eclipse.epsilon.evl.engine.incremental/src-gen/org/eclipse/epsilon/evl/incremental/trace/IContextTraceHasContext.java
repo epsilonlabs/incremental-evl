@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-07.
+ * This file was automatically generated on: 2017-12-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,9 +11,8 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
-import java.util.Queue;
 
-import org.eclipse.epsilon.eol.incremental.trace.IModuleElementTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;
 
 public interface IContextTraceHasContext {
 
@@ -24,27 +23,27 @@ public interface IContextTraceHasContext {
     /**
      * Get the value(s) for the reference
      */
-    Queue<IModuleElementTrace> get();
+    IModelElementTrace get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the
      * relation already existed. 
-     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IModuleElementTrace)}).
+     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IModelElementTrace)}).
      * If the reference has an opposite, that relation is also craeted.
      *
-     * @see ExecutionHasAccesses#conflict(IModuleElementTrace)
-     * @see ExecutionHasAccesses#related(IModuleElementTrace)
+     * @see ExecutionHasAccesses#conflict(IModelElementTrace)
+     * @see ExecutionHasAccesses#related(IModelElementTrace)
      */
-    boolean create(IModuleElementTrace target);
+    boolean create(IModelElementTrace target);
     
     /**
      * Destroy a reference to the target element. Returns true, if the reference existed
      * and was properly destroyed. If the reference has an opposite, that relation
      * is also destroyed.
      *
-     * @see ExecutionHasAccesses#related(IModuleElementTrace)
+     * @see ExecutionHasAccesses#related(IModelElementTrace)
      */    
-    boolean destroy(IModuleElementTrace target);
+    boolean destroy(IModelElementTrace target);
     
     /**
      * Determines if there is a conflict with a possible target. Conflicts can only arise for if
@@ -68,12 +67,12 @@ public interface IContextTraceHasContext {
      *      </ul>
      *  </li>
      */
-    boolean conflict(IModuleElementTrace target);
+    boolean conflict(IModelElementTrace target);
     
     /**
      * Returns true if the target is already related via this reference.
      */
-    boolean related(IModuleElementTrace target);
+    boolean related(IModelElementTrace target);
 
     // PRIVATE API
 
@@ -81,15 +80,15 @@ public interface IContextTraceHasContext {
      * Set a new value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#create(IModuleElementTrace)
+     * @see ExecutionHasAccesses#create(IModelElementTrace)
      */
-    void set(IModuleElementTrace target);
+    void set(IModelElementTrace target);
 
     /**
      * Remove a value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#destroy(IModuleElementTrace)
+     * @see ExecutionHasAccesses#destroy(IModelElementTrace)
      */
-    void remove(IModuleElementTrace target);
+    void remove(IModelElementTrace target);
 }

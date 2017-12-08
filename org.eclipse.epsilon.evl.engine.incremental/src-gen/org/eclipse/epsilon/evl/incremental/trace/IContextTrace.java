@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-07.
+ * This file was automatically generated on: 2017-12-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,10 +13,8 @@ package org.eclipse.epsilon.evl.incremental.trace;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;    
-import org.eclipse.epsilon.eol.incremental.trace.IElementAccess;    
 import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;    
 import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;    
-import org.eclipse.epsilon.eol.incremental.trace.IModuleElementTrace;    
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;    
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;    
@@ -28,7 +26,7 @@ import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
  * container references. That is, elements contained in the ContextTrace must be
  * created through this interface.
  */
-public interface IContextTrace extends IGuardedElementTrace, IModuleElementTrace {
+public interface IContextTrace extends IGuardedElementTrace {
 
     /**
      * Returns the value of the '<em><b>Kind</b></em>' attribute.

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-07.
+ * This file was automatically generated on: 2017-12-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -70,12 +70,6 @@ public class ModelElementTrace implements IModelElementTrace {
         return uri;
     }
     
-    
-    @Override
-    public void setUri(String value) {
-        this.uri = value;
-    }   
-     
     @Override
     public IModelElementTraceHasModel model() {
         return model;

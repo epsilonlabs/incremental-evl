@@ -5,10 +5,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.eclipse.epsilon.eol.incremental.trace.IElementAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 
 public class ContextTraceRepository implements IContextTraceRepository {
 	
@@ -49,39 +47,12 @@ public class ContextTraceRepository implements IContextTraceRepository {
 	}
 
 	@Override
-	public IContextTrace getContextFor(String typeName, IEvlModuleTrace evlModule) {
+	public IContextTrace getContextTraceFor(String typeName, IModelElementTrace modelElement) {
 		IContextTrace result = null;
-		try {
-			result = extent.stream()
-					.filter(ctx -> ctx.getKind().equals(typeName) && ctx.module().get().equals(evlModule))
-					.findFirst()
-					.get();
-		} catch (NoSuchElementException e) {
-			// No info
-			// FIXME Should we go to the DB here?
-		}
+		result = extent.stream()
+				.filter(ct -> ct.getKind().equals(typeName) && ct.context().get().equals(modelElement))
+				.findFirst()
+				.orElseGet(() -> null);
 		return result;
 	}
-
-	@Override
-	public IElementAccess getElementAccessFor(IContextTrace context, IModelElementTrace modelElement) {
-		IElementAccess result = null;
-		try {
-			result = extent.stream()
-						.filter(ct -> ct.equals(context))
-						.flatMap(ct -> ct.accesses().get().stream())
-						.filter(a -> a instanceof IElementAccess)
-						.map(IElementAccess.class::cast)
-						.filter(et -> et.modelElement().get().equals(modelElement))
-						.findFirst()
-						.get();
-		} catch (NoSuchElementException e) {
-			// No info
-			// FIXME Should we go to the DB here?
-		}
-		return result;
-	}
-
-
-
 }

@@ -61,14 +61,6 @@ public class EvlTraceModelTests {
         @Mock
         private IExecutionTrace executionsMock2;
         
-        /** Mock the target of the moduleElements reference. */
-        @Mock
-        private IModuleElementTrace moduleElementsMock1;
-        
-        /** Mock the target of the moduleElements reference. */
-        @Mock
-        private IModuleElementTrace moduleElementsMock2;
-        
         private EvlModuleExecution classUnderTest;
         
         @Test
@@ -162,31 +154,6 @@ public class EvlTraceModelTests {
             result = classUnderTest.executions().destroy(executionsMock2);
             assertFalse(result);
         }
-        @Test
-        public void testEvlModuleExecutionCreateModuleElementsReference() throws Exception {
-            classUnderTest = new EvlModuleExecution();
-            boolean result;
-            result = classUnderTest.moduleElements().create(moduleElementsMock1);
-            assertTrue(result);
-            result = classUnderTest.moduleElements().create(moduleElementsMock2);
-            assertTrue(result);
-            result = classUnderTest.moduleElements().create(moduleElementsMock1);
-            assertFalse(result);
-            // Create a second one
-            IEvlModuleExecution classUnderTest2 = new EvlModuleExecution();
-            assertThat(classUnderTest2, is(notNullValue()));
-        }
-        
-        @Test
-        public void testEvlModuleExecutionDestroyModuleElementsReference() throws Exception {
-            classUnderTest = new EvlModuleExecution();
-            classUnderTest.moduleElements().create(moduleElementsMock1);
-            boolean result = classUnderTest.moduleElements().destroy(moduleElementsMock1);
-            assertTrue(result);
-            assertThat(classUnderTest.moduleElements().get(), not(hasItem(moduleElementsMock1)));
-            result = classUnderTest.moduleElements().destroy(moduleElementsMock2);
-            assertFalse(result);
-        }
     }
     
     public static class EvlModuleTraceTests extends EasyMockSupport {
@@ -264,14 +231,6 @@ public class EvlTraceModelTests {
         /** Allow the target mock to populate the reference */
         private IGuardTraceHasLimits guardTrace2;
         
-        /** Mock the target of the module reference. */
-        @Mock
-        private IModuleTrace moduleMock1;
-        
-        /** Mock the target of the module reference. */
-        @Mock
-        private IModuleTrace moduleMock2;
-        
         /** Mock the target of the constraints reference. */
         @Mock
         private IInvariantTrace constraintsMock1;
@@ -288,31 +247,32 @@ public class EvlTraceModelTests {
         
         /** Mock the target of the context reference. */
         @Mock
-        private IModuleElementTrace contextMock1;
+        private IModelElementTrace contextMock1;
         
         /** Mock the target of the context reference. */
         @Mock
-        private IModuleElementTrace contextMock2;
+        private IModelElementTrace contextMock2;
         
         /** Mock the container. */
         @Mock
         private IModuleExecution containerMock;
         
         /** Allow the container mock to populate the reference */
-        private IModuleExecutionHasModuleElements moduleExecution1;
+        private IModuleExecutionHasExecutions moduleExecution1;
         
         /** Allow the container mock to populate the reference of second instance*/
-        private IModuleExecutionHasModuleElements moduleExecution2;
+        private IModuleExecutionHasExecutions moduleExecution2;
 
         private ContextTrace classUnderTest;
         
         @Test
         public void testContextTraceInstantiation() throws Exception {
-            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
+            expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new ContextTrace("kind", containerMock);
-            Queue<IModuleElementTrace> values = containerMock.moduleElements().get();
+            IModelElementTrace _context = mock(IModelElementTrace.class);
+            classUnderTest = new ContextTrace("kind", _context, containerMock);
+            Queue<IExecutionTrace> values = containerMock.executions().get();
             assertThat(values, hasItem(classUnderTest));
 	    }
 	    
@@ -321,10 +281,11 @@ public class EvlTraceModelTests {
 // protected region IgnoreContextTraceAttributes end	    
 	    @Test
         public void testContextTraceAttributes() throws Exception {
-            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
+            expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new ContextTrace("kind", containerMock);
+            IModelElementTrace _context = mock(IModelElementTrace.class);
+            classUnderTest = new ContextTrace("kind", _context, containerMock);
 // protected region ContextTraceAttributes on begin
             assertThat(classUnderTest.getKind(), is("kind"));
             String id = "ObjectId";
@@ -335,10 +296,11 @@ public class EvlTraceModelTests {
 
         @Test
         public void testContextTraceCreateAccessesReference() throws Exception {
-            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
+            expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new ContextTrace("kind", containerMock);
+            IModelElementTrace _context = mock(IModelElementTrace.class);
+            classUnderTest = new ContextTrace("kind", _context, containerMock);
             access1 = new AccessHasExecution(accessesMock1);
             expect(accessesMock1.execution()).andReturn(access1).anyTimes();
             replay(accessesMock1);
@@ -354,19 +316,21 @@ public class EvlTraceModelTests {
             assertFalse(result);
             // Create a second one
             reset(containerMock);
-            moduleExecution2 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution2).anyTimes();
+            moduleExecution2 = new ModuleExecutionHasExecutions(containerMock);
+            expect(containerMock.executions()).andReturn(moduleExecution2).anyTimes();
             replay(containerMock);
-            IContextTrace classUnderTest2 = new ContextTrace("kind2", containerMock);
+            IModelElementTrace _context2 = mock(IModelElementTrace.class);
+            IContextTrace classUnderTest2 = new ContextTrace("kind2", _context2, containerMock);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
         @Test
         public void testContextTraceDestroyAccessesReference() throws Exception {
-            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
+            expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new ContextTrace("kind", containerMock);
+            IModelElementTrace _context = mock(IModelElementTrace.class);
+            classUnderTest = new ContextTrace("kind", _context, containerMock);
             access1 = new AccessHasExecution(accessesMock1);
             expect(accessesMock1.execution()).andReturn(access1).anyTimes();
             replay(accessesMock1);
@@ -382,10 +346,11 @@ public class EvlTraceModelTests {
         }
         @Test
         public void testContextTraceCreateGuardReference() throws Exception {
-            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
+            expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new ContextTrace("kind", containerMock);
+            IModelElementTrace _context = mock(IModelElementTrace.class);
+            classUnderTest = new ContextTrace("kind", _context, containerMock);
             guardTrace1 = new GuardTraceHasLimits(guardMock1);
             expect(guardMock1.limits()).andReturn(guardTrace1).anyTimes();
             replay(guardMock1);
@@ -401,19 +366,21 @@ public class EvlTraceModelTests {
             assertFalse(result);
             // Create a second one
             reset(containerMock);
-            moduleExecution2 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution2).anyTimes();
+            moduleExecution2 = new ModuleExecutionHasExecutions(containerMock);
+            expect(containerMock.executions()).andReturn(moduleExecution2).anyTimes();
             replay(containerMock);
-            IContextTrace classUnderTest2 = new ContextTrace("kind2", containerMock);
+            IModelElementTrace _context2 = mock(IModelElementTrace.class);
+            IContextTrace classUnderTest2 = new ContextTrace("kind2", _context2, containerMock);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
         @Test
         public void testContextTraceDestroyGuardReference() throws Exception {
-            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
+            expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new ContextTrace("kind", containerMock);
+            IModelElementTrace _context = mock(IModelElementTrace.class);
+            classUnderTest = new ContextTrace("kind", _context, containerMock);
             guardTrace1 = new GuardTraceHasLimits(guardMock1);
             expect(guardMock1.limits()).andReturn(guardTrace1).anyTimes();
             replay(guardMock1);
@@ -428,46 +395,12 @@ public class EvlTraceModelTests {
             assertFalse(result);
         }
         @Test
-        public void testContextTraceCreateModuleReference() throws Exception {
-            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
-            replay(containerMock);
-            classUnderTest = new ContextTrace("kind", containerMock);
-            boolean result;
-            result = classUnderTest.module().create(moduleMock1);
-            assertTrue(result);
-            result = classUnderTest.module().create(moduleMock2);
-            assertTrue(result);
-            result = classUnderTest.module().create(moduleMock1);
-            assertFalse(result);
-            // Create a second one
-            reset(containerMock);
-            moduleExecution2 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution2).anyTimes();
-            replay(containerMock);
-            IContextTrace classUnderTest2 = new ContextTrace("kind2", containerMock);
-            assertThat(classUnderTest2, is(notNullValue()));
-        }
-        
-        @Test
-        public void testContextTraceDestroyModuleReference() throws Exception {
-            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
-            replay(containerMock);
-            classUnderTest = new ContextTrace("kind", containerMock);
-            classUnderTest.module().create(moduleMock1);
-            boolean result = classUnderTest.module().destroy(moduleMock1);
-            assertTrue(result);
-            assertThat(classUnderTest.module().get(), not(hasItem(moduleMock1)));
-            result = classUnderTest.module().destroy(moduleMock2);
-            assertFalse(result);
-        }
-        @Test
         public void testContextTraceCreateConstraintsReference() throws Exception {
-            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
+            expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new ContextTrace("kind", containerMock);
+            IModelElementTrace _context = mock(IModelElementTrace.class);
+            classUnderTest = new ContextTrace("kind", _context, containerMock);
             invariantTrace1 = new InvariantTraceHasInvariantContext(constraintsMock1);
             expect(constraintsMock1.invariantContext()).andReturn(invariantTrace1).anyTimes();
             replay(constraintsMock1);
@@ -483,19 +416,21 @@ public class EvlTraceModelTests {
             assertFalse(result);
             // Create a second one
             reset(containerMock);
-            moduleExecution2 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution2).anyTimes();
+            moduleExecution2 = new ModuleExecutionHasExecutions(containerMock);
+            expect(containerMock.executions()).andReturn(moduleExecution2).anyTimes();
             replay(containerMock);
-            IContextTrace classUnderTest2 = new ContextTrace("kind2", containerMock);
+            IModelElementTrace _context2 = mock(IModelElementTrace.class);
+            IContextTrace classUnderTest2 = new ContextTrace("kind2", _context2, containerMock);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
         @Test
         public void testContextTraceDestroyConstraintsReference() throws Exception {
-            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
+            expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new ContextTrace("kind", containerMock);
+            IModelElementTrace _context = mock(IModelElementTrace.class);
+            classUnderTest = new ContextTrace("kind", _context, containerMock);
             invariantTrace1 = new InvariantTraceHasInvariantContext(constraintsMock1);
             expect(constraintsMock1.invariantContext()).andReturn(invariantTrace1).anyTimes();
             replay(constraintsMock1);
@@ -511,36 +446,36 @@ public class EvlTraceModelTests {
         }
         @Test
         public void testContextTraceCreateContextReference() throws Exception {
-            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
+            expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new ContextTrace("kind", containerMock);
+            IModelElementTrace _context = mock(IModelElementTrace.class);
+            classUnderTest = new ContextTrace("kind", _context, containerMock);
             boolean result;
-            result = classUnderTest.context().create(contextMock1);
-            assertTrue(result);
             result = classUnderTest.context().create(contextMock2);
-            assertTrue(result);
-            result = classUnderTest.context().create(contextMock1);
+            assertFalse(result);
+            result = classUnderTest.context().create(_context);
             assertFalse(result);
             // Create a second one
             reset(containerMock);
-            moduleExecution2 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution2).anyTimes();
+            moduleExecution2 = new ModuleExecutionHasExecutions(containerMock);
+            expect(containerMock.executions()).andReturn(moduleExecution2).anyTimes();
             replay(containerMock);
-            IContextTrace classUnderTest2 = new ContextTrace("kind2", containerMock);
+            IModelElementTrace _context2 = mock(IModelElementTrace.class);
+            IContextTrace classUnderTest2 = new ContextTrace("kind2", _context2, containerMock);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
         @Test
         public void testContextTraceDestroyContextReference() throws Exception {
-            moduleExecution1 = new ModuleExecutionHasModuleElements(containerMock);
-            expect(containerMock.moduleElements()).andReturn(moduleExecution1).anyTimes();
+            moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
+            expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new ContextTrace("kind", containerMock);
-            classUnderTest.context().create(contextMock1);
-            boolean result = classUnderTest.context().destroy(contextMock1);
+            IModelElementTrace _context = mock(IModelElementTrace.class);
+            classUnderTest = new ContextTrace("kind", _context, containerMock);
+            boolean result = classUnderTest.context().destroy(_context);
             assertTrue(result);
-            assertThat(classUnderTest.context().get(), not(hasItem(contextMock1)));
+            assertThat(classUnderTest.context().get(), is(nullValue()));
             result = classUnderTest.context().destroy(contextMock2);
             assertFalse(result);
         }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-07.
+ * This file was automatically generated on: 2017-12-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -62,12 +62,6 @@ public class ModelTypeTrace implements IModelTypeTrace {
         return name;
     }
     
-    
-    @Override
-    public void setName(String value) {
-        this.name = value;
-    }   
-     
     @Override
     public IModelTypeTraceHasModel model() {
         return model;

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-07.
+ * This file was automatically generated on: 2017-12-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,7 +12,6 @@
 package org.eclipse.epsilon.eol.incremental.trace;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
-import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;    
 import org.eclipse.epsilon.eol.incremental.trace.IModelTrace;    
 
 /**
@@ -31,9 +30,6 @@ public interface IModuleExecution extends IIdElement {
                 
     /** The executions reference. */
     IModuleExecutionHasExecutions executions();
-                
-    /** The moduleElements reference. */
-    IModuleExecutionHasModuleElements moduleElements();
                 
    
     /** The ModelTrace Factory. */

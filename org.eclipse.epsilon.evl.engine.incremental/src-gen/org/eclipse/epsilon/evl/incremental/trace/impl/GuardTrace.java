@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-07.
+ * This file was automatically generated on: 2017-12-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -17,14 +17,11 @@ import java.util.NoSuchElementException;
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;
-import org.eclipse.epsilon.eol.incremental.trace.IElementAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IExecutionTraceHasAccesses;
-import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.eol.incremental.trace.impl.AllInstancesAccess;
-import org.eclipse.epsilon.eol.incremental.trace.impl.ElementAccess;
 import org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionTraceHasAccesses;
 import org.eclipse.epsilon.eol.incremental.trace.impl.PropertyAccess;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTraceHasLimits;
@@ -117,33 +114,6 @@ public class GuardTrace implements IGuardTrace {
             }
         }
         return allInstancesAccess;
-    }      
-            
-    @Override
-    public IElementAccess createElementAccess(IModelElementTrace modelElement) throws EolIncrementalExecutionException {
-        IElementAccess elementAccess = null;
-        try {
-            elementAccess = new ElementAccess(modelElement, this);
-            
-            this.accesses().create(elementAccess);
-        } catch (TraceModelDuplicateRelation e) {
-            // Pass
-        } finally {
-    	    if (elementAccess != null) {
-    	        return elementAccess;
-    	    }
-            try {
-                elementAccess = this.accesses.get().stream()
-                    .map(ElementAccess.class::cast)
-                    .filter(item -> item.modelElement().get().equals(modelElement))
-                    .findFirst()
-                    .get();
-            } catch (NoSuchElementException ex) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ElementAccess was "
-                        + "duplicate but previous one was not found.");
-            }
-        }
-        return elementAccess;
     }      
             
     @Override

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-07.
+ * This file was automatically generated on: 2017-12-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -56,12 +56,6 @@ public class EvlModuleTrace implements IEvlModuleTrace {
         return source;
     }
     
-    
-    @Override
-    public void setSource(String value) {
-        this.source = value;
-    }   
-     
     @Override
     public boolean sameIdentityAs(final IEvlModuleTrace other) {
         if (other == null) {

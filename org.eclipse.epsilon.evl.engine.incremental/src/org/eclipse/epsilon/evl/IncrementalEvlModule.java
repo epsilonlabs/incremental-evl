@@ -94,15 +94,9 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 		if (!incrementalMode) {
 			return super.execute();
 		}
-//		prepareContext(context);
+		prepareContext(context);
 		context.setOperationFactory(new EvlOperationFactory());
 		context.getFrameStack().put(Variable.createReadOnlyVariable("thisModule", this));
-//		List<String> modelIds = this.getContext().getModelRepository().getModels().stream()
-//				.map(IIncrementalModel.class::cast)
-//				.map(m -> m.getModelId())
-//				.collect(Collectors.toList());
-		
-		prepareExecutionTrace();
 		String evlScripPath = "String";
 		if (this.sourceUri != null) {
 			evlScripPath = this.sourceUri.toString();
@@ -113,15 +107,10 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 			throw new EolRuntimeException(e.getMessage());
 		}
 		IEvlExecutionTraceManager<IEvlModuleExecution> etManager = ((TracedEvlContext) context).getTraceManager(); 
-		
-		PropertyAccessExecutionListener proAccessListener = new PropertyAccessExecutionListener(etManager, evlExecution);
-		AllInstancesInvocationExecutionListener allInvocListener = new AllInstancesInvocationExecutionListener(etManager, evlExecution);
-		SatisfiesInvocationExecutionListener satisfiesListener = new SatisfiesInvocationExecutionListener();
-		context.getExecutorFactory().addExecutionListener(proAccessListener);
-		context.getExecutorFactory().addExecutionListener(allInvocListener);
-		// Satisfies is not checked on execute, so it is part of the execution manager
-		etManager.setSatisfiesListener(satisfiesListener);
-		
+		context.getExecutorFactory().addExecutionListener(etManager.getAllInstancesAccessListener());
+		context.getExecutorFactory().addExecutionListener(etManager.getPropertyAccessListener());
+		context.getExecutorFactory().addExecutionListener(etManager.getSatisfiesListener());
+
 		// Perform evaluation
 		execute(getPre(), context);
 		

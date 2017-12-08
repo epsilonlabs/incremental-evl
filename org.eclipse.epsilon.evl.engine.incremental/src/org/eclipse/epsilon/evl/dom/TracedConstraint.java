@@ -48,12 +48,18 @@ public class TracedConstraint extends Constraint {
 
 	public boolean appliesTo(Object object, IEvlContext context, final boolean checkType) throws EolRuntimeException{
 		if (checkType && !constraintContext.getAllOfSourceKind(context).contains(object)) return false;
-		((TracedEvlContext)context).getTraceManager().getSatisfiesListener().aboutToExecute(this, context);
 		Boolean result = true;
 		if (guardBlock != null) {
+			TracedEvlContext tracedEvlContext = (TracedEvlContext)context;
+			tracedEvlContext.getTraceManager().getSatisfiesListener().aboutToExecute(this, context);
+			tracedEvlContext.getTraceManager().getPropertyAccessListener().aboutToExecute(guardBlock, context);
+			tracedEvlContext.getTraceManager().getAllInstancesAccessListener().aboutToExecute(guardBlock, context);
 			result = guardBlock.execute(context, Variable.createReadOnlyVariable("self", object));
+			tracedEvlContext.getTraceManager().getSatisfiesListener().finishedExecuting(this, result, context);		
+			tracedEvlContext.getTraceManager().getPropertyAccessListener().finishedExecuting(guardBlock, result, context);
+			tracedEvlContext.getTraceManager().getAllInstancesAccessListener().finishedExecuting(guardBlock, result, context);
+			return result;
 		}
-		((TracedEvlContext)context).getTraceManager().getSatisfiesListener().finishedExecuting(this, result, context);		
 		return result;
 	}
 	
@@ -75,10 +81,22 @@ public class TracedConstraint extends Constraint {
 		//removeOldUnsatisfiedConstraint(self, context);
 		
 		final UnsatisfiedConstraint unsatisfiedConstraint = preprocessCheck(self, context);
-		//((TracedExecutableBlock<?>)checkBlock).startRecording();
+		TracedEvlContext tracedEvlContext = (TracedEvlContext)context;
+		tracedEvlContext.getTraceManager().getPropertyAccessListener().aboutToExecute(checkBlock, context);
+		tracedEvlContext.getTraceManager().getAllInstancesAccessListener().aboutToExecute(checkBlock, context);
 		Boolean result = checkBlock.execute(context, false);
-		//((TracedExecutableBlock<?>)checkBlock).stopRecording();
+		tracedEvlContext.getTraceManager().getPropertyAccessListener().finishedExecuting(checkBlock, result, context);
+		tracedEvlContext.getTraceManager().getAllInstancesAccessListener().finishedExecuting(checkBlock, result, context);
+		
+		if (messageBlock != null) {
+			tracedEvlContext.getTraceManager().getPropertyAccessListener().aboutToExecute(messageBlock, context);
+			tracedEvlContext.getTraceManager().getAllInstancesAccessListener().aboutToExecute(messageBlock, context);
+		}
 		boolean postResult = postprocessCheck(self, context, unsatisfiedConstraint, result);
+		if (messageBlock != null) {
+			tracedEvlContext.getTraceManager().getPropertyAccessListener().finishedExecuting(messageBlock, postResult, context);
+			tracedEvlContext.getTraceManager().getAllInstancesAccessListener().finishedExecuting(messageBlock, postResult, context);
+		}
 		trace.setResult(postResult);
 		return postResult;
 		

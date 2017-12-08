@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-07.
+ * This file was automatically generated on: 2017-12-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,6 +16,14 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;
+import org.eclipse.epsilon.eol.incremental.trace.IExecutionTraceHasAccesses;
+import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;
+import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;
+import org.eclipse.epsilon.eol.incremental.trace.impl.AllInstancesAccess;
+import org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionTraceHasAccesses;
+import org.eclipse.epsilon.eol.incremental.trace.impl.PropertyAccess;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasInvariant;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasSatisfiedInvariants;
@@ -27,8 +35,14 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.SatisfiesTraceHasSatisfied
  */
 public class SatisfiesTrace implements ISatisfiesTrace {
 
+    /** The id */
+    private Object id;
+
     /** The all */
     private boolean all;
+
+    /** The accesses relation */
+    private final IExecutionTraceHasAccesses accesses;
 
     /** The invariant relation */
     private final ISatisfiesTraceHasInvariant invariant;
@@ -41,6 +55,7 @@ public class SatisfiesTrace implements ISatisfiesTrace {
      * container and any attributes identified as indexes.
      */    
     public SatisfiesTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
+        this.accesses = new ExecutionTraceHasAccesses(this);
         this.invariant = new SatisfiesTraceHasInvariant(this);
         this.satisfiedInvariants = new SatisfiesTraceHasSatisfiedInvariants(this);
         if (!container.satisfies().create(this)) {
@@ -48,6 +63,17 @@ public class SatisfiesTrace implements ISatisfiesTrace {
         };
     }
     
+    @Override
+    public Object getId() {
+        return id;
+    }
+    
+    
+    @Override
+    public void setId(Object value) {
+        this.id = value;
+    }   
+     
     @Override
     public boolean getAll() {
         return all;
@@ -60,6 +86,11 @@ public class SatisfiesTrace implements ISatisfiesTrace {
     }   
      
     @Override
+    public IExecutionTraceHasAccesses accesses() {
+        return accesses;
+    }
+
+    @Override
     public ISatisfiesTraceHasInvariant invariant() {
         return invariant;
     }
@@ -69,6 +100,61 @@ public class SatisfiesTrace implements ISatisfiesTrace {
         return satisfiedInvariants;
     }
 
+    @Override
+    public IAllInstancesAccess createAllInstancesAccess(IModelTypeTrace type) throws EolIncrementalExecutionException {
+        IAllInstancesAccess allInstancesAccess = null;
+        try {
+            allInstancesAccess = new AllInstancesAccess(type, this);
+            
+            this.accesses().create(allInstancesAccess);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (allInstancesAccess != null) {
+    	        return allInstancesAccess;
+    	    }
+            try {
+                allInstancesAccess = this.accesses.get().stream()
+                    .map(AllInstancesAccess.class::cast)
+                    .filter(item -> item.type().get().equals(type))
+                    .findFirst()
+                    .get();
+            } catch (NoSuchElementException ex) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested AllInstancesAccess was "
+                        + "duplicate but previous one was not found.");
+            }
+        }
+        return allInstancesAccess;
+    }      
+            
+    @Override
+    public IPropertyAccess createPropertyAccess(IPropertyTrace property) throws EolIncrementalExecutionException {
+        IPropertyAccess propertyAccess = null;
+        try {
+            propertyAccess = new PropertyAccess(property, this);
+            
+            this.accesses().create(propertyAccess);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (propertyAccess != null) {
+    	        return propertyAccess;
+    	    }
+            try {
+                propertyAccess = this.accesses.get().stream()
+                    .map(PropertyAccess.class::cast)
+                    .filter(item -> item.property().get().equals(property))
+                    .findFirst()
+                    .get();
+            } catch (NoSuchElementException ex) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested PropertyAccess was "
+                        + "duplicate but previous one was not found.");
+            }
+        }
+        return propertyAccess;
+    }      
+            
+                  
     @Override
     public boolean sameIdentityAs(final ISatisfiesTrace other) {
         if (other == null) {

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-07.
+ * This file was automatically generated on: 2017-12-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,6 +16,14 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;
+import org.eclipse.epsilon.eol.incremental.trace.IExecutionTraceHasAccesses;
+import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;
+import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;
+import org.eclipse.epsilon.eol.incremental.trace.impl.AllInstancesAccess;
+import org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionTraceHasAccesses;
+import org.eclipse.epsilon.eol.incremental.trace.impl.PropertyAccess;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
@@ -41,11 +49,17 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.SatisfiesTrace;
  */
 public class InvariantTrace implements IInvariantTrace {
 
+    /** The id */
+    private Object id;
+
     /** The name */
     private String name;
 
     /** The result */
     private boolean result;
+
+    /** The accesses relation */
+    private final IExecutionTraceHasAccesses accesses;
 
     /** The guard relation */
     private final IGuardedElementTraceHasGuard guard;
@@ -68,6 +82,7 @@ public class InvariantTrace implements IInvariantTrace {
      */    
     public InvariantTrace(String name, IContextTrace container) throws TraceModelDuplicateRelation {
         this.name = name;
+        this.accesses = new ExecutionTraceHasAccesses(this);
         this.guard = new GuardedElementTraceHasGuard(this);
         this.check = new InvariantTraceHasCheck(this);
         this.message = new InvariantTraceHasMessage(this);
@@ -79,16 +94,21 @@ public class InvariantTrace implements IInvariantTrace {
     }
     
     @Override
-    public String getName() {
-        return name;
+    public Object getId() {
+        return id;
     }
     
     
     @Override
-    public void setName(String value) {
-        this.name = value;
+    public void setId(Object value) {
+        this.id = value;
     }   
      
+    @Override
+    public String getName() {
+        return name;
+    }
+    
     @Override
     public boolean getResult() {
         return result;
@@ -100,6 +120,11 @@ public class InvariantTrace implements IInvariantTrace {
         this.result = value;
     }   
      
+    @Override
+    public IExecutionTraceHasAccesses accesses() {
+        return accesses;
+    }
+
     @Override
     public IGuardedElementTraceHasGuard guard() {
         return guard;
@@ -125,6 +150,61 @@ public class InvariantTrace implements IInvariantTrace {
         return invariantContext;
     }
 
+    @Override
+    public IAllInstancesAccess createAllInstancesAccess(IModelTypeTrace type) throws EolIncrementalExecutionException {
+        IAllInstancesAccess allInstancesAccess = null;
+        try {
+            allInstancesAccess = new AllInstancesAccess(type, this);
+            
+            this.accesses().create(allInstancesAccess);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (allInstancesAccess != null) {
+    	        return allInstancesAccess;
+    	    }
+            try {
+                allInstancesAccess = this.accesses.get().stream()
+                    .map(AllInstancesAccess.class::cast)
+                    .filter(item -> item.type().get().equals(type))
+                    .findFirst()
+                    .get();
+            } catch (NoSuchElementException ex) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested AllInstancesAccess was "
+                        + "duplicate but previous one was not found.");
+            }
+        }
+        return allInstancesAccess;
+    }      
+            
+    @Override
+    public IPropertyAccess createPropertyAccess(IPropertyTrace property) throws EolIncrementalExecutionException {
+        IPropertyAccess propertyAccess = null;
+        try {
+            propertyAccess = new PropertyAccess(property, this);
+            
+            this.accesses().create(propertyAccess);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (propertyAccess != null) {
+    	        return propertyAccess;
+    	    }
+            try {
+                propertyAccess = this.accesses.get().stream()
+                    .map(PropertyAccess.class::cast)
+                    .filter(item -> item.property().get().equals(property))
+                    .findFirst()
+                    .get();
+            } catch (NoSuchElementException ex) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested PropertyAccess was "
+                        + "duplicate but previous one was not found.");
+            }
+        }
+        return propertyAccess;
+    }      
+            
+                  
     @Override
     public IGuardTrace createGuardTrace() throws EolIncrementalExecutionException {
         IGuardTrace guardTrace = null;
@@ -237,6 +317,13 @@ public class InvariantTrace implements IInvariantTrace {
         InvariantTrace other = (InvariantTrace) obj;
         if (!sameIdentityAs(other))
             return false;
+        // Will use invariantContext for equals
+        if (invariantContext.get() == null) {
+            if (other.invariantContext.get() != null)
+                return false;
+        }        else if (!invariantContext.get().equals(other.invariantContext.get())) {
+            return false;
+        }
         return true; 
   }
 
@@ -245,6 +332,7 @@ public class InvariantTrace implements IInvariantTrace {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((invariantContext == null) ? 0 : invariantContext.hashCode());
         return result;
     }
 

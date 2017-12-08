@@ -9,29 +9,26 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="guard" eType="#//GuardTrace"
         containment="true" eOpposite="#//GuardTrace/limits"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ContextTrace" eSuperTypes="#//GuardedElementTrace ../../org.eclipse.epsilon.eol.engine.incremental/model/EolExecutionTrace.ecore#//ModuleElementTrace">
+  <eClassifiers xsi:type="ecore:EClass" name="ContextTrace" eSuperTypes="#//GuardedElementTrace">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//ContextTrace/kind">
       <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
     </eAnnotations>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equals" references="#//ContextTrace/context"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="kind" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="constraints" upperBound="-1"
         eType="#//InvariantTrace" containment="true" resolveProxies="false" eOpposite="#//InvariantTrace/invariantContext">
       <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
         <details key="edge" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="context" upperBound="-1"
-        eType="ecore:EClass ../../org.eclipse.epsilon.eol.engine.incremental/model/EolExecutionTrace.ecore#//ModuleElementTrace"
-        resolveProxies="false">
-      <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
-        <details key="edge" value="true"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="kind" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="context" lowerBound="1"
+        eType="ecore:EClass ../../org.eclipse.epsilon.eol.engine.incremental/model/EolExecutionTrace.ecore#//ModelElementTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="InvariantTrace" eSuperTypes="#//GuardedElementTrace">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//InvariantTrace/name">
       <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
     </eAnnotations>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equals" references="#//InvariantTrace/invariantContext"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="result" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>

@@ -21,13 +21,7 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="executions" ordered="false"
-        upperBound="-1" eType="#//ExecutionTrace">
-      <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
-        <details key="edge" value="true"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="moduleElements" ordered="false"
-        upperBound="-1" eType="#//ModuleElementTrace" containment="true">
+        upperBound="-1" eType="#//ExecutionTrace" containment="true">
       <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
         <details key="edge" value="true"/>
       </eAnnotations>
@@ -38,15 +32,6 @@
       <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="source" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ModuleElementTrace" abstract="true"
-      eSuperTypes="#//IdElement">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="module" ordered="false"
-        upperBound="-1" eType="#//ModuleTrace">
-      <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
-        <details key="edge" value="true"/>
-      </eAnnotations>
-    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ExecutionTrace" abstract="true" eSuperTypes="#//IdElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="accesses" lowerBound="1"
@@ -65,11 +50,6 @@
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equals" references="#//AllInstancesAccess/type"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ofKind" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1" eType="#//ModelTypeTrace"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ElementAccess" eSuperTypes="#//Access">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/equals" references="#//ElementAccess/modelElement #//Access/execution"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="modelElement" lowerBound="1"
-        eType="#//ModelElementTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PropertyAccess" eSuperTypes="#//Access">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equals" references="#//PropertyAccess/property #//Access/execution"/>

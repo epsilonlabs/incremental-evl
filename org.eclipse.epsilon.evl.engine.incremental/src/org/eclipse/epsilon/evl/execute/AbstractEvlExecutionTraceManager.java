@@ -5,6 +5,7 @@ import org.eclipse.epsilon.eol.incremental.execute.AbstractEolExecutionTraceMana
 import org.eclipse.epsilon.eol.incremental.execute.IEolModuleExecutionRepository;
 import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
+import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
 import org.eclipse.epsilon.evl.execute.introspection.recording.SatisfiesInvocationExecutionListener;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
 
@@ -23,16 +24,30 @@ public abstract class AbstractEvlExecutionTraceManager
 	/** Repository of context traces */
 	protected IContextTraceRepository contexTraceRepository;
 	
-//	private PropertyAccessExecutionListener propertyAccessListener;// = new PropertyAccessExecutionListener();
-//	private AllInstancesInvocationExetionListener allInstancesListener;// = new AllInstancesInvocationExetionListener();
+	private PropertyAccessExecutionListener propertyAccessListener;// = new PropertyAccessExecutionListener();
+	private AllInstancesInvocationExecutionListener allAccessListener;// = new AllInstancesInvocationExetionListener();
 	private SatisfiesInvocationExecutionListener satisfiesListener;// = new SatisfiesInvocationExecutionListener();
 	
+	@Override
+	public void initExecutionListeners(IModuleExecution evlExecution) {
+		this.propertyAccessListener = new PropertyAccessExecutionListener(this, evlExecution);
+		this.allAccessListener = new AllInstancesInvocationExecutionListener(this, evlExecution);
+		this.satisfiesListener = new SatisfiesInvocationExecutionListener();
+	}
+
 	@Override
 	public IEolModuleExecutionRepository<IEvlModuleExecution> moduleExecutionTraces() {
 		if (this.moduleExecutionRepository == null) {
 			this.moduleExecutionRepository = new EvlModuleExecutionRepository(inParallel);
 		}
 		return moduleExecutionRepository;
+		
+		/*
+		 PropertyAccessExecutionListener proAccessListener = 
+		AllInstancesInvocationExecutionListener allInvocListener = 
+		SatisfiesInvocationExecutionListener satisfiesListener = 
+		
+		 */
 	}
 
 	@Override
@@ -42,29 +57,16 @@ public abstract class AbstractEvlExecutionTraceManager
 		}
 		return contexTraceRepository;
 	}
-	
-//	public void setPropertyAccessListener(PropertyAccessExecutionListener propertyAccessListener) {
-//		this.propertyAccessListener = propertyAccessListener;
-//	}
-//
-//	public void setAllInstancesListener(AllInstancesInvocationExetionListener allInstancesListener) {
-//		this.allInstancesListener = allInstancesListener;
-//	}
 
 	@Override
-	public void setSatisfiesListener(SatisfiesInvocationExecutionListener satisfiesListener) {
-		this.satisfiesListener = satisfiesListener;
+	public PropertyAccessExecutionListener getPropertyAccessListener() {
+		return propertyAccessListener;
 	}
 
-//	@Override
-//	public PropertyAccessExecutionListener getPropertyAccessListener() {
-//		return propertyAccessListener;
-//	}
-//
-//	@Override
-//	public AllInstancesInvocationExetionListener getAllInstancesListener() {
-//		return allInstancesListener;
-//	}
+	@Override
+	public AllInstancesInvocationExecutionListener getAllInstancesAccessListener() {
+		return allAccessListener;
+	}
 
 	@Override
 	public SatisfiesInvocationExecutionListener getSatisfiesListener() {

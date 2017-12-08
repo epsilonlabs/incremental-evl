@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-07.
+ * This file was automatically generated on: 2017-12-08.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,6 +12,11 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;    
+import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;    
+import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;    
+import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;    
+import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;    
 
 /**
@@ -20,11 +25,12 @@ import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
  * container references. That is, elements contained in the GuardedElementTrace must be
  * created through this interface.
  */
-public interface IGuardedElementTrace {
+public interface IGuardedElementTrace extends IExecutionTrace {
 
     /** The guard reference. */
     IGuardedElementTraceHasGuard guard();
                 
+   
     /** The GuardTrace Factory. */
     IGuardTrace createGuardTrace() throws EolIncrementalExecutionException;       
    
