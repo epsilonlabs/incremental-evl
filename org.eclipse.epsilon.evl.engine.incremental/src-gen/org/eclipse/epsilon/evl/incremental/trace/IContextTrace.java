@@ -17,7 +17,6 @@ import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;    
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;    
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;    
-import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;    
 
 /**
@@ -51,11 +50,5 @@ public interface IContextTrace extends IGuardedElementTrace {
      */
     public boolean sameIdentityAs(final IContextTrace other);
     
-   
-    /** The GuardTrace Factory. */
-    IGuardTrace createGuardTrace() throws EolIncrementalExecutionException;       
-   
-    /** The InvariantTrace Factory. */
-    IInvariantTrace createInvariantTrace(String name) throws EolIncrementalExecutionException;       
    
 }

@@ -33,9 +33,7 @@ import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTraceHasGuard;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.ContextTraceHasConstraints;
 import org.eclipse.epsilon.evl.incremental.trace.impl.ContextTraceHasContext;
-import org.eclipse.epsilon.evl.incremental.trace.impl.GuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.GuardedElementTraceHasGuard;
-import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTrace;
 
 /**
  * Implementation of IContextTrace. 
@@ -166,54 +164,6 @@ public class ContextTrace implements IContextTrace {
         return propertyAccess;
     }      
             
-                  
-    @Override
-    public IGuardTrace createGuardTrace() throws EolIncrementalExecutionException {
-        IGuardTrace guardTrace = null;
-        try {
-            guardTrace = new GuardTrace(this);
-            
-            this.guard().create(guardTrace);
-        } catch (TraceModelDuplicateRelation e) {
-            // Pass
-        } finally {
-    	    if (guardTrace != null) {
-    	        return guardTrace;
-    	    }
-            guardTrace = this.guard.get();
-            if (guardTrace  == null) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested GuardTrace was "
-                        + "duplicate but previous one was not found.");
-            }
-        }
-        return guardTrace;
-    }      
-                  
-    @Override
-    public IInvariantTrace createInvariantTrace(String name) throws EolIncrementalExecutionException {
-        IInvariantTrace invariantTrace = null;
-        try {
-            invariantTrace = new InvariantTrace(name, this);
-            
-            this.constraints().create(invariantTrace);
-        } catch (TraceModelDuplicateRelation e) {
-            // Pass
-        } finally {
-    	    if (invariantTrace != null) {
-    	        return invariantTrace;
-    	    }
-            try {
-                invariantTrace = this.constraints.get().stream()
-                    .filter(item -> item.getName().equals(name))
-                    .findFirst()
-                    .get();
-            } catch (NoSuchElementException ex) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested InvariantTrace was "
-                        + "duplicate but previous one was not found.");
-            }
-        }
-        return invariantTrace;
-    }      
                   
     @Override
     public boolean sameIdentityAs(final IContextTrace other) {

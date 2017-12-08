@@ -19,6 +19,7 @@ import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;    
+import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;    
@@ -51,16 +52,16 @@ public interface IEvlModuleExecution extends IModuleExecution {
     IInvariantTrace createInvariantTrace(String name) throws EolIncrementalExecutionException;       
             
     /** The GuardTrace Factory. */
-    IGuardTrace createGuardTrace() throws EolIncrementalExecutionException;       
+    IGuardTrace createGuardTrace(IGuardedElementTrace limits) throws EolIncrementalExecutionException;       
             
     /** The CheckTrace Factory. */
-    ICheckTrace createCheckTrace() throws EolIncrementalExecutionException;       
+    ICheckTrace createCheckTrace(IInvariantTrace invariant) throws EolIncrementalExecutionException;       
             
     /** The MessageTrace Factory. */
-    IMessageTrace createMessageTrace() throws EolIncrementalExecutionException;       
+    IMessageTrace createMessageTrace(IInvariantTrace invariant) throws EolIncrementalExecutionException;       
             
     /** The SatisfiesTrace Factory. */
-    ISatisfiesTrace createSatisfiesTrace() throws EolIncrementalExecutionException;       
+    ISatisfiesTrace createSatisfiesTrace(IInvariantTrace invariant) throws EolIncrementalExecutionException;       
             
    
 }

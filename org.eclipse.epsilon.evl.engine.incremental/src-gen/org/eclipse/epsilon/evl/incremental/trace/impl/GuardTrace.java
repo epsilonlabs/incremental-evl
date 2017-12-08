@@ -19,6 +19,7 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelatio
 import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IExecutionTraceHasAccesses;
 import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.eol.incremental.trace.impl.AllInstancesAccess;
@@ -49,10 +50,11 @@ public class GuardTrace implements IGuardTrace {
      * Instantiates a new GuardTrace. The GuardTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public GuardTrace(IGuardedElementTrace container) throws TraceModelDuplicateRelation {
+    public GuardTrace(IGuardedElementTrace limits, IModuleExecution container) throws TraceModelDuplicateRelation {
         this.accesses = new ExecutionTraceHasAccesses(this);
         this.limits = new GuardTraceHasLimits(this);
-        if (!container.guard().create(this)) {
+        this.limits.create(limits);
+        if (!container.executions().create(this)) {
             throw new TraceModelDuplicateRelation();
         };
     }

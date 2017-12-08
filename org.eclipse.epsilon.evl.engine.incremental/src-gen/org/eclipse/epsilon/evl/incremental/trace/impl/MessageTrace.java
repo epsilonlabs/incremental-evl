@@ -19,6 +19,7 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelatio
 import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IExecutionTraceHasAccesses;
 import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.eol.incremental.trace.impl.AllInstancesAccess;
@@ -46,10 +47,11 @@ public class MessageTrace implements IMessageTrace {
      * Instantiates a new MessageTrace. The MessageTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public MessageTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
+    public MessageTrace(IInvariantTrace invariant, IModuleExecution container) throws TraceModelDuplicateRelation {
         this.accesses = new ExecutionTraceHasAccesses(this);
         this.invariant = new MessageTraceHasInvariant(this);
-        if (!container.message().create(this)) {
+        this.invariant.create(invariant);
+        if (!container.executions().create(this)) {
             throw new TraceModelDuplicateRelation();
         };
     }

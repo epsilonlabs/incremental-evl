@@ -19,6 +19,7 @@ import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelatio
 import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IExecutionTraceHasAccesses;
 import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.eol.incremental.trace.impl.AllInstancesAccess;
@@ -54,11 +55,12 @@ public class SatisfiesTrace implements ISatisfiesTrace {
      * Instantiates a new SatisfiesTrace. The SatisfiesTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public SatisfiesTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
+    public SatisfiesTrace(IInvariantTrace invariant, IModuleExecution container) throws TraceModelDuplicateRelation {
         this.accesses = new ExecutionTraceHasAccesses(this);
         this.invariant = new SatisfiesTraceHasInvariant(this);
+        this.invariant.create(invariant);
         this.satisfiedInvariants = new SatisfiesTraceHasSatisfiedInvariants(this);
-        if (!container.satisfies().create(this)) {
+        if (!container.executions().create(this)) {
             throw new TraceModelDuplicateRelation();
         };
     }

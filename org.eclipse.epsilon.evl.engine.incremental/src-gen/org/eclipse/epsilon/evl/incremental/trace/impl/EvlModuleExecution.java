@@ -170,8 +170,6 @@ public class EvlModuleExecution implements IEvlModuleExecution {
         IInvariantTrace invariantTrace = null;
         try {
             invariantTrace = new InvariantTrace(name, this);
-            
-            this.constraints().create(invariantTrace);
         } catch (TraceModelDuplicateRelation e) {
             // Pass
         } finally {
@@ -193,12 +191,10 @@ public class EvlModuleExecution implements IEvlModuleExecution {
     }      
             
     @Override
-    public IGuardTrace createGuardTrace() throws EolIncrementalExecutionException {
+    public IGuardTrace createGuardTrace(IGuardedElementTrace limits) throws EolIncrementalExecutionException {
         IGuardTrace guardTrace = null;
         try {
-            guardTrace = new GuardTrace(this);
-            
-            this.guard().create(guardTrace);
+            guardTrace = new GuardTrace(limits, this);
         } catch (TraceModelDuplicateRelation e) {
             // Pass
         } finally {
@@ -208,6 +204,7 @@ public class EvlModuleExecution implements IEvlModuleExecution {
             try {
                 guardTrace = this.executions.get().stream()
                     .map(GuardTrace.class::cast)
+                    .filter(item -> item.limits().get().equals(limits))
                     .findFirst()
                     .get();
             } catch (NoSuchElementException ex) {
@@ -219,12 +216,10 @@ public class EvlModuleExecution implements IEvlModuleExecution {
     }      
             
     @Override
-    public ICheckTrace createCheckTrace() throws EolIncrementalExecutionException {
+    public ICheckTrace createCheckTrace(IInvariantTrace invariant) throws EolIncrementalExecutionException {
         ICheckTrace checkTrace = null;
         try {
-            checkTrace = new CheckTrace(this);
-            
-            this.check().create(checkTrace);
+            checkTrace = new CheckTrace(invariant, this);
         } catch (TraceModelDuplicateRelation e) {
             // Pass
         } finally {
@@ -234,6 +229,7 @@ public class EvlModuleExecution implements IEvlModuleExecution {
             try {
                 checkTrace = this.executions.get().stream()
                     .map(CheckTrace.class::cast)
+                    .filter(item -> item.invariant().get().equals(invariant))
                     .findFirst()
                     .get();
             } catch (NoSuchElementException ex) {
@@ -245,12 +241,10 @@ public class EvlModuleExecution implements IEvlModuleExecution {
     }      
             
     @Override
-    public IMessageTrace createMessageTrace() throws EolIncrementalExecutionException {
+    public IMessageTrace createMessageTrace(IInvariantTrace invariant) throws EolIncrementalExecutionException {
         IMessageTrace messageTrace = null;
         try {
-            messageTrace = new MessageTrace(this);
-            
-            this.message().create(messageTrace);
+            messageTrace = new MessageTrace(invariant, this);
         } catch (TraceModelDuplicateRelation e) {
             // Pass
         } finally {
@@ -260,6 +254,7 @@ public class EvlModuleExecution implements IEvlModuleExecution {
             try {
                 messageTrace = this.executions.get().stream()
                     .map(MessageTrace.class::cast)
+                    .filter(item -> item.invariant().get().equals(invariant))
                     .findFirst()
                     .get();
             } catch (NoSuchElementException ex) {
@@ -271,12 +266,10 @@ public class EvlModuleExecution implements IEvlModuleExecution {
     }      
             
     @Override
-    public ISatisfiesTrace createSatisfiesTrace() throws EolIncrementalExecutionException {
+    public ISatisfiesTrace createSatisfiesTrace(IInvariantTrace invariant) throws EolIncrementalExecutionException {
         ISatisfiesTrace satisfiesTrace = null;
         try {
-            satisfiesTrace = new SatisfiesTrace(this);
-            
-            this.satisfies().create(satisfiesTrace);
+            satisfiesTrace = new SatisfiesTrace(invariant, this);
         } catch (TraceModelDuplicateRelation e) {
             // Pass
         } finally {
@@ -286,6 +279,7 @@ public class EvlModuleExecution implements IEvlModuleExecution {
             try {
                 satisfiesTrace = this.executions.get().stream()
                     .map(SatisfiesTrace.class::cast)
+                    .filter(item -> item.invariant().get().equals(invariant))
                     .findFirst()
                     .get();
             } catch (NoSuchElementException ex) {

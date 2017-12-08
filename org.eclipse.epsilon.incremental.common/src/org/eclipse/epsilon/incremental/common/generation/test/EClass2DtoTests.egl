@@ -191,6 +191,15 @@ operation EClass testClass(interPrefix, interSufix, classPrefix, classSufix) {
 [%      if (not (er.isRequired() and not er.isMany())) {%]
             classUnderTest.[%=er.name%]().create([%=mockTarget%]);
 [%      }%]
+[%  for (rf in self.getRequiredFeatures()) {
+        if (not rf.isMany() and rf.getEOpposite().isDefined()) {
+            var opp = rf.getEOpposite();
+            var oppVar = opp.getEContainingClass().name.firstToLowerCase();%]
+            reset([%=oppVar%]);
+            expect([%=oppVar%].get()).andReturn(classUnderTest).anyTimes();
+            replay([%=oppVar%]);
+[%      }%]        
+[%  }%]
             boolean result = classUnderTest.[%=er.name%]().destroy([%=mockTarget%]);
             assertTrue(result);
 [%  if (er.isMany()) {%]
@@ -226,6 +235,16 @@ operation EClass initClassUnderTest(containerClass, containment, contReferenceCl
 [%  }%]
 [%  for (rf in self.getRequiredFeatures()) {%]
             [%=rf.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix)%] _[%=rf.name%] = mock([%=rf.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix)%].class);
+[%      if (not rf.isMany() and rf.getEOpposite().isDefined()) {
+            var opp = rf.getEOpposite();
+            var oppClass = opp.getRelationJavaInterfaceName(interPrefix, interSufix);
+            var oppVar = opp.getEContainingClass().name.firstToLowerCase();%]
+            [%=oppClass%] [%=oppVar%] = niceMock([%=oppClass%].class);
+            expect(_[%=rf.name%].[%=rf.getEOpposite().name%]()).andReturn([%=oppVar%]).anyTimes();
+            replay(_[%=rf.name%]);
+            expect([%=oppVar%].get()).andReturn(null).anyTimes();
+            replay([%=oppVar%]);
+[%      }%]        
 [%  }%]
 [%  // Assumes all parameters are Strings!
     var params = self.getIndexAttributes().collect(a | '"' + a.name + '"');
@@ -260,6 +279,16 @@ operation EClass newInitClassUnderTest(index, containerClass, containment, contR
 [%  }%]
     [%for (rf in self.getRequiredFeatures()) {%]
             [%=rf.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix)%] _[%=rf.name%][%=index%] = mock([%=rf.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix)%].class);
+[%      if (not rf.isMany() and rf.getEOpposite().isDefined()) {
+            var opp = rf.getEOpposite();
+            var oppClass = opp.getRelationJavaInterfaceName(interPrefix, interSufix);
+            var oppVar = opp.getEContainingClass().name.firstToLowerCase() + index;%]
+            [%=oppClass%] [%=oppVar%] = niceMock([%=oppClass%].class);
+            expect(_[%=rf.name%][%=index%].[%=rf.getEOpposite().name%]()).andReturn([%=oppVar%]).anyTimes();
+            replay(_[%=rf.name%][%=index%]);
+            expect([%=oppVar%].get()).andReturn(null).anyTimes();
+            replay([%=oppVar%]);
+[%      }%]             
 [%}%]
 [%  // Assumes all parameters are Strings!
     var params = self.getIndexAttributes().collect(a | '"' + a.name + index + '"');

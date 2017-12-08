@@ -31,7 +31,4 @@ public interface IGuardedElementTrace extends IExecutionTrace {
     IGuardedElementTraceHasGuard guard();
                 
    
-    /** The GuardTrace Factory. */
-    IGuardTrace createGuardTrace() throws EolIncrementalExecutionException;       
-   
 }
