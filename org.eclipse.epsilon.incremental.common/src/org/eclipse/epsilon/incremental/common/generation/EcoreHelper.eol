@@ -262,9 +262,10 @@ operation EClass getRequiredFeatures() {
 
 // Get the EReferences that should be used for equals/hashcode
 @cached
-operation EClass getEqualsReferences() {
+operation EClass getEqualsReferences() : Set {
     var annot = self.getEannotation("https://eclipse.org/epsilon/incremental/equals");
-    var result : Bag;
+    var result : Set;
+    result.addAll(self.getEAllSuperTypes().collect(sc | sc.getEqualsReferences()).flatten());
     if (annot.isUndefined()) {
         return result;
     }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-08.
+ * This file was automatically generated on: 2017-12-11.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,6 +12,7 @@
 package org.eclipse.epsilon.eol.incremental.trace.impl;
 
 import org.eclipse.epsilon.eol.incremental.trace.IModelTrace;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;

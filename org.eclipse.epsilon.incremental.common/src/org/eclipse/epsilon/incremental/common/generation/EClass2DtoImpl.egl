@@ -28,6 +28,7 @@ import "Ecore2JavaTemplates.egl";
 package [%=qp%].trace.impl;
 
 import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%];
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
@@ -67,7 +68,9 @@ for (er in ec.getEAllReferences()) {%]
 [%for (er in ec.getEAllReferences()) {%]
         this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this);
 [%  if ((er <> ec.getContainerReference().at(0)) and er.isRequired() and not er.isMany()) {%]
-        this.[%=er.name%].create([%=er.name%]);
+        if (!this.[%=er.name%].create([%=er.name%])) {
+            throw new TraceModelDuplicateRelation();
+        }
 [%  }%]
 [%}%]
 [%var container = ec.getContainerReference().at(2);
@@ -158,7 +161,8 @@ for (er in ec.getEqualsReferences()) {%]
         if ([%=er.name%].get() == null) {
             if (other.[%=er.name%].get() != null)
                 return false;
-        }[%
+        }
+[%
     if (er.isMany()) {%]
         else if (Arrays.equals([%=er.name%].get().toArray(), other.[%=er.name%].get().toArray())) {
             return false;
@@ -180,7 +184,7 @@ for (er in ec.getEqualsReferences()) {%]
         result = prime * result + (([%=index.name%] == null) ? 0 : [%=index.name%].hashCode());
 [%}%]
 [%for (index in ec.getEqualsReferences()) {%]
-        result = prime * result + (([%=index.name%] == null) ? 0 : [%=index.name%].hashCode());
+        result = prime * result + (([%=index.name%].get() == null) ? 0 : [%=index.name%].get().hashCode());
 [%}%]
         return result;
     }
@@ -215,9 +219,10 @@ public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] create[%=self.nam
 [%  if (ref.isMany()) {%]
         try {
             [%=instanceName%] = this.[%=ref.name%].get().stream()
-[%// Need to cast for subclasses
+[%// Need to filter and cast for subclasses
         if (subClass) {%]
-                .map([%=self.name%].class::cast)
+                .filter(t -> t instanceof [%=self.getJavaInterfaceName(interPrefix, interSufix)%])
+                .map([%=self.getJavaInterfaceName(interPrefix, interSufix)%].class::cast)
 [%      }%]
 [%      for (param in self.getIndexAttributes()) {%]
                 .filter(item -> item.get[%=param.name.firstToUpperCase()%]().equals([%=param.name%]))

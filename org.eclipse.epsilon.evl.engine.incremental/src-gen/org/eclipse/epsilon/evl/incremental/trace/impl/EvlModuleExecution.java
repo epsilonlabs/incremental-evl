@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-08.
+ * This file was automatically generated on: 2017-12-11.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,6 +12,7 @@
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
@@ -152,7 +153,8 @@ public class EvlModuleExecution implements IEvlModuleExecution {
     	    }
             try {
                 contextTrace = this.executions.get().stream()
-                    .map(ContextTrace.class::cast)
+                    .filter(t -> t instanceof IContextTrace)
+                    .map(IContextTrace.class::cast)
                     .filter(item -> item.getKind().equals(kind))
                     .filter(item -> item.context().get().equals(context))
                     .findFirst()
@@ -178,7 +180,8 @@ public class EvlModuleExecution implements IEvlModuleExecution {
     	    }
             try {
                 invariantTrace = this.executions.get().stream()
-                    .map(InvariantTrace.class::cast)
+                    .filter(t -> t instanceof IInvariantTrace)
+                    .map(IInvariantTrace.class::cast)
                     .filter(item -> item.getName().equals(name))
                     .findFirst()
                     .get();
@@ -203,7 +206,8 @@ public class EvlModuleExecution implements IEvlModuleExecution {
     	    }
             try {
                 guardTrace = this.executions.get().stream()
-                    .map(GuardTrace.class::cast)
+                    .filter(t -> t instanceof IGuardTrace)
+                    .map(IGuardTrace.class::cast)
                     .filter(item -> item.limits().get().equals(limits))
                     .findFirst()
                     .get();
@@ -228,7 +232,8 @@ public class EvlModuleExecution implements IEvlModuleExecution {
     	    }
             try {
                 checkTrace = this.executions.get().stream()
-                    .map(CheckTrace.class::cast)
+                    .filter(t -> t instanceof ICheckTrace)
+                    .map(ICheckTrace.class::cast)
                     .filter(item -> item.invariant().get().equals(invariant))
                     .findFirst()
                     .get();
@@ -253,7 +258,8 @@ public class EvlModuleExecution implements IEvlModuleExecution {
     	    }
             try {
                 messageTrace = this.executions.get().stream()
-                    .map(MessageTrace.class::cast)
+                    .filter(t -> t instanceof IMessageTrace)
+                    .map(IMessageTrace.class::cast)
                     .filter(item -> item.invariant().get().equals(invariant))
                     .findFirst()
                     .get();
@@ -278,7 +284,8 @@ public class EvlModuleExecution implements IEvlModuleExecution {
     	    }
             try {
                 satisfiesTrace = this.executions.get().stream()
-                    .map(SatisfiesTrace.class::cast)
+                    .filter(t -> t instanceof ISatisfiesTrace)
+                    .map(ISatisfiesTrace.class::cast)
                     .filter(item -> item.invariant().get().equals(invariant))
                     .findFirst()
                     .get();
@@ -310,6 +317,22 @@ public class EvlModuleExecution implements IEvlModuleExecution {
         EvlModuleExecution other = (EvlModuleExecution) obj;
         if (!sameIdentityAs(other))
             return false;
+        // Will use module for equals
+        if (module.get() == null) {
+            if (other.module.get() != null)
+                return false;
+        }
+        else if (!module.get().equals(other.module.get())) {
+            return false;
+        }
+        // Will use model for equals
+        if (model.get() == null) {
+            if (other.model.get() != null)
+                return false;
+        }
+        else if (Arrays.equals(model.get().toArray(), other.model.get().toArray())) {
+            return false;
+        }
         return true; 
   }
 
@@ -317,6 +340,8 @@ public class EvlModuleExecution implements IEvlModuleExecution {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((module.get() == null) ? 0 : module.get().hashCode());
+        result = prime * result + ((model.get() == null) ? 0 : model.get().hashCode());
         return result;
     }
 

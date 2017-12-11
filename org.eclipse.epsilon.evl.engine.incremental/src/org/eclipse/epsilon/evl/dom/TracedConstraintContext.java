@@ -91,20 +91,20 @@ public class TracedConstraintContext extends ConstraintContext {
 				throw new EolRuntimeException(e.getMessage(), this);
 			}
 		}
-		IContextTrace trace;
+		IContextTrace contextTrace;
 		String typeName = getTypeName();
 		if (typeName == null) {
 			throw new IllegalStateException("Can't create TracedConstraintContext for unknown (null type.");
 		}
-		trace = traceManager.contextTraces().getContextTraceFor(typeName, modelElementTrace);
-		if (trace == null) {
+		contextTrace = traceManager.contextTraces().getContextTraceFor(typeName, modelElementTrace);
+		if (contextTrace == null) {
 			try {
-				trace = evlExecution.createContextTrace(typeName, modelElementTrace);
+				contextTrace = evlExecution.createContextTrace(typeName, modelElementTrace);
 			} catch (EolIncrementalExecutionException e) {
 				throw new IllegalStateException("Can't create ContextTrace for type " + typeName + ".", e);			
 			} finally {
-				if (trace != null) {
-					traceManager.contextTraces().add(trace);
+				if (contextTrace != null) {
+					traceManager.contextTraces().add(contextTrace);
 				}
 			}
 		}
@@ -113,20 +113,21 @@ public class TracedConstraintContext extends ConstraintContext {
 		for (Constraint c : constraints) {
 			TracedConstraint tc = (TracedConstraint) c;
 			try {
-				IInvariantTrace tcTrace = trace.createInvariantTrace(tc.getName());
+				IInvariantTrace tcTrace = evlExecution.createInvariantTrace(tc.getName());
 				tc.setTrace(tcTrace);
-				tc.createGuardTrace();
-				tc.createCheckTrace();
-				tc.createMessageTrace();
+				tcTrace.invariantContext().create(contextTrace);
+				tc.createGuardTrace(evlExecution);
+				tc.createCheckTrace(evlExecution);
+				tc.createMessageTrace(evlExecution);
 			} catch (EolIncrementalExecutionException e) {
 				throw new IllegalStateException("Error creating execution trace elements.", e);
 			}
 		}
 		if (guardBlock != null) {
-			IGuardTrace guard = trace.guard().get();
+			IGuardTrace guard = contextTrace.guard().get();
 			if (guard == null) {
 				try {
-					guard = trace.createGuardTrace();
+					guard = evlExecution.createGuardTrace(contextTrace);
 					((TracedExecutableBlock<?>) guardBlock).setTrace(guard);
 				} catch (EolIncrementalExecutionException e) {
 					throw new IllegalStateException("Can't create GuardTrace for Context " + getTypeName() + ".", e);	

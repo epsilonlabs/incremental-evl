@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-08.
+ * This file was automatically generated on: 2017-12-11.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,6 +12,7 @@
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
@@ -68,7 +69,9 @@ public class ContextTrace implements IContextTrace {
         this.guard = new GuardedElementTraceHasGuard(this);
         this.constraints = new ContextTraceHasConstraints(this);
         this.context = new ContextTraceHasContext(this);
-        this.context.create(context);
+        if (!this.context.create(context)) {
+            throw new TraceModelDuplicateRelation();
+        }
         if (!container.executions().create(this)) {
             throw new TraceModelDuplicateRelation();
         };
@@ -125,7 +128,8 @@ public class ContextTrace implements IContextTrace {
     	    }
             try {
                 allInstancesAccess = this.accesses.get().stream()
-                    .map(AllInstancesAccess.class::cast)
+                    .filter(t -> t instanceof IAllInstancesAccess)
+                    .map(IAllInstancesAccess.class::cast)
                     .filter(item -> item.type().get().equals(type))
                     .findFirst()
                     .get();
@@ -152,7 +156,8 @@ public class ContextTrace implements IContextTrace {
     	    }
             try {
                 propertyAccess = this.accesses.get().stream()
-                    .map(PropertyAccess.class::cast)
+                    .filter(t -> t instanceof IPropertyAccess)
+                    .map(IPropertyAccess.class::cast)
                     .filter(item -> item.property().get().equals(property))
                     .findFirst()
                     .get();
@@ -193,7 +198,8 @@ public class ContextTrace implements IContextTrace {
         if (context.get() == null) {
             if (other.context.get() != null)
                 return false;
-        }        else if (!context.get().equals(other.context.get())) {
+        }
+        else if (!context.get().equals(other.context.get())) {
             return false;
         }
         return true; 
@@ -204,7 +210,7 @@ public class ContextTrace implements IContextTrace {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((kind == null) ? 0 : kind.hashCode());
-        result = prime * result + ((context == null) ? 0 : context.hashCode());
+        result = prime * result + ((context.get() == null) ? 0 : context.get().hashCode());
         return result;
     }
 

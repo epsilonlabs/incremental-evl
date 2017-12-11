@@ -21,6 +21,7 @@ import org.eclipse.epsilon.evl.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTraceHasConstraints;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasInvariantContext;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
@@ -51,7 +52,7 @@ public class ExecutionListenerUnitTests {
 		@Mock
 		private IEolExecutionTraceManager<TestModuleExecution> traceManagerMock;
 		@Mock
-		private IModuleExecution evlExecutionMock;
+		private IEvlModuleExecution evlExecutionMock;
 		@Mock
 		private IEolContext contextMock;
 		
@@ -123,9 +124,9 @@ public class ExecutionListenerUnitTests {
 			listener.aboutToExecute(ast, contextMock);
 			// Test
 			// 4b. Execute parameters
-			listener.finishedExecuting(params[0], targetInvariant, null);
+			listener.finishedExecuting(params[0], targetInvariant, contextMock);
 			// 5. Execute operation
-			listener.finishedExecuting(ast, result, null);
+			listener.finishedExecuting(ast, result, contextMock);
 
 			// 6. Finish executing block
 			listener.finishedExecuting(blockMock, result, contextMock);
@@ -157,11 +158,11 @@ public class ExecutionListenerUnitTests {
 			listener.aboutToExecute(ast, contextMock);
 			// Test
 			// 4b. Execute parameters
-			listener.finishedExecuting(params[0], isNamed, null);
-			listener.finishedExecuting(params[1], isTyped, null);
+			listener.finishedExecuting(params[0], isNamed, contextMock);
+			listener.finishedExecuting(params[1], isTyped, contextMock);
 			
 			// 5. Execute operation
-			listener.finishedExecuting(ast, result, null);
+			listener.finishedExecuting(ast, result, contextMock);
 
 			// 6. Finish executing block
 			listener.finishedExecuting(blockMock, result, contextMock);
@@ -193,11 +194,11 @@ public class ExecutionListenerUnitTests {
 			listener.aboutToExecute(ast, contextMock);
 			// Test
 			// 4b. Execute parameters
-			listener.finishedExecuting(params[0], isNamed, null);
-			listener.finishedExecuting(params[1], isTyped, null);
+			listener.finishedExecuting(params[0], isNamed, contextMock);
+			listener.finishedExecuting(params[1], isTyped, contextMock);
 			
 			// 5. Execute operation
-			listener.finishedExecuting(ast, result, null);
+			listener.finishedExecuting(ast, result, contextMock);
 	
 			// 6. Finish executing block
 			listener.finishedExecuting(blockMock, result, contextMock);
@@ -205,7 +206,7 @@ public class ExecutionListenerUnitTests {
 			verifyAll();
 		}
 		
-		private void recordExecutionTrace(StringLiteral[] params, IInvariantTrace executionTraceMock) throws Exception {
+		private void recordExecutionTrace(StringLiteral[] params, IInvariantTrace currentInvariantMock) throws Exception {
 			IContextTrace contextMock = mock(IContextTrace.class);
 			IInvariantTraceHasInvariantContext invariantHasContextMock = mock(IInvariantTraceHasInvariantContext.class);
 			IContextTraceHasConstraints contextHasInvariants = mock(IContextTraceHasConstraints.class);
@@ -214,14 +215,14 @@ public class ExecutionListenerUnitTests {
 			ISatisfiesTraceHasSatisfiedInvariants satisfiesHasSatisfiedInvariantMock = niceMock(ISatisfiesTraceHasSatisfiedInvariants.class);
 			
 			EasyMock.expect(invariantHasContextMock.get()).andReturn(contextMock);
-			EasyMock.expect(executionTraceMock.invariantContext()).andReturn(invariantHasContextMock);
+			EasyMock.expect(currentInvariantMock.invariantContext()).andReturn(invariantHasContextMock);
 			EasyMock.expect(contextMock.constraints()).andReturn(contextHasInvariants).times(params.length);
 			EasyMock.expect(contextHasInvariants.get()).andReturn(new ArrayDeque<>()).times(params.length);
 			for (StringLiteral p : params) {
-				EasyMock.expect(contextMock.createInvariantTrace(p.getValue())).andReturn(targetInvariantMock);
+				EasyMock.expect(evlExecutionMock.createInvariantTrace(p.getValue())).andReturn(targetInvariantMock);
 				EasyMock.expect(satisfiesMock.satisfiedInvariants()).andReturn(satisfiesHasSatisfiedInvariantMock);
 			}
-			EasyMock.expect(executionTraceMock.createSatisfiesTrace()).andReturn(satisfiesMock);
+			EasyMock.expect(evlExecutionMock.createSatisfiesTrace(currentInvariantMock)).andReturn(satisfiesMock);
 		}
 
 	}
@@ -232,8 +233,5 @@ public class ExecutionListenerUnitTests {
 		OperationCallExpression oce = new OperationCallExpression(targetExpression, nameExpression, params);
 		return oce;
 	}
-	
-
-
 	
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-08.
+ * This file was automatically generated on: 2017-12-11.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,6 +12,7 @@
 package org.eclipse.epsilon.eol.incremental.trace.impl;
 
 import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
@@ -134,7 +135,8 @@ public class ModelElementTrace implements IModelElementTrace {
         if (model.get() == null) {
             if (other.model.get() != null)
                 return false;
-        }        else if (!model.get().equals(other.model.get())) {
+        }
+        else if (!model.get().equals(other.model.get())) {
             return false;
         }
         return true; 
@@ -145,7 +147,7 @@ public class ModelElementTrace implements IModelElementTrace {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((uri == null) ? 0 : uri.hashCode());
-        result = prime * result + ((model == null) ? 0 : model.hashCode());
+        result = prime * result + ((model.get() == null) ? 0 : model.get().hashCode());
         return result;
     }
 

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-08.
+ * This file was automatically generated on: 2017-12-11.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,6 +12,7 @@
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
@@ -50,7 +51,9 @@ public class CheckTrace implements ICheckTrace {
     public CheckTrace(IInvariantTrace invariant, IModuleExecution container) throws TraceModelDuplicateRelation {
         this.accesses = new ExecutionTraceHasAccesses(this);
         this.invariant = new CheckTraceHasInvariant(this);
-        this.invariant.create(invariant);
+        if (!this.invariant.create(invariant)) {
+            throw new TraceModelDuplicateRelation();
+        }
         if (!container.executions().create(this)) {
             throw new TraceModelDuplicateRelation();
         };
@@ -92,7 +95,8 @@ public class CheckTrace implements ICheckTrace {
     	    }
             try {
                 allInstancesAccess = this.accesses.get().stream()
-                    .map(AllInstancesAccess.class::cast)
+                    .filter(t -> t instanceof IAllInstancesAccess)
+                    .map(IAllInstancesAccess.class::cast)
                     .filter(item -> item.type().get().equals(type))
                     .findFirst()
                     .get();
@@ -119,7 +123,8 @@ public class CheckTrace implements ICheckTrace {
     	    }
             try {
                 propertyAccess = this.accesses.get().stream()
-                    .map(PropertyAccess.class::cast)
+                    .filter(t -> t instanceof IPropertyAccess)
+                    .map(IPropertyAccess.class::cast)
                     .filter(item -> item.property().get().equals(property))
                     .findFirst()
                     .get();
@@ -155,7 +160,8 @@ public class CheckTrace implements ICheckTrace {
         if (invariant.get() == null) {
             if (other.invariant.get() != null)
                 return false;
-        }        else if (!invariant.get().equals(other.invariant.get())) {
+        }
+        else if (!invariant.get().equals(other.invariant.get())) {
             return false;
         }
         return true; 
@@ -165,7 +171,7 @@ public class CheckTrace implements ICheckTrace {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((invariant == null) ? 0 : invariant.hashCode());
+        result = prime * result + ((invariant.get() == null) ? 0 : invariant.get().hashCode());
         return result;
     }
 

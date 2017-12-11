@@ -21,6 +21,7 @@ import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.execute.context.TracedEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
@@ -104,17 +105,18 @@ public class TracedConstraint extends Constraint {
 	
 	/**
 	 * Create a new guard trace for the constraint
+	 * @param evlExecution 
 	 * @param tracedGuard
 	 * @throws EolIncrementalExecutionException
 	 */
-	public boolean createGuardTrace() throws EolIncrementalExecutionException {
+	public boolean createGuardTrace(IEvlModuleExecution evlExecution) throws EolIncrementalExecutionException {
 		if (guardBlock == null) {
 			return false;
 		}
 		IGuardTrace guard = trace.guard().get();
 		if (guard == null) {
 			try {
-				guard = trace.createGuardTrace();
+				guard = evlExecution.createGuardTrace(trace);
 				((TracedExecutableBlock<?>) guardBlock).setTrace(guard);
 				return true;
 			} catch (EolIncrementalExecutionException e) {
@@ -126,17 +128,18 @@ public class TracedConstraint extends Constraint {
 	
 	/**
 	 * Create a new check trace for the constraint
+	 * @param evlExecution 
 	 * @param tracedCheck
 	 * @throws EolIncrementalExecutionException
 	 */
-	public boolean createCheckTrace() throws EolIncrementalExecutionException {
+	public boolean createCheckTrace(IEvlModuleExecution evlExecution) throws EolIncrementalExecutionException {
 		if (checkBlock == null) {
 			return false;
 		}
 		ICheckTrace check = trace.check().get();
 		if (check == null) {
 			try {
-				check = trace.createCheckTrace();
+				check = evlExecution.createCheckTrace(trace);
 				((TracedExecutableBlock<?>) checkBlock).setTrace(check);
 				return true;
 			} catch (EolIncrementalExecutionException e) {
@@ -148,17 +151,18 @@ public class TracedConstraint extends Constraint {
 	
 	/**
 	 * Create a new message trace for the constraint
+	 * @param evlExecution 
 	 * @param tracedMessage
 	 * @throws EolIncrementalExecutionException
 	 */
-	public boolean createMessageTrace() throws EolIncrementalExecutionException {
+	public boolean createMessageTrace(IEvlModuleExecution evlExecution) throws EolIncrementalExecutionException {
 		if (messageBlock == null) {
 			return false;
 		}
 		IMessageTrace message = trace.message().get();
 		if (message == null) {
 			try {
-				message = trace.createMessageTrace();
+				message = evlExecution.createMessageTrace(trace);
 				((TracedExecutableBlock<?>) messageBlock).setTrace(message);
 				return true;
 			} catch (EolIncrementalExecutionException e) {

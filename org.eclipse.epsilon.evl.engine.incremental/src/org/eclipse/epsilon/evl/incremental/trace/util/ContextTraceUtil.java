@@ -5,6 +5,12 @@ import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 
+/**
+ * Helper class to retrieve ContexTraces with different filters
+ * 
+ * @author Horacio Hoyos Rodriguez
+ *
+ */
 public class ContextTraceUtil {
 
 	

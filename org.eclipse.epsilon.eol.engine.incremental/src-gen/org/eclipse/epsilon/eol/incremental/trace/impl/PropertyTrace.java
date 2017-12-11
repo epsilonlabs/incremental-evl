@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-08.
+ * This file was automatically generated on: 2017-12-11.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,6 +12,7 @@
 package org.eclipse.epsilon.eol.incremental.trace.impl;
 
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
@@ -95,7 +96,8 @@ public class PropertyTrace implements IPropertyTrace {
         if (element.get() == null) {
             if (other.element.get() != null)
                 return false;
-        }        else if (!element.get().equals(other.element.get())) {
+        }
+        else if (!element.get().equals(other.element.get())) {
             return false;
         }
         return true; 
@@ -106,7 +108,7 @@ public class PropertyTrace implements IPropertyTrace {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((element == null) ? 0 : element.hashCode());
+        result = prime * result + ((element.get() == null) ? 0 : element.get().hashCode());
         return result;
     }
 

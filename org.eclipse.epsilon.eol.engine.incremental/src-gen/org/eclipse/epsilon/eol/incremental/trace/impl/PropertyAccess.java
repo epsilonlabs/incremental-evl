@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-08.
+ * This file was automatically generated on: 2017-12-11.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,6 +12,7 @@
 package org.eclipse.epsilon.eol.incremental.trace.impl;
 
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
@@ -47,7 +48,9 @@ public class PropertyAccess implements IPropertyAccess {
     public PropertyAccess(IPropertyTrace property, IExecutionTrace container) throws TraceModelDuplicateRelation {
         this.execution = new AccessHasExecution(this);
         this.property = new PropertyAccessHasProperty(this);
-        this.property.create(property);
+        if (!this.property.create(property)) {
+            throw new TraceModelDuplicateRelation();
+        }
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateRelation();
         };
@@ -104,18 +107,20 @@ public class PropertyAccess implements IPropertyAccess {
         PropertyAccess other = (PropertyAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        // Will use property for equals
-        if (property.get() == null) {
-            if (other.property.get() != null)
-                return false;
-        }        else if (!property.get().equals(other.property.get())) {
-            return false;
-        }
         // Will use execution for equals
         if (execution.get() == null) {
             if (other.execution.get() != null)
                 return false;
-        }        else if (!execution.get().equals(other.execution.get())) {
+        }
+        else if (!execution.get().equals(other.execution.get())) {
+            return false;
+        }
+        // Will use property for equals
+        if (property.get() == null) {
+            if (other.property.get() != null)
+                return false;
+        }
+        else if (!property.get().equals(other.property.get())) {
             return false;
         }
         return true; 
@@ -125,8 +130,8 @@ public class PropertyAccess implements IPropertyAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((property == null) ? 0 : property.hashCode());
-        result = prime * result + ((execution == null) ? 0 : execution.hashCode());
+        result = prime * result + ((execution.get() == null) ? 0 : execution.get().hashCode());
+        result = prime * result + ((property.get() == null) ? 0 : property.get().hashCode());
         return result;
     }
 

@@ -19,7 +19,9 @@ import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.evl.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
+import org.eclipse.epsilon.evl.execute.context.TracedEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 import org.eclipse.epsilon.evl.incremental.trace.util.ContextTraceUtil;
@@ -101,7 +103,10 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 			IInvariantTrace currentInvariant = moduleElementStack.peekFirst();
 			if (ast.equals(waitingFor)) {
 				boolean all = EvlOperationFactory.SATISFIES_ALL_OPERATION.equals(waitingFor.getOperationName());
-				record(all, parameterValues, currentInvariant);				
+				record(all, parameterValues, currentInvariant, ((TracedEvlContext)context).getEvlExecution());
+				parameters.clear();
+				listening = false;
+				waitingFor = null;
 			}
 			else {
 				if (ast instanceof TracedConstraint) {
@@ -123,17 +128,17 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 		return moduleElementStack.isEmpty();
 	}
 
-	private void record(boolean all, Collection<String> parameterValues, IInvariantTrace invariant) {
+	private void record(boolean all, Collection<String> parameterValues, IInvariantTrace invariant, IEvlModuleExecution evlModuleExecution) {
 		// Each parameter should be an Invariant name
 		IContextTrace context = invariant.invariantContext().get();
-		List<IInvariantTrace> invariants = new ArrayList<>();
+		Set<IInvariantTrace> invariants = new HashSet<>();
 		for (Object p : parameterValues) {
 			assert p instanceof String;
 			String invariantName = (String) p;
 			IInvariantTrace  targetInvariant = ContextTraceUtil.getInvariantIn(context, invariantName);
 			if (targetInvariant == null) {
 				try {
-					targetInvariant = context.createInvariantTrace((String) p);
+					targetInvariant = evlModuleExecution.createInvariantTrace((String) p);
 				} catch (EolIncrementalExecutionException e) {
 					throw new IllegalStateException(String.format("Uknown invariant for %s: %s", invariantName, p), e);
 				}
@@ -142,10 +147,11 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 		}
 		ISatisfiesTrace result = null;
 		try {
-			result = invariant.createSatisfiesTrace();
+			result = evlModuleExecution.createSatisfiesTrace(invariant);
 		} catch (EolIncrementalExecutionException e) {
 			throw new IllegalStateException(e);
-		} finally {
+		} 
+		finally {	
 			for (IInvariantTrace i : invariants) {
 				result.satisfiedInvariants().create(i);
 			}
