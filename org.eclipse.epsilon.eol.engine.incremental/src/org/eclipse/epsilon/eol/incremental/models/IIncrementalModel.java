@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.models;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
@@ -57,6 +58,6 @@ public interface IIncrementalModel extends IModel {
 	 * 
 	 * @return
 	 */
-	List<IIncrementalModule> getModules();
+	Collection<IIncrementalModule> getModules();
 	
 }

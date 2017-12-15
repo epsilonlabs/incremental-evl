@@ -56,6 +56,7 @@ public class TracedConstraint extends Constraint {
 			tracedEvlContext.getTraceManager().getPropertyAccessListener().aboutToExecute(guardBlock, context);
 			tracedEvlContext.getTraceManager().getAllInstancesAccessListener().aboutToExecute(guardBlock, context);
 			result = guardBlock.execute(context, Variable.createReadOnlyVariable("self", object));
+			trace.guard().get().setResult(result);
 			tracedEvlContext.getTraceManager().getSatisfiesListener().finishedExecuting(this, result, context);		
 			tracedEvlContext.getTraceManager().getPropertyAccessListener().finishedExecuting(guardBlock, result, context);
 			tracedEvlContext.getTraceManager().getAllInstancesAccessListener().finishedExecuting(guardBlock, result, context);
