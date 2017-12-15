@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-11.
+ * This file was automatically generated on: 2017-12-15.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -38,6 +38,17 @@ public interface IContextTrace extends IGuardedElementTrace {
      * @return the value of the '<em>Kind</em>' attribute.
      */
     String getKind();            
+    /**
+     * Returns the value of the '<em><b>Index</b></em>' attribute.
+     * <!-- protected region index-getter-doc on begin -->
+     * <p>
+     * If the meaning of the '<em>Index</em>' attribute isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- protected region index-getter-doc end --> 
+     * @return the value of the '<em>Index</em>' attribute.
+     */
+    Integer getIndex();            
     /** The constraints reference. */
     IContextTraceHasConstraints constraints();
                 

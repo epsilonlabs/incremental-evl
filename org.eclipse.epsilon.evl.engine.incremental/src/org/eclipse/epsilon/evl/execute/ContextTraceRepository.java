@@ -47,10 +47,10 @@ public class ContextTraceRepository implements IContextTraceRepository {
 	}
 
 	@Override
-	public IContextTrace getContextTraceFor(String typeName, IModelElementTrace modelElement) {
+	public IContextTrace getContextTraceFor(String typeName, int index, IModelElementTrace modelElement) {
 		IContextTrace result = null;
 		result = extent.stream()
-				.filter(ct -> ct.getKind().equals(typeName) && ct.context().get().equals(modelElement))
+				.filter(ct -> ct.getKind().equals(typeName) && ct.getIndex().equals(index) && ct.context().get().equals(modelElement))
 				.findFirst()
 				.orElseGet(() -> null);
 		return result;

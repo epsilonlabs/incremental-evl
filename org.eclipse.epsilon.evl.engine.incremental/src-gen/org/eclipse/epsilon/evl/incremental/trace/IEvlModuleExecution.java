@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-11.
+ * This file was automatically generated on: 2017-12-15.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -46,7 +46,7 @@ public interface IEvlModuleExecution extends IModuleExecution {
     IModelTrace createModelTrace(String name) throws EolIncrementalExecutionException;       
    
     /** The ContextTrace Factory. */
-    IContextTrace createContextTrace(String kind, IModelElementTrace context) throws EolIncrementalExecutionException;       
+    IContextTrace createContextTrace(String kind, Integer index, IModelElementTrace context) throws EolIncrementalExecutionException;       
             
     /** The InvariantTrace Factory. */
     IInvariantTrace createInvariantTrace(String name) throws EolIncrementalExecutionException;       

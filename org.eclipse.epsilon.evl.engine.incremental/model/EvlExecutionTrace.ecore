@@ -10,11 +10,12 @@
         eOpposite="#//GuardTrace/limits"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ContextTrace" eSuperTypes="#//GuardedElementTrace">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//ContextTrace/kind">
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//ContextTrace/kind #//ContextTrace/index">
       <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
     </eAnnotations>
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equals" references="#//ContextTrace/context"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="kind" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="index" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="constraints" upperBound="-1"
         eType="#//InvariantTrace" resolveProxies="false" eOpposite="#//InvariantTrace/invariantContext">
       <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-11.
+ * This file was automatically generated on: 2017-12-15.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -47,6 +47,9 @@ public class ContextTrace implements IContextTrace {
     /** The kind */
     private String kind;
 
+    /** The index */
+    private Integer index;
+
     /** The accesses relation */
     private final IExecutionTraceHasAccesses accesses;
 
@@ -63,8 +66,9 @@ public class ContextTrace implements IContextTrace {
      * Instantiates a new ContextTrace. The ContextTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ContextTrace(String kind, IModelElementTrace context, IModuleExecution container) throws TraceModelDuplicateRelation {
+    public ContextTrace(String kind, Integer index, IModelElementTrace context, IModuleExecution container) throws TraceModelDuplicateRelation {
         this.kind = kind;
+        this.index = index;
         this.accesses = new ExecutionTraceHasAccesses(this);
         this.guard = new GuardedElementTraceHasGuard(this);
         this.constraints = new ContextTraceHasConstraints(this);
@@ -91,6 +95,11 @@ public class ContextTrace implements IContextTrace {
     @Override
     public String getKind() {
         return kind;
+    }
+    
+    @Override
+    public Integer getIndex() {
+        return index;
     }
     
     @Override
@@ -180,6 +189,11 @@ public class ContextTrace implements IContextTrace {
                 return false;
         } else if (!getKind().equals(other.getKind()))
             return false;
+        if (getIndex() == null) {
+            if (other.getIndex() != null)
+                return false;
+        } else if (!getIndex().equals(other.getIndex()))
+            return false;
         return true;
     }
 
@@ -210,6 +224,7 @@ public class ContextTrace implements IContextTrace {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((kind == null) ? 0 : kind.hashCode());
+        result = prime * result + ((index == null) ? 0 : index.hashCode());
         result = prime * result + ((context.get() == null) ? 0 : context.get().hashCode());
         return result;
     }

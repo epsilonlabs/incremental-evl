@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-11.
+ * This file was automatically generated on: 2017-12-15.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -141,10 +141,10 @@ public class EvlModuleExecution implements IEvlModuleExecution {
     }      
                   
     @Override
-    public IContextTrace createContextTrace(String kind, IModelElementTrace context) throws EolIncrementalExecutionException {
+    public IContextTrace createContextTrace(String kind, Integer index, IModelElementTrace context) throws EolIncrementalExecutionException {
         IContextTrace contextTrace = null;
         try {
-            contextTrace = new ContextTrace(kind, context, this);
+            contextTrace = new ContextTrace(kind, index, context, this);
         } catch (TraceModelDuplicateRelation e) {
             // Pass
         } finally {
@@ -156,6 +156,7 @@ public class EvlModuleExecution implements IEvlModuleExecution {
                     .filter(t -> t instanceof IContextTrace)
                     .map(IContextTrace.class::cast)
                     .filter(item -> item.getKind().equals(kind))
+                    .filter(item -> item.getIndex().equals(index))
                     .filter(item -> item.context().get().equals(context))
                     .findFirst()
                     .get();

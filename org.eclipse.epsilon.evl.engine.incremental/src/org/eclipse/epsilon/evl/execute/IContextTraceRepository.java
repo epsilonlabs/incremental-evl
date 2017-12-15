@@ -7,6 +7,6 @@ import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 
 public interface IContextTraceRepository extends IRepository<IContextTrace> {
 
-	IContextTrace getContextTraceFor(String typeName, IModelElementTrace modelElement);
+	IContextTrace getContextTraceFor(String typeName, int index, IModelElementTrace modelElement);
 
 }

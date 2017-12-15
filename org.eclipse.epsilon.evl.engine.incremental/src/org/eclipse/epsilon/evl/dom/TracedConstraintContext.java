@@ -1,5 +1,7 @@
 package org.eclipse.epsilon.evl.dom;
 
+import org.eclipse.epsilon.common.module.IModule;
+import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
@@ -26,19 +28,13 @@ import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
  */
 public class TracedConstraintContext extends ConstraintContext {
 
-//	@Override
-//	public void build(AST cst, IModule module) {
-//		super.build(cst, module);
-//		assert module instanceof IncrementalEvlModule;
-//		String typeName = getTypeName();
-//		IContextTrace trace;
-//		if (typeName == null) {
-//			throw new IllegalStateException("Can't create TracedConstraintContext for unknown (null type.");
-//		}
-//		else {
-//			trace = createContextTrace(module, typeName);
-//		}
-//	}
+	private int index;
+
+	@Override
+	public void build(AST cst, IModule module) {
+		super.build(cst, module);
+		this.index = cst.childIndex;
+	}
 
 	@Override
 	public boolean appliesTo(Object object, IEvlContext context, final boolean checkType) throws EolRuntimeException {
@@ -96,10 +92,10 @@ public class TracedConstraintContext extends ConstraintContext {
 		if (typeName == null) {
 			throw new IllegalStateException("Can't create TracedConstraintContext for unknown (null type.");
 		}
-		contextTrace = traceManager.contextTraces().getContextTraceFor(typeName, modelElementTrace);
+		contextTrace = traceManager.contextTraces().getContextTraceFor(typeName, index, modelElementTrace);
 		if (contextTrace == null) {
 			try {
-				contextTrace = evlExecution.createContextTrace(typeName, modelElementTrace);
+				contextTrace = evlExecution.createContextTrace(typeName, index, modelElementTrace);
 			} catch (EolIncrementalExecutionException e) {
 				throw new IllegalStateException("Can't create ContextTrace for type " + typeName + ".", e);			
 			} finally {

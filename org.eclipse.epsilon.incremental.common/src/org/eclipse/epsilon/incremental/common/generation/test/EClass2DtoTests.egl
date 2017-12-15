@@ -246,8 +246,8 @@ operation EClass initClassUnderTest(containerClass, containment, contReferenceCl
             replay([%=oppVar%]);
 [%      }%]        
 [%  }%]
-[%  // Assumes all parameters are Strings!
-    var params = self.getIndexAttributes().collect(a | '"' + a.name + '"');
+[%  
+    var params = self.getIndexAttributes().collect(a | a.getInitValue(1));
     // We need a mock for the Required EReferences used in the constructor
     params.addAll(self.getRequiredFeatures().collect(a | "_" + a.name));
     if (containerClass.isDefined()) {
@@ -261,6 +261,15 @@ operation EClass initClassUnderTest(containerClass, containment, contReferenceCl
     }%]
             classUnderTest = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=params%]);
 [%}
+
+operation EAttribute getInitValue(index) : Any {
+    switch(self.getEAttributeType().getName()) {
+        case "EString": return '"' + self.name + index + '"';
+        case "EIntegerObject": return 0 + index;
+        default: return null;
+    }
+    
+}
 
 @template
 operation EClass newInitClassUnderTest(index, containerClass, containment, contReferenceClass,
@@ -290,8 +299,8 @@ operation EClass newInitClassUnderTest(index, containerClass, containment, contR
             replay([%=oppVar%]);
 [%      }%]             
 [%}%]
-[%  // Assumes all parameters are Strings!
-    var params = self.getIndexAttributes().collect(a | '"' + a.name + index + '"');
+[% 
+    var params = self.getIndexAttributes().collect(a | a.getInitValue(index));
     // We need a mock for the Required EReferences used in the constructor
     params.addAll(self.getRequiredFeatures().collect(a | "_" + a.name + index));
     if (containerClass.isDefined()) {
