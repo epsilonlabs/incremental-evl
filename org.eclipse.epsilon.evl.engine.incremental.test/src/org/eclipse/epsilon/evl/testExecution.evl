@@ -1,0 +1,39 @@
+pre {
+    var sdf = new Native("java.text.SimpleDateFormat")("MM/dd/yyyy");
+    var changeDate = sdf.parse("6/4/2017");
+}
+
+context Row {
+    // Only appply to new account customers
+    guard : changeDate.before(sdf.parse(self.startDate))
+    
+    constraint isInOverdraft {
+        
+        // Remove $ and convert to Real
+        check : self.balance.substring(1).asReal() >= 0
+        
+        message: "Account " + self.iban + " is in overdraft."
+    }
+    
+    constraint OverdraftCharges {
+        
+        guard: not self.satisfies("isInOverdraft")
+        
+        check: self.hasOverdraft.asBoolean()
+                and Sequence{"Veracruz", "Jaboatão", "Kortkeros"}.includes(self.branch)
+        
+        message: "Account " + self.iban + " is in overdraft and needs to pay the overdraft excess."
+    }
+    
+    
+}
+
+context Row {
+    
+    constraint idisUnique {
+        
+        check: not Row.all.excluding(self).exists(r | r.iban == self.iban)
+        
+        message: "Accounts " + Row.allOfType("Row").select(r | r.iban == self.iban) + " have duplicate ids."
+    }
+}

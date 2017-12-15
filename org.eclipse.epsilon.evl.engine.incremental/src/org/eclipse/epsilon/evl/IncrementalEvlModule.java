@@ -21,8 +21,6 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
 import org.eclipse.epsilon.eol.incremental.dom.TracedExecutableBlock;
-import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
-import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
 import org.eclipse.epsilon.eol.incremental.trace.IModuleTrace;
@@ -39,7 +37,6 @@ import org.eclipse.epsilon.evl.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.execute.context.TracedEvlContext;
-import org.eclipse.epsilon.evl.execute.introspection.recording.SatisfiesInvocationExecutionListener;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleExecution;
@@ -257,18 +254,18 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	@Override
 	public void onCreate(Object newElement) {
 		
-//		System.out.println("On Create: " + newElement);
-//		for (ConstraintContext conCtx : getConstraintContexts()) {
-//			 try {
-//				if (conCtx.appliesTo(newElement, getContext())) {
-//					 for (Constraint constraint : conCtx.getConstraints()) {
-//						constraint.check(newElement, getContext());
-//					}
-//				 }
-//			} catch (EolRuntimeException e) {
-//				e.printStackTrace();
-//			}
-//		}	
+		System.out.println("On Create: " + newElement);
+		for (ConstraintContext conCtx : getConstraintContexts()) {
+			 try {
+				if (conCtx.appliesTo(newElement, getContext())) {
+					 for (Constraint constraint : conCtx.getConstraints()) {
+						constraint.check(newElement, getContext());
+					}
+				 }
+			} catch (EolRuntimeException e) {
+				e.printStackTrace();
+			}
+		}	
 	}
 
 	@Override

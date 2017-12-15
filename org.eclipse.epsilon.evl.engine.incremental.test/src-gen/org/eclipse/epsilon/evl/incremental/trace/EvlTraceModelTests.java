@@ -178,7 +178,7 @@ public class EvlTraceModelTests {
             moduleExecution1 = new ModuleExecutionHasModule(containerMock);
             expect(containerMock.module()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new EvlModuleTrace("source", containerMock);
+            classUnderTest = new EvlModuleTrace("source1", containerMock);
             assertThat(containerMock.module().get(), is(classUnderTest));
 	    }
 	    
@@ -190,7 +190,7 @@ public class EvlTraceModelTests {
             moduleExecution1 = new ModuleExecutionHasModule(containerMock);
             expect(containerMock.module()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new EvlModuleTrace("source", containerMock);
+            classUnderTest = new EvlModuleTrace("source1", containerMock);
 // protected region EvlModuleTraceAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region EvlModuleTraceAttributes end
@@ -272,7 +272,7 @@ public class EvlTraceModelTests {
             replay(containerMock);
             IModelElementTrace _context = mock(IModelElementTrace.class);
         
-            classUnderTest = new ContextTrace("kind", _context, containerMock);
+            classUnderTest = new ContextTrace("kind1", 1, _context, containerMock);
             Queue<IExecutionTrace> values = containerMock.executions().get();
             assertThat(values, hasItem(classUnderTest));
 	    }
@@ -287,7 +287,7 @@ public class EvlTraceModelTests {
             replay(containerMock);
             IModelElementTrace _context = mock(IModelElementTrace.class);
         
-            classUnderTest = new ContextTrace("kind", _context, containerMock);
+            classUnderTest = new ContextTrace("kind1", 1, _context, containerMock);
 // protected region ContextTraceAttributes on begin
             assertThat(classUnderTest.getKind(), is("kind"));
             String id = "ObjectId";
@@ -303,7 +303,7 @@ public class EvlTraceModelTests {
             replay(containerMock);
             IModelElementTrace _context = mock(IModelElementTrace.class);
         
-            classUnderTest = new ContextTrace("kind", _context, containerMock);
+            classUnderTest = new ContextTrace("kind1", 1, _context, containerMock);
             access1 = new AccessHasExecution(accessesMock1);
             expect(accessesMock1.execution()).andReturn(access1).anyTimes();
             replay(accessesMock1);
@@ -324,7 +324,7 @@ public class EvlTraceModelTests {
             replay(containerMock);
             IModelElementTrace _context2 = mock(IModelElementTrace.class);
              
-            IContextTrace classUnderTest2 = new ContextTrace("kind2", _context2, containerMock);
+            IContextTrace classUnderTest2 = new ContextTrace("kind2", 2, _context2, containerMock);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
@@ -335,7 +335,7 @@ public class EvlTraceModelTests {
             replay(containerMock);
             IModelElementTrace _context = mock(IModelElementTrace.class);
         
-            classUnderTest = new ContextTrace("kind", _context, containerMock);
+            classUnderTest = new ContextTrace("kind1", 1, _context, containerMock);
             access1 = new AccessHasExecution(accessesMock1);
             expect(accessesMock1.execution()).andReturn(access1).anyTimes();
             replay(accessesMock1);
@@ -357,7 +357,7 @@ public class EvlTraceModelTests {
             replay(containerMock);
             IModelElementTrace _context = mock(IModelElementTrace.class);
         
-            classUnderTest = new ContextTrace("kind", _context, containerMock);
+            classUnderTest = new ContextTrace("kind1", 1, _context, containerMock);
             guardTrace1 = new GuardTraceHasLimits(guardMock1);
             expect(guardMock1.limits()).andReturn(guardTrace1).anyTimes();
             replay(guardMock1);
@@ -378,7 +378,7 @@ public class EvlTraceModelTests {
             replay(containerMock);
             IModelElementTrace _context2 = mock(IModelElementTrace.class);
              
-            IContextTrace classUnderTest2 = new ContextTrace("kind2", _context2, containerMock);
+            IContextTrace classUnderTest2 = new ContextTrace("kind2", 2, _context2, containerMock);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
@@ -389,7 +389,7 @@ public class EvlTraceModelTests {
             replay(containerMock);
             IModelElementTrace _context = mock(IModelElementTrace.class);
         
-            classUnderTest = new ContextTrace("kind", _context, containerMock);
+            classUnderTest = new ContextTrace("kind1", 1, _context, containerMock);
             guardTrace1 = new GuardTraceHasLimits(guardMock1);
             expect(guardMock1.limits()).andReturn(guardTrace1).anyTimes();
             replay(guardMock1);
@@ -411,7 +411,7 @@ public class EvlTraceModelTests {
             replay(containerMock);
             IModelElementTrace _context = mock(IModelElementTrace.class);
         
-            classUnderTest = new ContextTrace("kind", _context, containerMock);
+            classUnderTest = new ContextTrace("kind1", 1, _context, containerMock);
             invariantTrace1 = new InvariantTraceHasInvariantContext(constraintsMock1);
             expect(constraintsMock1.invariantContext()).andReturn(invariantTrace1).anyTimes();
             replay(constraintsMock1);
@@ -432,7 +432,7 @@ public class EvlTraceModelTests {
             replay(containerMock);
             IModelElementTrace _context2 = mock(IModelElementTrace.class);
              
-            IContextTrace classUnderTest2 = new ContextTrace("kind2", _context2, containerMock);
+            IContextTrace classUnderTest2 = new ContextTrace("kind2", 2, _context2, containerMock);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
@@ -443,7 +443,7 @@ public class EvlTraceModelTests {
             replay(containerMock);
             IModelElementTrace _context = mock(IModelElementTrace.class);
         
-            classUnderTest = new ContextTrace("kind", _context, containerMock);
+            classUnderTest = new ContextTrace("kind1", 1, _context, containerMock);
             invariantTrace1 = new InvariantTraceHasInvariantContext(constraintsMock1);
             expect(constraintsMock1.invariantContext()).andReturn(invariantTrace1).anyTimes();
             replay(constraintsMock1);
@@ -465,7 +465,7 @@ public class EvlTraceModelTests {
             replay(containerMock);
             IModelElementTrace _context = mock(IModelElementTrace.class);
         
-            classUnderTest = new ContextTrace("kind", _context, containerMock);
+            classUnderTest = new ContextTrace("kind1", 1, _context, containerMock);
             boolean result;
             result = classUnderTest.context().create(contextMock2);
             assertFalse(result);
@@ -478,7 +478,7 @@ public class EvlTraceModelTests {
             replay(containerMock);
             IModelElementTrace _context2 = mock(IModelElementTrace.class);
              
-            IContextTrace classUnderTest2 = new ContextTrace("kind2", _context2, containerMock);
+            IContextTrace classUnderTest2 = new ContextTrace("kind2", 2, _context2, containerMock);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
@@ -489,7 +489,7 @@ public class EvlTraceModelTests {
             replay(containerMock);
             IModelElementTrace _context = mock(IModelElementTrace.class);
         
-            classUnderTest = new ContextTrace("kind", _context, containerMock);
+            classUnderTest = new ContextTrace("kind1", 1, _context, containerMock);
         
             boolean result = classUnderTest.context().destroy(_context);
             assertTrue(result);
@@ -605,7 +605,7 @@ public class EvlTraceModelTests {
             moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
             expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantTrace("name", containerMock);
+            classUnderTest = new InvariantTrace("name1", containerMock);
             Queue<IExecutionTrace> values = containerMock.executions().get();
             assertThat(values, hasItem(classUnderTest));
 	    }
@@ -618,7 +618,7 @@ public class EvlTraceModelTests {
             moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
             expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantTrace("name", containerMock);
+            classUnderTest = new InvariantTrace("name1", containerMock);
 // protected region InvariantTraceAttributes on begin
             assertThat(classUnderTest.getName(), is("name"));
             String id = "ObjectId";
@@ -638,7 +638,7 @@ public class EvlTraceModelTests {
             moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
             expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantTrace("name", containerMock);
+            classUnderTest = new InvariantTrace("name1", containerMock);
             access1 = new AccessHasExecution(accessesMock1);
             expect(accessesMock1.execution()).andReturn(access1).anyTimes();
             replay(accessesMock1);
@@ -666,7 +666,7 @@ public class EvlTraceModelTests {
             moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
             expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantTrace("name", containerMock);
+            classUnderTest = new InvariantTrace("name1", containerMock);
             access1 = new AccessHasExecution(accessesMock1);
             expect(accessesMock1.execution()).andReturn(access1).anyTimes();
             replay(accessesMock1);
@@ -685,7 +685,7 @@ public class EvlTraceModelTests {
             moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
             expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantTrace("name", containerMock);
+            classUnderTest = new InvariantTrace("name1", containerMock);
             guardTrace1 = new GuardTraceHasLimits(guardMock1);
             expect(guardMock1.limits()).andReturn(guardTrace1).anyTimes();
             replay(guardMock1);
@@ -713,7 +713,7 @@ public class EvlTraceModelTests {
             moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
             expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantTrace("name", containerMock);
+            classUnderTest = new InvariantTrace("name1", containerMock);
             guardTrace1 = new GuardTraceHasLimits(guardMock1);
             expect(guardMock1.limits()).andReturn(guardTrace1).anyTimes();
             replay(guardMock1);
@@ -732,7 +732,7 @@ public class EvlTraceModelTests {
             moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
             expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantTrace("name", containerMock);
+            classUnderTest = new InvariantTrace("name1", containerMock);
             checkTrace1 = new CheckTraceHasInvariant(checkMock1);
             expect(checkMock1.invariant()).andReturn(checkTrace1).anyTimes();
             replay(checkMock1);
@@ -760,7 +760,7 @@ public class EvlTraceModelTests {
             moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
             expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantTrace("name", containerMock);
+            classUnderTest = new InvariantTrace("name1", containerMock);
             checkTrace1 = new CheckTraceHasInvariant(checkMock1);
             expect(checkMock1.invariant()).andReturn(checkTrace1).anyTimes();
             replay(checkMock1);
@@ -779,7 +779,7 @@ public class EvlTraceModelTests {
             moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
             expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantTrace("name", containerMock);
+            classUnderTest = new InvariantTrace("name1", containerMock);
             messageTrace1 = new MessageTraceHasInvariant(messageMock1);
             expect(messageMock1.invariant()).andReturn(messageTrace1).anyTimes();
             replay(messageMock1);
@@ -807,7 +807,7 @@ public class EvlTraceModelTests {
             moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
             expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantTrace("name", containerMock);
+            classUnderTest = new InvariantTrace("name1", containerMock);
             messageTrace1 = new MessageTraceHasInvariant(messageMock1);
             expect(messageMock1.invariant()).andReturn(messageTrace1).anyTimes();
             replay(messageMock1);
@@ -826,7 +826,7 @@ public class EvlTraceModelTests {
             moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
             expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantTrace("name", containerMock);
+            classUnderTest = new InvariantTrace("name1", containerMock);
             satisfiesTrace1 = new SatisfiesTraceHasInvariant(satisfiesMock1);
             expect(satisfiesMock1.invariant()).andReturn(satisfiesTrace1).anyTimes();
             replay(satisfiesMock1);
@@ -854,7 +854,7 @@ public class EvlTraceModelTests {
             moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
             expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantTrace("name", containerMock);
+            classUnderTest = new InvariantTrace("name1", containerMock);
             satisfiesTrace1 = new SatisfiesTraceHasInvariant(satisfiesMock1);
             expect(satisfiesMock1.invariant()).andReturn(satisfiesTrace1).anyTimes();
             replay(satisfiesMock1);
@@ -873,7 +873,7 @@ public class EvlTraceModelTests {
             moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
             expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantTrace("name", containerMock);
+            classUnderTest = new InvariantTrace("name1", containerMock);
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
@@ -901,7 +901,7 @@ public class EvlTraceModelTests {
             moduleExecution1 = new ModuleExecutionHasExecutions(containerMock);
             expect(containerMock.executions()).andReturn(moduleExecution1).anyTimes();
             replay(containerMock);
-            classUnderTest = new InvariantTrace("name", containerMock);
+            classUnderTest = new InvariantTrace("name1", containerMock);
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
