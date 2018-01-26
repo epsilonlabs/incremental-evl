@@ -11,7 +11,6 @@ package org.eclipse.epsilon.eol.incremental.execute;
  *
  * @param <T>
  */
-@Deprecated
 public interface IRepository<T> {
 	
 	// Get Objects

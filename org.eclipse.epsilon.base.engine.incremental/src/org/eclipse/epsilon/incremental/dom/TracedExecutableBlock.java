@@ -11,7 +11,7 @@
 package org.eclipse.epsilon.incremental.dom;
 
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
-import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
 
 /**
  * An executable block that has different type of recorders and that is capable of starting/stopping all its recorders

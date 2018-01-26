@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.eclipse.epsilon.eol.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 
 /**
  * Implementation of the {@link IModelTraceRepository} that only accesses elements in memory.

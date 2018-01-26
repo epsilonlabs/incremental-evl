@@ -13,4 +13,5 @@ Export-Package: org.eclipse.epsilon.eol.incremental.execute;uses:="org.eclipse.e
  org.eclipse.epsilon.incremental.execute.introspection.recording,
  org.eclipse.epsilon.incremental.trace.impl;uses:="org.eclipse.epsilon.eol.incremental.trace"
 Require-Bundle: org.eclipse.epsilon.eol.engine,
- org.eclipse.epsilon.common
+ org.eclipse.epsilon.common,
+ org.slf4j.api;bundle-version="1.7.2"

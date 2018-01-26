@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.execute;
 
-import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
-import org.eclipse.epsilon.eol.incremental.trace.util.ModelUtil;
+import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
 import org.eclipse.epsilon.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 
-// TODO: Auto-generated Javadoc
 /**
  * The manager holds the reference to the Trace Model, keeps a queue of model changes and flushes the changes
  * when the queue has a specific size, when the user requests a flush or when the ExL module finishes execution.
@@ -29,9 +27,8 @@ import org.eclipse.epsilon.incremental.execute.introspection.recording.PropertyA
  *  
  *
  * @author Horacio Hoyos Rodriguez
- * @param <T> the generic type
+ * @param <T> the generic type of the specific engine
  */
-@Deprecated
 public interface IEolExecutionTraceManager<T> {
 	
 	/**
@@ -56,19 +53,11 @@ public interface IEolExecutionTraceManager<T> {
 	void setFlushTimeout(float period);
 	
 	/**
-	 * The repository of models. Via the repository it is possible to get access to a specific ModelTrace and from
-	 * there find types, elements and properties (see @link {@link ModelUtil}).
-	 *
-	 * @return the i model trace repository
-	 */
-	IModelTraceRepository modelTraces();
-	
-	/**
 	 * The repository of module executions. Each Epsilon language will return a specialised repository.
 	 *
 	 * @return the i eol module execution repository
 	 */
-	IEolModuleExecutionRepository<T> moduleExecutionTraces();
+	IModuleRepository<?> moduleExecutionTraces();
 	
 	/**
 	 * Makes the trace manager persist any temporal trace information in the trace model.
@@ -96,6 +85,6 @@ public interface IEolExecutionTraceManager<T> {
 	 *
 	 * @param moduleExecution the module execution
 	 */
-	void initExecutionListeners(IModuleExecution moduleExecution);
+	void initExecutionListeners(IModuleTrace moduleExecution);
 	
 }

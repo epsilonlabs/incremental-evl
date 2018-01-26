@@ -11,11 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
-import org.eclipse.epsilon.incremental.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;    
-import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;    
-import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;    
-import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;    
+import org.eclipse.epsilon.base.incremental.trace.IAccess;    
 
 /**
  * The ExecutionTrace defines the access methods for the EClass features.
@@ -28,11 +24,4 @@ public interface IExecutionTrace extends IIdElement {
     /** The accesses reference. */
     IExecutionTraceHasAccesses accesses();
                 
-    /** The AllInstancesAccess Factory. */
-    IAllInstancesAccess createAllInstancesAccess(IModelTypeTrace type) throws EolIncrementalExecutionException;       
-            
-    /** The PropertyAccess Factory. */
-    IPropertyAccess createPropertyAccess(IPropertyTrace property) throws EolIncrementalExecutionException;       
-            
-   
 }

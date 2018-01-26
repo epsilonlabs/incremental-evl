@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccessHasProperty;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.PropertyAccessHasProperty;
@@ -39,14 +38,11 @@ public class PropertyAccess implements IPropertyAccess {
      * Instantiates a new PropertyAccess. The PropertyAccess is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public PropertyAccess(IPropertyTrace property, IExecutionTrace container) throws TraceModelDuplicateRelation {
+    public PropertyAccess(IPropertyTrace property) throws TraceModelDuplicateRelation {
         this.property = new PropertyAccessHasProperty(this);
         if (!this.property.create(property)) {
             throw new TraceModelDuplicateRelation();
         }
-        if (!container.accesses().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
     }
     
     @Override
@@ -95,6 +91,14 @@ public class PropertyAccess implements IPropertyAccess {
         PropertyAccess other = (PropertyAccess) obj;
         if (!sameIdentityAs(other))
             return false;
+        // Will use value for equals
+        if (value == null) {
+            if (other.value != null)
+                return false;
+        }
+        else if (!value.equals(other.value)) {
+            return false;
+        }
         // Will use property for equals
         if (property.get() == null) {
             if (other.property.get() != null)
@@ -110,8 +114,8 @@ public class PropertyAccess implements IPropertyAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
         result = prime * result + ((property.get() == null) ? 0 : property.get().hashCode());
         return result;
     }
-
 }

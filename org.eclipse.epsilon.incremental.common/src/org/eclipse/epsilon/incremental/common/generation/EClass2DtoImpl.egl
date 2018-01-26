@@ -158,22 +158,31 @@ for (er in ec.getEAllReferences().select(er | er.isContainment())) {
             return false;
 [%
 // Use only the EReferneces defined in the metamodel
-for (er in ec.getEqualsReferences()) {%]
+for (er in ec.getEqualsReferences()) {
+    var access = er.name;
+    if(er.isTypeOf(EReference)){
+        access += ".get()";
+    }%]
         // Will use [%=er.name%] for equals
-        if ([%=er.name%].get() == null) {
-            if (other.[%=er.name%].get() != null)
+[%  if (er.isTypeOf(EAttribute) and (er.getEAttributeType().name == "EBoolean")) {%]
+	    if ([%=access%] != other.[%=access%]) {
+	      return false;
+	    }
+[%  } else { %]
+        if ([%=access%] == null) {
+            if (other.[%=access%] != null)
                 return false;
         }
-[%
-    if (er.isMany()) {%]
-        else if (Arrays.equals([%=er.name%].get().toArray(), other.[%=er.name%].get().toArray())) {
+[%      if (er.isMany()) {%]
+        else if (Arrays.equals([%=access%].toArray(), other.[%=access%].toArray())) {
             return false;
         }
-[%  } else {%]
-        else if (![%=er.name%].get().equals(other.[%=er.name%].get())) {
+[%      } else {%]
+        else if (![%=access%].equals(other.[%=access%])) {
             return false;
         }
-[%  }
+[%      }
+    }
 }%]
         return true; 
   }
@@ -185,12 +194,19 @@ for (er in ec.getEqualsReferences()) {%]
 [%for (index in ec.getIndexAttributes()) {%]
         result = prime * result + (([%=index.name%] == null) ? 0 : [%=index.name%].hashCode());
 [%}%]
-[%for (index in ec.getEqualsReferences()) {%]
-        result = prime * result + (([%=index.name%].get() == null) ? 0 : [%=index.name%].get().hashCode());
-[%}%]
+[%for (er in ec.getEqualsReferences()) {
+    var access = er.name;
+    if(er.isTypeOf(EReference)){
+        access += ".get()";
+    }
+    if (er.isTypeOf(EAttribute) and (er.getEAttributeType().name == "EBoolean")) {%]
+        result = prime * result + ([%=access%] ? 1 : 0);
+[%  } else { %]
+        result = prime * result + (([%=access%] == null) ? 0 : [%=access%].hashCode());
+[%  }
+}%]
         return result;
     }
-
 }
 [%
 @template

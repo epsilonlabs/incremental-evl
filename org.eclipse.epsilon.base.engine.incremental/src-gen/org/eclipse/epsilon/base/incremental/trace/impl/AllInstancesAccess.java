@@ -17,7 +17,6 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccessHasType;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.AllInstancesAccessHasType;
 
@@ -39,14 +38,11 @@ public class AllInstancesAccess implements IAllInstancesAccess {
      * Instantiates a new AllInstancesAccess. The AllInstancesAccess is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public AllInstancesAccess(IModelTypeTrace type, IExecutionTrace container) throws TraceModelDuplicateRelation {
+    public AllInstancesAccess(IModelTypeTrace type) throws TraceModelDuplicateRelation {
         this.type = new AllInstancesAccessHasType(this);
         if (!this.type.create(type)) {
             throw new TraceModelDuplicateRelation();
         }
-        if (!container.accesses().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
     }
     
     @Override
@@ -95,6 +91,10 @@ public class AllInstancesAccess implements IAllInstancesAccess {
         AllInstancesAccess other = (AllInstancesAccess) obj;
         if (!sameIdentityAs(other))
             return false;
+        // Will use ofKind for equals
+	    if (ofKind != other.ofKind) {
+	      return false;
+	    }
         // Will use type for equals
         if (type.get() == null) {
             if (other.type.get() != null)
@@ -110,8 +110,8 @@ public class AllInstancesAccess implements IAllInstancesAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + (ofKind ? 1 : 0);
         result = prime * result + ((type.get() == null) ? 0 : type.get().hashCode());
         return result;
     }
-
 }

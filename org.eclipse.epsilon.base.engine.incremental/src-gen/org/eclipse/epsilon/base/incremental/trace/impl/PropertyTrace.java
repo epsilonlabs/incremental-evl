@@ -110,5 +110,4 @@ public class PropertyTrace implements IPropertyTrace {
         result = prime * result + ((element.get() == null) ? 0 : element.get().hashCode());
         return result;
     }
-
 }

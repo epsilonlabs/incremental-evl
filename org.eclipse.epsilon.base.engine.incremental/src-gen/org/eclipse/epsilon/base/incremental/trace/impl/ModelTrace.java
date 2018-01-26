@@ -86,5 +86,4 @@ public class ModelTrace implements IModelTrace {
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
-
 }

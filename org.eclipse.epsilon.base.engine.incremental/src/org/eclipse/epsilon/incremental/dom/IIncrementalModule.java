@@ -12,10 +12,8 @@ package org.eclipse.epsilon.incremental.dom;
 
 import java.util.Set;
 
-import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
+import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
 import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleTrace;
 
 /**
  * Incremental Modules can be attached to incremental models (models that implement IIncrementalModel) in order to be
@@ -36,11 +34,6 @@ public interface IIncrementalModule {
 	
 	public static final String ONLINE_MODE = "online";
 	
-	/**
-	 * Return the ExecutionTrace for the execution
-	 * @return
-	 */
-	public IModuleExecution getModuleExecution();
 	
 	/** 
 	 * Return the ExecutionTrace for the executed module

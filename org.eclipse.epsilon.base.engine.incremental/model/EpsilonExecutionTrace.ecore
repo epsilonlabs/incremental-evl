@@ -14,16 +14,16 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ExecutionTrace" abstract="true" eSuperTypes="#//IdElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="accesses" lowerBound="1"
-        upperBound="-1" eType="#//Access" containment="true" resolveProxies="false"/>
+        upperBound="-1" eType="#//Access" resolveProxies="false"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Access" abstract="true" eSuperTypes="#//IdElement"/>
   <eClassifiers xsi:type="ecore:EClass" name="AllInstancesAccess" eSuperTypes="#//Access">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/equals" references="#//AllInstancesAccess/type"/>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equals" references="#//AllInstancesAccess/ofKind #//AllInstancesAccess/type"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ofKind" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1" eType="#//ModelTypeTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PropertyAccess" eSuperTypes="#//Access">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/equals" references="#//PropertyAccess/property"/>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equals" references="#//PropertyAccess/property #//PropertyAccess/value"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="property" lowerBound="1"
         eType="#//PropertyTrace"/>

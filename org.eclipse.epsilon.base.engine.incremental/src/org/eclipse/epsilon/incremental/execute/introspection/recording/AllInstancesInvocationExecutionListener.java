@@ -6,20 +6,25 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.AllInstancesAccess;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModelTypeTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.OperationCallExpression;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
-import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;
-import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModelTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
 import org.eclipse.epsilon.eol.incremental.trace.util.ModelUtil;
 import org.eclipse.epsilon.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.incremental.dom.TracedExecutableBlock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An {@link IExecutionListener} that monitors execution of operations that retrieve all elements of a type/kind.
@@ -28,6 +33,8 @@ import org.eclipse.epsilon.incremental.dom.TracedExecutableBlock;
  *
  */
 public class AllInstancesInvocationExecutionListener implements IExecutionListener {
+	
+	private static final Logger logger = LoggerFactory.getLogger(AllInstancesInvocationExecutionListener.class);
 	
 	/** The name of the operations of interest */
 	public static final String[] SET_VALUES = new String[] { "all",
@@ -45,15 +52,10 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 	/** The trace manager */
 	private final IEolExecutionTraceManager<?> traceManager;
 	
-	/** The Module being executed */
-	private final IModuleExecution moduleExecution;
 	
-
-	public AllInstancesInvocationExecutionListener(IEolExecutionTraceManager<?> traceManager,
-			IModuleExecution moduleExecution) {
+	public AllInstancesInvocationExecutionListener(IEolExecutionTraceManager<?> traceManager) {
 		super();
 		this.traceManager = traceManager;
-		this.moduleExecution = moduleExecution;
 	}
 
 	@Override
@@ -79,7 +81,11 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 				// We assume the targetExpression resolved in a type
 				String typeName = oce.getTargetExpression().getResolvedType().getName();
 				boolean isKind = !"allOfType".equals(operationName);
-				record(currentAst.getTrace(), isKind, typeName);				
+				try {
+					record(currentAst.getTrace(), isKind, typeName);
+				} catch (TraceModelDuplicateRelation e) {
+					logger.warn("Unable to create traces for the execution of {}", ast, e);
+				}				
 			}
 		}
 	}
@@ -88,7 +94,7 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 		return moduleElementStack.isEmpty();
 	}
 
-	private void record(IExecutionTrace executionTrace, boolean isKind, String modelAndMetaClass) {
+	private void record(IExecutionTrace executionTrace, boolean isKind, String modelAndMetaClass) throws TraceModelDuplicateRelation {
 		String modelName;
 		String typeName;
 		if (modelAndMetaClass.indexOf("!") > -1){
@@ -100,42 +106,11 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 			modelName = "";
 			typeName = modelAndMetaClass;
 		}
-		IModelTrace modelTrace;
-		if (!modelName.isEmpty()) {
-			modelTrace = traceManager.modelTraces().getModelTraceByName(modelName);
-		}
-		else {
-			// Assume one model (i.e the element type is not qualified)
-			modelTrace = traceManager.modelTraces().first();
-		}
-		if (modelTrace == null) {
-			try {
-				//TODO Do we need to make this thread safe?
-				// FIXME What is the default model name?
-				modelTrace = moduleExecution.createModelTrace(modelName);
-			} catch (EolIncrementalExecutionException e) {
-				throw new IllegalStateException(e);
-			} finally {
-				traceManager.modelTraces().add(modelTrace);
-			}
-		}
-		IModelTypeTrace modelTypeTrace = ModelUtil.findModelType(modelTrace, typeName);
-		if (modelTypeTrace == null) {
-			try {
-				modelTypeTrace = modelTrace.createModelTypeTrace(typeName);
-			} catch (EolIncrementalExecutionException e) {
-				throw new IllegalStateException(e);
-			}
-		}
-		IAllInstancesAccess allIns = traceManager.moduleExecutionTraces().getAllInstancesAccessFor(executionTrace, modelTypeTrace);
-		if (allIns == null) {
-			try {
-				allIns = executionTrace.createAllInstancesAccess(modelTypeTrace);
-			} catch (EolIncrementalExecutionException e) {
-				throw new IllegalStateException(e);
-			}
-		}
+		IModelTrace modelTrace = new ModelTrace(modelName);
+		IModelTypeTrace modelTypeTrace = new ModelTypeTrace(typeName, modelTrace);
+		IAllInstancesAccess allIns = new AllInstancesAccess(modelTypeTrace);
 		allIns.setOfKind(isKind);
+		executionTrace.accesses().create(allIns);
 	}
 
 	@Override

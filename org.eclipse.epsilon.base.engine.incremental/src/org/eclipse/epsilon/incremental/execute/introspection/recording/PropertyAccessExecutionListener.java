@@ -11,12 +11,6 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
-import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModelTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
-import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;
-import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.eol.incremental.trace.util.ModelUtil;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.incremental.EolIncrementalExecutionException;
@@ -38,15 +32,10 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 	
 	/** The trace manager */
 	private final IEolExecutionTraceManager<?> traceManager;
-	
-	/** The Module being executed */
-	private final IModuleExecution moduleExecution;
-	
 
-	public PropertyAccessExecutionListener(IEolExecutionTraceManager<?> traceManager, IModuleExecution moduleExecution) {
+	public PropertyAccessExecutionListener(IEolExecutionTraceManager<?> traceManager) {
 		super();
 		this.traceManager = traceManager;
-		this.moduleExecution = moduleExecution;
 	}
 
 	@Override

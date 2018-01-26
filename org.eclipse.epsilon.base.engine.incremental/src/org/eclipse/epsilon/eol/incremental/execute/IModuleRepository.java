@@ -1,6 +1,6 @@
 package org.eclipse.epsilon.eol.incremental.execute;
 
-import org.eclipse.epsilon.eol.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
 
 /**
  * A repository of model traces.
@@ -8,8 +8,7 @@ import org.eclipse.epsilon.eol.incremental.trace.IModelTrace;
  * @author Horacio Hoyos Rodriguez
  *
  */
-@Deprecated
-public interface IModelTraceRepository extends IRepository<IModelTrace> {
+public interface IModuleRepository<T extends IModuleTrace> extends IRepository<T> {
 	
 	/**
 	 * Search a model by name.
@@ -17,15 +16,15 @@ public interface IModelTraceRepository extends IRepository<IModelTrace> {
 	 * @param name the name of the model
 	 * @return
 	 */
-	IModelTrace getModelTraceByName(String name);
+	T getModuleTraceBySource(String source);
 
 	/**
-	 * Get the first model in the repository.
+	 * Get the first module in the repository.
 	 * 
 	 * This method is useful for ExL executions in which a single model is used and type information is not prepended
 	 * with the model name, i.e. model!type vs. type
 	 * @return
 	 */
-	IModelTrace first();
+	T first();
 
 }

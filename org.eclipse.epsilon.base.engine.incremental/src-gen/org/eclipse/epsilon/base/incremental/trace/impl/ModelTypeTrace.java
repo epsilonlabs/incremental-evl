@@ -110,5 +110,4 @@ public class ModelTypeTrace implements IModelTypeTrace {
         result = prime * result + ((model.get() == null) ? 0 : model.get().hashCode());
         return result;
     }
-
 }
