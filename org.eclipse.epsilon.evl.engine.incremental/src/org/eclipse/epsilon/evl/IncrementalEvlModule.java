@@ -42,6 +42,8 @@ import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleExecution;
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTrace;
 import org.eclipse.epsilon.evl.parse.EvlParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -51,7 +53,9 @@ import org.eclipse.epsilon.evl.parse.EvlParser;
 // to enable the incremental behaviour
 // FIXME Some of this API should belong to the base Eol Module (e.g. the trace model API can be shared by all languages
 public class IncrementalEvlModule extends EvlModule implements IIncrementalModule {
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(IncrementalEvlModule.class);
+	
 	/**
 	 * Flag to indicate incremental execution.
 	 */
@@ -73,91 +77,20 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	private boolean onlineExecution;
 
 	protected IEvlModuleExecution evlExecution;
-	
+
 	protected IEvlModuleTrace evlModuleTrace;
-	
+
 	/** The context. */
 	protected IEvlContext context;
-	
-	
 	
 	public IncrementalEvlModule() {
 		super();
 		context = new TracedEvlContext();
 	}
-
-	@Override
-	public Object execute() throws EolRuntimeException {
-		if (!incrementalMode) {
-			return super.execute();
-		}
-		prepareContext(context);
-		context.setOperationFactory(new EvlOperationFactory());
-		context.getFrameStack().put(Variable.createReadOnlyVariable("thisModule", this));
-		String evlScripPath = "String";
-		if (this.sourceUri != null) {
-			evlScripPath = this.sourceUri.toString();
-		}
-		try {
-			evlModuleTrace = new EvlModuleTrace(evlScripPath, evlExecution);
-		} catch (TraceModelDuplicateRelation e) {
-			throw new EolRuntimeException(e.getMessage());
-		}
-		IEvlExecutionTraceManager<IEvlModuleExecution> etManager = ((TracedEvlContext) context).getTraceManager(); 
-		context.getExecutorFactory().addExecutionListener(etManager.getAllInstancesAccessListener());
-		context.getExecutorFactory().addExecutionListener(etManager.getPropertyAccessListener());
-		context.getExecutorFactory().addExecutionListener(etManager.getSatisfiesListener());
-
-		// Perform evaluation
-		execute(getPre(), context);
-		
-		for (ConstraintContext conCtx : getConstraintContexts()) { 
-			conCtx.checkAll(context);	
-		}
-		if (fixer != null) {
-			fixer.fix(this);
-		}
-		execute(getPost(), context);
-		for (UnsatisfiedConstraint uc : context.getUnsatisfiedConstraints()) {
-			System.out.println(uc.getMessage());
-		}
-		etManager.persistTraceInformation();
-		if (onlineExecution) {
-			listenToModelChanges(true);
-		}
-		return null;
-	}
-
-	/**
-	 * The execution trace must be initialised after the traceManager has been assigned to the context
-	 * ({@link TracedEvlContext#setTraceManager(IEvlExecutionTraceManager)}).
-	 * 
-	 * @throws EolRuntimeException
-	 */
-	public void prepareExecutionTrace() throws EolRuntimeException {
-		
-		IEvlExecutionTraceManager<IEvlModuleExecution>  etManager = ((TracedEvlContext) context).getTraceManager();
-		//evlExecution = (IEvlModuleExecution) etManager.moduleExecutionTraces().getEvlModuleExecutionForSource(evlScripPath);
-		if (evlExecution == null) {
-			try {
-				evlExecution = new EvlModuleExecution();
-				((TracedEvlContext)getContext()).setEvlExecution(evlExecution);
-			} catch (TraceModelDuplicateRelation e) {
-				throw new EolRuntimeException("Error creating the execution trace for this module. " + e.getMessage());
-			} finally {
-				if (evlExecution != null) {
-					etManager.moduleExecutionTraces().add(evlExecution);
-				}
-			}
-		}
-//		else {
-//			evlModuleTrace = (IEvlModuleTrace) evlExecution.module().get();
-//		}
-	} 
 	
 	@Override
 	public ModuleElement adapt(AST cst, ModuleElement parentAst) {
-		
+		logger.debug("Adapting {} from {}", cst, parentAst);
 		switch (cst.getType()) {
 			case EvlParser.MESSAGE: return createExecutableBlock(String.class);
 			case EvlParser.CHECK: return createExecutableBlock(Boolean.class);
@@ -185,6 +118,57 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 		return super.adapt(cst, parentAst);
 	}
 	
+	
+	
+	@Override
+	public Object execute() throws EolRuntimeException {
+		if (!incrementalMode) {
+			logger.info("Invoked in non-incremental model. Delegating to normal EVL.");
+			return super.execute();
+		}
+		prepareContext(context);
+		context.setOperationFactory(new EvlOperationFactory());
+		context.getFrameStack().put(Variable.createReadOnlyVariable("thisModule", this));
+		String evlScripPath = "String";
+		if (this.sourceUri != null) {
+			evlScripPath = this.sourceUri.toString();
+		}
+		try {
+			logger.info("Craetig the EvlModuleTrace.");
+			evlModuleTrace = new EvlModuleTrace(evlScripPath, evlExecution);
+		} catch (TraceModelDuplicateRelation e) {
+			throw new EolRuntimeException(e.getMessage());
+		}
+		IEvlExecutionTraceManager<IEvlModuleExecution> etManager = ((TracedEvlContext) context).getTraceManager();
+		logger.info("Adding execution listeners");
+		context.getExecutorFactory().addExecutionListener(etManager.getAllInstancesAccessListener());
+		context.getExecutorFactory().addExecutionListener(etManager.getPropertyAccessListener());
+		context.getExecutorFactory().addExecutionListener(etManager.getSatisfiesListener());
+
+		// Perform evaluation
+		logger.info("Executing pre{}");
+		execute(getPre(), context);
+		logger.info("Executing contexts");
+		for (ConstraintContext conCtx : getConstraintContexts()) { 
+			conCtx.checkAll(context);	
+		}
+		if (fixer != null) {
+			logger.info("Executing fixer");
+			fixer.fix(this);
+		}
+		logger.info("Executing post{}");
+		execute(getPost(), context);
+		for (UnsatisfiedConstraint uc : context.getUnsatisfiedConstraints()) {
+			System.out.println(uc.getMessage());
+		}
+		logger.info("Persisting traces");
+		etManager.persistTraceInformation();
+		if (onlineExecution) {
+			listenToModelChanges(true);
+		}
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.epsilon.eol.IEolLibraryModule#getContext()
 	 */
@@ -193,48 +177,56 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 		return context;
 	}
 
-	private <T> ExecutableBlock<T> createExecutableBlock(Class<T> clazz) {
-		if (incrementalMode) {
-			return new TracedExecutableBlock<T>(clazz);
-		}
-		else {
-			return new ExecutableBlock<T>(clazz);
-		}
-	}
-
-	private ExecutableBlock<Boolean> createGuardBlock() {
-		if (incrementalMode) {
-			return new TracedGuardBlock(Boolean.class);
-		}
-		else {
-			return new ExecutableBlock<Boolean>(Boolean.class);
-		}
+	@Override
+	public IModuleExecution getModuleExecution() {
+		return evlExecution;
+	} 
+	
+	@Override
+	public IModuleTrace getModuleTrace() {
+		return evlModuleTrace;
 	}
 	
 	@Override
+	public Set<IIncrementalModel> getTargets() {
+		if (targets == null) {
+			targets = new HashSet<>();
+		}
+		return targets;
+	}
+
+	public boolean isOnlineExecution() {
+		return onlineExecution;
+	}
+
+	@Override
 	public void listenToModelChanges(boolean listen) {
+		logger.info("Listening to model changes");
 		// Attach change listeners to models
 		// FIXME I think we only want to attach to the model opened in the editor
 		for (IModel model : this.getContext().getModelRepository().getModels()) {
 			// FIXME We need to decouple this from the Model
 			if (model instanceof IIncrementalModel) {
+				logger.debug("Model {} is incremental.", model.getName());
 				IIncrementalModel incrementalModel = (IIncrementalModel) model;
 				if (incrementalModel.supportsNotifications()) {
 					if (listen) {
+						logger.info("Resgitering with model {} to recieve notifications.", model.getName());
 						incrementalModel.getModules().add(this);
 						getTargets().add(incrementalModel);
 						incrementalModel.setDeliver(listen);
 					}
 					else {
+						logger.debug("Un-resgitering with model {} to recieve notifications.", model.getName());
 						incrementalModel.getModules().remove(this);
-						incrementalModel.setDeliver(false);  	// DO NO disable notifications unless you are 100% no one else is listening
+						//incrementalModel.setDeliver(false);  	// DO NOT disable notifications unless you are 100% no one else is listening
 						getTargets().remove(incrementalModel);
 					}
 				}
 			}
 		}
 	}
-
+	
 	@Override
 	public void onChange(String objectId, Object object, String propertyName) {
 		
@@ -254,18 +246,43 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	@Override
 	public void onCreate(Object newElement) {
 		
-		System.out.println("On Create: " + newElement);
+		IEvlExecutionTraceManager<IEvlModuleExecution> etManager = ((TracedEvlContext) context).getTraceManager();
+		// Do we need to execute the pre blocks to restore context?
+		//logger.info("Executing pre{}");
+		//execute(getPre(), context);
+		
+		logger.info("On Craete event for {}", newElement);
 		for (ConstraintContext conCtx : getConstraintContexts()) {
 			 try {
 				if (conCtx.appliesTo(newElement, getContext())) {
-					 for (Constraint constraint : conCtx.getConstraints()) {
-						constraint.check(newElement, getContext());
+				    logger.info("Foound matching context, executing.");
+					for (Constraint constraint : conCtx.getConstraints()) {
+					    constraint.check(newElement, getContext());
 					}
 				 }
 			} catch (EolRuntimeException e) {
-				e.printStackTrace();
+				logger.error("Error executing contexts for new element", e);
 			}
-		}	
+		}
+//		if (fixer != null) {
+//			logger.info("Executing fixer");
+//			try {
+//				fixer.fix(this);
+//			} catch (EolRuntimeException e) {
+//				logger.info("Error executing fixes", e);
+//			}
+//		}
+//		logger.info("Executing post{}");
+//		try {
+//			execute(getPost(), context);
+//		} catch (EolRuntimeException e) {
+//			logger.info("Error executing post{}", e);
+//		}
+		for (UnsatisfiedConstraint uc : context.getUnsatisfiedConstraints()) {
+			System.out.println(uc.getMessage());
+		}
+		logger.info("Persisting traces");
+		etManager.persistTraceInformation();
 	}
 
 	@Override
@@ -288,6 +305,35 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 //		} catch (EolIncrementalExecutionException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
+//		}
+	}
+
+	/**
+	 * The execution trace must be initialised after the traceManager has been assigned to the context
+	 * ({@link TracedEvlContext#setTraceManager(IEvlExecutionTraceManager)}).
+	 * 
+	 * @throws EolRuntimeException
+	 */
+	public void prepareExecutionTrace() throws EolRuntimeException {
+		
+		logger.info("Preparing the Execution Trace");
+		IEvlExecutionTraceManager<IEvlModuleExecution>  etManager = ((TracedEvlContext) context).getTraceManager();
+		//evlExecution = (IEvlModuleExecution) etManager.moduleExecutionTraces().getEvlModuleExecutionForSource(evlScripPath);
+		if (evlExecution == null) {
+			logger.info("Creating a new Evl Module Execution");
+			try {
+				evlExecution = new EvlModuleExecution();
+				((TracedEvlContext)getContext()).setEvlExecution(evlExecution);
+			} catch (TraceModelDuplicateRelation e) {
+				throw new EolRuntimeException("Error creating the execution trace for this module. " + e.getMessage());
+			} finally {
+				if (evlExecution != null) {
+					etManager.moduleExecutionTraces().add(evlExecution);
+				}
+			}
+		}
+//		else {
+//			evlModuleTrace = (IEvlModuleTrace) evlExecution.module().get();
 //		}
 	}
 	
@@ -357,22 +403,26 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 //		return result;
 //	}
 
-	@Override
-	public Set<IIncrementalModel> getTargets() {
-		if (targets == null) {
-			targets = new HashSet<>();
+	public void setOnlineExecution(boolean onlineExecution) {
+		this.onlineExecution = onlineExecution;
+	}
+
+	private <T> ExecutableBlock<T> createExecutableBlock(Class<T> clazz) {
+		if (incrementalMode) {
+			return new TracedExecutableBlock<T>(clazz);
 		}
-		return targets;
+		else {
+			return new ExecutableBlock<T>(clazz);
+		}
 	}
 
-	@Override
-	public IModuleTrace getModuleTrace() {
-		return evlModuleTrace;
-	}
-
-	@Override
-	public IModuleExecution getModuleExecution() {
-		return evlExecution;
+	private ExecutableBlock<Boolean> createGuardBlock() {
+		if (incrementalMode) {
+			return new TracedGuardBlock(Boolean.class);
+		}
+		else {
+			return new ExecutableBlock<Boolean>(Boolean.class);
+		}
 	}
 	
 }
