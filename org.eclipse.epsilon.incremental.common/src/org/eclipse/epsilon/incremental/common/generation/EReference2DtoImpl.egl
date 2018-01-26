@@ -46,7 +46,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import [%=qp%].trace.[%=sourceType%];
 import [%=erqp%].trace.[%=targetType%];
 import [%=qp%].trace.[%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%];
-import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
+import org.eclipse.epsilon.incremental.trace.impl.Feature;
 
 
 /**

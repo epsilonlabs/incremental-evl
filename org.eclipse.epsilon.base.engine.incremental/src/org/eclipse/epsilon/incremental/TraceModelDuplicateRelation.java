@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.incremental.trace.impl;
+package org.eclipse.epsilon.incremental;
 
 /**
  * An exception to indicate that creating a relation between two elements of the trace model would result in duplicate
