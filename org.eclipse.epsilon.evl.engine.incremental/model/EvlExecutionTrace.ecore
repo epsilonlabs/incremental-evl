@@ -51,8 +51,8 @@
         <details key="edge" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="invariantContext" eType="#//ContextTrace"
-        eOpposite="#//ContextTrace/constraints"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="invariantContext" lowerBound="1"
+        eType="#//ContextTrace" eOpposite="#//ContextTrace/constraints"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="GuardTrace" eSuperTypes="../../org.eclipse.epsilon.eol.engine.incremental/model/EolExecutionTrace.ecore#//ExecutionTrace">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equals" references="#//GuardTrace/limits"/>

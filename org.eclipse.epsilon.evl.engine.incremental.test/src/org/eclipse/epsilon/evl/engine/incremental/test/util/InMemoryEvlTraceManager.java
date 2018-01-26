@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.evl.util;
+package org.eclipse.epsilon.evl.engine.incremental.test.util;
 
 import org.eclipse.epsilon.evl.execute.AbstractEvlExecutionTraceManager;
 

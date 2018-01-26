@@ -51,7 +51,7 @@ public abstract class AbstractEvlExecutionTraceManager
 	}
 
 	@Override
-	public IContextTraceRepository contextTraces() {
+	public IContextTraceRepository getContextTraceRepository() {
 		if (this.contexTraceRepository == null) {
 			this.contexTraceRepository = new ContextTraceRepository(inParallel);
 		}

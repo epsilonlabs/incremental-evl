@@ -1,11 +1,14 @@
 package org.eclipse.epsilon.evl.execute;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.evl.execute.IExecutionTraceRepository.IContextTraceRepository;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 
 public class ContextTraceRepository implements IContextTraceRepository {

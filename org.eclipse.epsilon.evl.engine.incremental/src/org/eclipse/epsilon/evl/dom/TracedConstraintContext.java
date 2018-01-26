@@ -92,7 +92,7 @@ public class TracedConstraintContext extends ConstraintContext {
 		if (typeName == null) {
 			throw new IllegalStateException("Can't create TracedConstraintContext for unknown (null type.");
 		}
-		contextTrace = traceManager.contextTraces().getContextTraceFor(typeName, index, modelElementTrace);
+		contextTrace = traceManager.getContextTraceRepository().getContextTraceFor(typeName, index, modelElementTrace);
 		if (contextTrace == null) {
 			try {
 				contextTrace = evlExecution.createContextTrace(typeName, index, modelElementTrace);
@@ -100,12 +100,11 @@ public class TracedConstraintContext extends ConstraintContext {
 				throw new IllegalStateException("Can't create ContextTrace for type " + typeName + ".", e);			
 			} finally {
 				if (contextTrace != null) {
-					traceManager.contextTraces().add(contextTrace);
+					traceManager.getContextTraceRepository().add(contextTrace);
 				}
 			}
 		}
 		// This created traces for the current execution, this DOES NOT work
-		// if ConstraintContext/Constraints are executed in parallel
 		for (Constraint c : constraints) {
 			TracedConstraint tc = (TracedConstraint) c;
 			try {

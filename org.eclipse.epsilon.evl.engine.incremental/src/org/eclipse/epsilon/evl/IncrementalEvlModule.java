@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.epsilon.evl;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,6 +34,7 @@ import org.eclipse.epsilon.evl.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.dom.TracedConstraintContext;
 import org.eclipse.epsilon.evl.dom.TracedGuardBlock;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
+import org.eclipse.epsilon.evl.execute.IContextTraceRepository;
 import org.eclipse.epsilon.evl.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
@@ -230,28 +232,30 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	@Override
 	public void onChange(String objectId, Object object, String propertyName) {
 		
-//		System.out.println("On Change: " + objectId);
-//		Collection<Trace> traces = null;
-//		try {
-//			traces = etManager.findExecutionTraces(objectId, propertyName);
-//		} catch (EolIncrementalExecutionException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		if (traces != null) {
-//			validateTraces(traces, object);
-//		}
+		logger.info("On Change event for {} with property {}", objectId, propertyName);
+		IEvlExecutionTraceManager<IEvlModuleExecution> etManager = ((TracedEvlContext) context).getTraceManager();
+		IContextTraceRepository repo = etManager.getContextTraceRepository();
+		Collection<Trace> traces = null;
+		try {
+			traces = etManager.findExecutionTraces(objectId, propertyName);
+		} catch (EolIncrementalExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (traces != null) {
+			validateTraces(traces, object);
+		}
 	}
 
 	@Override
 	public void onCreate(Object newElement) {
 		
+		logger.info("On Craete event for {}", newElement);
 		IEvlExecutionTraceManager<IEvlModuleExecution> etManager = ((TracedEvlContext) context).getTraceManager();
 		// Do we need to execute the pre blocks to restore context?
 		//logger.info("Executing pre{}");
 		//execute(getPre(), context);
 		
-		logger.info("On Craete event for {}", newElement);
 		for (ConstraintContext conCtx : getConstraintContexts()) {
 			 try {
 				if (conCtx.appliesTo(newElement, getContext())) {

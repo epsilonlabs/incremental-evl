@@ -1,18 +1,16 @@
 package org.eclipse.epsilon.evl;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -20,23 +18,34 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.Lexer;
+import org.apache.commons.csv.CSVFormat;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.common.parse.EpsilonTreeAdaptor;
 import org.eclipse.epsilon.common.util.AstUtil;
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.csv.CsvModel;
+import org.eclipse.epsilon.emc.csv.incremental.CsvModelIncremental;
+import org.eclipse.epsilon.emc.csv.test.util.CsvAddRowInjector;
+import org.eclipse.epsilon.emc.csv.test.util.CsvAppendMethod;
+import org.eclipse.epsilon.emc.csv.test.util.CsvChangeInjector;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
-import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
+import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.eol.execute.context.IEolContext;
+import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.eol.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.eol.incremental.trace.IAccess;
-import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;
 import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
 import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;
@@ -45,14 +54,13 @@ import org.eclipse.epsilon.evl.dom.Fix;
 import org.eclipse.epsilon.evl.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.dom.TracedConstraintContext;
 import org.eclipse.epsilon.evl.dom.TracedGuardBlock;
+import org.eclipse.epsilon.evl.engine.incremental.test.util.InMemoryEvlTraceManager;
 import org.eclipse.epsilon.evl.execute.context.TracedEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
-import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 import org.eclipse.epsilon.evl.parse.EvlParser;
-import org.eclipse.epsilon.evl.util.InMemoryEvlTraceManager;
-import org.eclipse.epsilon.evl.util.NotifyingCsvModel;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,16 +68,21 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 /**
- * Test pre-execution of the the Module, that is, cst adaptation, ast creation and 
- * execution trace creation.
  * 
  * @author Horacio Hoyos Rodriguez
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({IncrementalEvlModuleIntegrationTests.PreexecutionTests.class})
+@SuiteClasses({IncrementalEvlModuleIntegrationTests.PreexecutionTests.class,
+			   IncrementalEvlModuleIntegrationTests.ExecutionTests.class,
+	           IncrementalEvlModuleIntegrationTests.PostexecutionTests.class})
 public class IncrementalEvlModuleIntegrationTests {
 	
+	/**
+	 * Test that the correct EVL model elements are created in the trace model
+	 * @author Horacio Hoyos Rodriguez
+	 *
+	 */
 	public static class PreexecutionTests {
 		
 		private IncrementalEvlModule module;
@@ -184,6 +197,12 @@ public class IncrementalEvlModuleIntegrationTests {
 		}
 		
 	}
+	
+	/**
+	 * Test that the correct access traces are created
+	 * @author Horacio Hoyos Rodriguez
+	 *
+	 */
 	
 	public static class ExecutionTests {
 		
@@ -326,19 +345,30 @@ public class IncrementalEvlModuleIntegrationTests {
 				
 				assertThat("No guard == no access information", allAccesses, is(empty()));
 			}
-				
-			
 		}
+	}
+	
+	/**
+	 * Test that the correct access traces are retrieved and the corresponding EVL blocks/rules executed.
+	 * @author Horacio Hoyos Rodriguez
+	 *
+	 */
+	public static class PostexecutionTests {
 		
-		@Test
-		public void testOnCreate() throws Exception {
+		private IncrementalEvlModule module;
+		private File evlFile;
+		private String csvFilePath;
+		private File modelCopy;
+
+		@Before
+		public void setup() throws Exception {
 			StringProperties properties = new StringProperties();
 			properties.put(CsvModel.PROPERTY_NAME, "bank");
 			properties.put(CsvModel.PROPERTY_HAS_KNOWN_HEADERS, "true");
 			properties.put(CsvModel.PROPERTY_ID_FIELD, "iban");
-			String path = IncrementalEvlModuleIntegrationTests.class.getResource("bankSmall.csv").getPath();
-			properties.put(CsvModel.PROPERTY_FILE, path);
-			CsvModel model = new CsvModel();
+			csvFilePath = IncrementalEvlModuleIntegrationTests.class.getResource("bankSmall.csv").getPath();
+			properties.put(CsvModel.PROPERTY_FILE, csvFilePath);
+			CsvModel model = new CsvModelIncremental();
 			model.load(properties, new IRelativePathResolver() {
 				@Override
 				public String resolve(String relativePath)
@@ -346,109 +376,224 @@ public class IncrementalEvlModuleIntegrationTests {
 					return relativePath;
 				}
 			});
-			
+			module = new IncrementalEvlModule();
+			evlFile = new File(IncrementalEvlModuleIntegrationTests.class.getResource("testExecution.evl").toURI());
 			((TracedEvlContext) module.context).setTraceManager(new InMemoryEvlTraceManager());
 			module.prepareExecutionTrace();
 			((TracedEvlContext) module.context).getTraceManager().initExecutionListeners(module.getModuleExecution());
 			module.parse(evlFile);
 			module.context.getModelRepository().addModel(model);
+			// Make model copy
+			modelCopy = saveModelCopy(csvFilePath);
+		}
+		
+		@After
+		public void teardown() throws Exception {
+			restoreModel(modelCopy, csvFilePath);
+		}
+		
+		@Test
+		public void testOnCreate() throws Exception {
+			
+			module.setOnlineExecution(true);
 			module.execute();
-			String[] headers = new String[]{"iban","branch","email","startDate","employer","hasOverdraft","balance","branchVisits"};
-			// Line 71
-			String[] data = new String[]{"CZ63 7593 6158 0945 3366 6310","Bobrowice","bkennet1x@wiley.com","5/16/2017","Brainsphere","false","$-3.35","Often"};
-			Map<String, Object> newRow = model.createInstance("Row");
-			newRow.putAll(IntStream.range(0, headers.length).boxed()
-					.collect(Collectors.toMap(i -> headers[i], i -> data[i])));
-			module.onCreate(newRow);
+			// Save the previous state so we can compare changes
+			// ContextTraces
 			IModuleExecution execution = module.getModuleExecution();
 			Queue<IExecutionTrace> executionTraces = execution.executions().get();
-			// One ContextTrace per Row
-			Collection<Map<String, Object>> modelRows = model.getAllOfType("Row");
-			List<IContextTrace> contextExecutionTraces = executionTraces.stream()
+			long contextExecutionTraces = executionTraces.stream()
 					.filter(t -> t instanceof IContextTrace)
 					.map(IContextTrace.class::cast)
-					.collect(Collectors.toList());
-			assertThat("One ContextTrace per model element", contextExecutionTraces.size(), is(modelRows.size() * 2));
-//			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-//		    Date changeDate = sdf.parse("6/4/2017");
-//		    IContextTrace contextTrace1 = contextExecutionTraces.get(2);
-			// Line 264
+					.count();
+			// Unsatisfied constraints
+			long unsatisfied = module.getContext().getUnsatisfiedConstraints().size();
+			
+			// Add a listener so we can synchronise the execution.
+			BlockingQueue<ExecutionResult> results = new SynchronousQueue<ExecutionResult>();
+			IExecutionListener assertExecutionListener = new IExecutionListener() {
+				
+				@Override
+				public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception, IEolContext context) {
+					// TODO Implement Type1516897943540.finishedExecutingWithException
+					throw new UnsupportedOperationException(
+							"Unimplemented Method    Type1516897943540.finishedExecutingWithException invoked.");
+				}
+				
+				@Override
+				public void finishedExecuting(ModuleElement ast, Object result, IEolContext context) {
+					try {
+						results.put(new ExecutionResult(ast, result));
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+				@Override
+				public void aboutToExecute(ModuleElement ast, IEolContext context) {
+					// We dont trace abouts
+				}
+			};
+			module.getContext().getExecutorFactory().addExecutionListener(assertExecutionListener);
+			
+			// Insert Line 71 from test data
+			String[] data = new String[]{"CZ63 7593 6158 0945 3366 6310","Bobrowice","bkennet1x@wiley.com","5/16/2017","Brainsphere","false","$-3.35","Often"};
+			CsvAddRowInjector injector = new CsvAddRowInjector(data, csvFilePath,
+					CSVFormat.RFC4180.withDelimiter(',').withFirstRecordAsHeader(),
+					CsvAppendMethod.RANDOM);
+			ExecutorService executor = Executors.newSingleThreadExecutor();
+	        Future<?> future = executor.submit(injector);
+	        // Wait for changes in file to finish
+	        while (future.isDone()) { }
+	        // Wait for evl to execute again
+	        for (;;) {
+	        	ExecutionResult r = results.poll(10, TimeUnit.SECONDS);
+	        	//System.out.println(r);
+	        	if (r == null) {
+	        		break;
+	        	}
+	        }
+	        
+	        executionTraces = execution.executions().get();
+			long contextExecutionTracesNew = executionTraces.stream()
+					.filter(t -> t instanceof IContextTrace)
+					.map(IContextTrace.class::cast)
+					.count();
+			assertThat("New Row should result in two new context execution traces", contextExecutionTracesNew, is(contextExecutionTraces+2));
+	        long unsatisfiedNew = module.getContext().getUnsatisfiedConstraints().size();
+			assertThat("Added row should not break any constraints", unsatisfiedNew-unsatisfied, is(0L));
+			
+			// Insert Line 264 from test data
+			contextExecutionTraces = contextExecutionTracesNew;
+			unsatisfied = unsatisfiedNew;
 			String[] data2 = new String[]{"BE02 7334 0167 6391","Pelabuhanratu","rmaclaughlin7a@loc.gov","11/21/2017","Buzzdog","true","$-28.03","Often"};
-			newRow = model.createInstance("Row");
-			newRow.putAll(IntStream.range(0, headers.length).boxed()
-					.collect(Collectors.toMap(i -> headers[i], i -> data2[i])));
-			module.onCreate(newRow);
-			model.getAllOfType("Row");
-			contextExecutionTraces = executionTraces.stream()
+			injector = new CsvAddRowInjector(data2, csvFilePath,
+					CSVFormat.RFC4180.withDelimiter(',').withFirstRecordAsHeader(),
+					CsvAppendMethod.RANDOM);
+			future = executor.submit(injector);
+	        executor.shutdown();
+	        // Wait for changes in file to finish
+	        while (future.isDone()) { }
+	        // Wait for evl to execute again
+	        for (;;) {
+	        	ExecutionResult r = results.poll(10, TimeUnit.SECONDS);
+	        	if (r == null) {
+	        		break;
+	        	}
+	        }
+	        
+	        executionTraces = execution.executions().get();
+			contextExecutionTracesNew = executionTraces.stream()
 					.filter(t -> t instanceof IContextTrace)
 					.map(IContextTrace.class::cast)
-					.collect(Collectors.toList());
-			assertThat("One ContextTrace per model element", contextExecutionTraces.size(), is(modelRows.size() * 2));
-			
-			
-//		    
-//		    System.out.println("=============");
-//			System.out.println(String.format("Context %s for %s", contextTrace1.getKind(), contextTrace1.context().get().getUri()));
-//			if (contextTrace1.guard().get() != null) {
-//				System.out.println(String.format("\tContext's guard was %s.", contextTrace1.guard().get().getResult()));
-//				if (contextTrace1.guard().get().getResult()) {
-//					System.out.println("\tAccessed:");
-//					for (IAccess access : contextTrace1.guard().get().accesses().get()) {
-//						printAccess(access);
-//					}
-//					for (IInvariantTrace invariantTrace : contextTrace1.constraints().get()) {
-//						System.out.println("\t------------");
-//						System.out.println(String.format("\tInvariant %s was %s", invariantTrace.getName(), String.valueOf(invariantTrace.getResult())));
-//						if (invariantTrace.guard().get() != null) {
-//							System.out.println(String.format("\tInvariant's guard was %s and accessed: ", invariantTrace.getResult()));
-//							for (IAccess access : invariantTrace.guard().get().accesses().get()) {
-//								printAccess(access);
-//							}
-//						}
-//						ISatisfiesTrace satisfiesTrace = invariantTrace.satisfies().get();
-//						if (satisfiesTrace != null) {
-//							System.out.println(String.format("\tInvariant's satisfies: %s, all = %s",
-//									satisfiesTrace.satisfiedInvariants().get().stream().map(inv -> inv.getName()).collect(Collectors.toList()),
-//									satisfiesTrace.getAll()));
-//							// Assume simple satisfies (i.e. not computed)
-////							for (IAccess access : invariantTrace.guard().get().accesses().get()) {
-////								printAccess(access);
-////							}
-//						}
-//						if (invariantTrace.check().get() != null) {
-//							System.out.println("\tInvariant's check accessed: ");
-//							for (IAccess access : invariantTrace.check().get().accesses().get()) {
-//								printAccess(access);
-//							}
-//						}
-//						if (invariantTrace.message().get() != null) {
-//							System.out.println("\tInvariant's message accessed: ");
-//							for (IAccess access : invariantTrace.message().get().accesses().get()) {
-//								printAccess(access);
-//							}
-//						}
-//						
-//					}
-//				}
-//			}
-		    
+					.count();
+			assertThat("New Row should result in two new context execution traces", contextExecutionTracesNew, is(contextExecutionTraces+2));
+	        unsatisfiedNew = module.getContext().getUnsatisfiedConstraints().size();
+			assertThat("Added row should break two constraints", unsatisfiedNew-unsatisfied, is(2L));
 		}
-
-		private void printAccess(IAccess access) {
-			if(access instanceof IPropertyAccess) {
-				IPropertyAccess propAccess = (IPropertyAccess) access;
-				System.out.println(String.format("\t\tPropertyAccess: %s @ %s, with value: %s", 
-						propAccess.property().get().getName(), 
-						propAccess.property().get().element().get().getUri(),
-						propAccess.getValue()));
-			}
-			else if(access instanceof IAllInstancesAccess) {
-				IAllInstancesAccess allAccess = (IAllInstancesAccess)access;
-				System.out.println(String.format("\t\tAllInstancesAccess: %s, kind = %s",
-						allAccess.type().get().getName(),
-						allAccess.getOfKind()));
-			}
+		
+		@Test
+		public void testOnUpdate() throws Exception {
+			module.setOnlineExecution(true);
+			module.execute();
+			// Save the previous state so we can compare changes
+			// ContextTraces
+			IModuleExecution execution = module.getModuleExecution();
+			Queue<IExecutionTrace> executionTraces = execution.executions().get();
+			long contextExecutionTraces = executionTraces.stream()
+					.filter(t -> t instanceof IContextTrace)
+					.map(IContextTrace.class::cast)
+					.count();
+			// Unsatisfied constraints
+			long unsatisfied = module.getContext().getUnsatisfiedConstraints().size();
+			
+			// Add a listener so we can synchronise the execution.
+			BlockingQueue<ExecutionResult> results = new SynchronousQueue<ExecutionResult>();
+			IExecutionListener assertExecutionListener = new IExecutionListener() {
+				
+				@Override
+				public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception, IEolContext context) {
+					// TODO Implement Type1516897943540.finishedExecutingWithException
+					throw new UnsupportedOperationException(
+							"Unimplemented Method    Type1516897943540.finishedExecutingWithException invoked.");
+				}
+				
+				@Override
+				public void finishedExecuting(ModuleElement ast, Object result, IEolContext context) {
+					try {
+						results.put(new ExecutionResult(ast, result));
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+				@Override
+				public void aboutToExecute(ModuleElement ast, IEolContext context) {
+					// We dont trace abouts
+				}
+			};
+			module.getContext().getExecutorFactory().addExecutionListener(assertExecutionListener);
+			
+			// Make a customer go into overdraft
+			// PL04 6348 6856 3863 4689 7150 1771 had $85.98, take it to $-45.12
+			CsvChangeInjector injector = new CsvChangeInjector("iban", "PL04 6348 6856 3863 4689 7150 1771",
+					6, "$-45.12",
+					csvFilePath, CSVFormat.RFC4180.withDelimiter(',').withFirstRecordAsHeader());
+			ExecutorService executor = Executors.newSingleThreadExecutor();
+	        Future<?> future = executor.submit(injector);
+	        // Wait for changes in file to finish
+	        while (future.isDone()) { }
+	        // Wait for evl to execute again
+	        for (;;) {
+	        	ExecutionResult r = results.poll(10, TimeUnit.SECONDS);
+	        	//System.out.println(r);
+	        	if (r == null) {
+	        		break;
+	        	}
+	        }
+	        executionTraces = execution.executions().get();
+	        long contextExecutionTracesNew = executionTraces.stream()
+					.filter(t -> t instanceof IContextTrace)
+					.map(IContextTrace.class::cast)
+					.count();
+			assertThat("Change should not create new traces", contextExecutionTracesNew-contextExecutionTraces, is(0L));
+	        long unsatisfiedNew = module.getContext().getUnsatisfiedConstraints().size();
+			assertThat("Change breaks two constraints", unsatisfiedNew-unsatisfied, is(2L));
 		}
+		
+		
+		
+		private class ExecutionResult {
+			private final ModuleElement ast;
+			private final Object result;
+			public ExecutionResult(ModuleElement ast, Object result) {
+				super();
+				this.ast = ast;
+				this.result = result;
+			}
+			@Override
+			public String toString() {
+				return String.format("Executed %s with result %s", ast.toString(), result); 
+			}
+			
+		}
+		
+		private File saveModelCopy(String modelPath) throws IOException {
+			File temp = File.createTempFile("temp-model", ".tmp");
+    		//System.out.println("Temp file : " + temp.getAbsolutePath());
+    		Files. copy(Paths.get(modelPath), temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    		return temp;
+	    }
+		
+		private void restoreModel(File temp, String modelPath) throws IOException {
+			Files.copy(temp.toPath(), Paths.get(modelPath), StandardCopyOption.REPLACE_EXISTING);
+		}
+		
+		
+		
+		
+			
 	}
 	
 }

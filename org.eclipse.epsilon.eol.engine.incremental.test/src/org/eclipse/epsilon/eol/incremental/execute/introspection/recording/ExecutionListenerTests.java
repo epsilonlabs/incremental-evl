@@ -484,7 +484,7 @@ public class ExecutionListenerTests {
 			EasyMock.expect(modelTraceMock.elements()).andReturn(modelHasElementsMock);
 			EasyMock.expect(modelHasElementsMock.get()).andReturn(new ArrayDeque<>());
 						
-			// Since not present, the model trace will craete a modelElement
+			// Since not present, the model trace will create a modelElement
 			
 			EasyMock.expect(modelTraceMock.createModelElementTrace(elementId)).andReturn(elementTraceMock);
 			
