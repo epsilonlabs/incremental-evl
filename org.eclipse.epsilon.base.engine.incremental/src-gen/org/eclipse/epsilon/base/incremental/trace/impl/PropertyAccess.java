@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-01-26.
+ * This file was automatically generated on: 2018-01-28.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -91,20 +91,20 @@ public class PropertyAccess implements IPropertyAccess {
         PropertyAccess other = (PropertyAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        // Will use value for equals
-        if (value == null) {
-            if (other.value != null)
-                return false;
-        }
-        else if (!value.equals(other.value)) {
-            return false;
-        }
         // Will use property for equals
         if (property.get() == null) {
             if (other.property.get() != null)
                 return false;
         }
         else if (!property.get().equals(other.property.get())) {
+            return false;
+        }
+        // Will use value for equals
+        if (value == null) {
+            if (other.value != null)
+                return false;
+        }
+        else if (!value.equals(other.value)) {
             return false;
         }
         return true; 
@@ -114,8 +114,8 @@ public class PropertyAccess implements IPropertyAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
         result = prime * result + ((property.get() == null) ? 0 : property.get().hashCode());
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result;
     }
 }

@@ -18,9 +18,6 @@ import org.eclipse.epsilon.eol.dom.OperationCallExpression;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
-import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
-import org.eclipse.epsilon.eol.incremental.trace.util.ModelUtil;
-import org.eclipse.epsilon.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.incremental.dom.TracedExecutableBlock;
 import org.slf4j.Logger;
@@ -41,22 +38,13 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 															 "allInstances",
 															 "allOfKind",
 															 "allOfType"
-															};
+															 };
 	
 	/** Static set for quick search */
 	public static final Set<String> OPERATION_NAMES = new HashSet<>(Arrays.asList(SET_VALUES));
 	
 	/** Keep track of ModuleElements executing */
 	private final Deque<TracedExecutableBlock<?>> moduleElementStack = new ArrayDeque<>();
-	
-	/** The trace manager */
-	private final IEolExecutionTraceManager<?> traceManager;
-	
-	
-	public AllInstancesInvocationExecutionListener(IEolExecutionTraceManager<?> traceManager) {
-		super();
-		this.traceManager = traceManager;
-	}
 
 	@Override
 	public void aboutToExecute(ModuleElement ast, IEolContext context) {

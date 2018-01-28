@@ -4,9 +4,10 @@ Bundle-Name: Incremental
 Bundle-SymbolicName: org.eclipse.epsilon.base.engine.incremental
 Bundle-Version: 0.0.1.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.eclipse.epsilon.eol.incremental.execute;uses:="org.eclipse.epsilon.eol.incremental.models,org.eclipse.epsilon.eol.execute.context",
+Export-Package: org.eclipse.epsilon.base.incremental.trace,
+ org.eclipse.epsilon.base.incremental.trace.impl,
+ org.eclipse.epsilon.eol.incremental.execute;uses:="org.eclipse.epsilon.eol.incremental.models,org.eclipse.epsilon.eol.execute.context",
  org.eclipse.epsilon.eol.incremental.models;uses:="org.eclipse.epsilon.eol.models,org.eclipse.epsilon.common.util,org.eclipse.epsilon.eol.compile.m3",
- org.eclipse.epsilon.eol.incremental.trace,
  org.eclipse.epsilon.eol.incremental.trace.util,
  org.eclipse.epsilon.incremental,
  org.eclipse.epsilon.incremental.dom;uses:="org.eclipse.epsilon.eol.incremental.execute,org.eclipse.epsilon.common.module",

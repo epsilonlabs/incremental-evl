@@ -270,7 +270,7 @@ public class BaseTraceModelTests {
         public void testModelElementTraceInstantiation() throws Exception {
             IModelTrace _model = mock(IModelTrace.class);
         
-            classUnderTest = new ModelElementTrace(, _model);
+            classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _model);
 	    }
 	    
 // protected region IgnoreModelElementTraceAttributes on begin
@@ -280,7 +280,7 @@ public class BaseTraceModelTests {
         public void testModelElementTraceAttributes() throws Exception {
             IModelTrace _model = mock(IModelTrace.class);
         
-            classUnderTest = new ModelElementTrace(, _model);
+            classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _model);
 // protected region ModelElementTraceAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region ModelElementTraceAttributes end
@@ -290,7 +290,7 @@ public class BaseTraceModelTests {
         public void testModelElementTraceCreateModelReference() throws Exception {
             IModelTrace _model = mock(IModelTrace.class);
         
-            classUnderTest = new ModelElementTrace(, _model);
+            classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _model);
             boolean result;
             result = classUnderTest.model().create(modelMock2);
             assertFalse(result);
@@ -299,7 +299,7 @@ public class BaseTraceModelTests {
             // Create a second one
             IModelTrace _model2 = mock(IModelTrace.class);
              
-            IModelElementTrace classUnderTest2 = new ModelElementTrace(, _model2);
+            IModelElementTrace classUnderTest2 = new ModelElementTrace("url://path/in/model/to/uri/2", _model2);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
@@ -307,7 +307,7 @@ public class BaseTraceModelTests {
         public void testModelElementTraceDestroyModelReference() throws Exception {
             IModelTrace _model = mock(IModelTrace.class);
         
-            classUnderTest = new ModelElementTrace(, _model);
+            classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _model);
         
             boolean result = classUnderTest.model().destroy(_model);
             assertTrue(result);

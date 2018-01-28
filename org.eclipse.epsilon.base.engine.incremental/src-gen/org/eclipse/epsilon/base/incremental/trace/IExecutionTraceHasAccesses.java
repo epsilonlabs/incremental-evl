@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-01-26.
+ * This file was automatically generated on: 2018-01-28.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,7 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
-import java.util.Queue;
+import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
 
@@ -24,7 +24,7 @@ public interface IExecutionTraceHasAccesses {
     /**
      * Get the value(s) for the reference
      */
-    Queue<IAccess> get();
+    public Set<IAccess> get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the

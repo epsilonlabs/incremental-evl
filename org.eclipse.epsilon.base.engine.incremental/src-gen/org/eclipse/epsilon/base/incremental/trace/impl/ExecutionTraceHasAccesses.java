@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-01-26.
+ * This file was automatically generated on: 2018-01-28.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,7 +12,8 @@
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionTraceHasAccesses;
@@ -28,7 +29,7 @@ public class ExecutionTraceHasAccesses extends Feature implements IExecutionTrac
     protected IExecutionTrace source;
     
     /** The target(s) of the reference */
-    protected Queue<IAccess> target =  new ConcurrentLinkedQueue<IAccess>();
+    protected Set<IAccess> target =  ConcurrentHashMap.newKeySet();
     
     /**
      * Instantiates a new IExecutionTraceHasAccesses.
@@ -43,7 +44,7 @@ public class ExecutionTraceHasAccesses extends Feature implements IExecutionTrac
     // PUBLIC API
         
     @Override
-    public Queue<IAccess> get() {
+    public Set<IAccess> get() {
         return target;
     }
     

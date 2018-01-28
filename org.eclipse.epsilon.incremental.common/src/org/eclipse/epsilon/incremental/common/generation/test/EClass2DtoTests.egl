@@ -266,7 +266,8 @@ operation EAttribute getInitValue(index) : Any {
     switch(self.getEAttributeType().getName()) {
         case "EString": return '"' + self.name + index + '"';
         case "EIntegerObject": return 0 + index;
-        default: return null;
+        case "AnyURI": return '"url://path/in/model/to/' + self.name + "/" + index + '"';
+        default: self.getEAttributeType().getName().println(); return null;
     }
     
 }

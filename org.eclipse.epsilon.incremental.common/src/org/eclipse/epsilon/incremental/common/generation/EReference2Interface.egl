@@ -32,8 +32,14 @@ var erqp = qp.replace("." + er.getEContainingClass().getEPackage().name + ".", "
 package [%=qp%].trace;
 
 [%if (er.isMany()) {%]
+[%  if (er.isUnique() and er.isOrdered()) {%]
 import java.util.Queue;
-[%}%]
+[%  } else if (er.isUnique() and not er.isOrdered()) {%]
+import java.util.Set;
+[%  } else {%]
+import java.util.Queue;
+[%  }
+}%]
 
 import [%=erqp%].trace.[%=targetType%];
 
@@ -46,10 +52,14 @@ public interface [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] {
     /**
      * Get the value(s) for the reference
      */
-[%if (er.isMany()) {%]
-    Queue<[%=targetType%]> get();
-[%} else {%]
-    [%=targetType%] get();
+[%if (er.isMany()) {
+    if (er.isUnique() and not er.isOrdered()) {%]
+    public Set<[%=targetType%]> get();
+[%  } else {%]    
+    public Queue<[%=targetType%]> get();
+[%  }
+} else {%]
+    public [%=targetType%] get();
 [%}%]
 
     /**

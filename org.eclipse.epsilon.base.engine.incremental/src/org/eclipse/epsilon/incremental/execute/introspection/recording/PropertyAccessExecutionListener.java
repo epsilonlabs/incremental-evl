@@ -4,17 +4,26 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.WeakHashMap;
 
+import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
+import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.PropertyAccess;
+import org.eclipse.epsilon.base.incremental.trace.impl.PropertyTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.AssignmentStatement;
 import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
-import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
-import org.eclipse.epsilon.eol.incremental.trace.util.ModelUtil;
 import org.eclipse.epsilon.eol.models.IModel;
-import org.eclipse.epsilon.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.incremental.dom.TracedExecutableBlock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An {@link IExecutionListener} that monitors property access
@@ -24,19 +33,14 @@ import org.eclipse.epsilon.incremental.dom.TracedExecutableBlock;
  */
 public class PropertyAccessExecutionListener implements IExecutionListener {
 	
+	private static final Logger logger = LoggerFactory.getLogger(PropertyAccessExecutionListener.class);
+	
 	/** Keep track of ModuleElements executing */
 	private final Deque<TracedExecutableBlock<?>> moduleElementStack = new ArrayDeque<>();
 	
 	/** For property access we need to save the value of the left side expression */
 	private final WeakHashMap<ModuleElement, Object> cache = new WeakHashMap<ModuleElement, Object>();
-	
-	/** The trace manager */
-	private final IEolExecutionTraceManager<?> traceManager;
 
-	public PropertyAccessExecutionListener(IEolExecutionTraceManager<?> traceManager) {
-		super();
-		this.traceManager = traceManager;
-	}
 
 	@Override
 	public void aboutToExecute(ModuleElement ast, IEolContext context) {
@@ -69,52 +73,27 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 			final String propertyName = propertyCallExpression.getPropertyNameExpression().getName();
 			final IModel model = getModelThatKnowsAboutProperty(modelElement, propertyName, context);
 			if (model != null) {				
-				IPropertyAccess pa = record(currentBlock.getTrace(), model, modelElement, propertyName);
-				// FIXME We need a smarter serializer depending on the type of object? Probably ask
-				// the owning model first, if not the use toString();
-				pa.setValue(result.toString());
+				IPropertyAccess pa;
+				try {
+					pa = record(currentBlock.getTrace(), model, modelElement, propertyName);
+					// FIXME We need a smarter serializer depending on the type of object? Probably ask
+					// the owning model first, if not the use toString();
+					pa.setValue(result.toString());
+				} catch (TraceModelDuplicateRelation e) {
+					logger.warn("Unable to create traces for the execution of {}", ast, e);
+				}
+				
 			}
-//			else {
-//				// Log warning?
-//			}
+
 		}
 	}
 
-	private IPropertyAccess record(IExecutionTrace executionTrace, IModel model, Object modelElement, String propertyName) {
-		IModelTrace modelTrace = traceManager.modelTraces().getModelTraceByName(model.getName());
-		if (modelTrace == null) {
-			try {
-				modelTrace = moduleExecution.createModelTrace(model.getName());
-			} catch (EolIncrementalExecutionException e) {
-				throw new IllegalStateException(e);
-			} finally {
-				traceManager.modelTraces().add(modelTrace);
-			}
-		}
-		IModelElementTrace modelElementTrace = ModelUtil.findElement(modelTrace, model.getElementId(modelElement));
-		if (modelElementTrace == null) {
-			try {
-				modelElementTrace = modelTrace.createModelElementTrace(model.getElementId(modelElement));
-			} catch (EolIncrementalExecutionException e) {
-				throw new IllegalStateException(e);
-			}
-		}
-		IPropertyTrace propertyTrace = ModelUtil.findProperty(modelElementTrace, propertyName);
-		if (propertyTrace == null) {
-			try {
-				propertyTrace = modelElementTrace.createPropertyTrace(propertyName);
-			} catch (EolIncrementalExecutionException e) {
-				throw new IllegalStateException(e);
-			}
-		}
-		IPropertyAccess pa = traceManager.moduleExecutionTraces().getPropertyAccessFor(executionTrace, propertyTrace);
-		if (pa == null) {
-			try {
-				pa = executionTrace.createPropertyAccess(propertyTrace);
-			} catch (EolIncrementalExecutionException e) {
-				throw new IllegalStateException(e);
-			}
-		}
+	private IPropertyAccess record(IExecutionTrace executionTrace, IModel model, Object modelElement,
+			String propertyName) throws TraceModelDuplicateRelation {
+		IModelTrace modelTrace = new ModelTrace(model.getName());
+		IModelElementTrace modelElementTrace = new ModelElementTrace(model.getElementId(modelElement), modelTrace);
+		IPropertyTrace propertyTrace = new PropertyTrace(propertyName, modelElementTrace);
+		IPropertyAccess pa = new PropertyAccess(propertyTrace);
 		return pa;
 	}
 

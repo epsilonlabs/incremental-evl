@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.eclipse.epsilon.eol.engine.incremental.test</name>
+	<name>org.eclipse.epsilon.base.engine.incremental.test</name>
 	<comment></comment>
 	<projects>
 	</projects>

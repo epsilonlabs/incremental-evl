@@ -41,8 +41,15 @@ package [%=qp%].trace.impl;
 
 [%if (er.isMany()) {%]
 import java.util.Queue;
+[%  if (er.isUnique() and er.isOrdered()) {%]
+import org.eclipse.epsilon.eol.incremental.trace.util.ConcurrentSetQueue;
+[%  } else if (er.isUnique() and not er.isOrdered()) {%]
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+[%  } else {%]
 import java.util.concurrent.ConcurrentLinkedQueue;
-[%}%]
+[%  }
+}%]
 import [%=qp%].trace.[%=sourceType%];
 import [%=erqp%].trace.[%=targetType%];
 import [%=qp%].trace.[%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%];
@@ -59,9 +66,14 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
     
     /** The target(s) of the reference */
 [%if (er.isMany()) { // Perhaps use ConcurrentHashMap.newKeySet() if unique?
-%]
+    if (er.isUnique() and er.isOrdered()) {%]
+    protected Queue<[%=targetType%]> target =  new ConcurrentSetQueue<[%=targetType%]>();
+[%  } else if (er.isUnique() and not er.isOrdered()) {%]
+    protected Set<[%=targetType%]> target =  ConcurrentHashMap.newKeySet();
+[%  } else {%]
     protected Queue<[%=targetType%]> target =  new ConcurrentLinkedQueue<[%=targetType%]>();
-[%} else {%]
+[%  }   
+} else {%]
     protected [%=targetType%] target;
 [%}%]
     
@@ -78,9 +90,13 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
     // PUBLIC API
         
     @Override
-[%if (er.isMany()) {%]
+[%if (er.isMany()) {
+    if (er.isUnique() and not er.isOrdered()) {%]
+    public Set<[%=targetType%]> get() {
+[%  } else {%]    
     public Queue<[%=targetType%]> get() {
-[%} else {%]
+[%  }
+} else {%]
     public [%=targetType%] get() {
 [%}%]
         return target;
