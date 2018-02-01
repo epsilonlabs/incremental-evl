@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-15.
+ * This file was automatically generated on: 2018-02-01.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,9 +12,9 @@
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTraceHasContext;
-import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
+import org.eclipse.epsilon.incremental.trace.impl.Feature;
 
 
 /**

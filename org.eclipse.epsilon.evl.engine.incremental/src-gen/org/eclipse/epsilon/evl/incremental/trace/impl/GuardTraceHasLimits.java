@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-15.
+ * This file was automatically generated on: 2018-02-01.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,7 +14,7 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTraceHasLimits;
-import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
+import org.eclipse.epsilon.incremental.trace.impl.Feature;
 
 
 /**

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-15.
+ * This file was automatically generated on: 2018-02-01.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,11 +12,11 @@
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import org.eclipse.epsilon.eol.incremental.trace.util.ConcurrentSetQueue;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasSatisfiedInvariants;
-import org.eclipse.epsilon.eol.incremental.trace.impl.Feature;
+import org.eclipse.epsilon.incremental.trace.impl.Feature;
 
 
 /**
@@ -28,7 +28,7 @@ public class SatisfiesTraceHasSatisfiedInvariants extends Feature implements ISa
     protected ISatisfiesTrace source;
     
     /** The target(s) of the reference */
-    protected Queue<IInvariantTrace> target =  new ConcurrentLinkedQueue<IInvariantTrace>();
+    protected Queue<IInvariantTrace> target =  new ConcurrentSetQueue<IInvariantTrace>();
     
     /**
      * Instantiates a new ISatisfiesTraceHasSatisfiedInvariants.
@@ -43,6 +43,7 @@ public class SatisfiesTraceHasSatisfiedInvariants extends Feature implements ISa
     // PUBLIC API
         
     @Override
+    
     public Queue<IInvariantTrace> get() {
         return target;
     }

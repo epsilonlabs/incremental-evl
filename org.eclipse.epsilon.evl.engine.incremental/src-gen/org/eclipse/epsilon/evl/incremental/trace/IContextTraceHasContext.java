@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-15.
+ * This file was automatically generated on: 2018-02-01.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,7 +12,7 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
 
-import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 
 public interface IContextTraceHasContext {
 
@@ -23,7 +23,7 @@ public interface IContextTraceHasContext {
     /**
      * Get the value(s) for the reference
      */
-    IModelElementTrace get();
+    public IModelElementTrace get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the

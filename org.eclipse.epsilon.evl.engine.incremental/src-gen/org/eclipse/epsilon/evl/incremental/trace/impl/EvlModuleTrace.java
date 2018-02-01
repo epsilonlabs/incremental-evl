@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-15.
+ * This file was automatically generated on: 2018-02-01.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,9 +15,13 @@ import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
-import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
+import org.eclipse.epsilon.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceHasContexts;
+import org.eclipse.epsilon.evl.incremental.trace.impl.ContextTrace;
+import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTraceHasContexts;
 
 /**
  * Implementation of IEvlModuleTrace. 
@@ -30,15 +34,16 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     /** The source */
     private String source;
 
+    /** The contexts relation */
+    private final IEvlModuleTraceHasContexts contexts;
+
     /**
      * Instantiates a new EvlModuleTrace. The EvlModuleTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public EvlModuleTrace(String source, IModuleExecution container) throws TraceModelDuplicateRelation {
+    public EvlModuleTrace(String source) throws TraceModelDuplicateRelation {
         this.source = source;
-        if (!container.module().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
+        this.contexts = new EvlModuleTraceHasContexts(this);
     }
     
     @Override
@@ -57,6 +62,37 @@ public class EvlModuleTrace implements IEvlModuleTrace {
         return source;
     }
     
+    @Override
+    public IEvlModuleTraceHasContexts contexts() {
+        return contexts;
+    }
+
+    @Override
+    public IContextTrace createContextTrace(String kind, Integer index, IModelElementTrace context) throws EolIncrementalExecutionException {
+        IContextTrace contextTrace = null;
+        try {
+            contextTrace = new ContextTrace(kind, index, context, this);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (contextTrace != null) {
+    	        return contextTrace;
+    	    }
+            try {
+                contextTrace = this.contexts.get().stream()
+                    .filter(item -> item.getKind().equals(kind))
+                    .filter(item -> item.getIndex().equals(index))
+                    .filter(item -> item.context().get().equals(context))
+                    .findFirst()
+                    .get();
+            } catch (NoSuchElementException ex) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ContextTrace was "
+                        + "duplicate but previous one was not found.");
+            }
+        }
+        return contextTrace;
+    }      
+                  
     @Override
     public boolean sameIdentityAs(final IEvlModuleTrace other) {
         if (other == null) {
@@ -91,5 +127,4 @@ public class EvlModuleTrace implements IEvlModuleTrace {
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         return result;
     }
-
 }

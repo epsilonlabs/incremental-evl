@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-15.
+ * This file was automatically generated on: 2018-02-01.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -24,7 +24,8 @@ public interface IContextTraceHasConstraints {
     /**
      * Get the value(s) for the reference
      */
-    Queue<IInvariantTrace> get();
+    
+    public Queue<IInvariantTrace> get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-15.
+ * This file was automatically generated on: 2018-02-01.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,32 +15,32 @@ import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
-import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;
-import org.eclipse.epsilon.eol.incremental.trace.IExecutionTraceHasAccesses;
-import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
-import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;
-import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;
-import org.eclipse.epsilon.eol.incremental.trace.impl.AllInstancesAccess;
-import org.eclipse.epsilon.eol.incremental.trace.impl.ExecutionTraceHasAccesses;
-import org.eclipse.epsilon.eol.incremental.trace.impl.PropertyAccess;
+import org.eclipse.epsilon.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.trace.IAccess;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionTraceHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionTraceHasAccesses;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTraceHasGuard;
+import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasCheck;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasInvariantContext;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasMessage;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasSatisfies;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
+import org.eclipse.epsilon.evl.incremental.trace.impl.CheckTrace;
+import org.eclipse.epsilon.evl.incremental.trace.impl.GuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.GuardedElementTraceHasGuard;
 import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTraceHasCheck;
 import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTraceHasInvariantContext;
 import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTraceHasMessage;
 import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTraceHasSatisfies;
+import org.eclipse.epsilon.evl.incremental.trace.impl.MessageTrace;
+import org.eclipse.epsilon.evl.incremental.trace.impl.SatisfiesTrace;
 
 /**
  * Implementation of IInvariantTrace. 
@@ -78,7 +78,7 @@ public class InvariantTrace implements IInvariantTrace {
      * Instantiates a new InvariantTrace. The InvariantTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public InvariantTrace(String name, IModuleExecution container) throws TraceModelDuplicateRelation {
+    public InvariantTrace(String name, IContextTrace container) throws TraceModelDuplicateRelation {
         this.name = name;
         this.accesses = new ExecutionTraceHasAccesses(this);
         this.guard = new GuardedElementTraceHasGuard(this);
@@ -86,7 +86,7 @@ public class InvariantTrace implements IInvariantTrace {
         this.message = new InvariantTraceHasMessage(this);
         this.satisfies = new InvariantTraceHasSatisfies(this);
         this.invariantContext = new InvariantTraceHasInvariantContext(this);
-        if (!container.executions().create(this)) {
+        if (!container.constraints().create(this)) {
             throw new TraceModelDuplicateRelation();
         };
     }
@@ -149,61 +149,92 @@ public class InvariantTrace implements IInvariantTrace {
     }
 
     @Override
-    public IAllInstancesAccess createAllInstancesAccess(IModelTypeTrace type) throws EolIncrementalExecutionException {
-        IAllInstancesAccess allInstancesAccess = null;
+    public IGuardTrace createGuardTrace() throws EolIncrementalExecutionException {
+        IGuardTrace guardTrace = null;
         try {
-            allInstancesAccess = new AllInstancesAccess(type, this);
+            guardTrace = new GuardTrace(this);
             
-            this.accesses().create(allInstancesAccess);
+            this.guard().create(guardTrace);
         } catch (TraceModelDuplicateRelation e) {
             // Pass
         } finally {
-    	    if (allInstancesAccess != null) {
-    	        return allInstancesAccess;
+    	    if (guardTrace != null) {
+    	        return guardTrace;
     	    }
-            try {
-                allInstancesAccess = this.accesses.get().stream()
-                    .filter(t -> t instanceof IAllInstancesAccess)
-                    .map(IAllInstancesAccess.class::cast)
-                    .filter(item -> item.type().get().equals(type))
-                    .findFirst()
-                    .get();
-            } catch (NoSuchElementException ex) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested AllInstancesAccess was "
+            guardTrace = this.guard.get();
+            if (guardTrace  == null) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested GuardTrace was "
                         + "duplicate but previous one was not found.");
             }
         }
-        return allInstancesAccess;
+        return guardTrace;
     }      
-            
+                  
     @Override
-    public IPropertyAccess createPropertyAccess(IPropertyTrace property) throws EolIncrementalExecutionException {
-        IPropertyAccess propertyAccess = null;
+    public ICheckTrace createCheckTrace() throws EolIncrementalExecutionException {
+        ICheckTrace checkTrace = null;
         try {
-            propertyAccess = new PropertyAccess(property, this);
+            checkTrace = new CheckTrace(this);
             
-            this.accesses().create(propertyAccess);
+            this.check().create(checkTrace);
         } catch (TraceModelDuplicateRelation e) {
             // Pass
         } finally {
-    	    if (propertyAccess != null) {
-    	        return propertyAccess;
+    	    if (checkTrace != null) {
+    	        return checkTrace;
     	    }
-            try {
-                propertyAccess = this.accesses.get().stream()
-                    .filter(t -> t instanceof IPropertyAccess)
-                    .map(IPropertyAccess.class::cast)
-                    .filter(item -> item.property().get().equals(property))
-                    .findFirst()
-                    .get();
-            } catch (NoSuchElementException ex) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested PropertyAccess was "
+            checkTrace = this.check.get();
+            if (checkTrace  == null) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested CheckTrace was "
                         + "duplicate but previous one was not found.");
             }
         }
-        return propertyAccess;
+        return checkTrace;
     }      
+                  
+    @Override
+    public IMessageTrace createMessageTrace() throws EolIncrementalExecutionException {
+        IMessageTrace messageTrace = null;
+        try {
+            messageTrace = new MessageTrace(this);
             
+            this.message().create(messageTrace);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (messageTrace != null) {
+    	        return messageTrace;
+    	    }
+            messageTrace = this.message.get();
+            if (messageTrace  == null) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested MessageTrace was "
+                        + "duplicate but previous one was not found.");
+            }
+        }
+        return messageTrace;
+    }      
+                  
+    @Override
+    public ISatisfiesTrace createSatisfiesTrace() throws EolIncrementalExecutionException {
+        ISatisfiesTrace satisfiesTrace = null;
+        try {
+            satisfiesTrace = new SatisfiesTrace(this);
+            
+            this.satisfies().create(satisfiesTrace);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (satisfiesTrace != null) {
+    	        return satisfiesTrace;
+    	    }
+            satisfiesTrace = this.satisfies.get();
+            if (satisfiesTrace  == null) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested SatisfiesTrace was "
+                        + "duplicate but previous one was not found.");
+            }
+        }
+        return satisfiesTrace;
+    }      
                   
     @Override
     public boolean sameIdentityAs(final IInvariantTrace other) {
@@ -248,5 +279,4 @@ public class InvariantTrace implements IInvariantTrace {
         result = prime * result + ((invariantContext.get() == null) ? 0 : invariantContext.get().hashCode());
         return result;
     }
-
 }

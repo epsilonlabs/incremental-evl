@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-06.
+ * This file was automatically generated on: 2018-02-01.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,10 +11,11 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
+import java.util.Queue;
 
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 
-public interface ISatisfiesTraceHasInvariant1 {
+public interface IEvlModuleTraceHasContexts {
 
     // PUBLIC API
     
@@ -23,27 +24,28 @@ public interface ISatisfiesTraceHasInvariant1 {
     /**
      * Get the value(s) for the reference
      */
-    IInvariantTrace get();
+    
+    public Queue<IContextTrace> get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the
      * relation already existed. 
-     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IInvariantTrace)}).
+     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IContextTrace)}).
      * If the reference has an opposite, that relation is also craeted.
      *
-     * @see ExecutionHasAccesses#conflict(IInvariantTrace)
-     * @see ExecutionHasAccesses#related(IInvariantTrace)
+     * @see ExecutionHasAccesses#conflict(IContextTrace)
+     * @see ExecutionHasAccesses#related(IContextTrace)
      */
-    boolean create(IInvariantTrace target);
+    boolean create(IContextTrace target);
     
     /**
      * Destroy a reference to the target element. Returns true, if the reference existed
      * and was properly destroyed. If the reference has an opposite, that relation
      * is also destroyed.
      *
-     * @see ExecutionHasAccesses#related(IInvariantTrace)
+     * @see ExecutionHasAccesses#related(IContextTrace)
      */    
-    boolean destroy(IInvariantTrace target);
+    boolean destroy(IContextTrace target);
     
     /**
      * Determines if there is a conflict with a possible target. Conflicts can only arise for if
@@ -67,12 +69,12 @@ public interface ISatisfiesTraceHasInvariant1 {
      *      </ul>
      *  </li>
      */
-    boolean conflict(IInvariantTrace target);
+    boolean conflict(IContextTrace target);
     
     /**
      * Returns true if the target is already related via this reference.
      */
-    boolean related(IInvariantTrace target);
+    boolean related(IContextTrace target);
 
     // PRIVATE API
 
@@ -80,15 +82,15 @@ public interface ISatisfiesTraceHasInvariant1 {
      * Set a new value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#create(IInvariantTrace)
+     * @see ExecutionHasAccesses#create(IContextTrace)
      */
-    void set(IInvariantTrace target);
+    void set(IContextTrace target);
 
     /**
      * Remove a value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#destroy(IInvariantTrace)
+     * @see ExecutionHasAccesses#destroy(IContextTrace)
      */
-    void remove(IInvariantTrace target);
+    void remove(IContextTrace target);
 }

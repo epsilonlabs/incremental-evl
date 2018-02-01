@@ -89,6 +89,16 @@ operation EClass getRequriedImports(basePackage:String, interPrefix:String, inte
                 if (isImpl) {
                     imports.add(erqp + ".impl." + type.getJavaClassName(classPrefix, classSufix));
                 }
+                // We also need the types of the constructor!
+                var extraTypes = type.getEReferences().select(er | er.isRequired())
+                        .collect(er | er.getEReferenceType());
+                for (et in extraTypes) {
+                    var rferqp = et.getCorrectPackage(basePackage, self);
+                    imports.add(rferqp + "." + et.getJavaInterfaceName(interPrefix, interSufix));
+	                //if (isImpl) {
+	                //    imports.add(rferqp + ".impl." + et.getJavaInterfaceName(interPrefix, interSufix));
+	                //}
+                }
             }
         }
         else {

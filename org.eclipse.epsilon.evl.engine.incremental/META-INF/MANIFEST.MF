@@ -7,7 +7,7 @@ Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.epsilon.common,
  org.eclipse.epsilon.eol.engine,
- org.eclipse.epsilon.eol.engine.incremental,
+ org.eclipse.epsilon.base.engine.incremental,
  org.eclipse.epsilon.evl.engine,
  org.slf4j.api;bundle-version="1.7.2"
 Export-Package: org.eclipse.epsilon.evl,

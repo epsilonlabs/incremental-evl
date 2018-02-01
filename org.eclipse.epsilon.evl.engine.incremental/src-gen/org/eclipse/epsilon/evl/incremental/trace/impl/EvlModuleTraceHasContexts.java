@@ -11,29 +11,31 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
+import java.util.Queue;
+import org.eclipse.epsilon.eol.incremental.trace.util.ConcurrentSetQueue;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasInvariantContext;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceHasContexts;
 import org.eclipse.epsilon.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of IInvariantTraceHasInvariantContext reference. 
+ * Implementation of IEvlModuleTraceHasContexts reference. 
  */
-public class InvariantTraceHasInvariantContext extends Feature implements IInvariantTraceHasInvariantContext {
+public class EvlModuleTraceHasContexts extends Feature implements IEvlModuleTraceHasContexts {
     
     /** The source(s) of the reference */
-    protected IInvariantTrace source;
+    protected IEvlModuleTrace source;
     
     /** The target(s) of the reference */
-    protected IContextTrace target;
+    protected Queue<IContextTrace> target =  new ConcurrentSetQueue<IContextTrace>();
     
     /**
-     * Instantiates a new IInvariantTraceHasInvariantContext.
+     * Instantiates a new IEvlModuleTraceHasContexts.
      *
      * @param source the source of the reference
      */
-    public InvariantTraceHasInvariantContext (IInvariantTrace source) {
+    public EvlModuleTraceHasContexts (IEvlModuleTrace source) {
         super(true);
         this.source = source;
     }
@@ -41,17 +43,14 @@ public class InvariantTraceHasInvariantContext extends Feature implements IInvar
     // PUBLIC API
         
     @Override
-    public IContextTrace get() {
+    
+    public Queue<IContextTrace> get() {
         return target;
     }
     
     @Override
     public boolean create(IContextTrace target) {
         if (conflict(target)) {
-            return false;
-        }
-        target.constraints().set(source);
-        if (related(target)) {
             return false;
         }
         set(target);
@@ -63,7 +62,6 @@ public class InvariantTraceHasInvariantContext extends Feature implements IInvar
         if (!related(target)) {
             return false;
         }
-        target.constraints().remove(source);
         remove(target);
         return true;
     }
@@ -71,27 +69,28 @@ public class InvariantTraceHasInvariantContext extends Feature implements IInvar
     @Override
     public boolean conflict(IContextTrace target) {
         boolean result = false;
-        result |= get() != null;
-        result |= target.constraints().isUnique() && target.constraints().get().contains(source);
+        if (isUnique) {
+            result |= get().contains(target);
+        }
         return result;
     }
     
     @Override
     public boolean related(IContextTrace target) {
   
-        return target.equals(this.target) && target.constraints().get().contains(source);
+        return get().contains(target) ;
     }
     
     // PRIVATE API
     
     @Override
     public void set(IContextTrace target) {
-        this.target = target;
+        this.target.add(target);
     }
     
     @Override
     public void remove(IContextTrace target) {
-        this.target = null;
+        this.target.remove(target);
     }
 
 }

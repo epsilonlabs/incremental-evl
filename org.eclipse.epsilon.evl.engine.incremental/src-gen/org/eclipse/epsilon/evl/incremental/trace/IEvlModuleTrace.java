@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-15.
+ * This file was automatically generated on: 2018-02-01.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,8 +11,10 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
-import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleTrace;    
+import org.eclipse.epsilon.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;    
+import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;    
+import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;    
 
 /**
  * The EvlModuleTrace defines the access methods for the EClass features.
@@ -22,10 +24,16 @@ import org.eclipse.epsilon.eol.incremental.trace.IModuleTrace;
  */
 public interface IEvlModuleTrace extends IModuleTrace {
 
+    /** The contexts reference. */
+    IEvlModuleTraceHasContexts contexts();
+                
  
     /**
      * EvlModuleTrace has same identity in the aggregate.
      */
     public boolean sameIdentityAs(final IEvlModuleTrace other);
     
+    /** The ContextTrace Factory. */
+    IContextTrace createContextTrace(String kind, Integer index, IModelElementTrace context) throws EolIncrementalExecutionException;       
+   
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2017-12-15.
+ * This file was automatically generated on: 2018-02-01.
  * Only modify protected regions indicated by "<!-- -->"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,13 +11,10 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
-import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
-import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;    
-import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;    
-import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;    
-import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;    
-import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;    
+import org.eclipse.epsilon.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;    
+import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;    
 
 /**
  * The GuardedElementTrace defines the access methods for the EClass features.
@@ -30,5 +27,7 @@ public interface IGuardedElementTrace extends IExecutionTrace {
     /** The guard reference. */
     IGuardedElementTraceHasGuard guard();
                 
+    /** The GuardTrace Factory. */
+    IGuardTrace createGuardTrace() throws EolIncrementalExecutionException;       
    
 }
