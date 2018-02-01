@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.execute;
 
-import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
 import org.eclipse.epsilon.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 
@@ -27,7 +26,7 @@ import org.eclipse.epsilon.incremental.execute.introspection.recording.PropertyA
  *  
  *
  * @author Horacio Hoyos Rodriguez
- * @param <T> the generic type of the specific engine
+ * @param <T> the generic type of the specific trace repository
  */
 public interface IEolExecutionTraceManager<T> {
 	
@@ -57,7 +56,7 @@ public interface IEolExecutionTraceManager<T> {
 	 *
 	 * @return the exl module execution repository
 	 */
-	IModuleRepository<?> moduleExecutionTraces();
+	T getExecutionTraceRepository();
 	
 	/**
 	 * Makes the trace manager persist any temporal trace information in the trace model.
@@ -80,11 +79,5 @@ public interface IEolExecutionTraceManager<T> {
 	 */
 	AllInstancesInvocationExecutionListener getAllInstancesAccessListener();
 
-	/**
-	 * Inits the execution listeners.
-	 *
-	 * @param moduleExecution the module execution
-	 */
-	void initExecutionListeners(IModuleTrace moduleExecution);
 	
 }

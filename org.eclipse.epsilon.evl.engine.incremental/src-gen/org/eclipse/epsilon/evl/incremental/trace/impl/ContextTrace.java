@@ -19,18 +19,17 @@ import org.eclipse.epsilon.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionTraceHasAccesses;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTraceHasConstraints;
-import org.eclipse.epsilon.evl.incremental.trace.IContextTraceHasContext;
+import org.eclipse.epsilon.evl.incremental.trace.IContextTraceHasModule;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTraceHasGuard;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.ContextTraceHasConstraints;
-import org.eclipse.epsilon.evl.incremental.trace.impl.ContextTraceHasContext;
+import org.eclipse.epsilon.evl.incremental.trace.impl.ContextTraceHasModule;
 import org.eclipse.epsilon.evl.incremental.trace.impl.GuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.GuardedElementTraceHasGuard;
 import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTrace;
@@ -58,26 +57,23 @@ public class ContextTrace implements IContextTrace {
     /** The constraints relation */
     private final IContextTraceHasConstraints constraints;
 
-    /** The context relation */
-    private final IContextTraceHasContext context;
+    /** The module relation */
+    private final IContextTraceHasModule module;
 
     /**
      * Instantiates a new ContextTrace. The ContextTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ContextTrace(String kind, Integer index, IModelElementTrace context, IEvlModuleTrace container) throws TraceModelDuplicateRelation {
+    public ContextTrace(String kind, Integer index, IEvlModuleTrace module) throws TraceModelDuplicateRelation {
         this.kind = kind;
         this.index = index;
         this.accesses = new ExecutionTraceHasAccesses(this);
         this.guard = new GuardedElementTraceHasGuard(this);
         this.constraints = new ContextTraceHasConstraints(this);
-        this.context = new ContextTraceHasContext(this);
-        if (!this.context.create(context)) {
+        this.module = new ContextTraceHasModule(this);
+        if (!this.module.create(module)) {
             throw new TraceModelDuplicateRelation();
         }
-        if (!container.contexts().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
     }
     
     @Override
@@ -117,8 +113,8 @@ public class ContextTrace implements IContextTrace {
     }
 
     @Override
-    public IContextTraceHasContext context() {
-        return context;
+    public IContextTraceHasModule module() {
+        return module;
     }
 
     @Override
@@ -198,14 +194,6 @@ public class ContextTrace implements IContextTrace {
         ContextTrace other = (ContextTrace) obj;
         if (!sameIdentityAs(other))
             return false;
-        // Will use context for equals
-        if (context.get() == null) {
-            if (other.context.get() != null)
-                return false;
-        }
-        else if (!context.get().equals(other.context.get())) {
-            return false;
-        }
         return true; 
   }
 
@@ -215,7 +203,6 @@ public class ContextTrace implements IContextTrace {
         int result = 1;
         result = prime * result + ((kind == null) ? 0 : kind.hashCode());
         result = prime * result + ((index == null) ? 0 : index.hashCode());
-        result = prime * result + ((context.get() == null) ? 0 : context.get().hashCode());
         return result;
     }
 }

@@ -1,8 +1,9 @@
-package org.eclipse.epsilon.evl.dom;
+package org.eclipse.epsilon.evl.incremental.dom;
 
-import org.eclipse.epsilon.eol.incremental.dom.TracedExecutableBlock;
-import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;
+
+import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
+import org.eclipse.epsilon.incremental.dom.TracedExecutableBlock;
 
 public class TracedGuardBlock extends TracedExecutableBlock<Boolean> {
 	

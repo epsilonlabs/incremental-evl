@@ -9,34 +9,31 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  ******************************************************************************/
-package org.eclipse.epsilon.base.incremental.trace.impl;
+package org.eclipse.epsilon.evl.incremental.trace.impl;
 
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.IAccess;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionTraceHasAccesses;
+import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IContextTraceHasModule;
 import org.eclipse.epsilon.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of IExecutionTraceHasAccesses reference. 
+ * Implementation of IContextTraceHasModule reference. 
  */
-public class ExecutionTraceHasAccesses extends Feature implements IExecutionTraceHasAccesses {
+public class ContextTraceHasModule extends Feature implements IContextTraceHasModule {
     
     /** The source(s) of the reference */
-    protected IExecutionTrace source;
+    protected IContextTrace source;
     
     /** The target(s) of the reference */
-    protected Set<IAccess> target =  ConcurrentHashMap.newKeySet();
+    protected IEvlModuleTrace target;
     
     /**
-     * Instantiates a new IExecutionTraceHasAccesses.
+     * Instantiates a new IContextTraceHasModule.
      *
      * @param source the source of the reference
      */
-    public ExecutionTraceHasAccesses (IExecutionTrace source) {
+    public ContextTraceHasModule (IContextTrace source) {
         super(true);
         this.source = source;
     }
@@ -44,12 +41,12 @@ public class ExecutionTraceHasAccesses extends Feature implements IExecutionTrac
     // PUBLIC API
         
     @Override
-    public Set<IAccess> get() {
+    public IEvlModuleTrace get() {
         return target;
     }
     
     @Override
-    public boolean create(IAccess target) {
+    public boolean create(IEvlModuleTrace target) {
         if (conflict(target)) {
             return false;
         }
@@ -58,7 +55,7 @@ public class ExecutionTraceHasAccesses extends Feature implements IExecutionTrac
     }
 
     @Override
-    public boolean destroy(IAccess target) {
+    public boolean destroy(IEvlModuleTrace target) {
         if (!related(target)) {
             return false;
         }
@@ -67,30 +64,28 @@ public class ExecutionTraceHasAccesses extends Feature implements IExecutionTrac
     }
     
     @Override
-    public boolean conflict(IAccess target) {
+    public boolean conflict(IEvlModuleTrace target) {
         boolean result = false;
-        if (isUnique) {
-            result |= get().contains(target);
-        }
+        result |= get() != null;
         return result;
     }
     
     @Override
-    public boolean related(IAccess target) {
+    public boolean related(IEvlModuleTrace target) {
   
-        return get().contains(target) ;
+        return target.equals(this.target) ;
     }
     
     // PRIVATE API
     
     @Override
-    public void set(IAccess target) {
-        this.target.add(target);
+    public void set(IEvlModuleTrace target) {
+        this.target = target;
     }
     
     @Override
-    public void remove(IAccess target) {
-        this.target.remove(target);
+    public void remove(IEvlModuleTrace target) {
+        this.target = null;
     }
 
 }

@@ -11,32 +11,29 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.IAccess;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionTraceHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IElementAccessHasElement;
 import org.eclipse.epsilon.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of IExecutionTraceHasAccesses reference. 
+ * Implementation of IElementAccessHasElement reference. 
  */
-public class ExecutionTraceHasAccesses extends Feature implements IExecutionTraceHasAccesses {
+public class ElementAccessHasElement extends Feature implements IElementAccessHasElement {
     
     /** The source(s) of the reference */
-    protected IExecutionTrace source;
+    protected IElementAccess source;
     
     /** The target(s) of the reference */
-    protected Set<IAccess> target =  ConcurrentHashMap.newKeySet();
+    protected IModelElementTrace target;
     
     /**
-     * Instantiates a new IExecutionTraceHasAccesses.
+     * Instantiates a new IElementAccessHasElement.
      *
      * @param source the source of the reference
      */
-    public ExecutionTraceHasAccesses (IExecutionTrace source) {
+    public ElementAccessHasElement (IElementAccess source) {
         super(true);
         this.source = source;
     }
@@ -44,12 +41,12 @@ public class ExecutionTraceHasAccesses extends Feature implements IExecutionTrac
     // PUBLIC API
         
     @Override
-    public Set<IAccess> get() {
+    public IModelElementTrace get() {
         return target;
     }
     
     @Override
-    public boolean create(IAccess target) {
+    public boolean create(IModelElementTrace target) {
         if (conflict(target)) {
             return false;
         }
@@ -58,7 +55,7 @@ public class ExecutionTraceHasAccesses extends Feature implements IExecutionTrac
     }
 
     @Override
-    public boolean destroy(IAccess target) {
+    public boolean destroy(IModelElementTrace target) {
         if (!related(target)) {
             return false;
         }
@@ -67,30 +64,28 @@ public class ExecutionTraceHasAccesses extends Feature implements IExecutionTrac
     }
     
     @Override
-    public boolean conflict(IAccess target) {
+    public boolean conflict(IModelElementTrace target) {
         boolean result = false;
-        if (isUnique) {
-            result |= get().contains(target);
-        }
+        result |= get() != null;
         return result;
     }
     
     @Override
-    public boolean related(IAccess target) {
+    public boolean related(IModelElementTrace target) {
   
-        return get().contains(target) ;
+        return target.equals(this.target) ;
     }
     
     // PRIVATE API
     
     @Override
-    public void set(IAccess target) {
-        this.target.add(target);
+    public void set(IModelElementTrace target) {
+        this.target = target;
     }
     
     @Override
-    public void remove(IAccess target) {
-        this.target.remove(target);
+    public void remove(IModelElementTrace target) {
+        this.target = null;
     }
 
 }

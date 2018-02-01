@@ -2,20 +2,17 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="evl" nsURI="http://www.eclipse.epsilon.org/incremental/evl/ExecutionTrace"
     nsPrefix="evl_et">
-  <eClassifiers xsi:type="ecore:EClass" name="EvlModuleTrace" eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//ModuleTrace">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="contexts" upperBound="-1"
-        eType="#//ContextTrace" containment="true"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EvlModuleTrace" eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//ModuleTrace"/>
   <eClassifiers xsi:type="ecore:EClass" name="GuardedElementTrace" abstract="true"
       eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//ExecutionTrace">
     <eStructuralFeatures xsi:type="ecore:EReference" name="guard" eType="#//GuardTrace"
         containment="true" eOpposite="#//GuardTrace/limits"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ContextTrace" eSuperTypes="#//GuardedElementTrace">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//ContextTrace/kind #//ContextTrace/index">
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//ContextTrace/kind #//ContextTrace/index #//ContextTrace/module">
       <details key="type" value="NOTUNIQUE_HASH_INDEX"/>
     </eAnnotations>
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/equals" references="#//ContextTrace/context"/>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equals" references="#//ContextTrace/module"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="kind" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="index" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="constraints" upperBound="-1"
@@ -24,8 +21,8 @@
         <details key="edge" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="context" lowerBound="1"
-        eType="ecore:EClass ../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//ModelElementTrace"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="module" lowerBound="1"
+        eType="#//EvlModuleTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="InvariantTrace" eSuperTypes="#//GuardedElementTrace">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/OrientDbIndex" references="#//InvariantTrace/name">

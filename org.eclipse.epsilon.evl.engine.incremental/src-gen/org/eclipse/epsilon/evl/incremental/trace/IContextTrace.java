@@ -12,8 +12,8 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
 import org.eclipse.epsilon.incremental.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;    
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;    
 
@@ -50,8 +50,8 @@ public interface IContextTrace extends IGuardedElementTrace {
     /** The constraints reference. */
     IContextTraceHasConstraints constraints();
                 
-    /** The context reference. */
-    IContextTraceHasContext context();
+    /** The module reference. */
+    IContextTraceHasModule module();
                 
  
     /**

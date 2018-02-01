@@ -19,7 +19,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({BaseTraceModelTests.AllInstancesAccessTests.class,
+@Suite.SuiteClasses({BaseTraceModelTests.ElementAccessTests.class,
+                     BaseTraceModelTests.AllInstancesAccessTests.class,
                      BaseTraceModelTests.PropertyAccessTests.class,
                      BaseTraceModelTests.ModelTraceTests.class,
                      BaseTraceModelTests.ModelTypeTraceTests.class,
@@ -27,6 +28,72 @@ import org.junit.runners.Suite;
                      BaseTraceModelTests.PropertyTraceTests.class})
 public class BaseTraceModelTests {
 
+    
+    public static class ElementAccessTests extends EasyMockSupport {
+    
+        @Rule
+        public EasyMockRule rule = new EasyMockRule(this);
+
+        /** Mock the target of the element reference. */
+        @Mock
+        private IModelElementTrace elementMock1;
+        
+        /** Mock the target of the element reference. */
+        @Mock
+        private IModelElementTrace elementMock2;
+        
+        private ElementAccess classUnderTest;
+        
+        @Test
+        public void testElementAccessInstantiation() throws Exception {
+            IModelElementTrace _element = mock(IModelElementTrace.class);
+        
+            classUnderTest = new ElementAccess(_element);
+	    }
+	    
+// protected region IgnoreElementAccessAttributes on begin
+	    @Ignore
+// protected region IgnoreElementAccessAttributes end	    
+	    @Test
+        public void testElementAccessAttributes() throws Exception {
+            IModelElementTrace _element = mock(IModelElementTrace.class);
+        
+            classUnderTest = new ElementAccess(_element);
+// protected region ElementAccessAttributes on begin
+            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
+// protected region ElementAccessAttributes end
+        }
+
+        @Test
+        public void testElementAccessCreateElementReference() throws Exception {
+            IModelElementTrace _element = mock(IModelElementTrace.class);
+        
+            classUnderTest = new ElementAccess(_element);
+            boolean result;
+            result = classUnderTest.element().create(elementMock2);
+            assertFalse(result);
+            result = classUnderTest.element().create(_element);
+            assertFalse(result);
+            // Create a second one
+            IModelElementTrace _element2 = mock(IModelElementTrace.class);
+             
+            IElementAccess classUnderTest2 = new ElementAccess(_element2);
+            assertThat(classUnderTest2, is(notNullValue()));
+        }
+        
+        @Test
+        public void testElementAccessDestroyElementReference() throws Exception {
+            IModelElementTrace _element = mock(IModelElementTrace.class);
+        
+            classUnderTest = new ElementAccess(_element);
+        
+            boolean result = classUnderTest.element().destroy(_element);
+            assertTrue(result);
+            assertThat(classUnderTest.element().get(), is(nullValue()));
+            result = classUnderTest.element().destroy(elementMock2);
+            assertFalse(result);
+        }
+    }
     
     public static class AllInstancesAccessTests extends EasyMockSupport {
     

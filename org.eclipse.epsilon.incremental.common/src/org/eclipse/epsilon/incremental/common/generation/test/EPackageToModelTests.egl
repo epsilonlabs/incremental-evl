@@ -16,7 +16,7 @@ import java.util.Queue;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
 import org.easymock.Mock;
-[%if (baseLanguage.isDefined()) { // Noe enough, we need to actually collect all packages%]
+[%if (baseLanguage.isDefined()) { // Not enough, we need to actually collect all packages%]
 import org.eclipse.epsilon.[%=baseLanguage%].incremental.trace.*;
 import org.eclipse.epsilon.[%=baseLanguage%].incremental.trace.impl.*;
 [%}%]

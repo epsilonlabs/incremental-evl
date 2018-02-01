@@ -1,31 +1,20 @@
-package org.eclipse.epsilon.evl.execute;
+package org.eclipse.epsilon.evl.incremental.execute;
 
 import java.util.List;
 
+import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.eol.incremental.execute.IRepository;
-import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 
-
-public interface IExecutionTraceRepository extends IRepository<IExecutionTrace> {
+// Having a ModuleTrace repository is not usefull, each module should define
+// the repos that are usefull, e.g. in EVL the contexttrave repo is key
+public interface IEvlExecutionTraceRepository extends IRepository<IExecutionTrace> {
 	
+	IContextTrace getContextTraceFor(String typeName, int index, IEvlModuleTrace moduleTrace);
 	
-	public interface IContextTraceRepository extends IRepository<IContextTrace> {
-		
-		/**
-		 * Find the ContextTraces for the given type and index, that have been executed for the given
-		 * model element. 
-		 * 
-		 * @param typeName the name of the type of the model element (and hence the Context's type-context)
-		 * @param index	the index of the context (multiple context can exist for the same type)
-		 * @param modelElement	the model element
-		 * @return
-		 */
-		IContextTrace getContextTraceFor(String typeName, int index, IModelElementTrace modelElement);
-		
-	}
-
+	IContextTrace getContextTraceFor(String typeName, int index, IEvlModuleTrace module, IModelElementTrace modelElement);
 	
 	/**
 	 * Gets the property trace for the given property and element. This allows fine grained incremental execution for

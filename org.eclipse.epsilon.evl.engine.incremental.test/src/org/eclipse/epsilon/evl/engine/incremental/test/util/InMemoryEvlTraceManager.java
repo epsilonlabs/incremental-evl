@@ -1,6 +1,6 @@
 package org.eclipse.epsilon.evl.engine.incremental.test.util;
 
-import org.eclipse.epsilon.evl.execute.AbstractEvlExecutionTraceManager;
+import org.eclipse.epsilon.evl.incremental.execute.AbstractEvlExecutionTraceManager;
 
 public class InMemoryEvlTraceManager extends AbstractEvlExecutionTraceManager  {
 

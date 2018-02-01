@@ -11,11 +11,9 @@
 package org.eclipse.epsilon.eol.incremental.models;
 
 import java.util.Collection;
-import java.util.List;
 
+import org.eclipse.epsilon.eol.incremental.execute.IModuleIncremental;
 import org.eclipse.epsilon.eol.models.IModel;
-import org.eclipse.epsilon.incremental.dom.IIncrementalModule;
-
 
 /**
  * The Interface IIncrementalModel defines the API for models that support incremental execution, both on-line and 
@@ -58,6 +56,6 @@ public interface IIncrementalModel extends IModel {
 	 * 
 	 * @return
 	 */
-	Collection<IIncrementalModule> getModules();
+	Collection<IModuleIncremental> getModules();
 	
 }

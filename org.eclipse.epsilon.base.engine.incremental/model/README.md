@@ -59,7 +59,7 @@ index is faster).
   metamodel elements. 
  
 ## http://eclipse.org/epsilon/incremental/ValueObject
-ValueOjects are created when needed, and 
+ValueOjects are created when needed, don't have ids and don't keep references to entities 
 
 
 ## https://eclipse.org/epsilon/incremental/Property
@@ -68,5 +68,6 @@ ValueOjects are created when needed, and
   types and uses the corresponding Java type to select the appropriate Type type when creating
   properties. For cases in which this is not the case, the Property can be used to have
   more control over the used type. THIS IS NOT IMPLEMENTED YET.
+
 
 ## http://eclipse.org/epsilon/incremental/UniqueIn

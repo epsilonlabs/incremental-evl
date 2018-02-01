@@ -9,22 +9,25 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  ******************************************************************************/
-package org.eclipse.epsilon.evl.incremental.trace;
+package org.eclipse.epsilon.base.incremental.trace;
 
-import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;    
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;    
 
 /**
- * The EvlModuleTrace defines the access methods for the EClass features.
- * Additionally, the IEvlModuleTrace acts as the root entity of the AGGREGATE of its
- * container references. That is, elements contained in the EvlModuleTrace must be
+ * The ElementAccess defines the access methods for the EClass features.
+ * Additionally, the IElementAccess acts as the root entity of the AGGREGATE of its
+ * container references. That is, elements contained in the ElementAccess must be
  * created through this interface.
  */
-public interface IEvlModuleTrace extends IModuleTrace {
+public interface IElementAccess extends IAccess {
 
+    /** The element reference. */
+    IElementAccessHasElement element();
+                
  
     /**
-     * EvlModuleTrace has same identity in the aggregate.
+     * ElementAccess has same identity in the aggregate.
      */
-    public boolean sameIdentityAs(final IEvlModuleTrace other);
+    public boolean sameIdentityAs(final IElementAccess other);
     
 }

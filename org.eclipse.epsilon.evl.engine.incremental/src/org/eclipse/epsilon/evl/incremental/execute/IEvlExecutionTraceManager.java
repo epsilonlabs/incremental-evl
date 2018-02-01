@@ -8,15 +8,12 @@
  * Contributors:
  *     Horacio Hoyos Rodriguez - initial API and implementation
  ******************************************************************************/
-package org.eclipse.epsilon.evl.execute;
+package org.eclipse.epsilon.evl.incremental.execute;
 
 import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
-import org.eclipse.epsilon.evl.execute.IExecutionTraceRepository.IContextTraceRepository;
-import org.eclipse.epsilon.evl.execute.introspection.recording.SatisfiesInvocationExecutionListener;
+import org.eclipse.epsilon.evl.incremental.execute.introspection.recording.SatisfiesInvocationExecutionListener;
 
 public interface IEvlExecutionTraceManager<T> extends IEolExecutionTraceManager<T> {
-	
-	IContextTraceRepository getContextTraceRepository();
 
 	SatisfiesInvocationExecutionListener getSatisfiesListener();
 

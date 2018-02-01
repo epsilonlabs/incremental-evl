@@ -15,35 +15,33 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
-import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
-import org.eclipse.epsilon.eol.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleTrace;
-import org.eclipse.epsilon.eol.incremental.trace.impl.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.dom.Fix;
-import org.eclipse.epsilon.evl.dom.TracedConstraint;
-import org.eclipse.epsilon.evl.dom.TracedConstraintContext;
-import org.eclipse.epsilon.evl.dom.TracedGuardBlock;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
-import org.eclipse.epsilon.evl.execute.IContextTraceRepository;
-import org.eclipse.epsilon.evl.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
-import org.eclipse.epsilon.evl.execute.context.TracedEvlContext;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
+import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
+import org.eclipse.epsilon.evl.incremental.dom.TracedConstraintContext;
+import org.eclipse.epsilon.evl.incremental.dom.TracedGuardBlock;
+import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
+import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceRepository;
+import org.eclipse.epsilon.evl.incremental.execute.IEvlModuleIncremental;
+import org.eclipse.epsilon.evl.incremental.execute.context.TracedEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleExecution;
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTrace;
 import org.eclipse.epsilon.evl.parse.EvlParser;
+import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.incremental.dom.TracedExecutableBlock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,8 +51,8 @@ import org.slf4j.LoggerFactory;
  */
 // FIXME This changes should be merged into EVL Module and use the incremental execution flag
 // to enable the incremental behaviour
-// FIXME Some of this API should belong to the base Eol Module (e.g. the trace model API can be shared by all languages
-public class IncrementalEvlModule extends EvlModule implements IIncrementalModule {
+// FIXME Some of this API should belong to the base Module (e.g. the trace model API can be shared by all languages
+public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncremental {
 	
 	private static final Logger logger = LoggerFactory.getLogger(IncrementalEvlModule.class);
 	
@@ -77,8 +75,6 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	Set<IIncrementalModel> targets;
 	
 	private boolean onlineExecution;
-
-	protected IEvlModuleExecution evlExecution;
 
 	protected IEvlModuleTrace evlModuleTrace;
 
@@ -111,13 +107,20 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 				}
 			case EvlParser.CONTEXT:
 				if (incrementalMode) {
-					return new TracedConstraintContext();
+					return createTracedConstraintContext();
 				}
 				else {
 					return new ConstraintContext();
 				}
 		}
 		return super.adapt(cst, parentAst);
+	}
+
+	/**
+	 * @return
+	 */
+	private TracedConstraintContext createTracedConstraintContext() {
+		return new TracedConstraintContext();
 	}
 	
 	
@@ -137,11 +140,12 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 		}
 		try {
 			logger.info("Craetig the EvlModuleTrace.");
-			evlModuleTrace = new EvlModuleTrace(evlScripPath, evlExecution);
+			evlModuleTrace = new EvlModuleTrace(evlScripPath);
 		} catch (TraceModelDuplicateRelation e) {
 			throw new EolRuntimeException(e.getMessage());
 		}
-		IEvlExecutionTraceManager<IEvlModuleExecution> etManager = ((TracedEvlContext) context).getTraceManager();
+		IEvlExecutionTraceManager<IEvlExecutionTraceRepository> etManager = ((TracedEvlContext) context).getTraceManager();
+		((TracedEvlContext) context).setEvlModuleTrace(evlModuleTrace);
 		logger.info("Adding execution listeners");
 		context.getExecutorFactory().addExecutionListener(etManager.getAllInstancesAccessListener());
 		context.getExecutorFactory().addExecutionListener(etManager.getPropertyAccessListener());
@@ -178,11 +182,6 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	public IEvlContext getContext(){
 		return context;
 	}
-
-	@Override
-	public IModuleExecution getModuleExecution() {
-		return evlExecution;
-	} 
 	
 	@Override
 	public IModuleTrace getModuleTrace() {
@@ -230,28 +229,23 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	}
 	
 	@Override
-	public void onChange(String objectId, Object object, String propertyName) {
+	public void onChange(String modelName, String objectId, Object object, String propertyName) {
 		
 		logger.info("On Change event for {} with property {}", objectId, propertyName);
-		IEvlExecutionTraceManager<IEvlModuleExecution> etManager = ((TracedEvlContext) context).getTraceManager();
-		IContextTraceRepository repo = etManager.getContextTraceRepository();
-		Collection<Trace> traces = null;
-		try {
-			traces = etManager.findExecutionTraces(objectId, propertyName);
-		} catch (EolIncrementalExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		IEvlExecutionTraceManager<IEvlExecutionTraceRepository> etManager = ((TracedEvlContext) context).getTraceManager();
+		IEvlExecutionTraceRepository repo = ((TracedEvlContext) context).getTraceManager().getExecutionTraceRepository();
+		Collection<IExecutionTrace> traces = null;
+		traces = repo.findExecutionTraces(objectId, propertyName);
 		if (traces != null) {
 			validateTraces(traces, object);
 		}
 	}
 
 	@Override
-	public void onCreate(Object newElement) {
+	public void onCreate(String modelName, Object newElement) {
 		
 		logger.info("On Craete event for {}", newElement);
-		IEvlExecutionTraceManager<IEvlModuleExecution> etManager = ((TracedEvlContext) context).getTraceManager();
+		IEvlExecutionTraceManager<IEvlExecutionTraceRepository>  etManager = ((TracedEvlContext) context).getTraceManager();
 		// Do we need to execute the pre blocks to restore context?
 		//logger.info("Executing pre{}");
 		//execute(getPre(), context);
@@ -290,7 +284,7 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 	}
 
 	@Override
-	public void onDelete(String objectId, Object object) {
+	public void onDelete(String modelName, String objectId, Object object) {
 		
 //		System.out.println("On Delete: " + objectId);
 //		Collection<Trace> traces = null;
@@ -311,42 +305,13 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 //			e.printStackTrace();
 //		}
 	}
-
-	/**
-	 * The execution trace must be initialised after the traceManager has been assigned to the context
-	 * ({@link TracedEvlContext#setTraceManager(IEvlExecutionTraceManager)}).
-	 * 
-	 * @throws EolRuntimeException
-	 */
-	public void prepareExecutionTrace() throws EolRuntimeException {
-		
-		logger.info("Preparing the Execution Trace");
-		IEvlExecutionTraceManager<IEvlModuleExecution>  etManager = ((TracedEvlContext) context).getTraceManager();
-		//evlExecution = (IEvlModuleExecution) etManager.moduleExecutionTraces().getEvlModuleExecutionForSource(evlScripPath);
-		if (evlExecution == null) {
-			logger.info("Creating a new Evl Module Execution");
-			try {
-				evlExecution = new EvlModuleExecution();
-				((TracedEvlContext)getContext()).setEvlExecution(evlExecution);
-			} catch (TraceModelDuplicateRelation e) {
-				throw new EolRuntimeException("Error creating the execution trace for this module. " + e.getMessage());
-			} finally {
-				if (evlExecution != null) {
-					etManager.moduleExecutionTraces().add(evlExecution);
-				}
-			}
-		}
-//		else {
-//			evlModuleTrace = (IEvlModuleTrace) evlExecution.module().get();
-//		}
-	}
 	
-//	private void validateTraces(Collection<Trace> traces, Object modelObject) {
-//		if (traces == null || traces.isEmpty()) {
-//			return;
-//		}
-//		for (Trace t : traces) {
-//			
+	private void validateTraces(Collection<IExecutionTrace> traces, Object modelObject) {
+		if (traces == null || traces.isEmpty()) {
+			return;
+		}
+		for (IExecutionTrace t : traces) {
+			
 //			String constraintId = t.getTraces().getModuleId();
 //			// 
 //			final Constraint constraint;
@@ -362,50 +327,22 @@ public class IncrementalEvlModule extends EvlModule implements IIncrementalModul
 //				// TODO: Log exception
 //				continue;
 //			}
-//		}
-//		// Will satisfied constraints be removed? is the fix replacing everything?
-//		if (fixer != null) {
-//			try {
-//				fixer.fix(this);
-//			} catch (EolRuntimeException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//		for (UnsatisfiedConstraint uc : getContext().getUnsatisfiedConstraints()) {
-//			System.out.println(uc.getMessage());
-//		}
-//	}
+		}
+		// Will satisfied constraints be removed? is the fix replacing everything?
+		if (fixer != null) {
+			try {
+				fixer.fix(this);
+			} catch (EolRuntimeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		for (UnsatisfiedConstraint uc : getContext().getUnsatisfiedConstraints()) {
+			System.out.println(uc.getMessage());
+		}
+	}
 
-//	/**
-//	 * In EVL the module element ID is formed by joining the Context name and the Constraint name. 
-//	 * <contextName>.<constraintName>
-//	 */
-//	@Override
-//	public String getModuleElementId(ModuleElement moduleElement) throws EolRuntimeException {
-//		if (!(moduleElement instanceof Constraint)) {
-//			throw new EolRuntimeException("Can not create ids for module elements that are not Constraints.");
-//		}
-//		Constraint constraint = (Constraint) moduleElement;
-//		String constraintName = constraint.getName();
-//		String contextName = constraint.getConstraintContext().getTypeName();
-//		// TODO Check if the getTypeName() returns the model name too
-//		return contextName + "." + constraintName;
-//	}
-//
-//	@Override
-//	public ModuleElement getModuleElementById(String moduleElementId) {
-//		String[] names = moduleElementId.split("\\.");
-//		ModuleElement result = null;
-//		for (Constraint constraint : getConstraints()) {
-//			if (constraint.getName().equals(names[1])
-//					&& constraint.getConstraintContext().getTypeName().equals(names[0])) {
-//				result = constraint;
-//				break;
-//			}
-//		}
-//		return result;
-//	}
+
 
 	public void setOnlineExecution(boolean onlineExecution) {
 		this.onlineExecution = onlineExecution;

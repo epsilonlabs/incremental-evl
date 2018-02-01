@@ -11,36 +11,32 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
+import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.trace.IElementAccessHasElement;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IPropertyTraceHasElement;
-import org.eclipse.epsilon.base.incremental.trace.impl.PropertyTraceHasElement;
+import org.eclipse.epsilon.base.incremental.trace.impl.ElementAccessHasElement;
 
 /**
- * Implementation of IPropertyTrace. 
+ * Implementation of IElementAccess. 
  */
-public class PropertyTrace implements IPropertyTrace {
+public class ElementAccess implements IElementAccess {
 
     /** The id */
     private Object id;
 
-    /** The name */
-    private String name;
-
     /** The element relation */
-    private final IPropertyTraceHasElement element;
+    private final IElementAccessHasElement element;
 
     /**
-     * Instantiates a new PropertyTrace. The PropertyTrace is uniquely identified by its
+     * Instantiates a new ElementAccess. The ElementAccess is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public PropertyTrace(String name, IModelElementTrace element) throws TraceModelDuplicateRelation {
-        this.name = name;
-        this.element = new PropertyTraceHasElement(this);
+    public ElementAccess(IModelElementTrace element) throws TraceModelDuplicateRelation {
+        this.element = new ElementAccessHasElement(this);
         if (!this.element.create(element)) {
             throw new TraceModelDuplicateRelation();
         }
@@ -58,25 +54,15 @@ public class PropertyTrace implements IPropertyTrace {
     }   
      
     @Override
-    public String getName() {
-        return name;
-    }
-    
-    @Override
-    public IPropertyTraceHasElement element() {
+    public IElementAccessHasElement element() {
         return element;
     }
 
     @Override
-    public boolean sameIdentityAs(final IPropertyTrace other) {
+    public boolean sameIdentityAs(final IElementAccess other) {
         if (other == null) {
             return false;
         }
-        if (getName() == null) {
-            if (other.getName() != null)
-                return false;
-        } else if (!getName().equals(other.getName()))
-            return false;
         return true;
     }
 
@@ -86,19 +72,11 @@ public class PropertyTrace implements IPropertyTrace {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof PropertyTrace))
+        if (!(obj instanceof ElementAccess))
             return false;
-        PropertyTrace other = (PropertyTrace) obj;
+        ElementAccess other = (ElementAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        // Will use element for equals
-        if (element.get() == null) {
-            if (other.element.get() != null)
-                return false;
-        }
-        else if (!element.get().equals(other.element.get())) {
-            return false;
-        }
         return true; 
   }
 
@@ -106,8 +84,6 @@ public class PropertyTrace implements IPropertyTrace {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((element.get() == null) ? 0 : element.get().hashCode());
         return result;
     }
 }

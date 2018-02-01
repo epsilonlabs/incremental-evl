@@ -9,12 +9,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  ******************************************************************************/
-package org.eclipse.epsilon.base.incremental.trace;
+package org.eclipse.epsilon.evl.incremental.trace;
 
 
-import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 
-public interface IPropertyAccessHasProperty {
+public interface IContextTraceHasModule {
 
     // PUBLIC API
     
@@ -23,27 +23,27 @@ public interface IPropertyAccessHasProperty {
     /**
      * Get the value(s) for the reference
      */
-    public IPropertyTrace get();
+    public IEvlModuleTrace get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the
      * relation already existed. 
-     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IPropertyTrace)}).
+     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IEvlModuleTrace)}).
      * If the reference has an opposite, that relation is also craeted.
      *
-     * @see ExecutionHasAccesses#conflict(IPropertyTrace)
-     * @see ExecutionHasAccesses#related(IPropertyTrace)
+     * @see ExecutionHasAccesses#conflict(IEvlModuleTrace)
+     * @see ExecutionHasAccesses#related(IEvlModuleTrace)
      */
-    boolean create(IPropertyTrace target);
+    boolean create(IEvlModuleTrace target);
     
     /**
      * Destroy a reference to the target element. Returns true, if the reference existed
      * and was properly destroyed. If the reference has an opposite, that relation
      * is also destroyed.
      *
-     * @see ExecutionHasAccesses#related(IPropertyTrace)
+     * @see ExecutionHasAccesses#related(IEvlModuleTrace)
      */    
-    boolean destroy(IPropertyTrace target);
+    boolean destroy(IEvlModuleTrace target);
     
     /**
      * Determines if there is a conflict with a possible target. Conflicts can only arise for if
@@ -67,12 +67,12 @@ public interface IPropertyAccessHasProperty {
      *      </ul>
      *  </li>
      */
-    boolean conflict(IPropertyTrace target);
+    boolean conflict(IEvlModuleTrace target);
     
     /**
      * Returns true if the target is already related via this reference.
      */
-    boolean related(IPropertyTrace target);
+    boolean related(IEvlModuleTrace target);
 
     // PRIVATE API
 
@@ -80,15 +80,15 @@ public interface IPropertyAccessHasProperty {
      * Set a new value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#create(IPropertyTrace)
+     * @see ExecutionHasAccesses#create(IEvlModuleTrace)
      */
-    void set(IPropertyTrace target);
+    void set(IEvlModuleTrace target);
 
     /**
      * Remove a value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#destroy(IPropertyTrace)
+     * @see ExecutionHasAccesses#destroy(IEvlModuleTrace)
      */
-    void remove(IPropertyTrace target);
+    void remove(IEvlModuleTrace target);
 }

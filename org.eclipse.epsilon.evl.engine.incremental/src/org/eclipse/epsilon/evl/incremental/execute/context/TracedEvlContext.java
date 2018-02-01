@@ -8,11 +8,13 @@
  * Contributors:
  *     Horacio Hoyos Rodriguez - initial API and implementation
  ******************************************************************************/
-package org.eclipse.epsilon.evl.execute.context;
+package org.eclipse.epsilon.evl.incremental.execute.context;
 
 
-import org.eclipse.epsilon.evl.execute.IEvlExecutionTraceManager;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
+import org.eclipse.epsilon.evl.execute.context.EvlContext;
+import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
+import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceRepository;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 
 /**
  * An EVL Context that keeps a reference to the traceManager and current EVL Execution Trace.
@@ -23,17 +25,15 @@ import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
 public class TracedEvlContext extends EvlContext {
 	
 	/** The trace manager. */
-	private IEvlExecutionTraceManager<IEvlModuleExecution> traceManager;
-	
-	/** The evl execution. */
-	private IEvlModuleExecution evlExecution;
+	private IEvlExecutionTraceManager<IEvlExecutionTraceRepository> traceManager;
+	private IEvlModuleTrace evlModuleTrace;
 	
 	/**
 	 * Gets the trace manager.
 	 *
 	 * @return the trace manager
 	 */
-	public IEvlExecutionTraceManager<IEvlModuleExecution> getTraceManager() {
+	public IEvlExecutionTraceManager<IEvlExecutionTraceRepository> getTraceManager() {
 		return traceManager;
 	}
 	
@@ -42,26 +42,26 @@ public class TracedEvlContext extends EvlContext {
 	 *
 	 * @param traceManager the new unit of work
 	 */
-	public void setTraceManager(IEvlExecutionTraceManager<IEvlModuleExecution> traceManager) {
+	public void setTraceManager(IEvlExecutionTraceManager<IEvlExecutionTraceRepository> traceManager) {
 		this.traceManager = traceManager;
 	}
 	
 	/**
-	 * Gets the evl execution.
+	 * Gets the evl module trace.
 	 *
-	 * @return the evl execution
+	 * @return the evl modeule trace
 	 */
-	public IEvlModuleExecution getEvlExecution() {
-		return evlExecution;
+	public IEvlModuleTrace getEvlModuleTrace() {
+		return evlModuleTrace;
 	}
 	
 	/**
-	 * Sets the evl execution.
+	 * Sets the evl module trace.
 	 *
-	 * @param evlExecution the new evl execution
+	 * @param evlModuleTrace the new evl module trace
 	 */
-	public void setEvlExecution(IEvlModuleExecution evlExecution) {
-		this.evlExecution = evlExecution;
+	public void setEvlModuleTrace(IEvlModuleTrace evlModuleTrace) {
+		this.evlModuleTrace = evlModuleTrace;
 	}
 
 }

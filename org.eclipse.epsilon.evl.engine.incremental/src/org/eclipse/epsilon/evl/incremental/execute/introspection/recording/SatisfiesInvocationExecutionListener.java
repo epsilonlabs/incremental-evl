@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.evl.execute.introspection.recording;
+package org.eclipse.epsilon.evl.incremental.execute.introspection.recording;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
@@ -16,15 +15,13 @@ import org.eclipse.epsilon.eol.dom.OperationCallExpression;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
-import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
-import org.eclipse.epsilon.evl.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
-import org.eclipse.epsilon.evl.execute.context.TracedEvlContext;
+import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 import org.eclipse.epsilon.evl.incremental.trace.util.ContextTraceUtil;
+import org.eclipse.epsilon.incremental.EolIncrementalExecutionException;
 
 /**
  * An An {@link IExecutionListener}  that listens to OperationCallExpressions that match the "Satisfies" name.
@@ -103,7 +100,7 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 			IInvariantTrace currentInvariant = moduleElementStack.peekFirst();
 			if (ast.equals(waitingFor)) {
 				boolean all = EvlOperationFactory.SATISFIES_ALL_OPERATION.equals(waitingFor.getOperationName());
-				record(all, parameterValues, currentInvariant, ((TracedEvlContext)context).getEvlExecution());
+				record(all, parameterValues, currentInvariant);
 				parameters.clear();
 				listening = false;
 				waitingFor = null;
@@ -128,7 +125,7 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 		return moduleElementStack.isEmpty();
 	}
 
-	private void record(boolean all, Collection<String> parameterValues, IInvariantTrace invariant, IEvlModuleExecution evlModuleExecution) {
+	private void record(boolean all, Collection<String> parameterValues, IInvariantTrace invariant) {
 		// Each parameter should be an Invariant name
 		IContextTrace context = invariant.invariantContext().get();
 		Set<IInvariantTrace> invariants = new HashSet<>();
@@ -138,7 +135,7 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 			IInvariantTrace  targetInvariant = ContextTraceUtil.getInvariantIn(context, invariantName);
 			if (targetInvariant == null) {
 				try {
-					targetInvariant = evlModuleExecution.createInvariantTrace((String) p);
+					targetInvariant = context.createInvariantTrace((String) p);
 				} catch (EolIncrementalExecutionException e) {
 					throw new IllegalStateException(String.format("Uknown invariant for %s: %s", invariantName, p), e);
 				}
@@ -147,7 +144,7 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 		}
 		ISatisfiesTrace result = null;
 		try {
-			result = evlModuleExecution.createSatisfiesTrace(invariant);
+			result = invariant.createSatisfiesTrace();
 		} catch (EolIncrementalExecutionException e) {
 			throw new IllegalStateException(e);
 		} 

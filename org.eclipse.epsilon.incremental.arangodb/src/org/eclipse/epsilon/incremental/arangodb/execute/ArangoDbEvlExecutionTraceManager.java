@@ -1,7 +1,7 @@
 package org.eclipse.epsilon.incremental.arangodb.execute;
 
-import org.eclipse.epsilon.evl.execute.AbstractEvlExecutionTraceManager;
-import org.eclipse.epsilon.evl.execute.IEvlExecutionTraceManager;
+import org.eclipse.epsilon.evl.incremental.execute.AbstractEvlExecutionTraceManager;
+import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 
 public class ArangoDbEvlExecutionTraceManager extends AbstractEvlExecutionTraceManager  implements IEvlExecutionTraceManager {
 
