@@ -55,7 +55,7 @@ public interface IEolExecutionTraceManager<T> {
 	/**
 	 * The repository of module executions. Each Epsilon language will return a specialised repository.
 	 *
-	 * @return the i eol module execution repository
+	 * @return the exl module execution repository
 	 */
 	IModuleRepository<?> moduleExecutionTraces();
 	

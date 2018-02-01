@@ -1,15 +1,14 @@
 package org.eclipse.epsilon.eol.incremental.execute.introspection.recording;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayDeque;
 
 import org.easymock.EasyMock;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
 import org.easymock.Mock;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionTraceHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.compile.context.EolCompilationContext;
 import org.eclipse.epsilon.eol.dom.Expression;
@@ -18,25 +17,13 @@ import org.eclipse.epsilon.eol.dom.OperationCallExpression;
 import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
 import org.eclipse.epsilon.eol.dom.StringLiteral;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
-import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
-import org.eclipse.epsilon.eol.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
-import org.eclipse.epsilon.eol.incremental.execute.IEolModuleExecutionRepository;
-import org.eclipse.epsilon.eol.incremental.execute.IModelTraceRepository;
-import org.eclipse.epsilon.eol.incremental.trace.IAllInstancesAccess;
-import org.eclipse.epsilon.eol.incremental.trace.IExecutionTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModelElementTraceHasProperties;
-import org.eclipse.epsilon.eol.incremental.trace.IModelTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModelTraceHasElements;
-import org.eclipse.epsilon.eol.incremental.trace.IModelTraceHasTypes;
-import org.eclipse.epsilon.eol.incremental.trace.IModelTypeTrace;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleExecutionHasModel;
-import org.eclipse.epsilon.eol.incremental.trace.IPropertyAccess;
-import org.eclipse.epsilon.eol.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.models.ModelRepository;
+import org.eclipse.epsilon.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.incremental.dom.TracedExecutableBlock;
+import org.eclipse.epsilon.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
+import org.eclipse.epsilon.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -49,7 +36,7 @@ import org.junit.runners.Suite.SuiteClasses;
 				ExecutionListenerTests.PropertyAccessExecutionListenerTest.class})
 public class ExecutionListenerTests {
 	
-	private interface TestModuleExecution extends IModuleExecution { }
+	private interface TestModuleExecution extends IModuleTrace { }
 	
 	public static class AllInstancesInvocationExetionListenerTest extends EasyMockSupport {
 		
@@ -62,12 +49,9 @@ public class ExecutionListenerTests {
 		
 		@Mock
 		private IEolExecutionTraceManager<TestModuleExecution> traceManagerMock;
-		@Mock
-		private IModuleExecution evlExecutionMock;
+		
 		@Mock
 		private IEolContext contextMock;
-		
-
 		
 		private AllInstancesInvocationExecutionListener listener;
 		
@@ -77,7 +61,7 @@ public class ExecutionListenerTests {
 		
 		@Before
 		public void setup() {
-			listener = new AllInstancesInvocationExecutionListener(traceManagerMock, evlExecutionMock);
+			listener = new AllInstancesInvocationExecutionListener();
 			targetExpression = new NameExpression(typeName);
 			EolCompilationContext contextMock = new EolCompilationContext();
 			targetExpression.compile(contextMock);
@@ -155,17 +139,7 @@ public class ExecutionListenerTests {
 			// 3. Execute all operation
 			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, "allInstances", params);
 			listener.finishedExecuting(ast, "elements", null);
-//			EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
-//
-//				@Override
-//				public Object answer() throws Throwable {
-//					// Verify arguments
-//					assertThat(EasyMock.getCurrentArguments().length, is(2));
-//					assertThat(EasyMock.getCurrentArguments()[0], is(true));
-//					assertThat(EasyMock.getCurrentArguments()[1], is(typeName));
-//					return null;
-//				}
-//			});
+
 			// 4. Finish executing block
 			listener.finishedExecuting(blockMock, result, contextMock);
 			assertTrue(listener.done());
@@ -221,48 +195,9 @@ public class ExecutionListenerTests {
 		private void recordExecutionTrace(String modelName, String modelTypeName, IExecutionTrace executionTraceMock) throws Exception {
 			// Setup mocks
 			IModel model = mock(IModel.class);
-			IModelTraceRepository modelRepoMock = createNiceMock(IModelTraceRepository.class);  // Nice so it allows add()
-			IModelTrace modelTraceMock = mock(IModelTrace.class);
-			IModuleExecutionHasModel hasModel = createMock(IModuleExecutionHasModel.class);
-			IModelTraceHasTypes modelHasTypesMock = mock(IModelTraceHasTypes.class);
-			IAllInstancesAccess aa = createNiceMock(IAllInstancesAccess.class);
-			
+			IExecutionTraceHasAccesses hasAccesses = createNiceMock(IExecutionTraceHasAccesses.class);
 			EasyMock.expect(model.getName()).andReturn(modelName).anyTimes();
-			
-			// No trace for the model
-			if (!modelName.isEmpty()) {
-				EasyMock.expect(modelRepoMock.getModelTraceByName(modelName)).andReturn(null);
-			}
-			else {
-				EasyMock.expect(modelRepoMock.first()).andReturn(null);
-			}
-			// The trace manager returns this mock
-			EasyMock.expect(traceManagerMock.modelTraces()).andReturn(modelRepoMock).times(2);
-			
-			// Since not present, the evlExecution will need to create one
-			
-			EasyMock.expect(evlExecutionMock.createModelTrace(modelName)).andReturn(modelTraceMock);
-				// evlExecution has models
-			EasyMock.expect(evlExecutionMock.model()).andReturn(hasModel).anyTimes();
-						
-			// ModelTrace has no types
-			
-			EasyMock.expect(modelTraceMock.types()).andReturn(modelHasTypesMock);
-			EasyMock.expect(modelHasTypesMock.get()).andReturn(new ArrayDeque<>());
-						
-			// Since not present, the model trace will create a modelType
-			IModelTypeTrace typeTraceMock = mock(IModelTypeTrace.class);
-			EasyMock.expect(modelTraceMock.createModelTypeTrace(modelTypeName)).andReturn(typeTraceMock);
-			
-			// No traces for the type
-			@SuppressWarnings("unchecked")
-			IEolModuleExecutionRepository<TestModuleExecution> executionRepoMock = mock(IEolModuleExecutionRepository.class);
-			EasyMock.expect(traceManagerMock.moduleExecutionTraces()).andReturn((IEolModuleExecutionRepository) executionRepoMock);
-			EasyMock.expect(executionRepoMock.getAllInstancesAccessFor(executionTraceMock, typeTraceMock)).andReturn(null);
-			
-			// We need to create one
-			EasyMock.expect(executionTraceMock.createAllInstancesAccess(typeTraceMock)).andReturn(aa);
-		
+			EasyMock.expect(executionTraceMock.accesses()).andReturn(hasAccesses);
 		}
 	}
 
@@ -275,30 +210,10 @@ public class ExecutionListenerTests {
 		
 		@Mock
 		private IEolExecutionTraceManager<TestModuleExecution> traceManagerMock;
-		@Mock
-		private IModuleExecution evlExecutionMock;
 
-		
+
 		@Mock
-		private IEolContext contextMock;	// = mock(IEolContext.class);
-//		@Mock
-//		private IModel modelMock;	// = mock(IModel.class);
-//		@Mock
-//		private IModelTrace modelTraceMock;	// = mock(IModelTrace.class);
-//		@Mock
-//		private IModuleExecutionHasModel hasModelMock;	// = mock(IModuleExecutionHasModel.class);
-//		@Mock
-//		private IModelTraceHasElements modelHasElementsMock;	// = mock(IModelTraceHasElements.class);
-//		@Mock
-//		private IPropertyTrace propertyTraceMock;	// = mock(IPropertyTrace.class);
-//		@Mock
-//		private IPropertyAccess pa;	// = mock(IPropertyAccess.class);
-//		@Mock
-//		private IModelElementTrace elementTraceMock;	// = mock(IModelElementTrace.class);
-//		@Mock
-//		private IModelElementTraceHasProperties elementHasPropMock;	// = mock(IModelElementTraceHasProperties.class);
-//		@Mock
-//		private IEolModuleExecutionRepository<TestModuleExecution> executionRepoMock;	// = mock(IEolModuleExecutionRepository.class);
+		private IEolContext contextMock;
 		
 		
 		private PropertyAccessExecutionListener listener;
@@ -312,7 +227,7 @@ public class ExecutionListenerTests {
 			String propertyvalue = "somePValue";
 			
 			// Init the listener
-			listener = new PropertyAccessExecutionListener(traceManagerMock, evlExecutionMock);
+			listener = new PropertyAccessExecutionListener();
 
 			// 1. Trigger listener by executing a TracedExecutableBlock
 			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
@@ -342,13 +257,11 @@ public class ExecutionListenerTests {
 		
 		@Test
 		public void testNoPropertyAccess() throws Exception {
-			String elementId = "some/path/element";
 			String result = "someValue";
 			String instance = "someObject";
-			String propertyName = "someProperty";
 			
 			// Init the listener
-			listener = new PropertyAccessExecutionListener(traceManagerMock, evlExecutionMock);
+			listener = new PropertyAccessExecutionListener();
 
 			// 1. Trigger listener by executing a TracedExecutableBlock
 			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
@@ -361,11 +274,8 @@ public class ExecutionListenerTests {
 			listener.finishedExecuting(objectValue, instance, null);
 			
 			//3. Create an operation call expression
-			NameExpression targetExpression = new NameExpression("modelA!typeB");
 			StringLiteral[] params = new StringLiteral[0];
 			OperationCallExpression ast = createOperationCallExpression(objectValue, "someOp", params);
-			
-			// 4. No record as there should be no ExecutionTrace access
 			
 			// Test
 			replayAll();
@@ -449,18 +359,17 @@ public class ExecutionListenerTests {
 		 * @param propertyvalue 
 		 * @throws EolIncrementalExecutionException
 		 */
-		private void recordExecutionTrace(String elementId, String instance, String propertyName, IExecutionTrace executionTraceMock)
-				throws EolIncrementalExecutionException {
+		private void recordExecutionTrace(String elementId, String instance, String propertyName, IExecutionTrace executionTraceMock) {
 			
 			IModel modelMock = mock(IModel.class);
-			IModelTrace modelTraceMock = mock(IModelTrace.class);
-			IModuleExecutionHasModel hasModelMock = mock(IModuleExecutionHasModel.class);
-			IModelTraceHasElements modelHasElementsMock = mock(IModelTraceHasElements.class);
-			IPropertyTrace propertyTraceMock = mock(IPropertyTrace.class);
-			IPropertyAccess pa = createNiceMock(IPropertyAccess.class);
-			IModelElementTrace elementTraceMock = mock(IModelElementTrace.class);
-			IModelElementTraceHasProperties elementHasPropMock = mock(IModelElementTraceHasProperties.class);
-			IEolModuleExecutionRepository<TestModuleExecution> executionRepoMock = mock(IEolModuleExecutionRepository.class);
+//			IModelTrace modelTraceMock = mock(IModelTrace.class);
+//			IModuleExecutionHasModel hasModelMock = mock(IModuleExecutionHasModel.class);
+//			IModelTraceHasElements modelHasElementsMock = mock(IModelTraceHasElements.class);
+//			IPropertyTrace propertyTraceMock = mock(IPropertyTrace.class);
+//			IPropertyAccess pa = createNiceMock(IPropertyAccess.class);
+//			IModelElementTrace elementTraceMock = mock(IModelElementTrace.class);
+//			IModelElementTraceHasProperties elementHasPropMock = mock(IModelElementTraceHasProperties.class);
+//			IEolModuleExecutionRepository<TestModuleExecution> executionRepoMock = mock(IEolModuleExecutionRepository.class);
 			
 			ModelRepository modelRepo = new ModelRepository();
 			modelRepo.addModel(modelMock);
@@ -469,38 +378,38 @@ public class ExecutionListenerTests {
 			EasyMock.expect(modelMock.getElementId(instance)).andReturn(elementId).anyTimes();
 			EasyMock.expect(modelMock.knowsAboutProperty(instance, propertyName)).andReturn(true).times(1);
 			
-			// Model repo has no model by that name
-			IModelTraceRepository modelTraceRepoMock = createNiceMock(IModelTraceRepository.class);  // Nice so it allows add()
-			EasyMock.expect(modelTraceRepoMock.getModelTraceByName(modelName)).andReturn(null);
-			// The trace manager returns the model trace repo mock
-			EasyMock.expect(traceManagerMock.modelTraces()).andReturn(modelTraceRepoMock).times(2);
-
-			// Since not present, the evlExecution will need to create one
-			EasyMock.expect(evlExecutionMock.createModelTrace(modelName)).andReturn(modelTraceMock);
-				// evlExecution has models
-			//EasyMock.expect(evlExecutionMock.model()).andReturn(hasModelMock).times(1);
-						
-			// Model has no elements
-			EasyMock.expect(modelTraceMock.elements()).andReturn(modelHasElementsMock);
-			EasyMock.expect(modelHasElementsMock.get()).andReturn(new ArrayDeque<>());
-						
-			// Since not present, the model trace will create a modelElement
-			
-			EasyMock.expect(modelTraceMock.createModelElementTrace(elementId)).andReturn(elementTraceMock);
-			
-			// Element has no properties
-			EasyMock.expect(elementTraceMock.properties()).andReturn(elementHasPropMock);
-			EasyMock.expect(elementHasPropMock.get()).andReturn(new ArrayDeque<>());
-			
-			// Since not present, the element will create a Property
-			EasyMock.expect(elementTraceMock.createPropertyTrace(propertyName)).andReturn(propertyTraceMock);
-			
-			// No traces for the property
-			EasyMock.expect(traceManagerMock.moduleExecutionTraces()).andReturn((IEolModuleExecutionRepository) executionRepoMock);
-			EasyMock.expect(executionRepoMock.getPropertyAccessFor(executionTraceMock, propertyTraceMock)).andReturn(null);
-			
-			// We need to create one
-			EasyMock.expect(executionTraceMock.createPropertyAccess(propertyTraceMock)).andReturn(pa);
+//			// Model repo has no model by that name
+//			IModelTraceRepository modelTraceRepoMock = createNiceMock(IModelTraceRepository.class);  // Nice so it allows add()
+//			EasyMock.expect(modelTraceRepoMock.getModelTraceByName(modelName)).andReturn(null);
+//			// The trace manager returns the model trace repo mock
+//			EasyMock.expect(traceManagerMock.modelTraces()).andReturn(modelTraceRepoMock).times(2);
+//
+//			// Since not present, the evlExecution will need to create one
+//			EasyMock.expect(evlExecutionMock.createModelTrace(modelName)).andReturn(modelTraceMock);
+//				// evlExecution has models
+//			//EasyMock.expect(evlExecutionMock.model()).andReturn(hasModelMock).times(1);
+//						
+//			// Model has no elements
+//			EasyMock.expect(modelTraceMock.elements()).andReturn(modelHasElementsMock);
+//			EasyMock.expect(modelHasElementsMock.get()).andReturn(new ArrayDeque<>());
+//						
+//			// Since not present, the model trace will create a modelElement
+//			
+//			EasyMock.expect(modelTraceMock.createModelElementTrace(elementId)).andReturn(elementTraceMock);
+//			
+//			// Element has no properties
+//			EasyMock.expect(elementTraceMock.properties()).andReturn(elementHasPropMock);
+//			EasyMock.expect(elementHasPropMock.get()).andReturn(new ArrayDeque<>());
+//			
+//			// Since not present, the element will create a Property
+//			EasyMock.expect(elementTraceMock.createPropertyTrace(propertyName)).andReturn(propertyTraceMock);
+//			
+//			// No traces for the property
+//			EasyMock.expect(traceManagerMock.moduleExecutionTraces()).andReturn((IEolModuleExecutionRepository) executionRepoMock);
+//			EasyMock.expect(executionRepoMock.getPropertyAccessFor(executionTraceMock, propertyTraceMock)).andReturn(null);
+//			
+//			// We need to create one
+//			EasyMock.expect(executionTraceMock.createPropertyAccess(propertyTraceMock)).andReturn(pa);
 		}
 
 		/**

@@ -40,29 +40,33 @@ elements.
   EMF models support bi--directional relationships between classes by defining one EReference
   as the opposite of the other. In OrientDB, a single edge is needed to define the relationship.
   In order to avoid double edges the OrientDbGraph annotation allow you to define which
-  EReferences in the metamodel should be used as edges in the DB. If the EReference used for
-  and edge has an opposite reference, the appropriate access methods will be added to the
-  Vertex definitions.
+  EReferences in the metamodel should be used as edges in the DB.
+  To define an EReference as an edge, add the (edge, true) pair to the annotation values.
+  If the EReference used for and edge has an opposite reference, the appropriate access methods
+  will be added to the Vertex definitions.
 
 ## http://eclipse.org/epsilon/incremental/Index
 The modelling technology can support the concept of index/PK. The index/PK is usually formed by one
 or more features of the class and are intended to increase DB performance (looking elements by
 index is faster). 
 
-  The OrientDbIndex annotation allows information relevant to to Index definitions (see 
+  The Index annotation allows information relevant to to Index definitions (see 
   http://orientdb.com/docs/last/Indexes.html). To define an index for an EClass, the annotation
   must reference the EAttribute that will be used as an index and must include a details entry
   where the key is "type" and the value is one of the supported index types.
   
-  OrientDbIndex annotaions should only be added to EClasses, and will be ignored in any other
+  OrientDbIndex annotations should only be added to EClasses, and will be ignored in any other
   metamodel elements. 
  
-## http://eclipse.org/epsilon/incremental/UniqueIn
+## http://eclipse.org/epsilon/incremental/ValueObject
+ValueOjects are created when needed, and 
 
 
-  ## https://eclipse.org/epsilon/incremental/OrientDbProperty ##
+## https://eclipse.org/epsilon/incremental/Property
 
-  By default the temaplte assumes that EAttributes use EPrmitive types (EString, EInt, etc.) as
-  types and uses the correspoinding Java type to select the appropiate OType type when creating
-  properties. For cases in which this is not the case, the OrientDbProperty can be used to have
+  By default the tempalte assumes that EAttributes use EPrmitive types (EString, EInt, etc.) as
+  types and uses the corresponding Java type to select the appropriate Type type when creating
+  properties. For cases in which this is not the case, the Property can be used to have
   more control over the used type. THIS IS NOT IMPLEMENTED YET.
+
+## http://eclipse.org/epsilon/incremental/UniqueIn
