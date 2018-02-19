@@ -14,6 +14,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 
+import org.eclipse.epsilon.base.incremental.trace.eol.ExecutionContext;
+import org.eclipse.epsilon.base.incremental.trace.eol.Trace;
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundException;
@@ -26,8 +28,6 @@ import org.eclipse.epsilon.evl.incremental.models.AbstractEvlTraceModel;
 import org.eclipse.epsilon.evl.incremental.orientdb.dialog.OrientDBManagerConfiguration;
 import org.eclipse.epsilon.evl.incremental.orientdb.execute.OrientDbEvlTraceInformation;
 import org.eclipse.epsilon.evl.incremental.orientdb.execute.TraceOrientDbDAO;
-import org.eclipse.epsilon.incremental.trace.eol.ExecutionContext;
-import org.eclipse.epsilon.incremental.trace.eol.Trace;
 
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 

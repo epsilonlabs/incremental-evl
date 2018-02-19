@@ -12,11 +12,12 @@
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import java.util.Queue;
+
+import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 import org.eclipse.epsilon.eol.incremental.trace.util.ConcurrentSetQueue;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasSatisfiedInvariants;
-import org.eclipse.epsilon.incremental.trace.impl.Feature;
 
 
 /**

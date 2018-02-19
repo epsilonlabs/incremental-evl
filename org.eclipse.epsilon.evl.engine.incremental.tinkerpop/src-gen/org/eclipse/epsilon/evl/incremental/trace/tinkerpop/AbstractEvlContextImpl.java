@@ -13,8 +13,8 @@
  
 package org.eclipse.epsilon.evl.incremental.trace.tinkerpop;
 
+import org.eclipse.epsilon.base.incremental.trace.evl.*;
 import org.eclipse.epsilon.eol.incremental.trace.tinkerpop.AbstractModuleElementImpl;
-import org.eclipse.epsilon.incremental.trace.evl.*;
 
 /**
  * An abstract, generic, implementation of EvlContext. The generic component allows the class

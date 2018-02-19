@@ -15,7 +15,7 @@ import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTraceHasElement;
 import org.eclipse.epsilon.base.incremental.trace.impl.PropertyTraceHasElement;

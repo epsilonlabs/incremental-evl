@@ -11,10 +11,10 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTraceHasModule;
-import org.eclipse.epsilon.incremental.trace.impl.Feature;
 
 
 /**

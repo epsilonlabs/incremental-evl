@@ -11,11 +11,10 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
-
-import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
 
 /**
  * Implementation of IModelTrace. 

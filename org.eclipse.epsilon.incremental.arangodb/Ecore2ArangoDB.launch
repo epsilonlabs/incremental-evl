@@ -2,11 +2,13 @@
 <launchConfiguration type="org.epsilon.egl.eclipse.dt.launching.EglLaunchConfigurationDelegate">
 <booleanAttribute key="appendToFile" value="false"/>
 <listAttribute key="defaultFormatters"/>
+<intAttribute key="egxGenerateTo" value="1"/>
 <booleanAttribute key="fine_grained_profiling" value="false"/>
 <intAttribute key="generateTo" value="1"/>
 <listAttribute key="models">
 <listEntry value="isMetamodelFileBased=false&#10;name=ecore&#10;readOnLoad=true&#10;storeOnDisposal=false&#10;aliases=&#10;cached=true&#10;fileBasedMetamodelUri=&#10;metamodelUri=http\://www.eclipse.org/emf/2002/Ecore&#10;modelUri=platform\:/resource/org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore&#10;reuseUnmodifiedFileBasedMetamodels=true&#10;type=EMF&#10;modelFile=/org.eclipse.epsilon.eol.engine.incremental/model/ExecutionTrace.ecore&#10;expand=true&#10;metamodelFile="/>
 </listAttribute>
+<stringAttribute key="outputDirPath" value=""/>
 <stringAttribute key="outputFilePath" value=""/>
 <listAttribute key="parameters"/>
 <booleanAttribute key="produceTrace" value="false"/>

@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionTraceHasAccesses;
-import org.eclipse.epsilon.incremental.trace.impl.Feature;
+import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 
 
 /**

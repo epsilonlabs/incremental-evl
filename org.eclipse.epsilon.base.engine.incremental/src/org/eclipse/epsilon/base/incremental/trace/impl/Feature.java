@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.incremental.trace.impl;
+package org.eclipse.epsilon.base.incremental.trace.impl;
 
 /**
  * A simple class to store information about a Feature. Currently, extending classes are not expected to manage

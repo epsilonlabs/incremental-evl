@@ -11,10 +11,10 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTraceHasInvariant;
-import org.eclipse.epsilon.incremental.trace.impl.Feature;
 
 
 /**

@@ -15,7 +15,7 @@ import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionTraceHasAccesses;
 import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionTraceHasAccesses;

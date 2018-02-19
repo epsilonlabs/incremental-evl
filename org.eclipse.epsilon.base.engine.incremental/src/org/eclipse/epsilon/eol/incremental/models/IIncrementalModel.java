@@ -12,6 +12,15 @@ package org.eclipse.epsilon.eol.incremental.models;
 
 import java.util.Collection;
 
+import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
+import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
+import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceFactory;
 import org.eclipse.epsilon.eol.incremental.execute.IModuleIncremental;
 import org.eclipse.epsilon.eol.models.IModel;
 
@@ -27,6 +36,8 @@ public interface IIncrementalModel extends IModel {
 	
 	/**
 	 * Get the model Id. Id's are required to properly identify traces.
+	 *
+	 * @return the model id
 	 */
 	String getModelId();
 	
@@ -40,6 +51,8 @@ public interface IIncrementalModel extends IModel {
 	/**
 	 * Sets whether this model will deliver notifications to the modules. The notifications are usually enabled after
 	 * the intial traces have been executed (e.g. first execution of the ExL script).
+	 *
+	 * @param deliver the new deliver
 	 */
 	void setDeliver(boolean deliver);
 	
@@ -53,9 +66,15 @@ public interface IIncrementalModel extends IModel {
 	/**
 	 * Returns list of the modules associated with this model. The associated modules will receive notifications of
 	 * changes in the model.
-	 * 
-	 * @return
+	 *
+	 * @return the modules
 	 */
 	Collection<IModuleIncremental> getModules();
+	
+	/**
+	 * Return the factory for creating model traces
+	 * @return
+	 */
+	ModelTraceFactory getModelTraceFactory();
 	
 }

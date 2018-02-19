@@ -1,11 +1,13 @@
 package org.eclipse.epsilon.evl.incremental.dom;
 
 
+import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
+import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
-import org.eclipse.epsilon.incremental.dom.TracedExecutableBlock;
 
-public class TracedGuardBlock extends TracedExecutableBlock<Boolean> {
+public class TracedGuardBlock extends TracedExecutableBlock<Boolean> 
+		implements TracedModuleElement {
 	
 	private IGuardTrace trace;
 

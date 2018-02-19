@@ -13,8 +13,8 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccessHasProperty;
-import org.eclipse.epsilon.incremental.trace.impl.Feature;
 
 
 /**

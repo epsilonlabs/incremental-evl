@@ -11,11 +11,10 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
-
-import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
 
 /**
  * Implementation of IEvlModuleTrace. 

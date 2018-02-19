@@ -11,7 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
-import org.eclipse.epsilon.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;    

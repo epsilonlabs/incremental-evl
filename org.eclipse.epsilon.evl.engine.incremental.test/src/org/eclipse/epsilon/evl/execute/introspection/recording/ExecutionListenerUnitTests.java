@@ -16,13 +16,13 @@ import org.eclipse.epsilon.eol.dom.OperationCallExpression;
 import org.eclipse.epsilon.eol.dom.StringLiteral;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
-import org.eclipse.epsilon.eol.incremental.trace.IModuleExecution;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
+import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
+import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceRepository;
 import org.eclipse.epsilon.evl.incremental.execute.introspection.recording.SatisfiesInvocationExecutionListener;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTraceHasConstraints;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleExecution;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasInvariantContext;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
@@ -39,21 +39,17 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({	ExecutionListenerUnitTests.SatisfiesInvocationExecutionListenerTest.class})
 public class ExecutionListenerUnitTests {
 	
-	private interface TestModuleExecution extends IModuleExecution { }
-	
 	public static class SatisfiesInvocationExecutionListenerTest extends EasyMockSupport {
 		
 		private final boolean result = true;
 		private final String typeName = "modelA!typeB";
 
-		
 		@Rule
         public EasyMockRule rule = new EasyMockRule(this);
 		
 		@Mock
-		private IEolExecutionTraceManager<TestModuleExecution> traceManagerMock;
-		@Mock
-		private IEvlModuleExecution evlExecutionMock;
+		private IEvlExecutionTraceManager<IEvlExecutionTraceRepository> traceManagerMock;
+		
 		@Mock
 		private IEolContext contextMock;
 		
@@ -220,10 +216,10 @@ public class ExecutionListenerUnitTests {
 			EasyMock.expect(contextMock.constraints()).andReturn(contextHasInvariants).times(params.length);
 			EasyMock.expect(contextHasInvariants.get()).andReturn(new ArrayDeque<>()).times(params.length);
 			for (StringLiteral p : params) {
-				EasyMock.expect(evlExecutionMock.createInvariantTrace(p.getValue())).andReturn(targetInvariantMock);
+				//EasyMock.expect(evlExecutionMock.createInvariantTrace(p.getValue())).andReturn(targetInvariantMock);
 				EasyMock.expect(satisfiesMock.satisfiedInvariants()).andReturn(satisfiesHasSatisfiedInvariantMock);
 			}
-			EasyMock.expect(evlExecutionMock.createSatisfiesTrace(currentInvariantMock)).andReturn(satisfiesMock);
+			//EasyMock.expect(evlExecutionMock.createSatisfiesTrace(currentInvariantMock)).andReturn(satisfiesMock);
 		}
 
 	}

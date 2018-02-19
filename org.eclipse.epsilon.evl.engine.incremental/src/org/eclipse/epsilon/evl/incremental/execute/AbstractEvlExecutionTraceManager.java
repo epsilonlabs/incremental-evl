@@ -1,10 +1,10 @@
 package org.eclipse.epsilon.evl.incremental.execute;
 
 
+import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
+import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.eclipse.epsilon.eol.incremental.execute.AbstractEolExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.introspection.recording.SatisfiesInvocationExecutionListener;
-import org.eclipse.epsilon.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
-import org.eclipse.epsilon.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 
 
 /**

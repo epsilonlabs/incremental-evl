@@ -14,7 +14,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTraceHasModel;
-import org.eclipse.epsilon.incremental.trace.impl.Feature;
+import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 
 
 /**

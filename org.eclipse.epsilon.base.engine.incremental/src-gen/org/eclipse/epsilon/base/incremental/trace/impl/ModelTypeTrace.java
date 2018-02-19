@@ -15,7 +15,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTraceHasModel;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTypeTraceHasModel;

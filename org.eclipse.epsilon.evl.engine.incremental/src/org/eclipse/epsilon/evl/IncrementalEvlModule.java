@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
@@ -40,8 +42,6 @@ import org.eclipse.epsilon.evl.incremental.execute.context.TracedEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTrace;
 import org.eclipse.epsilon.evl.parse.EvlParser;
-import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.incremental.dom.TracedExecutableBlock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

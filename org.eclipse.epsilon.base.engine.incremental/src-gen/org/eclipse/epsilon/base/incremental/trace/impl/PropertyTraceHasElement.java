@@ -14,7 +14,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTraceHasElement;
-import org.eclipse.epsilon.incremental.trace.impl.Feature;
+import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 
 
 /**

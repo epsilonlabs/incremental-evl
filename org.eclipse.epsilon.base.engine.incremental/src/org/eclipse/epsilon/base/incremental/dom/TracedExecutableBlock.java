@@ -8,7 +8,7 @@
  * Contributors:
  *     Horacio Hoyos Rodriguez - initial API and implementation
  ******************************************************************************/
-package org.eclipse.epsilon.incremental.dom;
+package org.eclipse.epsilon.base.incremental.dom;
 
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;

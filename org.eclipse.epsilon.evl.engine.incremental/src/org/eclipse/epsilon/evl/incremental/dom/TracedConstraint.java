@@ -13,6 +13,9 @@ package org.eclipse.epsilon.evl.incremental.dom;
 
 import java.util.Iterator;
 
+import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
+import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.evl.dom.Constraint;
@@ -24,8 +27,6 @@ import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
 import org.eclipse.epsilon.evl.trace.ConstraintTrace;
-import org.eclipse.epsilon.incremental.EolIncrementalExecutionException;
-import org.eclipse.epsilon.incremental.dom.TracedExecutableBlock;
 
 /**
  * Subclass of {@link Constraint} for use with incremental evaluation and
@@ -35,7 +36,8 @@ import org.eclipse.epsilon.incremental.dom.TracedExecutableBlock;
  *
  */
 // FIXME this could be merged with the Constraint and use a flag
-public class TracedConstraint extends Constraint {
+public class TracedConstraint extends Constraint 
+		implements TracedModuleElement {
 	
 	private IInvariantTrace trace;
 

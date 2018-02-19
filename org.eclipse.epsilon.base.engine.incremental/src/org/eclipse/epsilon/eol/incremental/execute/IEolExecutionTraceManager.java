@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.epsilon.eol.incremental.execute;
 
-import org.eclipse.epsilon.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
-import org.eclipse.epsilon.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
+import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
+import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 
 /**
  * The manager holds the reference to the Trace Model, keeps a queue of model changes and flushes the changes

@@ -1,6 +1,11 @@
 package org.eclipse.epsilon.evl.incremental.dom;
 
+import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
+import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ElementAccess;
@@ -10,6 +15,7 @@ import org.eclipse.epsilon.common.module.IModule;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
+import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
@@ -22,8 +28,8 @@ import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.ContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTrace;
-import org.eclipse.epsilon.incremental.EolIncrementalExecutionException;
-import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A ConstraintContext that holds a reference to its tracing reference so it can create ElementAccessTraces and that
@@ -32,7 +38,10 @@ import org.eclipse.epsilon.incremental.TraceModelDuplicateRelation;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class TracedConstraintContext extends ConstraintContext {
+public class TracedConstraintContext extends ConstraintContext 
+		implements TracedModuleElement {
+	
+	private static final Logger logger = LoggerFactory.getLogger(TracedConstraintContext.class);
 	
 	private IContextTrace trace;
 	private int index;
@@ -52,7 +61,7 @@ public class TracedConstraintContext extends ConstraintContext {
 		TracedEvlContext tracedEvlContext = (TracedEvlContext)context;
 		try {
 			createContextTrace(object, tracedEvlContext, owningModel);
-		} catch (TraceModelDuplicateRelation e) {
+		} catch (EolIncrementalExecutionException e) {
 			throw new EolRuntimeException("Error creating trace information. " + e.getMessage(), this);
 		}
 		if (guardBlock != null) {
@@ -67,6 +76,11 @@ public class TracedConstraintContext extends ConstraintContext {
 			return true;
 		}
 	}
+	
+	@Override
+	public IExecutionTrace getTrace() {
+		return trace;
+	}
 
 	/**
 	 * Add an ElementAccessTrace for the ConstraintContext
@@ -76,42 +90,47 @@ public class TracedConstraintContext extends ConstraintContext {
 	 * @param owningModel	The model that owns the element
 	 * @throws TraceModelDuplicateRelation 
 	 */
-	private void createContextTrace(Object modelElement, TracedEvlContext context, final IModel owningModel)
-			throws TraceModelDuplicateRelation {
+	private void createContextTrace(Object element, TracedEvlContext context, final IModel model)
+			throws EolIncrementalExecutionException {
 		
-		IModelTrace modelTrace;
-		modelTrace = new ModelTrace(owningModel.getName());
-		String elementUri = owningModel.getElementId(modelElement);
-		IModelElementTrace modelElementTrace = new ModelElementTrace(elementUri, modelTrace);
-		IElementAccess access = new ElementAccess(modelElementTrace);
+		logger.info("Create ContextTrace: element: {}, context: {}", element, getTypeName());
+		if (!(model instanceof IIncrementalModel)) {
+			logger.warn("Can not trace non-incremental models. Model {} is not an IIncrementalModel",  model);
+			throw new EolIncrementalExecutionException("Can not trace non-incremental models");
+		}
+		IElementAccess access = ((IIncrementalModel)model).getModelTraceFactory().createElementAccess(element);
 		trace.accesses().create(access);
 		IEvlExecutionTraceRepository repo = context.getTraceManager().getExecutionTraceRepository();
-		IEvlModuleTrace moduleTrace = new EvlModuleTrace(module.getSourceUri().toString());
+		IEvlModuleTrace moduleTrace = context.getEvlModuleTrace();
 		trace = repo.getContextTraceFor(getTypeName(), index, moduleTrace);
 		if (trace == null) {
-			trace = new ContextTrace(getTypeName(), index, moduleTrace);
+			try {
+				trace = new ContextTrace(getTypeName(), index, moduleTrace);
+			} catch (TraceModelDuplicateRelation e1) {
+				logger.warn("If the ContextTrace was not in the repo it should have been created correctly.");
+				throw new EolIncrementalExecutionException("Error creating new ContextTrace", e1);
+			}
 			repo.add(trace);
 			if (guardBlock != null) {
 				try {
 					IGuardTrace guard = trace.createGuardTrace();
 					((TracedGuardBlock) guardBlock).setTrace(guard);
-				} catch (EolIncrementalExecutionException e) {
-					throw new IllegalStateException("Can't create GuardTrace for Context " + getTypeName() + ".", e);	
+				} catch (EolIncrementalExecutionException e2) {
+					throw new IllegalStateException("Can't create GuardTrace for Context " + getTypeName() + ".", e2);	
 				}	
 			}
 		}
 		// This created traces for the current execution, do we need to keep groups of traces that executed?
 		for (Constraint c : constraints) {
 			TracedConstraint tc = (TracedConstraint) c;
-			try {
-				IInvariantTrace tcTrace = trace.createInvariantTrace(tc.getName());
-				tc.setTrace(tcTrace);
-				tc.createGuardTrace();
-				tc.createCheckTrace();
-				tc.createMessageTrace();
-			} catch (EolIncrementalExecutionException e) {
-				throw new IllegalStateException("Error creating execution trace elements.", e);
-			}
+			IInvariantTrace tcTrace = trace.createInvariantTrace(tc.getName());
+			tc.setTrace(tcTrace);
+			tc.createGuardTrace();
+			tc.createCheckTrace();
+			tc.createMessageTrace();
+			
 		}
 	}
+
+
 }

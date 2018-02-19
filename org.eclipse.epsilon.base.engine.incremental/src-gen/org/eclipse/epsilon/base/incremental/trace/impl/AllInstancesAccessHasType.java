@@ -13,8 +13,8 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccessHasType;
-import org.eclipse.epsilon.incremental.trace.impl.Feature;
 
 
 /**
