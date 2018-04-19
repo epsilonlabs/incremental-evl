@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-02-01.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-04-18.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -32,6 +32,7 @@ public interface IModelElementTrace extends IIdElement {
      * @return the value of the '<em>Uri</em>' attribute.
      */
     String getUri();            
+
     /** The model reference. */
     IModelElementTraceHasModel model();
                 

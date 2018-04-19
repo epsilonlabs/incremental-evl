@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-02-01.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-04-18.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -11,10 +11,20 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
-import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+
+import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
+import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleTraceHasExecutionContexts;
+import org.eclipse.epsilon.base.incremental.trace.IModuleTraceHasRuleTraces;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModuleTraceHasExecutionContexts;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModuleTraceHasRuleTraces;
+import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.evl.incremental.trace.impl.ContextTrace;
 
 /**
  * Implementation of IEvlModuleTrace. 
@@ -27,12 +37,20 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     /** The source */
     private String source;
 
+    /** The ruleTraces relation */
+    private final IModuleTraceHasRuleTraces ruleTraces;
+
+    /** The executionContexts relation */
+    private final IModuleTraceHasExecutionContexts executionContexts;
+
     /**
      * Instantiates a new EvlModuleTrace. The EvlModuleTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
     public EvlModuleTrace(String source) throws TraceModelDuplicateRelation {
         this.source = source;
+        this.ruleTraces = new ModuleTraceHasRuleTraces(this);
+        this.executionContexts = new ModuleTraceHasExecutionContexts(this);
     }
     
     @Override
@@ -52,15 +70,59 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     }
     
     @Override
+    public IModuleTraceHasRuleTraces ruleTraces() {
+        return ruleTraces;
+    }
+
+    @Override
+    public IModuleTraceHasExecutionContexts executionContexts() {
+        return executionContexts;
+    }
+
+
+    @Override
+    public IContextTrace createContextTrace(String kind, Integer index, IModuleTrace module, IExecutionContext executionContext) throws EolIncrementalExecutionException {
+        IContextTrace contextTrace = null;
+        try {
+            contextTrace = new ContextTrace(kind, index, module, executionContext);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (contextTrace != null) {
+    	        return contextTrace;
+    	    }
+            try {
+                contextTrace = this.ruleTraces.get().stream()
+                    .filter(t -> t instanceof IContextTrace)
+                    .map(IContextTrace.class::cast)
+                    .filter(item -> item.getKind().equals(kind))
+                    .filter(item -> item.getIndex().equals(index))
+                    .filter(item -> item.module().get().equals(module))
+                    .filter(item -> item.executionContext().get().equals(executionContext))
+                    .findFirst()
+                    .get();
+            } catch (NoSuchElementException ex) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ContextTrace was "
+                        + "duplicate but previous one was not found.");
+            }
+        }
+        return contextTrace;
+    }      
+            
+                  
+    @Override
     public boolean sameIdentityAs(final IEvlModuleTrace other) {
         if (other == null) {
             return false;
         }
-        if (getSource() == null) {
-            if (other.getSource() != null)
+        String source = getSource();
+        String otherSource = other.getSource();
+        if (source == null) {
+            if (otherSource != null)
                 return false;
-        } else if (!getSource().equals(other.getSource()))
+        } else if (!source.equals(otherSource)) {
             return false;
+        }
         return true;
     }
 

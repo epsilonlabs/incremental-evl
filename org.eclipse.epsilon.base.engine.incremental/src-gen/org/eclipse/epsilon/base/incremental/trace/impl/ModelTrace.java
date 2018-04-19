@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-02-01.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-04-18.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -11,10 +11,11 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+
+import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 
 /**
  * Implementation of IModelTrace. 
@@ -51,16 +52,20 @@ public class ModelTrace implements IModelTrace {
         return name;
     }
     
+
     @Override
     public boolean sameIdentityAs(final IModelTrace other) {
         if (other == null) {
             return false;
         }
-        if (getName() == null) {
-            if (other.getName() != null)
+        String name = getName();
+        String otherName = other.getName();
+        if (name == null) {
+            if (otherName != null)
                 return false;
-        } else if (!getName().equals(other.getName()))
+        } else if (!name.equals(otherName)) {
             return false;
+        }
         return true;
     }
 

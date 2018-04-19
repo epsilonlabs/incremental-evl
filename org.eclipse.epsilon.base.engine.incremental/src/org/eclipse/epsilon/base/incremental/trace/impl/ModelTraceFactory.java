@@ -5,14 +5,16 @@ import java.util.Map;
 
 import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementVariable;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
-import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,7 @@ public class ModelTraceFactory {
 	private final Map<String, IAllInstancesAccess> ofTypeAccesses = new HashMap<>();
 	private final Map<String, IPropertyAccess> propertyAccesses = new HashMap<>();
 	private final Map<String, IElementAccess> elementAccesses = new HashMap<>();
+	private final Map<String, IModelElementVariable> modelElementVariables = new HashMap<>();
 
 	public ModelTraceFactory(IIncrementalModel model) throws EolIncrementalExecutionException {
 		super();
@@ -126,8 +129,8 @@ public class ModelTraceFactory {
 	public IPropertyTrace createPropertyTrace(Object element, String propertyName)
 			throws EolIncrementalExecutionException {
 		
-		logger.info("Creting PropertyTrace for {}", element);
 		String elementId = model.getElementId(element);
+		logger.info("Creting PropertyTrace for {}.{}", elementId, propertyName);
 		String propertyId = String.format("%s:%s", elementId, propertyName);
 		if (propertyTraces.containsKey(propertyId)) {
 			logger.info("Retreiving PropertyTrace from cache");
@@ -149,14 +152,15 @@ public class ModelTraceFactory {
 
 	/**
 	 * Creates the all instances access.
-	 *
-	 * @param typeName the type name
 	 * @param ofKind the of kind
+	 * @param typeName the type name
+	 * @param executionTrace the execution trace
+	 *
 	 * @return the all instances access
 	 * @throws EolIncrementalExecutionException if {@link #hasType(String)} is false for the type
 	 * @see #hasType(String)
 	 */
-	public IAllInstancesAccess createAllInstancesAccess(String typeName, boolean ofKind)
+	public IAllInstancesAccess createAllInstancesAccess(boolean ofKind, String typeName, IModuleElementTrace executionTrace)
 			throws EolIncrementalExecutionException {
 		
 		logger.info("Creting AllInstancesAccess for {} , kind: {}", typeName, ofKind);
@@ -174,11 +178,10 @@ public class ModelTraceFactory {
 		IAllInstancesAccess access;
 		try {
 			logger.info("Creating new AllInstancesAccess");
-			access = new AllInstancesAccess(createModelTypeTrace(typeName));
+			access = new AllInstancesAccess(ofKind, executionTrace, createModelTypeTrace(typeName));
 		} catch (TraceModelDuplicateRelation e) {
 			throw new EolIncrementalExecutionException("Error creating AllInstancesAccess for " + typeName, e);
 		}
-		access.setOfKind(ofKind);
 		cache.put(typeName, access);
 		return access;
 	}
@@ -188,11 +191,12 @@ public class ModelTraceFactory {
 	 *
 	 * @param element the element
 	 * @param propertyName the property name
+	 * @param executionTrace the execution trace
 	 * @return the i property access
 	 * @throws EolIncrementalExecutionException if the model does not know about the property
 	 * @see #knowsAboutProperty(Object, String)
 	 */
-	public IPropertyAccess createPropertyAccess(Object element, String propertyName)
+	public IPropertyAccess createPropertyAccess(Object element, String propertyName, IModuleElementTrace executionTrace)
 			throws EolIncrementalExecutionException {
 		
 		logger.info("Creting PropertyAccess for {} , proerty: {}", element, propertyName);
@@ -205,7 +209,7 @@ public class ModelTraceFactory {
 		IPropertyAccess access;
 		try {
 			logger.info("Creating new PropertyAccess");
-			access = new PropertyAccess(createPropertyTrace(element, propertyName));
+			access = new PropertyAccess(executionTrace, createPropertyTrace(element, propertyName));
 		} catch (TraceModelDuplicateRelation e) {
 			throw new EolIncrementalExecutionException("Error creating AllInstancesAccess for " + element + " and property " + propertyName, e);
 		}
@@ -217,11 +221,12 @@ public class ModelTraceFactory {
 	 * Creates the element access.
 	 *
 	 * @param element the element
+	 * @param currentTrace the execution trace
 	 * @return the i element access
 	 * @throws EolIncrementalExecutionException if the model does not own the element
 	 * @see #owns(Object)
 	 */
-	public IElementAccess createElementAccess(Object element) throws EolIncrementalExecutionException {
+	public IElementAccess createElementAccess(Object element, IModuleElementTrace currentTrace) throws EolIncrementalExecutionException {
 		logger.info("Creting ElementAccess for {}", element);
 		String elementId = model.getElementId(element);
 		if (elementAccesses.containsKey(elementId)) {
@@ -231,12 +236,39 @@ public class ModelTraceFactory {
 		IElementAccess access;
 		try {
 			logger.info("Creating new ElementAccess");
-			access = new ElementAccess(createModelElementTrace(element));
+			access = new ElementAccess(currentTrace, createModelElementTrace(element));
 		} catch (TraceModelDuplicateRelation e) {
 			throw new EolIncrementalExecutionException("Error creating ElementAccess for " + element, e);
 		}
 		elementAccesses.put(elementId, access);
 		return access;
+	}
+	
+	/**
+	 * Create an Model Element Variable
+	 * @param name the name of the variable
+	 * @param element the value of the variable
+	 * @return
+	 * @throws EolIncrementalExecutionException
+	 */
+	public IModelElementVariable createModelElementVariable(String name, Object element) throws EolIncrementalExecutionException {
+		
+		String elementId = model.getElementId(element);
+		logger.info("Creting ModelElementVariable for {}@{}", name, elementId);
+		String variableId = String.format("%s:%s", name, elementId);
+		if (modelElementVariables.containsKey(variableId)) {
+			logger.info("Retreiving ModelElementVariable from cache");
+			return modelElementVariables.get(variableId);
+		}
+		IModelElementVariable variable;
+		try {
+			logger.info("Creating new ModelElementVariable");
+			variable = new ModelElementVariable(name, createModelElementTrace(element));
+		} catch (TraceModelDuplicateRelation e) {
+			throw new EolIncrementalExecutionException("Error creating ModelElementVariable for " + name + " for element " + element);
+		}
+		modelElementVariables.put(variableId, variable);
+		return variable;
 	}
 
 }

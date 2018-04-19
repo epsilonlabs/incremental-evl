@@ -8,15 +8,15 @@ import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
+import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.OperationCallExpression;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelNotFoundException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
-import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,13 +42,13 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 	public static final Set<String> OPERATION_NAMES = new HashSet<>(Arrays.asList(SET_VALUES));
 	
 	/** Keep track of ModuleElements executing */
-	private final Deque<TracedModuleElement> moduleElementStack = new ArrayDeque<>();
+	private final Deque<TracedModuleElement<?>> moduleElementStack = new ArrayDeque<>();
 
 	@Override
 	public void aboutToExecute(ModuleElement ast, IEolContext context) {
 		logger.debug("aboutToExecute {}", ast);
 		if (ast instanceof TracedModuleElement) {
-			moduleElementStack.addLast((TracedModuleElement) ast);
+			moduleElementStack.addLast((TracedModuleElement<?>) ast);
 		}
 	}
 
@@ -58,7 +58,7 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 		if (moduleElementStack.isEmpty()) {
 			return;
 		}
-		TracedModuleElement currentAst = moduleElementStack.peekFirst();
+		TracedModuleElement<?> currentAst = moduleElementStack.peekFirst();
 		if (currentAst.equals(ast)) {
 			moduleElementStack.pollFirst();
 		}
@@ -70,7 +70,7 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 				String typeName = oce.getTargetExpression().getResolvedType().getName();
 				boolean ofKind = !"allOfType".equals(operationName);
 				try {
-					record(currentAst.getTrace(), ofKind, typeName, context);
+					record(currentAst.getCurrentTrace(), ofKind, typeName, context);
 				} catch (EolIncrementalExecutionException e) {
 					logger.warn("Unable to create traces for the execution of {}", ast, e);
 				}				
@@ -82,7 +82,7 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 		return moduleElementStack.isEmpty();
 	}
 
-	private void record(IExecutionTrace executionTrace, boolean ofKind, String modelAndMetaClass, IEolContext context)
+	private void record(IModuleElementTrace executionTrace, boolean ofKind, String modelAndMetaClass, IEolContext context)
 			throws EolIncrementalExecutionException {
 		
 		logger.info("Recording AllInstancesAccess. Type: {}, ofKind: {}", modelAndMetaClass, ofKind);
@@ -108,7 +108,7 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 			logger.warn("Can not trace non-incremental models. Model {} is not an IIncrementalModel",  model);
 			throw new EolIncrementalExecutionException(modelName);
 		}
-		IAllInstancesAccess allIns = ((IIncrementalModel)model).getModelTraceFactory().createAllInstancesAccess(typeName, ofKind);
+		IAllInstancesAccess allIns = ((IIncrementalModel)model).getModelTraceFactory().createAllInstancesAccess(ofKind, typeName, executionTrace);
 		executionTrace.accesses().create(allIns);
 	}
 

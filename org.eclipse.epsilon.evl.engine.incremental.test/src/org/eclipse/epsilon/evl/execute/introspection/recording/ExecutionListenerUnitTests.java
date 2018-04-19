@@ -8,6 +8,7 @@ import org.easymock.EasyMock;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
 import org.easymock.Mock;
+import org.eclipse.epsilon.base.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.compile.context.EolCompilationContext;
 import org.eclipse.epsilon.eol.dom.Expression;
@@ -15,7 +16,6 @@ import org.eclipse.epsilon.eol.dom.NameExpression;
 import org.eclipse.epsilon.eol.dom.OperationCallExpression;
 import org.eclipse.epsilon.eol.dom.StringLiteral;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
-import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
@@ -48,7 +48,7 @@ public class ExecutionListenerUnitTests {
         public EasyMockRule rule = new EasyMockRule(this);
 		
 		@Mock
-		private IEvlExecutionTraceManager<IEvlExecutionTraceRepository> traceManagerMock;
+		private IEvlExecutionTraceManager traceManagerMock;
 		
 		@Mock
 		private IEolContext contextMock;
@@ -72,7 +72,7 @@ public class ExecutionListenerUnitTests {
 			// 1. Trigger listener by executing a TracedExecutableBlock
 			TracedConstraint blockMock = new TracedConstraint();
 			IInvariantTrace executionTraceMock = mock(IInvariantTrace.class);
-			blockMock.setTrace(executionTraceMock);
+			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			// 2. Execute other expression
 			ModuleElement me = mock(ModuleElement.class);
@@ -88,7 +88,7 @@ public class ExecutionListenerUnitTests {
 			// 1. Trigger listener by executing a TracedExecutableBlock
 			TracedConstraint blockMock = new TracedConstraint();
 			IInvariantTrace executionTraceMock = mock(IInvariantTrace.class);
-			blockMock.setTrace(executionTraceMock);
+			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			// 2. Execute a non-satisfies operation
 			ast = ExecutionListenerUnitTests.createOperationCallExpression(targetExpression, "getOne", new StringLiteral[0]);
@@ -108,7 +108,7 @@ public class ExecutionListenerUnitTests {
 			// 1. Trigger listener by executing a TracedExecutableBlock
 			TracedConstraint blockMock = new TracedConstraint();
 			IInvariantTrace executionTraceMock = mock(IInvariantTrace.class);
-			blockMock.setTrace(executionTraceMock);
+			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			
 			// 2. Record invocations
@@ -142,7 +142,7 @@ public class ExecutionListenerUnitTests {
 			// 1. Trigger listener by executing a TracedExecutableBlock
 			TracedConstraint blockMock = new TracedConstraint();
 			IInvariantTrace executionTraceMock = mock(IInvariantTrace.class);
-			blockMock.setTrace(executionTraceMock);
+			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			
 			// 2. Record invocations
@@ -178,7 +178,7 @@ public class ExecutionListenerUnitTests {
 			// 1. Trigger listener by executing a TracedExecutableBlock
 			TracedConstraint blockMock = new TracedConstraint();
 			IInvariantTrace executionTraceMock = mock(IInvariantTrace.class);
-			blockMock.setTrace(executionTraceMock);
+			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			
 			// 2. Record invocations

@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.epsilon.base.incremental.execute.IEolExecutionTraceManager;
+import org.eclipse.epsilon.base.incremental.execute.IEolIncrementalContext;
 import org.eclipse.epsilon.common.dt.console.EpsilonConsole;
 import org.eclipse.epsilon.common.dt.util.EclipseUtil;
 import org.eclipse.epsilon.common.dt.util.LogUtil;
@@ -29,8 +31,6 @@ import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.eol.dt.launching.EclipseContextManager;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
-import org.eclipse.epsilon.eol.incremental.execute.IEolIncrementalContext;
-import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 
 public class EclipseIncrementalContextManager extends EclipseContextManager {

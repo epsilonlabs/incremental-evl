@@ -6,7 +6,8 @@ import java.util.WeakHashMap;
 
 import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
+import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.AssignmentStatement;
@@ -14,7 +15,6 @@ import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
-import org.eclipse.epsilon.eol.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 	private static final Logger logger = LoggerFactory.getLogger(PropertyAccessExecutionListener.class);
 	
 	/** Keep track of ModuleElements executing */
-	private final Deque<TracedModuleElement> moduleElementStack = new ArrayDeque<>();
+	private final Deque<TracedModuleElement<?>> moduleElementStack = new ArrayDeque<>();
 	
 	/** For property access we need to save the value of the left side expression */
 	private final WeakHashMap<ModuleElement, Object> cache = new WeakHashMap<ModuleElement, Object>();
@@ -40,7 +40,7 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 	public void aboutToExecute(ModuleElement ast, IEolContext context) {
 		logger.debug("aboutToExecute {}", ast);
 		if (ast instanceof TracedModuleElement) {
-			moduleElementStack.addLast((TracedModuleElement) ast);
+			moduleElementStack.addLast((TracedModuleElement<?>) ast);
 		}
 	}
 
@@ -68,7 +68,7 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 			final IModel model = getModelThatKnowsAboutProperty(modelElement, propertyName, context);
 			if (model != null) {				
 				try {
-					record(tracedModuleElement.getTrace(), model, modelElement, propertyName, result);
+					record(tracedModuleElement.getCurrentTrace(), model, modelElement, propertyName, result);
 				} catch (EolIncrementalExecutionException e) {
 					logger.warn("Unable to create traces for the execution of {}", ast, e);
 				}
@@ -77,7 +77,7 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 		}
 	}
 
-	private void record(IExecutionTrace executionTrace, IModel model, Object modelElement,
+	private void record(IModuleElementTrace executionTrace, IModel model, Object modelElement,
 			String propertyName, Object result) throws EolIncrementalExecutionException {
 		
 		logger.info("Recording PropertyAccess. model: {}, element: {}, property: {}",
@@ -86,7 +86,7 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 			logger.warn("Can not trace non-incremental models. Model {} is not an IIncrementalModel",  model);
 			throw new EolIncrementalExecutionException("Can not trace non-incremental models");
 		}
-		IPropertyAccess pa = ((IIncrementalModel)model).getModelTraceFactory().createPropertyAccess(modelElement, propertyName);
+		IPropertyAccess pa = ((IIncrementalModel)model).getModelTraceFactory().createPropertyAccess(modelElement, propertyName, executionTrace);
 		// FIXME We need a smarter serializer depending on the type of object? Probably ask
 		// the owning model first, if not the use toString();
 		pa.setValue(result.toString());

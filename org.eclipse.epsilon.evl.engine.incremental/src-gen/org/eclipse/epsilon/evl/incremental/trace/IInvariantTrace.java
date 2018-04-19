@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-02-01.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-04-18.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -12,6 +12,7 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
 import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.trace.INestedModuleElementTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;    
@@ -25,7 +26,7 @@ import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
  * container references. That is, elements contained in the InvariantTrace must be
  * created through this interface.
  */
-public interface IInvariantTrace extends IGuardedElementTrace {
+public interface IInvariantTrace extends IGuardedElementTrace, INestedModuleElementTrace {
 
     /**
      * Returns the value of the '<em><b>Name</b></em>' attribute.

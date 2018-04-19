@@ -19,7 +19,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({BaseTraceModelTests.ElementAccessTests.class,
+@Suite.SuiteClasses({BaseTraceModelTests.ExecutionContextTests.class,
+                     BaseTraceModelTests.ModelElementVariableTests.class,
+                     BaseTraceModelTests.ElementAccessTests.class,
                      BaseTraceModelTests.AllInstancesAccessTests.class,
                      BaseTraceModelTests.PropertyAccessTests.class,
                      BaseTraceModelTests.ModelTraceTests.class,
@@ -29,11 +31,208 @@ import org.junit.runners.Suite;
 public class BaseTraceModelTests {
 
     
+    public static class ExecutionContextTests extends EasyMockSupport {
+    
+        @Rule
+        public EasyMockRule rule = new EasyMockRule(this);
+
+        /** Mock the target of the contextVariables reference. */
+        @Mock
+        private IModelElementVariable contextVariablesMock1;
+        
+        /** Mock the target of the contextVariables reference. */
+        @Mock
+        private IModelElementVariable contextVariablesMock2;
+        
+        /** Mock the target of the rules reference. */
+        @Mock
+        private IRuleTrace rulesMock1;
+        
+        /** Mock the target of the rules reference. */
+        @Mock
+        private IRuleTrace rulesMock2;
+        
+        /** Allow the target mock to populate the reference */
+        private IRuleTraceHasExecutionContext ruleTrace1;
+        
+        /** Allow the target mock to populate the reference */
+        private IRuleTraceHasExecutionContext ruleTrace2;
+        
+        private ExecutionContext classUnderTest;
+
+	    
+// protected region IgnoreExecutionContextAttributes on begin
+	    @Ignore
+// protected region IgnoreExecutionContextAttributes end	    
+	    @Test
+        public void testExecutionContextAttributes() throws Exception {
+            // protected region ExecutionContextInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ExecutionContext();                    
+            // protected region ExecutionContextInit end     
+// protected region ExecutionContextAttributes on begin
+            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
+// protected region ExecutionContextAttributes end
+        }
+
+        @Test
+        public void testExecutionContextCreateContextVariablesReference() throws Exception {
+            // protected region ExecutionContextInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ExecutionContext();                    
+            // protected region ExecutionContextInit end     
+            boolean result;
+            result = classUnderTest.contextVariables().create(contextVariablesMock1);
+            assertTrue(result);
+            result = classUnderTest.contextVariables().create(contextVariablesMock2);
+            assertTrue(result);
+            result = classUnderTest.contextVariables().create(contextVariablesMock1);
+            assertFalse(result);
+            // Create a second one
+            IExecutionContext classUnderTest2 = new ExecutionContext();
+            assertThat(classUnderTest2, is(notNullValue()));
+        }
+        
+        @Test
+        public void testExecutionContextDestroyContextVariablesReference() throws Exception {
+            // protected region ExecutionContextInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ExecutionContext();                    
+            // protected region ExecutionContextInit end     
+            classUnderTest.contextVariables().create(contextVariablesMock1);
+            boolean result = classUnderTest.contextVariables().destroy(contextVariablesMock1);
+            assertTrue(result);
+            assertThat(classUnderTest.contextVariables().get(), not(hasItem(contextVariablesMock1)));
+            result = classUnderTest.contextVariables().destroy(contextVariablesMock2);
+            assertFalse(result);
+        }
+        @Test
+        public void testExecutionContextCreateRulesReference() throws Exception {
+            // protected region ExecutionContextInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ExecutionContext();                    
+            // protected region ExecutionContextInit end     
+            ruleTrace1 = new RuleTraceHasExecutionContext(rulesMock1);
+            expect(rulesMock1.executionContext()).andReturn(ruleTrace1).anyTimes();
+            replay(rulesMock1);
+            ruleTrace2 = new RuleTraceHasExecutionContext(rulesMock2);
+            expect(rulesMock2.executionContext()).andReturn(ruleTrace2).anyTimes();
+            replay(rulesMock2);
+            boolean result;
+            result = classUnderTest.rules().create(rulesMock1);
+            assertTrue(result);
+            result = classUnderTest.rules().create(rulesMock2);
+            assertTrue(result);
+            result = classUnderTest.rules().create(rulesMock1);
+            assertFalse(result);
+            // Create a second one
+            IExecutionContext classUnderTest2 = new ExecutionContext();
+            assertThat(classUnderTest2, is(notNullValue()));
+        }
+        
+        @Test
+        public void testExecutionContextDestroyRulesReference() throws Exception {
+            // protected region ExecutionContextInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ExecutionContext();                    
+            // protected region ExecutionContextInit end     
+            ruleTrace1 = new RuleTraceHasExecutionContext(rulesMock1);
+            expect(rulesMock1.executionContext()).andReturn(ruleTrace1).anyTimes();
+            replay(rulesMock1);
+            classUnderTest.rules().create(rulesMock1);
+            boolean result = classUnderTest.rules().destroy(rulesMock1);
+            assertTrue(result);
+            assertThat(classUnderTest.rules().get(), not(hasItem(rulesMock1)));
+            ruleTrace2 = new RuleTraceHasExecutionContext(rulesMock2);
+            expect(rulesMock2.executionContext()).andReturn(ruleTrace2).anyTimes();
+            replay(rulesMock2);
+            result = classUnderTest.rules().destroy(rulesMock2);
+            assertFalse(result);
+        }
+    }
+    
+    public static class ModelElementVariableTests extends EasyMockSupport {
+    
+        @Rule
+        public EasyMockRule rule = new EasyMockRule(this);
+
+        /** Mock the target of the value reference. */
+        @Mock
+        private IModelElementTrace valueMock1;
+        
+        /** Mock the target of the value reference. */
+        @Mock
+        private IModelElementTrace valueMock2;
+        
+        private ModelElementVariable classUnderTest;
+
+	    
+// protected region IgnoreModelElementVariableAttributes on begin
+	    @Ignore
+// protected region IgnoreModelElementVariableAttributes end	    
+	    @Test
+        public void testModelElementVariableAttributes() throws Exception {
+            IModelElementTrace _value = mock(IModelElementTrace.class);
+        
+            // protected region ModelElementVariableInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ModelElementVariable("name1", _value);                    
+            // protected region ModelElementVariableInit end     
+// protected region ModelElementVariableAttributes on begin
+            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
+// protected region ModelElementVariableAttributes end
+        }
+
+        @Test
+        public void testModelElementVariableCreateValueReference() throws Exception {
+            IModelElementTrace _value = mock(IModelElementTrace.class);
+        
+            // protected region ModelElementVariableInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ModelElementVariable("name1", _value);                    
+            // protected region ModelElementVariableInit end     
+            boolean result;
+            result = classUnderTest.value().create(valueMock2);
+            assertFalse(result);
+            result = classUnderTest.value().create(_value);
+            assertFalse(result);
+            // Create a second one
+            IModelElementTrace _value2 = mock(IModelElementTrace.class);
+             
+            IModelElementVariable classUnderTest2 = new ModelElementVariable("name2", _value2);
+            assertThat(classUnderTest2, is(notNullValue()));
+        }
+        
+        @Test
+        public void testModelElementVariableDestroyValueReference() throws Exception {
+            IModelElementTrace _value = mock(IModelElementTrace.class);
+        
+            // protected region ModelElementVariableInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ModelElementVariable("name1", _value);                    
+            // protected region ModelElementVariableInit end     
+        
+            boolean result = classUnderTest.value().destroy(_value);
+            assertTrue(result);
+            assertThat(classUnderTest.value().get(), is(nullValue()));
+            result = classUnderTest.value().destroy(valueMock2);
+            assertFalse(result);
+        }
+    }
+    
     public static class ElementAccessTests extends EasyMockSupport {
     
         @Rule
         public EasyMockRule rule = new EasyMockRule(this);
 
+        /** Mock the target of the executionTrace reference. */
+        @Mock
+        private IModuleElementTrace executionTraceMock1;
+        
+        /** Mock the target of the executionTrace reference. */
+        @Mock
+        private IModuleElementTrace executionTraceMock2;
+        
         /** Mock the target of the element reference. */
         @Mock
         private IModelElementTrace elementMock1;
@@ -43,49 +242,103 @@ public class BaseTraceModelTests {
         private IModelElementTrace elementMock2;
         
         private ElementAccess classUnderTest;
-        
-        @Test
-        public void testElementAccessInstantiation() throws Exception {
-            IModelElementTrace _element = mock(IModelElementTrace.class);
-        
-            classUnderTest = new ElementAccess(_element);
-	    }
+
 	    
 // protected region IgnoreElementAccessAttributes on begin
 	    @Ignore
 // protected region IgnoreElementAccessAttributes end	    
 	    @Test
         public void testElementAccessAttributes() throws Exception {
+            IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+        
             IModelElementTrace _element = mock(IModelElementTrace.class);
         
-            classUnderTest = new ElementAccess(_element);
+            // protected region ElementAccessInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ElementAccess(_executionTrace, _element);                    
+            // protected region ElementAccessInit end     
 // protected region ElementAccessAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region ElementAccessAttributes end
         }
 
         @Test
-        public void testElementAccessCreateElementReference() throws Exception {
+        public void testElementAccessCreateExecutionTraceReference() throws Exception {
+            IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+        
             IModelElementTrace _element = mock(IModelElementTrace.class);
         
-            classUnderTest = new ElementAccess(_element);
+            // protected region ElementAccessInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ElementAccess(_executionTrace, _element);                    
+            // protected region ElementAccessInit end     
+            boolean result;
+            result = classUnderTest.executionTrace().create(executionTraceMock2);
+            assertFalse(result);
+            result = classUnderTest.executionTrace().create(_executionTrace);
+            assertFalse(result);
+            // Create a second one
+            IModuleElementTrace _executionTrace2 = mock(IModuleElementTrace.class);
+             
+            IModelElementTrace _element2 = mock(IModelElementTrace.class);
+             
+            IElementAccess classUnderTest2 = new ElementAccess(_executionTrace2, _element2);
+            assertThat(classUnderTest2, is(notNullValue()));
+        }
+        
+        @Test
+        public void testElementAccessDestroyExecutionTraceReference() throws Exception {
+            IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+        
+            IModelElementTrace _element = mock(IModelElementTrace.class);
+        
+            // protected region ElementAccessInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ElementAccess(_executionTrace, _element);                    
+            // protected region ElementAccessInit end     
+        
+        
+            boolean result = classUnderTest.executionTrace().destroy(_executionTrace);
+            assertTrue(result);
+            assertThat(classUnderTest.executionTrace().get(), is(nullValue()));
+            result = classUnderTest.executionTrace().destroy(executionTraceMock2);
+            assertFalse(result);
+        }
+        @Test
+        public void testElementAccessCreateElementReference() throws Exception {
+            IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+        
+            IModelElementTrace _element = mock(IModelElementTrace.class);
+        
+            // protected region ElementAccessInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ElementAccess(_executionTrace, _element);                    
+            // protected region ElementAccessInit end     
             boolean result;
             result = classUnderTest.element().create(elementMock2);
             assertFalse(result);
             result = classUnderTest.element().create(_element);
             assertFalse(result);
             // Create a second one
+            IModuleElementTrace _executionTrace2 = mock(IModuleElementTrace.class);
+             
             IModelElementTrace _element2 = mock(IModelElementTrace.class);
              
-            IElementAccess classUnderTest2 = new ElementAccess(_element2);
+            IElementAccess classUnderTest2 = new ElementAccess(_executionTrace2, _element2);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
         @Test
         public void testElementAccessDestroyElementReference() throws Exception {
+            IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+        
             IModelElementTrace _element = mock(IModelElementTrace.class);
         
-            classUnderTest = new ElementAccess(_element);
+            // protected region ElementAccessInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ElementAccess(_executionTrace, _element);                    
+            // protected region ElementAccessInit end     
+        
         
             boolean result = classUnderTest.element().destroy(_element);
             assertTrue(result);
@@ -100,6 +353,14 @@ public class BaseTraceModelTests {
         @Rule
         public EasyMockRule rule = new EasyMockRule(this);
 
+        /** Mock the target of the executionTrace reference. */
+        @Mock
+        private IModuleElementTrace executionTraceMock1;
+        
+        /** Mock the target of the executionTrace reference. */
+        @Mock
+        private IModuleElementTrace executionTraceMock2;
+        
         /** Mock the target of the type reference. */
         @Mock
         private IModelTypeTrace typeMock1;
@@ -109,49 +370,103 @@ public class BaseTraceModelTests {
         private IModelTypeTrace typeMock2;
         
         private AllInstancesAccess classUnderTest;
-        
-        @Test
-        public void testAllInstancesAccessInstantiation() throws Exception {
-            IModelTypeTrace _type = mock(IModelTypeTrace.class);
-        
-            classUnderTest = new AllInstancesAccess(_type);
-	    }
+
 	    
 // protected region IgnoreAllInstancesAccessAttributes on begin
 	    @Ignore
 // protected region IgnoreAllInstancesAccessAttributes end	    
 	    @Test
         public void testAllInstancesAccessAttributes() throws Exception {
+            IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+        
             IModelTypeTrace _type = mock(IModelTypeTrace.class);
         
-            classUnderTest = new AllInstancesAccess(_type);
+            // protected region AllInstancesAccessInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new AllInstancesAccess(false, _executionTrace, _type);                    
+            // protected region AllInstancesAccessInit end     
 // protected region AllInstancesAccessAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region AllInstancesAccessAttributes end
         }
 
         @Test
-        public void testAllInstancesAccessCreateTypeReference() throws Exception {
+        public void testAllInstancesAccessCreateExecutionTraceReference() throws Exception {
+            IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+        
             IModelTypeTrace _type = mock(IModelTypeTrace.class);
         
-            classUnderTest = new AllInstancesAccess(_type);
+            // protected region AllInstancesAccessInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new AllInstancesAccess(false, _executionTrace, _type);                    
+            // protected region AllInstancesAccessInit end     
+            boolean result;
+            result = classUnderTest.executionTrace().create(executionTraceMock2);
+            assertFalse(result);
+            result = classUnderTest.executionTrace().create(_executionTrace);
+            assertFalse(result);
+            // Create a second one
+            IModuleElementTrace _executionTrace2 = mock(IModuleElementTrace.class);
+             
+            IModelTypeTrace _type2 = mock(IModelTypeTrace.class);
+             
+            IAllInstancesAccess classUnderTest2 = new AllInstancesAccess(false, _executionTrace2, _type2);
+            assertThat(classUnderTest2, is(notNullValue()));
+        }
+        
+        @Test
+        public void testAllInstancesAccessDestroyExecutionTraceReference() throws Exception {
+            IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+        
+            IModelTypeTrace _type = mock(IModelTypeTrace.class);
+        
+            // protected region AllInstancesAccessInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new AllInstancesAccess(false, _executionTrace, _type);                    
+            // protected region AllInstancesAccessInit end     
+        
+        
+            boolean result = classUnderTest.executionTrace().destroy(_executionTrace);
+            assertTrue(result);
+            assertThat(classUnderTest.executionTrace().get(), is(nullValue()));
+            result = classUnderTest.executionTrace().destroy(executionTraceMock2);
+            assertFalse(result);
+        }
+        @Test
+        public void testAllInstancesAccessCreateTypeReference() throws Exception {
+            IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+        
+            IModelTypeTrace _type = mock(IModelTypeTrace.class);
+        
+            // protected region AllInstancesAccessInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new AllInstancesAccess(false, _executionTrace, _type);                    
+            // protected region AllInstancesAccessInit end     
             boolean result;
             result = classUnderTest.type().create(typeMock2);
             assertFalse(result);
             result = classUnderTest.type().create(_type);
             assertFalse(result);
             // Create a second one
+            IModuleElementTrace _executionTrace2 = mock(IModuleElementTrace.class);
+             
             IModelTypeTrace _type2 = mock(IModelTypeTrace.class);
              
-            IAllInstancesAccess classUnderTest2 = new AllInstancesAccess(_type2);
+            IAllInstancesAccess classUnderTest2 = new AllInstancesAccess(false, _executionTrace2, _type2);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
         @Test
         public void testAllInstancesAccessDestroyTypeReference() throws Exception {
+            IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+        
             IModelTypeTrace _type = mock(IModelTypeTrace.class);
         
-            classUnderTest = new AllInstancesAccess(_type);
+            // protected region AllInstancesAccessInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new AllInstancesAccess(false, _executionTrace, _type);                    
+            // protected region AllInstancesAccessInit end     
+        
         
             boolean result = classUnderTest.type().destroy(_type);
             assertTrue(result);
@@ -166,6 +481,14 @@ public class BaseTraceModelTests {
         @Rule
         public EasyMockRule rule = new EasyMockRule(this);
 
+        /** Mock the target of the executionTrace reference. */
+        @Mock
+        private IModuleElementTrace executionTraceMock1;
+        
+        /** Mock the target of the executionTrace reference. */
+        @Mock
+        private IModuleElementTrace executionTraceMock2;
+        
         /** Mock the target of the property reference. */
         @Mock
         private IPropertyTrace propertyMock1;
@@ -175,49 +498,103 @@ public class BaseTraceModelTests {
         private IPropertyTrace propertyMock2;
         
         private PropertyAccess classUnderTest;
-        
-        @Test
-        public void testPropertyAccessInstantiation() throws Exception {
-            IPropertyTrace _property = mock(IPropertyTrace.class);
-        
-            classUnderTest = new PropertyAccess(_property);
-	    }
+
 	    
 // protected region IgnorePropertyAccessAttributes on begin
 	    @Ignore
 // protected region IgnorePropertyAccessAttributes end	    
 	    @Test
         public void testPropertyAccessAttributes() throws Exception {
+            IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+        
             IPropertyTrace _property = mock(IPropertyTrace.class);
         
-            classUnderTest = new PropertyAccess(_property);
+            // protected region PropertyAccessInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new PropertyAccess(_executionTrace, _property);                    
+            // protected region PropertyAccessInit end     
 // protected region PropertyAccessAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region PropertyAccessAttributes end
         }
 
         @Test
-        public void testPropertyAccessCreatePropertyReference() throws Exception {
+        public void testPropertyAccessCreateExecutionTraceReference() throws Exception {
+            IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+        
             IPropertyTrace _property = mock(IPropertyTrace.class);
         
-            classUnderTest = new PropertyAccess(_property);
+            // protected region PropertyAccessInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new PropertyAccess(_executionTrace, _property);                    
+            // protected region PropertyAccessInit end     
+            boolean result;
+            result = classUnderTest.executionTrace().create(executionTraceMock2);
+            assertFalse(result);
+            result = classUnderTest.executionTrace().create(_executionTrace);
+            assertFalse(result);
+            // Create a second one
+            IModuleElementTrace _executionTrace2 = mock(IModuleElementTrace.class);
+             
+            IPropertyTrace _property2 = mock(IPropertyTrace.class);
+             
+            IPropertyAccess classUnderTest2 = new PropertyAccess(_executionTrace2, _property2);
+            assertThat(classUnderTest2, is(notNullValue()));
+        }
+        
+        @Test
+        public void testPropertyAccessDestroyExecutionTraceReference() throws Exception {
+            IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+        
+            IPropertyTrace _property = mock(IPropertyTrace.class);
+        
+            // protected region PropertyAccessInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new PropertyAccess(_executionTrace, _property);                    
+            // protected region PropertyAccessInit end     
+        
+        
+            boolean result = classUnderTest.executionTrace().destroy(_executionTrace);
+            assertTrue(result);
+            assertThat(classUnderTest.executionTrace().get(), is(nullValue()));
+            result = classUnderTest.executionTrace().destroy(executionTraceMock2);
+            assertFalse(result);
+        }
+        @Test
+        public void testPropertyAccessCreatePropertyReference() throws Exception {
+            IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+        
+            IPropertyTrace _property = mock(IPropertyTrace.class);
+        
+            // protected region PropertyAccessInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new PropertyAccess(_executionTrace, _property);                    
+            // protected region PropertyAccessInit end     
             boolean result;
             result = classUnderTest.property().create(propertyMock2);
             assertFalse(result);
             result = classUnderTest.property().create(_property);
             assertFalse(result);
             // Create a second one
+            IModuleElementTrace _executionTrace2 = mock(IModuleElementTrace.class);
+             
             IPropertyTrace _property2 = mock(IPropertyTrace.class);
              
-            IPropertyAccess classUnderTest2 = new PropertyAccess(_property2);
+            IPropertyAccess classUnderTest2 = new PropertyAccess(_executionTrace2, _property2);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
         @Test
         public void testPropertyAccessDestroyPropertyReference() throws Exception {
+            IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+        
             IPropertyTrace _property = mock(IPropertyTrace.class);
         
-            classUnderTest = new PropertyAccess(_property);
+            // protected region PropertyAccessInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new PropertyAccess(_executionTrace, _property);                    
+            // protected region PropertyAccessInit end     
+        
         
             boolean result = classUnderTest.property().destroy(_property);
             assertTrue(result);
@@ -233,18 +610,17 @@ public class BaseTraceModelTests {
         public EasyMockRule rule = new EasyMockRule(this);
 
         private ModelTrace classUnderTest;
-        
-        @Test
-        public void testModelTraceInstantiation() throws Exception {
-            classUnderTest = new ModelTrace("name1");
-	    }
+
 	    
 // protected region IgnoreModelTraceAttributes on begin
 	    @Ignore
 // protected region IgnoreModelTraceAttributes end	    
 	    @Test
         public void testModelTraceAttributes() throws Exception {
-            classUnderTest = new ModelTrace("name1");
+            // protected region ModelTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ModelTrace("name1");                    
+            // protected region ModelTraceInit end     
 // protected region ModelTraceAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region ModelTraceAttributes end
@@ -266,13 +642,7 @@ public class BaseTraceModelTests {
         private IModelTrace modelMock2;
         
         private ModelTypeTrace classUnderTest;
-        
-        @Test
-        public void testModelTypeTraceInstantiation() throws Exception {
-            IModelTrace _model = mock(IModelTrace.class);
-        
-            classUnderTest = new ModelTypeTrace("name1", _model);
-	    }
+
 	    
 // protected region IgnoreModelTypeTraceAttributes on begin
 	    @Ignore
@@ -281,7 +651,10 @@ public class BaseTraceModelTests {
         public void testModelTypeTraceAttributes() throws Exception {
             IModelTrace _model = mock(IModelTrace.class);
         
-            classUnderTest = new ModelTypeTrace("name1", _model);
+            // protected region ModelTypeTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ModelTypeTrace("name1", _model);                    
+            // protected region ModelTypeTraceInit end     
 // protected region ModelTypeTraceAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region ModelTypeTraceAttributes end
@@ -291,7 +664,10 @@ public class BaseTraceModelTests {
         public void testModelTypeTraceCreateModelReference() throws Exception {
             IModelTrace _model = mock(IModelTrace.class);
         
-            classUnderTest = new ModelTypeTrace("name1", _model);
+            // protected region ModelTypeTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ModelTypeTrace("name1", _model);                    
+            // protected region ModelTypeTraceInit end     
             boolean result;
             result = classUnderTest.model().create(modelMock2);
             assertFalse(result);
@@ -308,7 +684,10 @@ public class BaseTraceModelTests {
         public void testModelTypeTraceDestroyModelReference() throws Exception {
             IModelTrace _model = mock(IModelTrace.class);
         
-            classUnderTest = new ModelTypeTrace("name1", _model);
+            // protected region ModelTypeTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ModelTypeTrace("name1", _model);                    
+            // protected region ModelTypeTraceInit end     
         
             boolean result = classUnderTest.model().destroy(_model);
             assertTrue(result);
@@ -332,13 +711,7 @@ public class BaseTraceModelTests {
         private IModelTrace modelMock2;
         
         private ModelElementTrace classUnderTest;
-        
-        @Test
-        public void testModelElementTraceInstantiation() throws Exception {
-            IModelTrace _model = mock(IModelTrace.class);
-        
-            classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _model);
-	    }
+
 	    
 // protected region IgnoreModelElementTraceAttributes on begin
 	    @Ignore
@@ -347,7 +720,10 @@ public class BaseTraceModelTests {
         public void testModelElementTraceAttributes() throws Exception {
             IModelTrace _model = mock(IModelTrace.class);
         
-            classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _model);
+            // protected region ModelElementTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _model);                    
+            // protected region ModelElementTraceInit end     
 // protected region ModelElementTraceAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region ModelElementTraceAttributes end
@@ -357,7 +733,10 @@ public class BaseTraceModelTests {
         public void testModelElementTraceCreateModelReference() throws Exception {
             IModelTrace _model = mock(IModelTrace.class);
         
-            classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _model);
+            // protected region ModelElementTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _model);                    
+            // protected region ModelElementTraceInit end     
             boolean result;
             result = classUnderTest.model().create(modelMock2);
             assertFalse(result);
@@ -374,7 +753,10 @@ public class BaseTraceModelTests {
         public void testModelElementTraceDestroyModelReference() throws Exception {
             IModelTrace _model = mock(IModelTrace.class);
         
-            classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _model);
+            // protected region ModelElementTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _model);                    
+            // protected region ModelElementTraceInit end     
         
             boolean result = classUnderTest.model().destroy(_model);
             assertTrue(result);
@@ -398,13 +780,7 @@ public class BaseTraceModelTests {
         private IModelElementTrace elementMock2;
         
         private PropertyTrace classUnderTest;
-        
-        @Test
-        public void testPropertyTraceInstantiation() throws Exception {
-            IModelElementTrace _element = mock(IModelElementTrace.class);
-        
-            classUnderTest = new PropertyTrace("name1", _element);
-	    }
+
 	    
 // protected region IgnorePropertyTraceAttributes on begin
 	    @Ignore
@@ -413,7 +789,10 @@ public class BaseTraceModelTests {
         public void testPropertyTraceAttributes() throws Exception {
             IModelElementTrace _element = mock(IModelElementTrace.class);
         
-            classUnderTest = new PropertyTrace("name1", _element);
+            // protected region PropertyTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new PropertyTrace("name1", _element);                    
+            // protected region PropertyTraceInit end     
 // protected region PropertyTraceAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region PropertyTraceAttributes end
@@ -423,7 +802,10 @@ public class BaseTraceModelTests {
         public void testPropertyTraceCreateElementReference() throws Exception {
             IModelElementTrace _element = mock(IModelElementTrace.class);
         
-            classUnderTest = new PropertyTrace("name1", _element);
+            // protected region PropertyTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new PropertyTrace("name1", _element);                    
+            // protected region PropertyTraceInit end     
             boolean result;
             result = classUnderTest.element().create(elementMock2);
             assertFalse(result);
@@ -440,7 +822,10 @@ public class BaseTraceModelTests {
         public void testPropertyTraceDestroyElementReference() throws Exception {
             IModelElementTrace _element = mock(IModelElementTrace.class);
         
-            classUnderTest = new PropertyTrace("name1", _element);
+            // protected region PropertyTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new PropertyTrace("name1", _element);                    
+            // protected region PropertyTraceInit end     
         
             boolean result = classUnderTest.element().destroy(_element);
             assertTrue(result);

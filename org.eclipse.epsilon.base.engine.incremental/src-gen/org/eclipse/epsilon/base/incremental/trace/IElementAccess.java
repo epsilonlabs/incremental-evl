@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-02-01.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-04-18.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -20,6 +20,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
  * created through this interface.
  */
 public interface IElementAccess extends IAccess {
+
 
     /** The element reference. */
     IElementAccessHasElement element();

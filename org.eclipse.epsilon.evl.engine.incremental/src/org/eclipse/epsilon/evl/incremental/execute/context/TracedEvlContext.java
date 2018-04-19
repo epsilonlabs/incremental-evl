@@ -13,7 +13,6 @@ package org.eclipse.epsilon.evl.incremental.execute.context;
 
 import org.eclipse.epsilon.evl.execute.context.EvlContext;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
-import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceRepository;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 
 /**
@@ -25,7 +24,7 @@ import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 public class TracedEvlContext extends EvlContext {
 	
 	/** The trace manager. */
-	private IEvlExecutionTraceManager<IEvlExecutionTraceRepository> traceManager;
+	private IEvlExecutionTraceManager traceManager;
 	private IEvlModuleTrace evlModuleTrace;
 	
 	/**
@@ -33,7 +32,7 @@ public class TracedEvlContext extends EvlContext {
 	 *
 	 * @return the trace manager
 	 */
-	public IEvlExecutionTraceManager<IEvlExecutionTraceRepository> getTraceManager() {
+	public IEvlExecutionTraceManager getTraceManager() {
 		return traceManager;
 	}
 	
@@ -42,7 +41,7 @@ public class TracedEvlContext extends EvlContext {
 	 *
 	 * @param traceManager the new unit of work
 	 */
-	public void setTraceManager(IEvlExecutionTraceManager<IEvlExecutionTraceRepository> traceManager) {
+	public void setTraceManager(IEvlExecutionTraceManager traceManager) {
 		this.traceManager = traceManager;
 	}
 	

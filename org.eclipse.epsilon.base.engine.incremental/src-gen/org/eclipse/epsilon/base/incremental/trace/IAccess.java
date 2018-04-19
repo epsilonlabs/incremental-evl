@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-02-01.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-04-18.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;    
 
 /**
  * The Access defines the access methods for the EClass features.
@@ -20,4 +21,8 @@ package org.eclipse.epsilon.base.incremental.trace;
  */
 public interface IAccess extends IIdElement {
 
+
+    /** The executionTrace reference. */
+    IAccessHasExecutionTrace executionTrace();
+                
 }

@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-02-01.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-04-18.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -17,8 +17,11 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionTraceHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.INestedModuleElementTraceHasParentTrace;
+import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModuleElementTraceHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.impl.NestedModuleElementTraceHasParentTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasInvariant;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasSatisfiedInvariants;
@@ -37,7 +40,7 @@ public class SatisfiesTrace implements ISatisfiesTrace {
     private boolean all;
 
     /** The accesses relation */
-    private final IExecutionTraceHasAccesses accesses;
+    private final IModuleElementTraceHasAccesses accesses;
 
     /** The invariant relation */
     private final ISatisfiesTraceHasInvariant invariant;
@@ -50,7 +53,7 @@ public class SatisfiesTrace implements ISatisfiesTrace {
      * container and any attributes identified as indexes.
      */    
     public SatisfiesTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
-        this.accesses = new ExecutionTraceHasAccesses(this);
+        this.accesses = new ModuleElementTraceHasAccesses(this);
         this.invariant = new SatisfiesTraceHasInvariant(this);
         this.satisfiedInvariants = new SatisfiesTraceHasSatisfiedInvariants(this);
         if (!container.satisfies().create(this)) {
@@ -81,7 +84,7 @@ public class SatisfiesTrace implements ISatisfiesTrace {
     }   
      
     @Override
-    public IExecutionTraceHasAccesses accesses() {
+    public IModuleElementTraceHasAccesses accesses() {
         return accesses;
     }
 
@@ -94,6 +97,14 @@ public class SatisfiesTrace implements ISatisfiesTrace {
     public ISatisfiesTraceHasSatisfiedInvariants satisfiedInvariants() {
         return satisfiedInvariants;
     }
+
+    @Override
+    public INestedModuleElementTraceHasParentTrace parentTrace() {
+        /** protected region parentTrace on begin **/
+        return null;
+        /** protected region parentTrace end **/
+    }
+
 
     @Override
     public boolean sameIdentityAs(final ISatisfiesTrace other) {
@@ -114,7 +125,6 @@ public class SatisfiesTrace implements ISatisfiesTrace {
         SatisfiesTrace other = (SatisfiesTrace) obj;
         if (!sameIdentityAs(other))
             return false;
-        // Will use invariant for equals
         if (invariant.get() == null) {
             if (other.invariant.get() != null)
                 return false;

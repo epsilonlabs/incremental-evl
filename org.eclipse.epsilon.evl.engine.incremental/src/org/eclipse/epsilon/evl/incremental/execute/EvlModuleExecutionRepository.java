@@ -1,19 +1,30 @@
 package org.eclipse.epsilon.evl.incremental.execute;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
-import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+//FIXME We need to instrument this class to measure times/memory of all the query operations
+// Probably provided an abstract class that does the instrumentation and then subclasses that 
+// provide the specific implementations. 
 public class EvlModuleExecutionRepository implements IEvlExecutionTraceRepository {
 	
-	private final Set<IExecutionTrace> extent;
+	private static final Logger logger = LoggerFactory.getLogger(EvlModuleExecutionRepository.class);
+	
+	private final Set<IModuleElementTrace> extent;
 	
 	public EvlModuleExecutionRepository() {
 		this(false);
@@ -30,8 +41,9 @@ public class EvlModuleExecutionRepository implements IEvlExecutionTraceRepositor
 	
 
 	@Override
-	public IExecutionTrace get(Object id) {
-		IExecutionTrace result = null;
+	public IModuleElementTrace get(Object id) {
+		logger.debug("Get ModuleElementTrace with id:{}", id);
+		IModuleElementTrace result = null;
 		try {
 			result = extent.stream()
 					.filter(mt -> mt.getId().equals(id))
@@ -40,31 +52,36 @@ public class EvlModuleExecutionRepository implements IEvlExecutionTraceRepositor
 		} catch (NoSuchElementException  e) {
 			// No info about the ModelTrace
 			// FIXME Should we go to the DB here?
+			logger.info("ModuleElementTrace not found in extent, delegating to DB?");
 		}
 		return result;
 	}
 
 	@Override
-	public void add(IExecutionTrace item) {
-		extent.add(item);
+	public boolean add(IModuleElementTrace item) {
+		return extent.add(item);
 	}
 
 	@Override
-	public void remove(IExecutionTrace item) {
-		extent.remove(item);
+	public boolean remove(IModuleElementTrace item) {
+		return extent.remove(item);
 	}
 
 	@Override
 	public IContextTrace getContextTraceFor(String typeName, int index, IEvlModuleTrace moduleTrace,
-			IModelElementTrace modelElement) {
+			IExecutionContext exContext) {
 		
+		logger.debug("Get ContextTraceFor type:{}, index:{} with ", typeName, index);
 		IContextTrace result = null;
 		// FIXME We need the model to create the model, element and elementAccess value objects,
 		// Probably this should be factory methods in the IncrementalModel!
 		result = extent.stream()
 				.filter(IContextTrace.class::isInstance)
 				.map(IContextTrace.class::cast)
-				.filter(ct -> ct.getKind().equals(typeName) && ct.getIndex().equals(index) && ct.module().get().equals(moduleTrace))
+				.filter(ct -> ct.getKind().equals(typeName) &&
+							ct.getIndex().equals(index) &&
+							ct.module().get().equals(moduleTrace) &&
+							ct.executionContext().get().equals(exContext))
 				.findFirst()
 				.orElseGet(() -> null);
 		return result;
@@ -72,6 +89,8 @@ public class EvlModuleExecutionRepository implements IEvlExecutionTraceRepositor
 
 	@Override
 	public IContextTrace getContextTraceFor(String typeName, int index, IEvlModuleTrace moduleTrace) {
+		
+		logger.debug("Get ContextTraceFor type:{}, index:{} with ", typeName, index);
 		IContextTrace result = null;
 		result = extent.stream()
 				.filter(IContextTrace.class::isInstance)
@@ -85,11 +104,39 @@ public class EvlModuleExecutionRepository implements IEvlExecutionTraceRepositor
 	}
 	
 	@Override
-	public List<IExecutionTrace> findExecutionTraces(String objectId, String propertyName) {
-		// TODO Implement IEvlExecutionTraceRepository.findExecutionTraces
-		throw new UnsupportedOperationException("Unimplemented Method    IEvlExecutionTraceRepository.findExecutionTraces invoked.");
+	public List<IModuleElementTrace> findPropertyAccessExecutionTraces(String objectId, String propertyName) {
+		List<IModuleElementTrace> result = extent.stream()
+				.filter(t -> t.accesses().get().stream()
+							.filter(IPropertyAccess.class::isInstance)
+							.map(IPropertyAccess.class::cast)
+							.anyMatch(pa -> pa.property().get().getName().equals(propertyName))
+							)
+				.collect(Collectors.toList());
+		return result;
+	}		
+
+	@Override
+	public List<IModuleElementTrace> findAllInstancesExecutionTraces(String typeName) {
+		List<IModuleElementTrace> result = extent.stream()
+				.filter(t -> t.accesses().get().stream()
+							.filter(IAllInstancesAccess.class::isInstance)
+							.map(IAllInstancesAccess.class::cast)
+							.anyMatch(aia -> aia.type().get().getName().equals(typeName))
+							)
+				.collect(Collectors.toList());
+		return result;
 	}
 
+	@Override
+	public List<IModuleElementTrace> findSatisfiesExecutionTraces(IInvariantTrace invariantTrace) {
+		// TODO Implement IEvlExecutionTraceRepository.findSatisfiesExecutionTraces
+		throw new UnsupportedOperationException("Unimplemented Method    IEvlExecutionTraceRepository.findSatisfiesExecutionTraces invoked.");
+	}
+
+	@Override
+	public Set<IModuleElementTrace> getAllExecutionTraces() {
+		return Collections.unmodifiableSet(extent);
+	}
 
 	
 //	@Override

@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-02-01.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-04-18.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -29,7 +29,7 @@ public interface IPropertyAccessHasProperty {
      * Create a reference to the target element. Returns true if the relation was created or if the
      * relation already existed. 
      * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IPropertyTrace)}).
-     * If the reference has an opposite, that relation is also craeted.
+     * If the reference has an opposite, that relation is also created.
      *
      * @see ExecutionHasAccesses#conflict(IPropertyTrace)
      * @see ExecutionHasAccesses#related(IPropertyTrace)
@@ -48,8 +48,8 @@ public interface IPropertyAccessHasProperty {
     /**
      * Determines if there is a conflict with a possible target. Conflicts can only arise for if
      * the reference has an opposite and for unique multi-valued references. Conflicts enforce
-     * that the application destroys relations before creating new ones. This helps mantain data
-     * integrity. Retruns true if there is a conflict. Conflicts are determined by:
+     * that the application destroys relations before creating new ones. This helps maintain data
+     * integrity. Returns true if there is a conflict. Conflicts are determined by:
      * <ul>
      *  <li>If the relation is many-to-many, there is no conflict.<li>
      *  <li>If the relation is one-to-one there is a conflict if the target is already part of

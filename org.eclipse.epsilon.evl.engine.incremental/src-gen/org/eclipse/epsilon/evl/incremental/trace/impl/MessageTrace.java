@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-02-01.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-04-18.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -17,8 +17,11 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionTraceHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.INestedModuleElementTraceHasParentTrace;
+import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModuleElementTraceHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.impl.NestedModuleElementTraceHasParentTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTraceHasInvariant;
 import org.eclipse.epsilon.evl.incremental.trace.impl.MessageTraceHasInvariant;
@@ -32,7 +35,7 @@ public class MessageTrace implements IMessageTrace {
     private Object id;
 
     /** The accesses relation */
-    private final IExecutionTraceHasAccesses accesses;
+    private final IModuleElementTraceHasAccesses accesses;
 
     /** The invariant relation */
     private final IMessageTraceHasInvariant invariant;
@@ -42,7 +45,7 @@ public class MessageTrace implements IMessageTrace {
      * container and any attributes identified as indexes.
      */    
     public MessageTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
-        this.accesses = new ExecutionTraceHasAccesses(this);
+        this.accesses = new ModuleElementTraceHasAccesses(this);
         this.invariant = new MessageTraceHasInvariant(this);
         if (!container.message().create(this)) {
             throw new TraceModelDuplicateRelation();
@@ -61,7 +64,7 @@ public class MessageTrace implements IMessageTrace {
     }   
      
     @Override
-    public IExecutionTraceHasAccesses accesses() {
+    public IModuleElementTraceHasAccesses accesses() {
         return accesses;
     }
 
@@ -69,6 +72,14 @@ public class MessageTrace implements IMessageTrace {
     public IMessageTraceHasInvariant invariant() {
         return invariant;
     }
+
+    @Override
+    public INestedModuleElementTraceHasParentTrace parentTrace() {
+        /** protected region parentTrace on begin **/
+        return null;
+        /** protected region parentTrace end **/
+    }
+
 
     @Override
     public boolean sameIdentityAs(final IMessageTrace other) {
@@ -89,7 +100,6 @@ public class MessageTrace implements IMessageTrace {
         MessageTrace other = (MessageTrace) obj;
         if (!sameIdentityAs(other))
             return false;
-        // Will use invariant for equals
         if (invariant.get() == null) {
             if (other.invariant.get() != null)
                 return false;

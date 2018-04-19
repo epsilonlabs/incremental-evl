@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-02-01.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-04-18.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -11,13 +11,16 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
+import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.trace.IAccessHasExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccessHasElement;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.AccessHasExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ElementAccessHasElement;
 
 /**
@@ -28,6 +31,9 @@ public class ElementAccess implements IElementAccess {
     /** The id */
     private Object id;
 
+    /** The executionTrace relation */
+    private final IAccessHasExecutionTrace executionTrace;
+
     /** The element relation */
     private final IElementAccessHasElement element;
 
@@ -35,7 +41,11 @@ public class ElementAccess implements IElementAccess {
      * Instantiates a new ElementAccess. The ElementAccess is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ElementAccess(IModelElementTrace element) throws TraceModelDuplicateRelation {
+    public ElementAccess(IModuleElementTrace executionTrace, IModelElementTrace element) throws TraceModelDuplicateRelation {
+        this.executionTrace = new AccessHasExecutionTrace(this);
+        if (!this.executionTrace.create(executionTrace)) {
+            throw new TraceModelDuplicateRelation();
+        }
         this.element = new ElementAccessHasElement(this);
         if (!this.element.create(element)) {
             throw new TraceModelDuplicateRelation();
@@ -54,9 +64,15 @@ public class ElementAccess implements IElementAccess {
     }   
      
     @Override
+    public IAccessHasExecutionTrace executionTrace() {
+        return executionTrace;
+    }
+
+    @Override
     public IElementAccessHasElement element() {
         return element;
     }
+
 
     @Override
     public boolean sameIdentityAs(final IElementAccess other) {
@@ -77,6 +93,13 @@ public class ElementAccess implements IElementAccess {
         ElementAccess other = (ElementAccess) obj;
         if (!sameIdentityAs(other))
             return false;
+        if (element.get() == null) {
+            if (other.element.get() != null)
+                return false;
+        }
+        else if (!element.get().equals(other.element.get())) {
+            return false;
+        }
         return true; 
   }
 
@@ -84,6 +107,7 @@ public class ElementAccess implements IElementAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((element.get() == null) ? 0 : element.get().hashCode());
         return result;
     }
 }

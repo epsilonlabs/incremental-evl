@@ -8,10 +8,11 @@ import org.easymock.EasyMockSupport;
 import org.easymock.Mock;
 import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
+import org.eclipse.epsilon.base.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionTraceHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
 import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.compile.context.EolCompilationContext;
@@ -21,7 +22,6 @@ import org.eclipse.epsilon.eol.dom.OperationCallExpression;
 import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
 import org.eclipse.epsilon.eol.dom.StringLiteral;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
-import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.models.ModelRepository;
 import org.junit.Before;
@@ -47,8 +47,8 @@ public class ExecutionListenerTests {
 		@Rule
         public EasyMockRule rule = new EasyMockRule(this);
 		
-		@Mock
-		private IEolExecutionTraceManager<TestModuleExecution> traceManagerMock;
+		//@Mock
+		//private IEolExecutionTraceManager<TestModuleExecution> traceManagerMock;
 		
 		@Mock
 		private IEolContext contextMock;
@@ -70,9 +70,9 @@ public class ExecutionListenerTests {
 		@Test
 		public void testFinishedNotAnOperationCallExpression() {
 			// 1. Trigger listener by executing a TracedExecutableBlock
-			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
-			IExecutionTrace executionTraceMock = mock(IExecutionTrace.class);
-			blockMock.setTrace(executionTraceMock);
+			TracedExecutableBlock<IModuleElementTrace, Boolean> blockMock = new TracedExecutableBlock<IModuleElementTrace, Boolean>(Boolean.class);
+			IModuleElementTrace executionTraceMock = mock(IModuleElementTrace.class);
+			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			// 2. Execute other expression
 			ModuleElement me = mock(ModuleElement.class);
@@ -87,9 +87,9 @@ public class ExecutionListenerTests {
 		@Test
 		public void testFinishedNotAnAllOperationCallExpression() {
 			// 1. Trigger listener by executing a TracedExecutableBlock
-			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
-			IExecutionTrace executionTraceMock = mock(IExecutionTrace.class);
-			blockMock.setTrace(executionTraceMock);
+			TracedExecutableBlock<IModuleElementTrace, Boolean> blockMock = new TracedExecutableBlock<IModuleElementTrace, Boolean>(Boolean.class);
+			IModuleElementTrace executionTraceMock = mock(IModuleElementTrace.class);
+			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			// 2. Execute a non-all operation
 			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, "getOne", params);
@@ -104,9 +104,9 @@ public class ExecutionListenerTests {
 		@Test
 		public void testFinishedAllInvocation() throws Exception {
 			// 1. Trigger listener by executing a TracedExecutableBlock
-			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
-			IExecutionTrace executionTraceMock = mock(IExecutionTrace.class);
-			blockMock.setTrace(executionTraceMock);
+			TracedExecutableBlock<IModuleElementTrace, Boolean> blockMock = new TracedExecutableBlock<IModuleElementTrace, Boolean>(Boolean.class);
+			IModuleElementTrace executionTraceMock = mock(IModuleElementTrace.class);
+			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			
 			// 2. Record invocations
@@ -126,9 +126,9 @@ public class ExecutionListenerTests {
 		@Test
 		public void testFinishedAllInstancesInvocation() throws Exception {
 			// 1. Trigger listener by executing a TracedExecutableBlock
-			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
-			IExecutionTrace executionTraceMock = mock(IExecutionTrace.class);
-			blockMock.setTrace(executionTraceMock);
+			TracedExecutableBlock<IModuleElementTrace, Boolean> blockMock = new TracedExecutableBlock<IModuleElementTrace, Boolean>(Boolean.class);
+			IModuleElementTrace executionTraceMock = mock(IModuleElementTrace.class);
+			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			
 			// 2. Record invocations
@@ -149,9 +149,9 @@ public class ExecutionListenerTests {
 		@Test
 		public void testFinishedAllOfKindInvocation() throws Exception {
 			// 1. Trigger listener by executing a TracedExecutableBlock
-			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
-			IExecutionTrace executionTraceMock = mock(IExecutionTrace.class);
-			blockMock.setTrace(executionTraceMock);
+			TracedExecutableBlock<IModuleElementTrace, Boolean> blockMock = new TracedExecutableBlock<IModuleElementTrace, Boolean>(Boolean.class);
+			IModuleElementTrace executionTraceMock = mock(IModuleElementTrace.class);
+			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			
 			// 2. Record invocations
@@ -172,9 +172,9 @@ public class ExecutionListenerTests {
 		@Test
 		public void testFinishedAllOfTypeInvocation() throws Exception {
 			// 1. Trigger listener by executing a TracedExecutableBlock
-			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
-			IExecutionTrace executionTraceMock = mock(IExecutionTrace.class);
-			blockMock.setTrace(executionTraceMock);
+			TracedExecutableBlock<IModuleElementTrace, Boolean> blockMock = new TracedExecutableBlock<IModuleElementTrace, Boolean>(Boolean.class);
+			IModuleElementTrace executionTraceMock = mock(IModuleElementTrace.class);
+			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			
 			// 2. Record invocations
@@ -192,10 +192,10 @@ public class ExecutionListenerTests {
 			verifyAll();
 		}
 		
-		private void recordExecutionTrace(String modelName, String modelTypeName, IExecutionTrace executionTraceMock) throws Exception {
+		private void recordExecutionTrace(String modelName, String modelTypeName, IModuleElementTrace executionTraceMock) throws Exception {
 			// Setup mocks
 			IModel model = mock(IModel.class);
-			IExecutionTraceHasAccesses hasAccesses = createNiceMock(IExecutionTraceHasAccesses.class);
+			IModuleElementTraceHasAccesses hasAccesses = createNiceMock(IModuleElementTraceHasAccesses.class);
 			EasyMock.expect(model.getName()).andReturn(modelName).anyTimes();
 			EasyMock.expect(executionTraceMock.accesses()).andReturn(hasAccesses);
 		}
@@ -208,8 +208,8 @@ public class ExecutionListenerTests {
 		@Rule
         public EasyMockRule rule = new EasyMockRule(this);
 		
-		@Mock
-		private IEolExecutionTraceManager<TestModuleExecution> traceManagerMock;
+		//@Mock
+		//private IEolExecutionTraceManager<TestModuleExecution> traceManagerMock;
 
 
 		@Mock
@@ -230,9 +230,9 @@ public class ExecutionListenerTests {
 			listener = new PropertyAccessExecutionListener();
 
 			// 1. Trigger listener by executing a TracedExecutableBlock
-			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
-			IExecutionTrace executionTraceMock = mock(IExecutionTrace.class);
-			blockMock.setTrace(executionTraceMock);
+			TracedExecutableBlock<IModuleElementTrace, Boolean> blockMock = new TracedExecutableBlock<IModuleElementTrace, Boolean>(Boolean.class);
+			IModuleElementTrace executionTraceMock = mock(IModuleElementTrace.class);
+			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			
 			// 2. Save the leftHand side result 1st.
@@ -264,9 +264,9 @@ public class ExecutionListenerTests {
 			listener = new PropertyAccessExecutionListener();
 
 			// 1. Trigger listener by executing a TracedExecutableBlock
-			TracedExecutableBlock<Boolean> blockMock = new TracedExecutableBlock<Boolean>(Boolean.class);
-			IExecutionTrace executionTraceMock = mock(IExecutionTrace.class);
-			blockMock.setTrace(executionTraceMock);
+			TracedExecutableBlock<IModuleElementTrace, Boolean> blockMock = new TracedExecutableBlock<IModuleElementTrace, Boolean>(Boolean.class);
+			IModuleElementTrace executionTraceMock = mock(IModuleElementTrace.class);
+			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			
 			// 2. Save the leftHand side result 1st.
@@ -302,14 +302,14 @@ public class ExecutionListenerTests {
 //			listener = new PropertyAccessExecutionListener(traceManagerMock, evlExecutionMock);
 //
 //			// 1. Trigger listener by executing a TracedExecutableBlock
-//			TracedExecutableBlock<Boolean> blockMock1 = new TracedExecutableBlock<Boolean>(Boolean.class);
-//			IExecutionTrace executionTrace1Mock = mock(IExecutionTrace.class);
+//			TracedExecutableBlock<IModuleElementTrace, Boolean> blockMock1 = new TracedExecutableBlock<IModuleElementTrace, Boolean>(Boolean.class);
+//			IModuleElementTrace executionTrace1Mock = mock(IModuleElementTrace.class);
 //			blockMock1.setTrace(executionTrace1Mock);
 //			listener.aboutToExecute(blockMock1, contextMock);
 //			
 //			// 2. Nested block
-//			TracedExecutableBlock<Boolean> blockMock2 = new TracedExecutableBlock<Boolean>(Boolean.class);
-//			IExecutionTrace executionTrace2Mock = mock(IExecutionTrace.class);
+//			TracedExecutableBlock<IModuleElementTrace, Boolean> blockMock2 = new TracedExecutableBlock<IModuleElementTrace, Boolean>(Boolean.class);
+//			IModuleElementTrace executionTrace2Mock = mock(IModuleElementTrace.class);
 //			blockMock2.setTrace(executionTrace2Mock);
 //			listener.aboutToExecute(blockMock2, contextMock);
 //			
@@ -359,7 +359,7 @@ public class ExecutionListenerTests {
 		 * @param propertyvalue 
 		 * @throws EolIncrementalExecutionException
 		 */
-		private void recordExecutionTrace(String elementId, String instance, String propertyName, IExecutionTrace executionTraceMock) {
+		private void recordExecutionTrace(String elementId, String instance, String propertyName, IModuleElementTrace executionTraceMock) {
 			
 			IModel modelMock = mock(IModel.class);
 //			IModelTrace modelTraceMock = mock(IModelTrace.class);

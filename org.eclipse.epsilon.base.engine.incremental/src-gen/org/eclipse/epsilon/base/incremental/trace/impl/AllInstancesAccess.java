@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-02-01.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-04-18.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -11,13 +11,16 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
+import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.trace.IAccessHasExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccessHasType;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.AccessHasExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.AllInstancesAccessHasType;
 
 /**
@@ -31,6 +34,9 @@ public class AllInstancesAccess implements IAllInstancesAccess {
     /** The ofKind */
     private boolean ofKind;
 
+    /** The executionTrace relation */
+    private final IAccessHasExecutionTrace executionTrace;
+
     /** The type relation */
     private final IAllInstancesAccessHasType type;
 
@@ -38,7 +44,12 @@ public class AllInstancesAccess implements IAllInstancesAccess {
      * Instantiates a new AllInstancesAccess. The AllInstancesAccess is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public AllInstancesAccess(IModelTypeTrace type) throws TraceModelDuplicateRelation {
+    public AllInstancesAccess(boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type) throws TraceModelDuplicateRelation {
+        this.ofKind = ofKind;
+        this.executionTrace = new AccessHasExecutionTrace(this);
+        if (!this.executionTrace.create(executionTrace)) {
+            throw new TraceModelDuplicateRelation();
+        }
         this.type = new AllInstancesAccessHasType(this);
         if (!this.type.create(type)) {
             throw new TraceModelDuplicateRelation();
@@ -61,20 +72,28 @@ public class AllInstancesAccess implements IAllInstancesAccess {
         return ofKind;
     }
     
-    
     @Override
-    public void setOfKind(boolean value) {
-        this.ofKind = value;
-    }   
-     
+    public IAccessHasExecutionTrace executionTrace() {
+        return executionTrace;
+    }
+
     @Override
     public IAllInstancesAccessHasType type() {
         return type;
     }
 
+
     @Override
     public boolean sameIdentityAs(final IAllInstancesAccess other) {
         if (other == null) {
+            return false;
+        }
+        Boolean ofKind = Boolean.valueOf(getOfKind());
+        Boolean otherOfKind = Boolean.valueOf(other.getOfKind());
+        if (ofKind == null) {
+            if (otherOfKind != null)
+                return false;
+        } else if (!ofKind.equals(otherOfKind)) {
             return false;
         }
         return true;
@@ -91,11 +110,6 @@ public class AllInstancesAccess implements IAllInstancesAccess {
         AllInstancesAccess other = (AllInstancesAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        // Will use ofKind for equals
-	    if (ofKind != other.ofKind) {
-	      return false;
-	    }
-        // Will use type for equals
         if (type.get() == null) {
             if (other.type.get() != null)
                 return false;
@@ -110,7 +124,8 @@ public class AllInstancesAccess implements IAllInstancesAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (ofKind ? 1 : 0);
+        Boolean ofKind = Boolean.valueOf(getOfKind());
+        result = prime * result + ((ofKind == null) ? 0 : ofKind.hashCode());
         result = prime * result + ((type.get() == null) ? 0 : type.get().hashCode());
         return result;
     }

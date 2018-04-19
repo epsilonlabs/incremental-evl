@@ -10,44 +10,22 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.dom;
 
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionTrace;
 
 /**
- * An executable block that has different type of recorders and that is capable of starting/stopping all its recorders
- * in a single invocation.
+ * An executable block that can be traced during execution
  * 
  * @author Horacio Hoyos Rodriguez
  *
- * @param <T> The expected type of the execution of the block
+ * @param <ReturnType> The expected type of the execution of the block
  */
-public class TracedExecutableBlock<T> extends ExecutableBlock<T> {
+public class TracedExecutableBlock<TraceType extends IModuleElementTrace, ReturnType> 
+		extends ExecutableBlock<ReturnType>
+		implements TracedModuleElement<TraceType> {
 
-	/**
-	 * A reference to the specific type of ExecutionTrace being traced.
-	 * This is necessary because an executable block can represent different elements,
-	 * for example in EVL it can be a guard, check, message, etc.
-	 */
-	private IExecutionTrace trace;
-
-	/**
-	 * Gets the trace.
-	 *
-	 * @return the trace
-	 */
-	public IExecutionTrace getTrace() {
-		return trace;
-	}
-
-	/**
-	 * Sets the trace.
-	 *
-	 * @param trace the new trace
-	 */
-	public void setTrace(IExecutionTrace trace) {
-		this.trace = trace;
-	}
-		
+	protected TraceType currentTrace;
+	
 	/**
 	 * Instantiates a new traced executable block.
 	 *
@@ -56,5 +34,18 @@ public class TracedExecutableBlock<T> extends ExecutableBlock<T> {
 	public TracedExecutableBlock(Class<?> expectedResultClass) {
 		super(expectedResultClass);
 	}
+
+	@Override
+	public void setCurrentTrace(TraceType trace) {
+		currentTrace = trace;
+	}
+
+	@Override
+	public TraceType getCurrentTrace() {
+		return currentTrace;
+	}
 	
+
+	
+
 }

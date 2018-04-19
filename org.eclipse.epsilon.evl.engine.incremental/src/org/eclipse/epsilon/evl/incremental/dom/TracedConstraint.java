@@ -37,17 +37,20 @@ import org.eclipse.epsilon.evl.trace.ConstraintTrace;
  */
 // FIXME this could be merged with the Constraint and use a flag
 public class TracedConstraint extends Constraint 
-		implements TracedModuleElement {
+		implements TracedModuleElement<IInvariantTrace> {
 	
 	private IInvariantTrace trace;
+	
+	@Override
+	public void setCurrentTrace(IInvariantTrace trace) {
+		this.trace = trace;
+	}
 
-	public IInvariantTrace getTrace() {
+	@Override
+	public IInvariantTrace getCurrentTrace() {
 		return trace;
 	}
 
-	public void setTrace(IInvariantTrace trace) {
-		this.trace = trace;
-	}
 
 	public boolean appliesTo(Object object, IEvlContext context, final boolean checkType) throws EolRuntimeException{
 		if (checkType && !constraintContext.getAllOfSourceKind(context).contains(object)) return false;
@@ -120,7 +123,7 @@ public class TracedConstraint extends Constraint
 		if (guard == null) {
 			try {
 				guard = trace.createGuardTrace();
-				((TracedExecutableBlock<?>) guardBlock).setTrace(guard);
+				((TracedExecutableBlock<IGuardTrace, ?>) guardBlock).setCurrentTrace(guard);
 				return true;
 			} catch (EolIncrementalExecutionException e) {
 				throw new EolIncrementalExecutionException("Can't create GuardTrace for Invariant " + getName() + ".");	
@@ -143,7 +146,7 @@ public class TracedConstraint extends Constraint
 		if (check == null) {
 			try {
 				check = trace.createCheckTrace();
-				((TracedExecutableBlock<?>) checkBlock).setTrace(check);
+				((TracedExecutableBlock<ICheckTrace, ?>) checkBlock).setCurrentTrace(check);
 				return true;
 			} catch (EolIncrementalExecutionException e) {
 				throw new EolIncrementalExecutionException("Can't create GuardTrace for Invariant " + getName() + ".");	
@@ -166,7 +169,7 @@ public class TracedConstraint extends Constraint
 		if (message == null) {
 			try {
 				message = trace.createMessageTrace();
-				((TracedExecutableBlock<?>) messageBlock).setTrace(message);
+				((TracedExecutableBlock<IMessageTrace, ?>) messageBlock).setCurrentTrace(message);
 				return true;
 			} catch (EolIncrementalExecutionException e) {
 				throw new EolIncrementalExecutionException("Can't create MessageTrace for Invariant " + getName() + ".");	
@@ -185,4 +188,5 @@ public class TracedConstraint extends Constraint
 			}
 		}
 	}
+
 }

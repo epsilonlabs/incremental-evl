@@ -47,7 +47,7 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 	public static final Set<String> OPERATION_NAMES = new HashSet<>(Arrays.asList(SET_VALUES));
 	
 	/** Keep track of ModuleElements executing */
-	private final Deque<TracedModuleElement> moduleElementStack = new ArrayDeque<>();
+	private final Deque<TracedModuleElement<IInvariantTrace>> moduleElementStack = new ArrayDeque<>();
 	
 	/** The invariant we are currently in */
 	//private final IInvariantTrace invariant;
@@ -75,7 +75,7 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 	public void aboutToExecute(ModuleElement ast, IEolContext context) {
 		logger.debug("aboutToExecute {}", ast);
 		if (ast instanceof TracedModuleElement) {
-			moduleElementStack.addLast((TracedModuleElement) ast);
+			moduleElementStack.addLast((TracedModuleElement<IInvariantTrace>) ast);
 		}
 		if (!moduleElementStack.isEmpty()) {	
 			if (ast instanceof OperationCallExpression) {
@@ -104,10 +104,10 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 			}
 		}
 		else {
-			TracedModuleElement currentInvariant = moduleElementStack.peekFirst();
+			TracedModuleElement<IInvariantTrace> currentInvariant = moduleElementStack.peekFirst();
 			if (ast.equals(waitingFor)) {
 				boolean all = EvlOperationFactory.SATISFIES_ALL_OPERATION.equals(waitingFor.getOperationName());
-				record(all, parameterValues, (IInvariantTrace)currentInvariant.getTrace());
+				record(all, parameterValues, (IInvariantTrace)currentInvariant.getCurrentTrace());
 				parameters.clear();
 				listening = false;
 				waitingFor = null;
@@ -115,7 +115,7 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 			else {
 				if (ast instanceof TracedConstraint) {
 					TracedConstraint block = (TracedConstraint) ast;
-					if (currentInvariant.equals(block.getTrace())) {
+					if (currentInvariant.equals(block)) {
 						moduleElementStack.pollFirst();
 					}
 				}

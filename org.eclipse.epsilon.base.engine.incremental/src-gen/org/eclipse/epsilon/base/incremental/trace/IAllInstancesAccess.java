@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-02-01.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-04-18.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -31,16 +31,8 @@ public interface IAllInstancesAccess extends IAccess {
      * <!-- protected region ofKind-getter-doc end --> 
      * @return the value of the '<em>Of Kind</em>' attribute.
      */
-    boolean getOfKind();    
+    boolean getOfKind();            
 
-    /**
-     * Sets the value of the '{@link AllInstancesAccess#OfKind <em>Of Kind</em>}' attribute.
-     * <!-- protected region ofKind-setter-doc on begin -->
-     * <!-- protected region ofKind-setter-doc end --> 
-     * @param value the new value of the '<em>Of Kind/em>' attribute.
-     */
-    void setOfKind(boolean value);
-            
     /** The type reference. */
     IAllInstancesAccessHasType type();
                 

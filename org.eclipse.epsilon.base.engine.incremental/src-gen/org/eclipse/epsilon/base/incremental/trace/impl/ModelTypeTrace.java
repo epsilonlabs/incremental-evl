@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-02-01.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-04-18.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -67,16 +67,20 @@ public class ModelTypeTrace implements IModelTypeTrace {
         return model;
     }
 
+
     @Override
     public boolean sameIdentityAs(final IModelTypeTrace other) {
         if (other == null) {
             return false;
         }
-        if (getName() == null) {
-            if (other.getName() != null)
+        String name = getName();
+        String otherName = other.getName();
+        if (name == null) {
+            if (otherName != null)
                 return false;
-        } else if (!getName().equals(other.getName()))
+        } else if (!name.equals(otherName)) {
             return false;
+        }
         return true;
     }
 
@@ -91,7 +95,6 @@ public class ModelTypeTrace implements IModelTypeTrace {
         ModelTypeTrace other = (ModelTypeTrace) obj;
         if (!sameIdentityAs(other))
             return false;
-        // Will use model for equals
         if (model.get() == null) {
             if (other.model.get() != null)
                 return false;

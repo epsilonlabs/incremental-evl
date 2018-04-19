@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-02-01.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-04-18.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -17,8 +17,11 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionTraceHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.INestedModuleElementTraceHasParentTrace;
+import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModuleElementTraceHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.impl.NestedModuleElementTraceHasParentTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTraceHasLimits;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.GuardTraceHasLimits;
@@ -35,7 +38,7 @@ public class GuardTrace implements IGuardTrace {
     private boolean result;
 
     /** The accesses relation */
-    private final IExecutionTraceHasAccesses accesses;
+    private final IModuleElementTraceHasAccesses accesses;
 
     /** The limits relation */
     private final IGuardTraceHasLimits limits;
@@ -45,7 +48,7 @@ public class GuardTrace implements IGuardTrace {
      * container and any attributes identified as indexes.
      */    
     public GuardTrace(IGuardedElementTrace container) throws TraceModelDuplicateRelation {
-        this.accesses = new ExecutionTraceHasAccesses(this);
+        this.accesses = new ModuleElementTraceHasAccesses(this);
         this.limits = new GuardTraceHasLimits(this);
         if (!container.guard().create(this)) {
             throw new TraceModelDuplicateRelation();
@@ -75,7 +78,7 @@ public class GuardTrace implements IGuardTrace {
     }   
      
     @Override
-    public IExecutionTraceHasAccesses accesses() {
+    public IModuleElementTraceHasAccesses accesses() {
         return accesses;
     }
 
@@ -83,6 +86,14 @@ public class GuardTrace implements IGuardTrace {
     public IGuardTraceHasLimits limits() {
         return limits;
     }
+
+    @Override
+    public INestedModuleElementTraceHasParentTrace parentTrace() {
+        /** protected region parentTrace on begin **/
+        return null;
+        /** protected region parentTrace end **/
+    }
+
 
     @Override
     public boolean sameIdentityAs(final IGuardTrace other) {
@@ -103,7 +114,6 @@ public class GuardTrace implements IGuardTrace {
         GuardTrace other = (GuardTrace) obj;
         if (!sameIdentityAs(other))
             return false;
-        // Will use limits for equals
         if (limits.get() == null) {
             if (other.limits.get() != null)
                 return false;

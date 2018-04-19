@@ -10,10 +10,11 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.execute;
 
-import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
+import org.eclipse.epsilon.base.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.introspection.recording.SatisfiesInvocationExecutionListener;
 
-public interface IEvlExecutionTraceManager<T> extends IEolExecutionTraceManager<T> {
+public interface IEvlExecutionTraceManager
+		extends IEolExecutionTraceManager<IEvlExecutionTraceRepository, IEvlExecutionContextRepository> {
 
 	SatisfiesInvocationExecutionListener getSatisfiesListener();
 

@@ -1,0 +1,121 @@
+[%
+/*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Horacio Hoyos Rodriguez - initial API and implementation
+ ******************************************************************************/
+import "Ecore2JavaTemplates.egl";  
+
+/**
+ * Generation of Java Interface from an EReference.
+ */
+var targetType = er.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix);
+var pack = er.getEReferenceType().getEPackage().name;
+var erqp = qp.replace("." + er.getEContainingClass().getEPackage().name + ".", "." + pack + ".");
+%]
+[%=getHeader()%]
+package [%=qp%].trace;
+
+[%if (er.isMany()) {%]
+[%  if (er.isUnique() and er.isOrdered()) {%]
+import java.util.Queue;
+[%  } else if (er.isUnique() and not er.isOrdered()) {%]
+import java.util.Set;
+[%  } else {%]
+import java.util.Queue;
+[%  }
+}%]
+
+import [%=erqp%].trace.[%=targetType%];
+
+public interface [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] {
+
+    // PUBLIC API
+    
+    boolean isUnique();
+    
+    /**
+     * Get the value(s) for the reference
+     */
+[%if (er.isMany()) {
+    if (er.isUnique() and not er.isOrdered()) {%]
+    public Set<[%=targetType%]> get();
+[%  } else {%]    
+    public Queue<[%=targetType%]> get();
+[%  }
+} else {%]
+    public [%=targetType%] get();
+[%}%]
+
+    /**
+     * Create a reference to the target element. Returns true if the relation was created or if the
+     * relation already existed. 
+     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict([%=targetType%])}).
+     * If the reference has an opposite, that relation is also created.
+     *
+     * @see ExecutionHasAccesses#conflict([%=targetType%])
+     * @see ExecutionHasAccesses#related([%=targetType%])
+     */
+    boolean create([%=targetType%] target);
+    
+    /**
+     * Destroy a reference to the target element. Returns true, if the reference existed
+     * and was properly destroyed. If the reference has an opposite, that relation
+     * is also destroyed.
+     *
+     * @see ExecutionHasAccesses#related([%=targetType%])
+     */    
+    boolean destroy([%=targetType%] target);
+    
+    /**
+     * Determines if there is a conflict with a possible target. Conflicts can only arise for if
+     * the reference has an opposite and for unique multi-valued references. Conflicts enforce
+     * that the application destroys relations before creating new ones. This helps maintain data
+     * integrity. Returns true if there is a conflict. Conflicts are determined by:
+     * <ul>
+     *  <li>If the relation is many-to-many, there is no conflict.<li>
+     *  <li>If the relation is one-to-one there is a conflict if the target is already part of
+     *      another relation, i.e. target.oppoiste != null.</li>
+     *  <li>If the relation is one-to-many:
+     *      <ul>
+     *          <li>If the relation is not containment and non-unique, there is no conflict.<li>
+     *          <li>If the relation is not-containment and unique, there is conflict if the target
+     *              is already related to the source.<li>
+     *          <li>If the relation is containment and non-unique, there is a conflict if the target
+     *              is contained elsewhere, i.e. target.oppoiste != null</li>
+     *          <li>If the relation is containment and unique, there is a conflict if the target is
+     *              contained elsewhere, i.e. target.oppoiste != null, or if the target is already
+     *              related to the source.</li>
+     *      </ul>
+     *  </li>
+     */
+    boolean conflict([%=targetType%] target);
+    
+    /**
+     * Returns true if the target is already related via this reference.
+     */
+    boolean related([%=targetType%] target);
+
+    // PRIVATE API
+
+    /**
+     * Set a new value for the reference. This method should be only accessed by classes in the
+     * relation.
+     *
+     * @see ExecutionHasAccesses#create([%=targetType%])
+     */
+    void set([%=targetType%] target);
+
+    /**
+     * Remove a value for the reference. This method should be only accessed by classes in the
+     * relation.
+     *
+     * @see ExecutionHasAccesses#destroy([%=targetType%])
+     */
+    void remove([%=targetType%] target);
+}

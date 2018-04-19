@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-02-01.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-04-18.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -11,11 +11,11 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
+import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTraceHasModel;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementTraceHasModel;
@@ -67,16 +67,20 @@ public class ModelElementTrace implements IModelElementTrace {
         return model;
     }
 
+
     @Override
     public boolean sameIdentityAs(final IModelElementTrace other) {
         if (other == null) {
             return false;
         }
-        if (getUri() == null) {
-            if (other.getUri() != null)
+        String uri = getUri();
+        String otherUri = other.getUri();
+        if (uri == null) {
+            if (otherUri != null)
                 return false;
-        } else if (!getUri().equals(other.getUri()))
+        } else if (!uri.equals(otherUri)) {
             return false;
+        }
         return true;
     }
 
@@ -91,7 +95,6 @@ public class ModelElementTrace implements IModelElementTrace {
         ModelElementTrace other = (ModelElementTrace) obj;
         if (!sameIdentityAs(other))
             return false;
-        // Will use model for equals
         if (model.get() == null) {
             if (other.model.get() != null)
                 return false;

@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-02-01.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-04-18.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
+import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;    
 
 /**
  * The ModuleTrace defines the access methods for the EClass features.
@@ -31,4 +33,12 @@ public interface IModuleTrace extends IIdElement {
      * @return the value of the '<em>Source</em>' attribute.
      */
     String getSource();            
+
+    /** The ruleTraces reference. */
+    IModuleTraceHasRuleTraces ruleTraces();
+                
+    /** The executionContexts reference. */
+    IModuleTraceHasExecutionContexts executionContexts();
+                
+   
 }

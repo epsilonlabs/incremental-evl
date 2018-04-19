@@ -9,15 +9,19 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,6 +29,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -32,7 +37,10 @@ import org.antlr.runtime.Lexer;
 import org.apache.commons.csv.CSVFormat;
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
+import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
+import org.eclipse.epsilon.base.incremental.trace.impl.ElementAccess;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.common.parse.EpsilonTreeAdaptor;
@@ -60,6 +68,7 @@ import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
 import org.eclipse.epsilon.evl.parse.EvlParser;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -221,7 +230,7 @@ public class IncrementalEvlModuleIntegrationTests {
 			properties.put(CsvModel.PROPERTY_ID_FIELD, "iban");
 			String path = IncrementalEvlModuleIntegrationTests.class.getResource("bankSmall.csv").getPath();
 			properties.put(CsvModel.PROPERTY_FILE, path);
-			CsvModel model = new CsvModel();
+			CsvModelIncremental model = new CsvModelIncremental();
 			model.load(properties, new IRelativePathResolver() {
 				@Override
 				public String resolve(String relativePath)
@@ -231,30 +240,38 @@ public class IncrementalEvlModuleIntegrationTests {
 			});
 			
 			((TracedEvlContext) module.context).setTraceManager(new InMemoryEvlTraceManager());
-			module.prepareExecutionTrace();
-			((TracedEvlContext) module.context).getTraceManager().initExecutionListeners(module.getModuleExecution());
 			module.parse(evlFile);
 			module.context.getModelRepository().addModel(model);
 			module.execute();
-			IModuleExecution execution = module.getModuleExecution();
-			Queue<IExecutionTrace> executionTraces = execution.executions().get();
-			// One ContextTrace per Row
-			Collection<Map<String, Object>> modelRows = model.getAllOfType("Row");
+			
+			Set<IModuleElementTrace> executionTraces = ((TracedEvlContext) module.context).getTraceManager()
+					.getExecutionTraceRepository().getAllExecutionTraces();
 			List<IContextTrace> contextExecutionTraces = executionTraces.stream()
 					.filter(t -> t instanceof IContextTrace)
 					.map(IContextTrace.class::cast)
 					.collect(Collectors.toList());
-			// We have two contexts
-			assertThat("One ContextTrace per model element", contextExecutionTraces.size(), is(modelRows.size() * 2));
+			// We have two contexts, i.e. two traces per Row
+			Collection<Map<String, Object>> modelRows = model.getAllOfType("Row");			
+			assertThat("One ContextTrace per model element", contextExecutionTraces.size(), is(2));
 			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
 		    Date changeDate = sdf.parse("6/4/2017");
 		    Iterator<IContextTrace> cIt = contextExecutionTraces.iterator();
 		    
 		    // FIXME This only asserts one context with one element... we should assert all?
 		    IContextTrace contextTrace1 = cIt.next();
-	    	// Find matching row
+		    // Find the model element access of the trace
+		    Stream<IElementAccess> elementAccesses = contextTrace1.accesses().get().stream()
+		    			.filter(a -> a instanceof IElementAccess)
+		    			.map(IElementAccess.class::cast);
+		    assertThat("There should be 8 element accessess", elementAccesses.count(), is(8L));
+			IElementAccess elementAccess = contextTrace1.accesses().get().stream()
+	    			.filter(a -> a instanceof IElementAccess)
+	    			.map(IElementAccess.class::cast)
+		    		.findFirst()
+		    		.get();
+	    		// Find matching row
 			Map<String, Object> currentRow = modelRows.stream()
-					.filter(r -> r.get("iban").equals(contextTrace1.context().get().getUri()))
+					.filter(r -> r.get("iban").equals(elementAccess.element().get().getUri()))
 					.findFirst()
 					.get();
 			assertThat("All traces have guard", contextTrace1.guard().get(), is(notNullValue()));
@@ -272,9 +289,11 @@ public class IncrementalEvlModuleIntegrationTests {
 				//Remove the $ and convert to number
 				float balance = Float.valueOf(((String)currentRow.get("balance")).substring(1));
 				assertThat(isInOverdraft.guard().get(), is(nullValue()));
-				Queue<IAccess> accesses = isInOverdraft.check().get().accesses().get();
+				
+				Set<IAccess> accesses = isInOverdraft.check().get().accesses().get();
+				
 				assertThat(accesses, hasSize(1));
-				IAccess balanceAccess = accesses.peek();
+				IAccess balanceAccess = accesses.iterator().next();
 				assertThat("Access is PropertyAccess", balanceAccess, instanceOf(IPropertyAccess.class));
 				IPropertyAccess pa = (IPropertyAccess)balanceAccess;
 				assertThat("Access is to 'balance' property.", pa.property().get().getName().equals("balance"));
@@ -282,7 +301,7 @@ public class IncrementalEvlModuleIntegrationTests {
 					IMessageTrace messageTrace = isInOverdraft.message().get();
 					accesses = messageTrace.accesses().get();
 					assertThat(accesses, hasSize(1));
-					IAccess ibanAccess = accesses.peek();
+					IAccess ibanAccess = accesses.iterator().next();
 					assertThat("Access is PropertyAccess", ibanAccess, instanceOf(IPropertyAccess.class));
 					pa = (IPropertyAccess)ibanAccess;
 					assertThat("Access is to 'iban' property.", pa.property().get().getName().equals("iban"));
@@ -308,21 +327,17 @@ public class IncrementalEvlModuleIntegrationTests {
 					// Satisfies guard
 					accesses = overdraftCharges.check().get().accesses().get();
 					assertThat(accesses, hasSize(2));
-					IAccess hasOverdraftAccess = accesses.poll();
-					assertThat("Access is PropertyAccess", hasOverdraftAccess, instanceOf(IPropertyAccess.class));
-					pa = (IPropertyAccess)hasOverdraftAccess;
-					assertThat("Access is to 'hasOverdraft' property.", pa.property().get().getName().equals("hasOverdraft"));
-					accesses.add(hasOverdraftAccess);
-					IAccess branchAccess = accesses.poll();
-					assertThat("Access is PropertyAccess", branchAccess, instanceOf(IPropertyAccess.class));
-					pa = (IPropertyAccess)branchAccess;
-					assertThat("Access is to 'branch' property.", pa.property().get().getName().equals("branch"));
-					accesses.add(branchAccess);
+					Set<String> allowedNames = new HashSet<>(Arrays.asList("hasOverdraft", "branch"));
+					for (IAccess a : accesses) {
+						assertThat("Access is PropertyAccess", a, instanceOf(IPropertyAccess.class));
+						pa = (IPropertyAccess)a;
+						assertThat("Access is to 'hasOverdraft'/'branch' property.", allowedNames, contains(pa.property().get().getName()));
+					}
 					if (Boolean.getBoolean((String) currentRow.get("hasOverdraft"))) {
 						IMessageTrace messageTrace = overdraftCharges.message().get();
 						accesses = messageTrace.accesses().get();
 						assertThat(accesses, hasSize(1));
-						IAccess ibanAccess = accesses.peek();
+						IAccess ibanAccess = accesses.iterator().next();
 						assertThat("Access is PropertyAccess", ibanAccess, instanceOf(IPropertyAccess.class));
 						pa = (IPropertyAccess)ibanAccess;
 						assertThat("Access is to 'iban' property.", pa.property().get().getName().equals("iban"));
@@ -366,7 +381,7 @@ public class IncrementalEvlModuleIntegrationTests {
 			properties.put(CsvModel.PROPERTY_ID_FIELD, "iban");
 			csvFilePath = IncrementalEvlModuleIntegrationTests.class.getResource("bankSmall.csv").getPath();
 			properties.put(CsvModel.PROPERTY_FILE, csvFilePath);
-			CsvModel model = new CsvModelIncremental();
+			CsvModelIncremental model = new CsvModelIncremental();
 			model.load(properties, new IRelativePathResolver() {
 				@Override
 				public String resolve(String relativePath)
@@ -377,8 +392,6 @@ public class IncrementalEvlModuleIntegrationTests {
 			module = new IncrementalEvlModule();
 			evlFile = new File(IncrementalEvlModuleIntegrationTests.class.getResource("testExecution.evl").toURI());
 			((TracedEvlContext) module.context).setTraceManager(new InMemoryEvlTraceManager());
-			module.prepareExecutionTrace();
-			((TracedEvlContext) module.context).getTraceManager().initExecutionListeners(module.getModuleExecution());
 			module.parse(evlFile);
 			module.context.getModelRepository().addModel(model);
 			// Make model copy
@@ -397,8 +410,9 @@ public class IncrementalEvlModuleIntegrationTests {
 			module.execute();
 			// Save the previous state so we can compare changes
 			// ContextTraces
-			IModuleExecution execution = module.getModuleExecution();
-			Queue<IExecutionTrace> executionTraces = execution.executions().get();
+			Set<IModuleElementTrace> executionTraces = ((TracedEvlContext) module.context).getTraceManager()
+					.getExecutionTraceRepository().getAllExecutionTraces();
+			
 			long contextExecutionTraces = executionTraces.stream()
 					.filter(t -> t instanceof IContextTrace)
 					.map(IContextTrace.class::cast)
@@ -435,37 +449,52 @@ public class IncrementalEvlModuleIntegrationTests {
 			module.getContext().getExecutorFactory().addExecutionListener(assertExecutionListener);
 			
 			// Insert Line 71 from test data
-			String[] data = new String[]{"CZ63 7593 6158 0945 3366 6310","Bobrowice","bkennet1x@wiley.com","5/16/2017","Brainsphere","false","$-3.35","Often"};
-			CsvAddRowInjector injector = new CsvAddRowInjector(data, csvFilePath,
+			String[] data = new String[]{"CZ63 7593 6158 0945 3366 6310","Bobrowice","bkennet1x@wiley.com",
+					"5/16/2017","Brainsphere","false","$-3.35","Often"};
+			Path csvPath = Paths.get(csvFilePath);
+			CsvAddRowInjector injector = new CsvAddRowInjector(data, csvPath,
 					CSVFormat.RFC4180.withDelimiter(',').withFirstRecordAsHeader(),
 					CsvAppendMethod.RANDOM);
 			ExecutorService executor = Executors.newSingleThreadExecutor();
 	        Future<?> future = executor.submit(injector);
 	        // Wait for changes in file to finish
 	        while (future.isDone()) { }
-	        // Wait for evl to execute again
+	       	// Wait for CsvModelIncremental to pickup changes and send notifications
 	        for (;;) {
-	        	ExecutionResult r = results.poll(10, TimeUnit.SECONDS);
-	        	//System.out.println(r);
-	        	if (r == null) {
-	        		break;
-	        	}
+		        	ExecutionResult r = results.poll(10, TimeUnit.SECONDS);
+		        	//System.out.println(r);
+		        	if (r == null) {
+		        		break;
+		        	}
 	        }
 	        
-	        executionTraces = execution.executions().get();
+//	        executionTraces = ((TracedEvlContext) module.context).getTraceManager()
+//					.getExecutionTraceRepository().getAllExecutionTraces();
+			
 			long contextExecutionTracesNew = executionTraces.stream()
 					.filter(t -> t instanceof IContextTrace)
 					.map(IContextTrace.class::cast)
 					.count();
-			assertThat("New Row should result in two new context execution traces", contextExecutionTracesNew, is(contextExecutionTraces+2));
+			assertThat("A new row does not add new ContextTraces", contextExecutionTracesNew, is(contextExecutionTraces));
 	        long unsatisfiedNew = module.getContext().getUnsatisfiedConstraints().size();
 			assertThat("Added row should not break any constraints", unsatisfiedNew-unsatisfied, is(0L));
+			for (IContextTrace ct : executionTraces.stream()
+					.filter(t -> t instanceof IContextTrace)
+					.map(IContextTrace.class::cast)
+					.collect(Collectors.toList())) {
+				List<ElementAccess> eas = ct.accesses().get().stream()
+						.filter(a -> a instanceof IElementAccess)
+						.map(ElementAccess.class::cast)
+						.collect(Collectors.toList());
+				assertThat("Each contextTrace should have one more element access", eas.size(), is(9));
+			}
 			
 			// Insert Line 264 from test data
 			contextExecutionTraces = contextExecutionTracesNew;
 			unsatisfied = unsatisfiedNew;
-			String[] data2 = new String[]{"BE02 7334 0167 6391","Pelabuhanratu","rmaclaughlin7a@loc.gov","11/21/2017","Buzzdog","true","$-28.03","Often"};
-			injector = new CsvAddRowInjector(data2, csvFilePath,
+			String[] data2 = new String[]{"BE02 7334 0167 6391","Pelabuhanratu","rmaclaughlin7a@loc.gov",
+					"11/21/2017","Buzzdog","true","$-28.03","Often"};
+			injector = new CsvAddRowInjector(data2, csvPath,
 					CSVFormat.RFC4180.withDelimiter(',').withFirstRecordAsHeader(),
 					CsvAppendMethod.RANDOM);
 			future = executor.submit(injector);
@@ -474,30 +503,33 @@ public class IncrementalEvlModuleIntegrationTests {
 	        while (future.isDone()) { }
 	        // Wait for evl to execute again
 	        for (;;) {
-	        	ExecutionResult r = results.poll(10, TimeUnit.SECONDS);
-	        	if (r == null) {
-	        		break;
-	        	}
+		        	ExecutionResult r = results.poll(10, TimeUnit.SECONDS);
+		        	if (r == null) {
+		        		break;
+		        	}
 	        }
 	        
-	        executionTraces = execution.executions().get();
-			contextExecutionTracesNew = executionTraces.stream()
+//	        executionTraces = ((TracedEvlContext) module.context).getTraceManager()
+//					.getExecutionTraceRepository().getAllExecutionTraces();
+			
+	        contextExecutionTracesNew = executionTraces.stream()
 					.filter(t -> t instanceof IContextTrace)
 					.map(IContextTrace.class::cast)
 					.count();
-			assertThat("New Row should result in two new context execution traces", contextExecutionTracesNew, is(contextExecutionTraces+2));
+			assertThat("A new row does not add new ContextTraces", contextExecutionTracesNew, is(contextExecutionTraces));
 	        unsatisfiedNew = module.getContext().getUnsatisfiedConstraints().size();
 			assertThat("Added row should break two constraints", unsatisfiedNew-unsatisfied, is(2L));
 		}
 		
+		@Ignore
 		@Test
-		public void testOnUpdate() throws Exception {
+		public void testOnChange() throws Exception {
 			module.setOnlineExecution(true);
 			module.execute();
 			// Save the previous state so we can compare changes
 			// ContextTraces
-			IModuleExecution execution = module.getModuleExecution();
-			Queue<IExecutionTrace> executionTraces = execution.executions().get();
+			Set<IModuleElementTrace> executionTraces = ((TracedEvlContext) module.context).getTraceManager()
+					.getExecutionTraceRepository().getAllExecutionTraces();
 			long contextExecutionTraces = executionTraces.stream()
 					.filter(t -> t instanceof IContextTrace)
 					.map(IContextTrace.class::cast)
@@ -535,22 +567,24 @@ public class IncrementalEvlModuleIntegrationTests {
 			
 			// Make a customer go into overdraft
 			// PL04 6348 6856 3863 4689 7150 1771 had $85.98, take it to $-45.12
-			CsvChangeInjector injector = new CsvChangeInjector("iban", "PL04 6348 6856 3863 4689 7150 1771",
+			Path csvPath = Paths.get(csvFilePath);
+			CsvChangeInjector injector = new CsvChangeInjector(0, "PL04 6348 6856 3863 4689 7150 1771",
 					6, "$-45.12",
-					csvFilePath, CSVFormat.RFC4180.withDelimiter(',').withFirstRecordAsHeader());
+					csvPath, CSVFormat.RFC4180.withDelimiter(',').withFirstRecordAsHeader());
 			ExecutorService executor = Executors.newSingleThreadExecutor();
 	        Future<?> future = executor.submit(injector);
 	        // Wait for changes in file to finish
 	        while (future.isDone()) { }
-	        // Wait for evl to execute again
+	        // Wait for CsvModelIncremental to pickup changes and send notifications
 	        for (;;) {
-	        	ExecutionResult r = results.poll(10, TimeUnit.SECONDS);
-	        	//System.out.println(r);
-	        	if (r == null) {
-	        		break;
-	        	}
+		        	ExecutionResult r = results.poll(10, TimeUnit.SECONDS);
+		        	//System.out.println(r);
+		        	if (r == null) {
+		        		break;
+		        	}
 	        }
-	        executionTraces = execution.executions().get();
+//	        executionTraces = execution.executions().get();
+	        
 	        long contextExecutionTracesNew = executionTraces.stream()
 					.filter(t -> t instanceof IContextTrace)
 					.map(IContextTrace.class::cast)
@@ -587,10 +621,6 @@ public class IncrementalEvlModuleIntegrationTests {
 		private void restoreModel(File temp, String modelPath) throws IOException {
 			Files.copy(temp.toPath(), Paths.get(modelPath), StandardCopyOption.REPLACE_EXISTING);
 		}
-		
-		
-		
-		
 			
 	}
 	

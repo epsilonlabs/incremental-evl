@@ -1,9 +1,10 @@
 package org.eclipse.epsilon.evl.incremental.execute;
 
 
+import org.eclipse.epsilon.base.incremental.execute.AbstractEolExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
-import org.eclipse.epsilon.eol.incremental.execute.AbstractEolExecutionTraceManager;
+import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.incremental.execute.introspection.recording.SatisfiesInvocationExecutionListener;
 
 
@@ -14,11 +15,13 @@ import org.eclipse.epsilon.evl.incremental.execute.introspection.recording.Satis
  *
  */
 public abstract class AbstractEvlExecutionTraceManager
-		extends AbstractEolExecutionTraceManager<IEvlExecutionTraceRepository>
-    	implements IEvlExecutionTraceManager<IEvlExecutionTraceRepository> {
+		extends AbstractEolExecutionTraceManager<IEvlExecutionTraceRepository, IEvlExecutionContextRepository>
+    	implements IEvlExecutionTraceManager {
 	
 	/** Repository of execution traces executions */
 	protected IEvlExecutionTraceRepository executionTraceRepository;
+	
+	protected IEvlExecutionContextRepository executionContextTraceRepository;
 	
 	private PropertyAccessExecutionListener propertyAccessListener = new PropertyAccessExecutionListener();
 	private AllInstancesInvocationExecutionListener allAccessListener = new AllInstancesInvocationExecutionListener();
@@ -31,6 +34,14 @@ public abstract class AbstractEvlExecutionTraceManager
 			executionTraceRepository = new EvlModuleExecutionRepository(inParallel);
 		}
 		return executionTraceRepository;
+	}
+	
+	@Override
+	public IEvlExecutionContextRepository getExecutionContextRepository() {
+		if (executionContextTraceRepository == null) {
+			executionContextTraceRepository = new EvlExecutionContextRepository(inParallel);
+		}
+		return executionContextTraceRepository;
 	}
 
 
