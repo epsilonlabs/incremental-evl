@@ -154,7 +154,9 @@ public class InvariantTrace implements IInvariantTrace {
     @Override
     public INestedModuleElementTraceHasParentTrace parentTrace() {
         /** protected region parentTrace on begin **/
-        return null;
+    	    INestedModuleElementTraceHasParentTrace result = new NestedModuleElementTraceHasParentTrace(this);
+    	    result.create(invariantContext.get());
+        return result;
         /** protected region parentTrace end **/
     }
 

@@ -14,17 +14,21 @@ package org.eclipse.epsilon.evl;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
+import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.eol.exceptions.models.EolModelNotFoundException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
@@ -44,6 +48,7 @@ import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
@@ -333,26 +338,23 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 			// To start, just rexecute the parent invariant if it matches the modelObject, if not do it for
 			// all model accesses. Fine granurality comes next!
 			
-			// Context and Invariants should not have property accesses!
-//			if (t instanceof IContextTrace) {
-//				executeTrace((IContextTrace) t, modelObject);
-//			}
-//			else if (t instanceof IInvariantTrace) {
-//				executeTrace((IInvariantTrace) t, modelObject);
-//			}
-			
 			// This could be done with runtime dispatch, but having distinct methods might be required?
-			if (t instanceof IGuardTrace) {
-				executeTrace((IGuardTrace) t, modelObject);
-			}
-			else if (t instanceof ISatisfiesTrace) {
-				executeTrace((ISatisfiesTrace) t, modelObject);
-			}
-			else if (t instanceof ICheckTrace) {
-				executeTrace((ICheckTrace) t, modelObject);
-			}
-			else if (t instanceof IMessageTrace) {
-				executeTrace((IMessageTrace) t, modelObject);
+			try {
+				if (t instanceof IGuardTrace) {
+					executeTrace((IGuardTrace) t, modelObject);
+				}
+				else if (t instanceof ISatisfiesTrace) {
+					executeTrace((ISatisfiesTrace) t, modelObject);
+				}
+				else if (t instanceof ICheckTrace) {
+					executeTrace((ICheckTrace) t, modelObject);
+				}
+				else if (t instanceof IMessageTrace) {
+					executeTrace((IMessageTrace) t, modelObject);
+				}
+			} catch (EolRuntimeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		// Will satisfied constraints be removed? is the fix replacing everything?
@@ -374,30 +376,144 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	 * (and its children) must be deleted. If the result changes from false->true, then the guarded element
 	 * must be reexecuted. If the results didn't change, then nothing else is executed.
 	 * 
-	 * Execution of the guard requires that the EVL context knows about self... who is self? It can or not
-	 * be the modelObject. We need to save this information in the trace.  
 	 * 
 	 * @param t the guard trace
 	 * @param modelObject
+	 * @throws EolRuntimeException 
 	 */
-	private void executeTrace(IGuardTrace t, Object modelObject) {
-		// TODO Implement IncrementalEvlModule.executeTrace
-		throw new UnsupportedOperationException("Unimplemented Method    IncrementalEvlModule.executeTrace invoked.");
+	private void executeTrace(IGuardTrace t, Object modelObject)  throws EolRuntimeException {
+		logger.info("Re-executing GuardTrace");				
+		IRuleTrace ruleTrace = t.parentTrace().get();
+		IGuardedElementTrace guardedElement = t.limits().get();
+		IModelElementTrace selfTrace = ruleTrace.executionContext().get().contextVariables().get().stream()
+				.filter(v -> v.getName().equals("self"))
+				.findFirst()
+				.get()
+				.value().get();//.getUri();
+		String modelName = selfTrace.model().get().getName();
+		IModel model = null;
+		try {
+			model = getContext().getModelRepository().getModelByName(modelName);
+		} catch (EolModelNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		Object self = model.getElementById(selfTrace.getUri());
+		if (guardedElement instanceof IInvariantTrace) {
+			logger.info("GuardTrace applies to Invariant");				
+			IInvariantTrace invariantT = (IInvariantTrace) guardedElement;
+			executeInvariantTrace(self, invariantT);
+		}
+		else {
+			logger.info("GuardTrace applies to Context");			
+			// Execute all the invariants in the InvariantContext
+			for (ConstraintContext conCtx : getConstraintContexts()) {
+				 try {
+					if (conCtx.appliesTo(self, getContext())) {
+						for (Constraint constraint : conCtx.getConstraints()) {
+						    constraint.check(self, getContext());
+						}
+					 }
+				} catch (EolRuntimeException e) {
+					logger.error("Error executing contexts for new element", e);
+				}
+			}
+		}
+		
+		
 	}
 	
-	private void executeTrace(IMessageTrace t, Object modelObject) {
-		// TODO Implement IncrementalEvlModule.executeTrace
-		throw new UnsupportedOperationException("Unimplemented Method    IncrementalEvlModule.executeTrace invoked.");
+	private void executeTrace(IMessageTrace t, Object modelObject)  throws EolRuntimeException {
+		
+		logger.info("Re-executing MessageTrace");	
+		IRuleTrace ruleTrace = t.parentTrace().get();
+		IModelElementTrace selfTrace = ruleTrace.executionContext().get().contextVariables().get().stream()
+				.filter(v -> v.getName().equals("self"))
+				.findFirst()
+				.get()
+				.value().get();//.getUri();
+		String modelName = selfTrace.model().get().getName();
+		IModel model = null;
+		try {
+			model = getContext().getModelRepository().getModelByName(modelName);
+		} catch (EolModelNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Object self = model.getElementById(selfTrace.getUri());
+		IInvariantTrace invariantT = t.invariant().get();
+		executeInvariantTrace(self, invariantT);
 	}
 
-	private void executeTrace(ICheckTrace t, Object modelObject) {
-		// TODO Implement IncrementalEvlModule.executeTrace
-		throw new UnsupportedOperationException("Unimplemented Method    IncrementalEvlModule.executeTrace invoked.");
+	private void executeTrace(ICheckTrace t, Object modelObject)  throws EolRuntimeException {
+		
+		logger.info("Re-executing CheckTrace");	
+		IRuleTrace ruleTrace = t.parentTrace().get();
+		IModelElementTrace selfTrace = ruleTrace.executionContext().get().contextVariables().get().stream()
+				.filter(v -> v.getName().equals("self"))
+				.findFirst()
+				.get()
+				.value().get();//.getUri();
+		String modelName = selfTrace.model().get().getName();
+		IModel model = null;
+		try {
+			model = getContext().getModelRepository().getModelByName(modelName);
+		} catch (EolModelNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Object self = model.getElementById(selfTrace.getUri());
+		IInvariantTrace invariantT = t.invariant().get();
+		executeInvariantTrace(self, invariantT);
 	}
 
-	private void executeTrace(ISatisfiesTrace t, Object modelObject) {
-		// TODO Implement IncrementalEvlModule.executeTrace
-		throw new UnsupportedOperationException("Unimplemented Method    IncrementalEvlModule.executeTrace invoked.");
+	private void executeTrace(ISatisfiesTrace t, Object modelObject) throws EolRuntimeException {
+		
+		logger.info("Re-executing SatisfiesTrace");	
+		IRuleTrace ruleTrace = t.parentTrace().get();
+		IModelElementTrace selfTrace = ruleTrace.executionContext().get().contextVariables().get().stream()
+				.filter(v -> v.getName().equals("self"))
+				.findFirst()
+				.get()
+				.value().get();//.getUri();
+		String modelName = selfTrace.model().get().getName();
+		IModel model = null;
+		try {
+			model = getContext().getModelRepository().getModelByName(modelName);
+		} catch (EolModelNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Object self = model.getElementById(selfTrace.getUri());
+		IInvariantTrace invariantT = t.invariant().get();
+		executeInvariantTrace(self, invariantT);
+	}
+	
+	/**
+	 * @param self
+	 * @param invariantT
+	 * @throws EolRuntimeException
+	 */
+	private void executeInvariantTrace(Object self, IInvariantTrace invariantT) throws EolRuntimeException {
+		int index = 0;
+		for (ConstraintContext conCtx : getConstraintContexts()) {
+			if (conCtx.getTypeName().equals(invariantT.invariantContext().get().getKind()) &&
+					(index == invariantT.invariantContext().get().getIndex())) {
+				// Found the context, now find the invariant
+				// FIXME	 Need to modify EVL so we can individually modify constraints (invariants)
+				Constraint inv = conCtx.getModuleElements().stream()
+						.map(Constraint.class::cast)
+						.filter(c -> c.getName().equals(invariantT.getName()))
+						.findFirst()
+						.orElse(null);
+				if (inv == null) {
+					logger.error("Can not find matching constraint for trace.");
+					throw new IllegalStateException();
+				}
+				inv.check(self, getContext(), true);
+				break;
+			}
+		}
 	}
 
 

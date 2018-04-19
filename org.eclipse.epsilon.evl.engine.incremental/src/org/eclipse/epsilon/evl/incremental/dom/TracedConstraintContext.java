@@ -7,6 +7,7 @@ import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementVariable;
+import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionContext;
 import org.eclipse.epsilon.common.module.IModule;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -102,10 +103,18 @@ public class TracedConstraintContext extends ConstraintContext
 		IEvlExecutionTraceRepository repo = context.getTraceManager().getExecutionTraceRepository();
 		IEvlExecutionContextRepository contextRepo = context.getTraceManager().getExecutionContextRepository();
 		IEvlModuleTrace moduleTrace = context.getEvlModuleTrace();
-		Object selfValue = context.getFrameStack().get("self");
 		IModelElementVariable selfVariable =  ((IIncrementalModel)model).getModelTraceFactory()
-				.createModelElementVariable("self", selfValue);
+				.createModelElementVariable("self", element);
 		IExecutionContext exContext = contextRepo.getExecutionContextFor(selfVariable);
+		if (exContext == null) {
+			try {
+				exContext = new ExecutionContext();
+			} catch (TraceModelDuplicateRelation e) {
+				logger.warn("If the ExecutionContext was not in the repo it should have been created correctly.");
+				throw new EolIncrementalExecutionException("Error creating new ExecutionContext", e);
+			}
+			contextRepo.add(exContext);
+		}
 		currentTrace = repo.getContextTraceFor(getTypeName(), index, moduleTrace, exContext);
 		if (currentTrace == null) {
 			try {
