@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-18.
+ * This file was automatically generated on: 2018-04-19.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,6 +22,7 @@ import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
  * created through this interface.
  */
 public interface IGuardedElementTrace {
+
 
     /** The guard reference. */
     IGuardedElementTraceHasGuard guard();

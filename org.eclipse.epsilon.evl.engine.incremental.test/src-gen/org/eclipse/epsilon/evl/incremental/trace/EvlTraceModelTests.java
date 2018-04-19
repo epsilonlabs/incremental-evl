@@ -51,18 +51,17 @@ public class EvlTraceModelTests {
         private IExecutionContext executionContextsMock2;
         
         private EvlModuleTrace classUnderTest;
-        
-        @Test
-        public void testEvlModuleTraceInstantiation() throws Exception {
-            classUnderTest = new EvlModuleTrace("source1");
-	    }
+
 	    
 // protected region IgnoreEvlModuleTraceAttributes on begin
 	    @Ignore
 // protected region IgnoreEvlModuleTraceAttributes end	    
 	    @Test
         public void testEvlModuleTraceAttributes() throws Exception {
-            classUnderTest = new EvlModuleTrace("source1");
+            // protected region EvlModuleTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new EvlModuleTrace("source1");                    
+            // protected region EvlModuleTraceInit end     
 // protected region EvlModuleTraceAttributes on begin
             // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region EvlModuleTraceAttributes end
@@ -70,7 +69,10 @@ public class EvlTraceModelTests {
 
         @Test
         public void testEvlModuleTraceCreateRuleTracesReference() throws Exception {
-            classUnderTest = new EvlModuleTrace("source1");
+            // protected region EvlModuleTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new EvlModuleTrace("source1");                    
+            // protected region EvlModuleTraceInit end     
             boolean result;
             result = classUnderTest.ruleTraces().create(ruleTracesMock1);
             assertTrue(result);
@@ -85,7 +87,10 @@ public class EvlTraceModelTests {
         
         @Test
         public void testEvlModuleTraceDestroyRuleTracesReference() throws Exception {
-            classUnderTest = new EvlModuleTrace("source1");
+            // protected region EvlModuleTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new EvlModuleTrace("source1");                    
+            // protected region EvlModuleTraceInit end     
             classUnderTest.ruleTraces().create(ruleTracesMock1);
             boolean result = classUnderTest.ruleTraces().destroy(ruleTracesMock1);
             assertTrue(result);
@@ -95,7 +100,10 @@ public class EvlTraceModelTests {
         }
         @Test
         public void testEvlModuleTraceCreateExecutionContextsReference() throws Exception {
-            classUnderTest = new EvlModuleTrace("source1");
+            // protected region EvlModuleTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new EvlModuleTrace("source1");                    
+            // protected region EvlModuleTraceInit end     
             boolean result;
             result = classUnderTest.executionContexts().create(executionContextsMock1);
             assertTrue(result);
@@ -110,7 +118,10 @@ public class EvlTraceModelTests {
         
         @Test
         public void testEvlModuleTraceDestroyExecutionContextsReference() throws Exception {
-            classUnderTest = new EvlModuleTrace("source1");
+            // protected region EvlModuleTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new EvlModuleTrace("source1");                    
+            // protected region EvlModuleTraceInit end     
             classUnderTest.executionContexts().create(executionContextsMock1);
             boolean result = classUnderTest.executionContexts().destroy(executionContextsMock1);
             assertTrue(result);
@@ -184,23 +195,10 @@ public class EvlTraceModelTests {
         private IInvariantTraceHasInvariantContext invariantTrace2;
         
         private ContextTrace classUnderTest;
-        
-        @Test
-        public void testContextTraceInstantiation() throws Exception {
-            IModuleTrace _module = mock(IModuleTrace.class);
-        
-            IExecutionContext _executionContext = mock(IExecutionContext.class);
-            IExecutionContextHasRules executionContext = niceMock(IExecutionContextHasRules.class);
-            expect(_executionContext.rules()).andReturn(executionContext).anyTimes();
-            replay(_executionContext);
-            expect(executionContext.get()).andReturn(null).anyTimes();
-            replay(executionContext);
-        
-            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext);
-	    }
+
 	    
 // protected region IgnoreContextTraceAttributes on begin
-	    //@Ignore
+	    @Ignore
 // protected region IgnoreContextTraceAttributes end	    
 	    @Test
         public void testContextTraceAttributes() throws Exception {
@@ -213,17 +211,22 @@ public class EvlTraceModelTests {
             expect(executionContext.get()).andReturn(null).anyTimes();
             replay(executionContext);
         
-            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext);
-// protected region ContextTraceAttributes on begin
-            assertThat(classUnderTest.getKind(), is("kind"));
-            String id = "ObjectId";
-            classUnderTest.setId(id);
-            assertThat(classUnderTest.getId(), is(id));
-// protected region ContextTraceAttributes end
-        }
-
-        @Test
-        public void testContextTraceCreateGuardReference() throws Exception {
+            // protected region ContextTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext, containerMock);                    
+            // protected region ContextTraceInit end     
+            Queue<IRuleTrace> values = containerMock.ruleTraces().get();
+            assertThat(values, hasItem(classUnderTest));
+	    }
+	    
+// protected region IgnoreContextTraceAttributes on begin	    
+	    @Ignore
+// protected region IgnoreContextTraceAttributes end	    
+	    @Test
+        public void testContextTraceAttributes() throws Exception {
+            moduleTrace1 = new ModuleTraceHasRuleTraces(containerMock);
+            expect(containerMock.ruleTraces()).andReturn(moduleTrace1).anyTimes();
+            replay(containerMock);
             IModuleTrace _module = mock(IModuleTrace.class);
         
             IExecutionContext _executionContext = mock(IExecutionContext.class);
@@ -233,7 +236,33 @@ public class EvlTraceModelTests {
             expect(executionContext.get()).andReturn(null).anyTimes();
             replay(executionContext);
         
-            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext);
+            // protected region ContextTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext, containerMock);                    
+            // protected region ContextTraceInit end     
+// protected region ContextTraceAttributes on begin
+            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
+// protected region ContextTraceAttributes end
+        }
+
+        @Test
+        public void testContextTraceCreateGuardReference() throws Exception {
+            moduleTrace1 = new ModuleTraceHasRuleTraces(containerMock);
+            expect(containerMock.ruleTraces()).andReturn(moduleTrace1).anyTimes();
+            replay(containerMock);
+            IModuleTrace _module = mock(IModuleTrace.class);
+        
+            IExecutionContext _executionContext = mock(IExecutionContext.class);
+            IExecutionContextHasRules executionContext = niceMock(IExecutionContextHasRules.class);
+            expect(_executionContext.rules()).andReturn(executionContext).anyTimes();
+            replay(_executionContext);
+            expect(executionContext.get()).andReturn(null).anyTimes();
+            replay(executionContext);
+        
+            // protected region ContextTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext, containerMock);                    
+            // protected region ContextTraceInit end     
             guardTrace1 = new GuardTraceHasLimits(guardMock1);
             expect(guardMock1.limits()).andReturn(guardTrace1).anyTimes();
             replay(guardMock1);
@@ -248,6 +277,10 @@ public class EvlTraceModelTests {
             result = classUnderTest.guard().create(guardMock1);
             assertFalse(result);
             // Create a second one
+            reset(containerMock);
+            moduleTrace2 = new ModuleTraceHasRuleTraces(containerMock);
+            expect(containerMock.ruleTraces()).andReturn(moduleTrace2).anyTimes();
+            replay(containerMock);
             IModuleTrace _module2 = mock(IModuleTrace.class);
              
             IExecutionContext _executionContext2 = mock(IExecutionContext.class);
@@ -257,12 +290,15 @@ public class EvlTraceModelTests {
             expect(executionContext2.get()).andReturn(null).anyTimes();
             replay(executionContext2);
              
-            IContextTrace classUnderTest2 = new ContextTrace("kind2", 2, _module2, _executionContext2);
+            IContextTrace classUnderTest2 = new ContextTrace("kind2", 2, _module2, _executionContext2, containerMock);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
         @Test
         public void testContextTraceDestroyGuardReference() throws Exception {
+            moduleTrace1 = new ModuleTraceHasRuleTraces(containerMock);
+            expect(containerMock.ruleTraces()).andReturn(moduleTrace1).anyTimes();
+            replay(containerMock);
             IModuleTrace _module = mock(IModuleTrace.class);
         
             IExecutionContext _executionContext = mock(IExecutionContext.class);
@@ -272,7 +308,10 @@ public class EvlTraceModelTests {
             expect(executionContext.get()).andReturn(null).anyTimes();
             replay(executionContext);
         
-            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext);
+            // protected region ContextTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext, containerMock);                    
+            // protected region ContextTraceInit end     
             guardTrace1 = new GuardTraceHasLimits(guardMock1);
             expect(guardMock1.limits()).andReturn(guardTrace1).anyTimes();
             replay(guardMock1);
@@ -293,6 +332,9 @@ public class EvlTraceModelTests {
         }
         @Test
         public void testContextTraceCreateAccessesReference() throws Exception {
+            moduleTrace1 = new ModuleTraceHasRuleTraces(containerMock);
+            expect(containerMock.ruleTraces()).andReturn(moduleTrace1).anyTimes();
+            replay(containerMock);
             IModuleTrace _module = mock(IModuleTrace.class);
         
             IExecutionContext _executionContext = mock(IExecutionContext.class);
@@ -302,7 +344,10 @@ public class EvlTraceModelTests {
             expect(executionContext.get()).andReturn(null).anyTimes();
             replay(executionContext);
         
-            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext);
+            // protected region ContextTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext, containerMock);                    
+            // protected region ContextTraceInit end     
             boolean result;
             result = classUnderTest.accesses().create(accessesMock1);
             assertTrue(result);
@@ -311,6 +356,10 @@ public class EvlTraceModelTests {
             result = classUnderTest.accesses().create(accessesMock1);
             assertFalse(result);
             // Create a second one
+            reset(containerMock);
+            moduleTrace2 = new ModuleTraceHasRuleTraces(containerMock);
+            expect(containerMock.ruleTraces()).andReturn(moduleTrace2).anyTimes();
+            replay(containerMock);
             IModuleTrace _module2 = mock(IModuleTrace.class);
              
             IExecutionContext _executionContext2 = mock(IExecutionContext.class);
@@ -320,12 +369,15 @@ public class EvlTraceModelTests {
             expect(executionContext2.get()).andReturn(null).anyTimes();
             replay(executionContext2);
              
-            IContextTrace classUnderTest2 = new ContextTrace("kind2", 2, _module2, _executionContext2);
+            IContextTrace classUnderTest2 = new ContextTrace("kind2", 2, _module2, _executionContext2, containerMock);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
         @Test
         public void testContextTraceDestroyAccessesReference() throws Exception {
+            moduleTrace1 = new ModuleTraceHasRuleTraces(containerMock);
+            expect(containerMock.ruleTraces()).andReturn(moduleTrace1).anyTimes();
+            replay(containerMock);
             IModuleTrace _module = mock(IModuleTrace.class);
         
             IExecutionContext _executionContext = mock(IExecutionContext.class);
@@ -335,7 +387,10 @@ public class EvlTraceModelTests {
             expect(executionContext.get()).andReturn(null).anyTimes();
             replay(executionContext);
         
-            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext);
+            // protected region ContextTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext, containerMock);                    
+            // protected region ContextTraceInit end     
             classUnderTest.accesses().create(accessesMock1);
         
             reset(executionContext);
@@ -350,6 +405,9 @@ public class EvlTraceModelTests {
         }
         @Test
         public void testContextTraceCreateModuleReference() throws Exception {
+            moduleTrace1 = new ModuleTraceHasRuleTraces(containerMock);
+            expect(containerMock.ruleTraces()).andReturn(moduleTrace1).anyTimes();
+            replay(containerMock);
             IModuleTrace _module = mock(IModuleTrace.class);
         
             IExecutionContext _executionContext = mock(IExecutionContext.class);
@@ -359,13 +417,20 @@ public class EvlTraceModelTests {
             expect(executionContext.get()).andReturn(null).anyTimes();
             replay(executionContext);
         
-            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext);
+            // protected region ContextTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext, containerMock);                    
+            // protected region ContextTraceInit end     
             boolean result;
             result = classUnderTest.module().create(moduleMock2);
             assertFalse(result);
             result = classUnderTest.module().create(_module);
             assertFalse(result);
             // Create a second one
+            reset(containerMock);
+            moduleTrace2 = new ModuleTraceHasRuleTraces(containerMock);
+            expect(containerMock.ruleTraces()).andReturn(moduleTrace2).anyTimes();
+            replay(containerMock);
             IModuleTrace _module2 = mock(IModuleTrace.class);
              
             IExecutionContext _executionContext2 = mock(IExecutionContext.class);
@@ -375,12 +440,15 @@ public class EvlTraceModelTests {
             expect(executionContext2.get()).andReturn(null).anyTimes();
             replay(executionContext2);
              
-            IContextTrace classUnderTest2 = new ContextTrace("kind2", 2, _module2, _executionContext2);
+            IContextTrace classUnderTest2 = new ContextTrace("kind2", 2, _module2, _executionContext2, containerMock);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
         @Test
         public void testContextTraceDestroyModuleReference() throws Exception {
+            moduleTrace1 = new ModuleTraceHasRuleTraces(containerMock);
+            expect(containerMock.ruleTraces()).andReturn(moduleTrace1).anyTimes();
+            replay(containerMock);
             IModuleTrace _module = mock(IModuleTrace.class);
         
             IExecutionContext _executionContext = mock(IExecutionContext.class);
@@ -390,7 +458,10 @@ public class EvlTraceModelTests {
             expect(executionContext.get()).andReturn(null).anyTimes();
             replay(executionContext);
         
-            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext);
+            // protected region ContextTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext, containerMock);                    
+            // protected region ContextTraceInit end     
         
             reset(executionContext);
             expect(executionContext.get()).andReturn(classUnderTest).anyTimes();
@@ -404,6 +475,9 @@ public class EvlTraceModelTests {
         }
         @Test
         public void testContextTraceCreateExecutionContextReference() throws Exception {
+            moduleTrace1 = new ModuleTraceHasRuleTraces(containerMock);
+            expect(containerMock.ruleTraces()).andReturn(moduleTrace1).anyTimes();
+            replay(containerMock);
             IModuleTrace _module = mock(IModuleTrace.class);
         
             IExecutionContext _executionContext = mock(IExecutionContext.class);
@@ -413,7 +487,10 @@ public class EvlTraceModelTests {
             expect(executionContext.get()).andReturn(null).anyTimes();
             replay(executionContext);
         
-            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext);
+            // protected region ContextTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext, containerMock);                    
+            // protected region ContextTraceInit end     
             executionContext1 = new ExecutionContextHasRules(executionContextMock1);
             expect(executionContextMock1.rules()).andReturn(executionContext1).anyTimes();
             replay(executionContextMock1);
@@ -426,6 +503,10 @@ public class EvlTraceModelTests {
             result = classUnderTest.executionContext().create(_executionContext);
             assertFalse(result);
             // Create a second one
+            reset(containerMock);
+            moduleTrace2 = new ModuleTraceHasRuleTraces(containerMock);
+            expect(containerMock.ruleTraces()).andReturn(moduleTrace2).anyTimes();
+            replay(containerMock);
             IModuleTrace _module2 = mock(IModuleTrace.class);
              
             IExecutionContext _executionContext2 = mock(IExecutionContext.class);
@@ -435,12 +516,15 @@ public class EvlTraceModelTests {
             expect(executionContext2.get()).andReturn(null).anyTimes();
             replay(executionContext2);
              
-            IContextTrace classUnderTest2 = new ContextTrace("kind2", 2, _module2, _executionContext2);
+            IContextTrace classUnderTest2 = new ContextTrace("kind2", 2, _module2, _executionContext2, containerMock);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
         @Test
         public void testContextTraceDestroyExecutionContextReference() throws Exception {
+            moduleTrace1 = new ModuleTraceHasRuleTraces(containerMock);
+            expect(containerMock.ruleTraces()).andReturn(moduleTrace1).anyTimes();
+            replay(containerMock);
             IModuleTrace _module = mock(IModuleTrace.class);
         
             IExecutionContext _executionContext = mock(IExecutionContext.class);
@@ -450,7 +534,10 @@ public class EvlTraceModelTests {
             expect(executionContext.get()).andReturn(null).anyTimes();
             replay(executionContext);
         
-            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext);
+            // protected region ContextTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext, containerMock);                    
+            // protected region ContextTraceInit end     
             executionContext1 = new ExecutionContextHasRules(executionContextMock1);
             expect(executionContextMock1.rules()).andReturn(executionContext1).anyTimes();
             replay(executionContextMock1);
@@ -470,6 +557,9 @@ public class EvlTraceModelTests {
         }
         @Test
         public void testContextTraceCreateConstraintsReference() throws Exception {
+            moduleTrace1 = new ModuleTraceHasRuleTraces(containerMock);
+            expect(containerMock.ruleTraces()).andReturn(moduleTrace1).anyTimes();
+            replay(containerMock);
             IModuleTrace _module = mock(IModuleTrace.class);
         
             IExecutionContext _executionContext = mock(IExecutionContext.class);
@@ -479,7 +569,10 @@ public class EvlTraceModelTests {
             expect(executionContext.get()).andReturn(null).anyTimes();
             replay(executionContext);
         
-            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext);
+            // protected region ContextTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext, containerMock);                    
+            // protected region ContextTraceInit end     
             invariantTrace1 = new InvariantTraceHasInvariantContext(constraintsMock1);
             expect(constraintsMock1.invariantContext()).andReturn(invariantTrace1).anyTimes();
             replay(constraintsMock1);
@@ -494,6 +587,10 @@ public class EvlTraceModelTests {
             result = classUnderTest.constraints().create(constraintsMock1);
             assertFalse(result);
             // Create a second one
+            reset(containerMock);
+            moduleTrace2 = new ModuleTraceHasRuleTraces(containerMock);
+            expect(containerMock.ruleTraces()).andReturn(moduleTrace2).anyTimes();
+            replay(containerMock);
             IModuleTrace _module2 = mock(IModuleTrace.class);
              
             IExecutionContext _executionContext2 = mock(IExecutionContext.class);
@@ -503,12 +600,15 @@ public class EvlTraceModelTests {
             expect(executionContext2.get()).andReturn(null).anyTimes();
             replay(executionContext2);
              
-            IContextTrace classUnderTest2 = new ContextTrace("kind2", 2, _module2, _executionContext2);
+            IContextTrace classUnderTest2 = new ContextTrace("kind2", 2, _module2, _executionContext2, containerMock);
             assertThat(classUnderTest2, is(notNullValue()));
         }
         
         @Test
         public void testContextTraceDestroyConstraintsReference() throws Exception {
+            moduleTrace1 = new ModuleTraceHasRuleTraces(containerMock);
+            expect(containerMock.ruleTraces()).andReturn(moduleTrace1).anyTimes();
+            replay(containerMock);
             IModuleTrace _module = mock(IModuleTrace.class);
         
             IExecutionContext _executionContext = mock(IExecutionContext.class);
@@ -518,7 +618,10 @@ public class EvlTraceModelTests {
             expect(executionContext.get()).andReturn(null).anyTimes();
             replay(executionContext);
         
-            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext);
+            // protected region ContextTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext, containerMock);                    
+            // protected region ContextTraceInit end     
             invariantTrace1 = new InvariantTraceHasInvariantContext(constraintsMock1);
             expect(constraintsMock1.invariantContext()).andReturn(invariantTrace1).anyTimes();
             replay(constraintsMock1);
@@ -631,38 +734,36 @@ public class EvlTraceModelTests {
         private IContextTraceHasConstraints contextTrace2;
         
         private InvariantTrace classUnderTest;
+
         
         @Test
         public void testInvariantTraceInstantiation() throws Exception {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
             assertThat(classUnderTest.invariantContext().get(), is(invariantContextMock1));
             Queue<IInvariantTrace> values = invariantContextMock1.constraints().get();
             assertThat(values, hasItem(classUnderTest));
 	    }
 	    
-// protected region IgnoreInvariantTraceAttributes on begin
-	    //@Ignore
+// protected region IgnoreInvariantTraceAttributes on begin	    
+	    @Ignore
 // protected region IgnoreInvariantTraceAttributes end	    
 	    @Test
         public void testInvariantTraceAttributes() throws Exception {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
 // protected region InvariantTraceAttributes on begin
-            assertThat(classUnderTest.getName(), is("name"));
-            String id = "ObjectId";
-            classUnderTest.setId(id);
-            assertThat(classUnderTest.getId(), is(id));
-            boolean result = false;
-            classUnderTest.setResult(result);
-            assertThat(classUnderTest.getResult(), is(result));
-            result = true;
-            classUnderTest.setResult(result);
-            assertThat(classUnderTest.getResult(), is(result));
+            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region InvariantTraceAttributes end
         }
 
@@ -672,7 +773,10 @@ public class EvlTraceModelTests {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
             contextTrace2 = new ContextTraceHasConstraints(invariantContextMock2);
             expect(invariantContextMock2.constraints()).andReturn(contextTrace2).anyTimes();
             replay(invariantContextMock2);
@@ -687,7 +791,10 @@ public class EvlTraceModelTests {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
             boolean result = classUnderTest.invariantContext().destroy(invariantContextMock1);
             assertTrue(result);
         }
@@ -697,7 +804,10 @@ public class EvlTraceModelTests {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
             contextTrace2 = new ContextTraceHasConstraints(invariantContextMock2);
             expect(invariantContextMock2.constraints()).andReturn(contextTrace2).anyTimes();
             replay(invariantContextMock2);
@@ -717,7 +827,10 @@ public class EvlTraceModelTests {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
             guardTrace1 = new GuardTraceHasLimits(guardMock1);
             expect(guardMock1.limits()).andReturn(guardTrace1).anyTimes();
             replay(guardMock1);
@@ -744,7 +857,10 @@ public class EvlTraceModelTests {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
             guardTrace1 = new GuardTraceHasLimits(guardMock1);
             expect(guardMock1.limits()).andReturn(guardTrace1).anyTimes();
             replay(guardMock1);
@@ -763,7 +879,10 @@ public class EvlTraceModelTests {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
             boolean result;
             result = classUnderTest.accesses().create(accessesMock1);
             assertTrue(result);
@@ -784,7 +903,10 @@ public class EvlTraceModelTests {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
             classUnderTest.accesses().create(accessesMock1);
             boolean result = classUnderTest.accesses().destroy(accessesMock1);
             assertTrue(result);
@@ -797,7 +919,10 @@ public class EvlTraceModelTests {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
             boolean result;
             result = classUnderTest.parentTrace().create(parentTraceMock2);
             assertFalse(result);
@@ -816,7 +941,10 @@ public class EvlTraceModelTests {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
             boolean result = classUnderTest.parentTrace().destroy(_parentTrace);
             assertTrue(result);
             assertThat(classUnderTest.parentTrace().get(), is(nullValue()));
@@ -828,7 +956,10 @@ public class EvlTraceModelTests {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
             checkTrace1 = new CheckTraceHasInvariant(checkMock1);
             expect(checkMock1.invariant()).andReturn(checkTrace1).anyTimes();
             replay(checkMock1);
@@ -855,7 +986,10 @@ public class EvlTraceModelTests {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
             checkTrace1 = new CheckTraceHasInvariant(checkMock1);
             expect(checkMock1.invariant()).andReturn(checkTrace1).anyTimes();
             replay(checkMock1);
@@ -874,7 +1008,10 @@ public class EvlTraceModelTests {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
             messageTrace1 = new MessageTraceHasInvariant(messageMock1);
             expect(messageMock1.invariant()).andReturn(messageTrace1).anyTimes();
             replay(messageMock1);
@@ -901,7 +1038,10 @@ public class EvlTraceModelTests {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
             messageTrace1 = new MessageTraceHasInvariant(messageMock1);
             expect(messageMock1.invariant()).andReturn(messageTrace1).anyTimes();
             replay(messageMock1);
@@ -920,7 +1060,10 @@ public class EvlTraceModelTests {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
             satisfiesTrace1 = new SatisfiesTraceHasInvariant(satisfiesMock1);
             expect(satisfiesMock1.invariant()).andReturn(satisfiesTrace1).anyTimes();
             replay(satisfiesMock1);
@@ -947,7 +1090,10 @@ public class EvlTraceModelTests {
             contextTrace1 = new ContextTraceHasConstraints(invariantContextMock1);
             expect(invariantContextMock1.constraints()).andReturn(contextTrace1).anyTimes();
             replay(invariantContextMock1);
-            classUnderTest = new InvariantTrace("name1", invariantContextMock1);
+            // protected region InvariantTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new InvariantTrace("name1", invariantContextMock1);                    
+            // protected region InvariantTraceInit end     
             satisfiesTrace1 = new SatisfiesTraceHasInvariant(satisfiesMock1);
             expect(satisfiesMock1.invariant()).andReturn(satisfiesTrace1).anyTimes();
             replay(satisfiesMock1);
@@ -999,36 +1145,35 @@ public class EvlTraceModelTests {
         private IGuardedElementTraceHasGuard guardedElementTrace2;
         
         private GuardTrace classUnderTest;
+
         
         @Test
         public void testGuardTraceInstantiation() throws Exception {
             guardedElementTrace1 = new GuardedElementTraceHasGuard(limitsMock1);
             expect(limitsMock1.guard()).andReturn(guardedElementTrace1).anyTimes();
             replay(limitsMock1);
-            classUnderTest = new GuardTrace(limitsMock1);
+            // protected region GuardTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new GuardTrace(limitsMock1);                    
+            // protected region GuardTraceInit end     
             assertThat(classUnderTest.limits().get(), is(limitsMock1));
             assertThat(limitsMock1.guard().get(), is(classUnderTest));
 	    }
 	    
-// protected region IgnoreGuardTraceAttributes on begin
-	    //@Ignore
+// protected region IgnoreGuardTraceAttributes on begin	    
+	    @Ignore
 // protected region IgnoreGuardTraceAttributes end	    
 	    @Test
         public void testGuardTraceAttributes() throws Exception {
             guardedElementTrace1 = new GuardedElementTraceHasGuard(limitsMock1);
             expect(limitsMock1.guard()).andReturn(guardedElementTrace1).anyTimes();
             replay(limitsMock1);
-            classUnderTest = new GuardTrace(limitsMock1);
+            // protected region GuardTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new GuardTrace(limitsMock1);                    
+            // protected region GuardTraceInit end     
 // protected region GuardTraceAttributes on begin
-            String id = "ObjectId";
-            classUnderTest.setId(id);
-            assertThat(classUnderTest.getId(), is(id));
-            boolean result = false;
-            classUnderTest.setResult(result);
-            assertThat(classUnderTest.getResult(), is(result));
-            result = true;
-            classUnderTest.setResult(result);
-            assertThat(classUnderTest.getResult(), is(result));
+            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region GuardTraceAttributes end
         }
 
@@ -1038,7 +1183,10 @@ public class EvlTraceModelTests {
             guardedElementTrace1 = new GuardedElementTraceHasGuard(limitsMock1);
             expect(limitsMock1.guard()).andReturn(guardedElementTrace1).anyTimes();
             replay(limitsMock1);
-            classUnderTest = new GuardTrace(limitsMock1);
+            // protected region GuardTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new GuardTrace(limitsMock1);                    
+            // protected region GuardTraceInit end     
             guardedElementTrace2 = new GuardedElementTraceHasGuard(limitsMock2);
             expect(limitsMock2.guard()).andReturn(guardedElementTrace2).anyTimes();
             replay(limitsMock2);
@@ -1053,7 +1201,10 @@ public class EvlTraceModelTests {
             guardedElementTrace1 = new GuardedElementTraceHasGuard(limitsMock1);
             expect(limitsMock1.guard()).andReturn(guardedElementTrace1).anyTimes();
             replay(limitsMock1);
-            classUnderTest = new GuardTrace(limitsMock1);
+            // protected region GuardTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new GuardTrace(limitsMock1);                    
+            // protected region GuardTraceInit end     
             boolean result = classUnderTest.limits().destroy(limitsMock1);
             assertTrue(result);
         }
@@ -1063,7 +1214,10 @@ public class EvlTraceModelTests {
             guardedElementTrace1 = new GuardedElementTraceHasGuard(limitsMock1);
             expect(limitsMock1.guard()).andReturn(guardedElementTrace1).anyTimes();
             replay(limitsMock1);
-            classUnderTest = new GuardTrace(limitsMock1);
+            // protected region GuardTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new GuardTrace(limitsMock1);                    
+            // protected region GuardTraceInit end     
             guardedElementTrace2 = new GuardedElementTraceHasGuard(limitsMock2);
             expect(limitsMock2.guard()).andReturn(guardedElementTrace2).anyTimes();
             replay(limitsMock2);
@@ -1083,7 +1237,10 @@ public class EvlTraceModelTests {
             guardedElementTrace1 = new GuardedElementTraceHasGuard(limitsMock1);
             expect(limitsMock1.guard()).andReturn(guardedElementTrace1).anyTimes();
             replay(limitsMock1);
-            classUnderTest = new GuardTrace(limitsMock1);
+            // protected region GuardTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new GuardTrace(limitsMock1);                    
+            // protected region GuardTraceInit end     
             boolean result;
             result = classUnderTest.accesses().create(accessesMock1);
             assertTrue(result);
@@ -1104,7 +1261,10 @@ public class EvlTraceModelTests {
             guardedElementTrace1 = new GuardedElementTraceHasGuard(limitsMock1);
             expect(limitsMock1.guard()).andReturn(guardedElementTrace1).anyTimes();
             replay(limitsMock1);
-            classUnderTest = new GuardTrace(limitsMock1);
+            // protected region GuardTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new GuardTrace(limitsMock1);                    
+            // protected region GuardTraceInit end     
             classUnderTest.accesses().create(accessesMock1);
             boolean result = classUnderTest.accesses().destroy(accessesMock1);
             assertTrue(result);
@@ -1117,7 +1277,10 @@ public class EvlTraceModelTests {
             guardedElementTrace1 = new GuardedElementTraceHasGuard(limitsMock1);
             expect(limitsMock1.guard()).andReturn(guardedElementTrace1).anyTimes();
             replay(limitsMock1);
-            classUnderTest = new GuardTrace(limitsMock1);
+            // protected region GuardTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new GuardTrace(limitsMock1);                    
+            // protected region GuardTraceInit end     
             boolean result;
             result = classUnderTest.parentTrace().create(parentTraceMock2);
             assertFalse(result);
@@ -1136,7 +1299,10 @@ public class EvlTraceModelTests {
             guardedElementTrace1 = new GuardedElementTraceHasGuard(limitsMock1);
             expect(limitsMock1.guard()).andReturn(guardedElementTrace1).anyTimes();
             replay(limitsMock1);
-            classUnderTest = new GuardTrace(limitsMock1);
+            // protected region GuardTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new GuardTrace(limitsMock1);                    
+            // protected region GuardTraceInit end     
             boolean result = classUnderTest.parentTrace().destroy(_parentTrace);
             assertTrue(result);
             assertThat(classUnderTest.parentTrace().get(), is(nullValue()));
@@ -1181,30 +1347,35 @@ public class EvlTraceModelTests {
         private IInvariantTraceHasCheck invariantTrace2;
         
         private CheckTrace classUnderTest;
+
         
         @Test
         public void testCheckTraceInstantiation() throws Exception {
             invariantTrace1 = new InvariantTraceHasCheck(invariantMock1);
             expect(invariantMock1.check()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new CheckTrace(invariantMock1);
+            // protected region CheckTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new CheckTrace(invariantMock1);                    
+            // protected region CheckTraceInit end     
             assertThat(classUnderTest.invariant().get(), is(invariantMock1));
             assertThat(invariantMock1.check().get(), is(classUnderTest));
 	    }
 	    
-// protected region IgnoreCheckTraceAttributes on begin
-	    //@Ignore
+// protected region IgnoreCheckTraceAttributes on begin	    
+	    @Ignore
 // protected region IgnoreCheckTraceAttributes end	    
 	    @Test
         public void testCheckTraceAttributes() throws Exception {
             invariantTrace1 = new InvariantTraceHasCheck(invariantMock1);
             expect(invariantMock1.check()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new CheckTrace(invariantMock1);
+            // protected region CheckTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new CheckTrace(invariantMock1);                    
+            // protected region CheckTraceInit end     
 // protected region CheckTraceAttributes on begin
-            String id = "ObjectId";
-            classUnderTest.setId(id);
-            assertThat(classUnderTest.getId(), is(id));                    
+            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region CheckTraceAttributes end
         }
 
@@ -1214,7 +1385,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasCheck(invariantMock1);
             expect(invariantMock1.check()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new CheckTrace(invariantMock1);
+            // protected region CheckTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new CheckTrace(invariantMock1);                    
+            // protected region CheckTraceInit end     
             invariantTrace2 = new InvariantTraceHasCheck(invariantMock2);
             expect(invariantMock2.check()).andReturn(invariantTrace2).anyTimes();
             replay(invariantMock2);
@@ -1229,7 +1403,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasCheck(invariantMock1);
             expect(invariantMock1.check()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new CheckTrace(invariantMock1);
+            // protected region CheckTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new CheckTrace(invariantMock1);                    
+            // protected region CheckTraceInit end     
             boolean result = classUnderTest.invariant().destroy(invariantMock1);
             assertTrue(result);
         }
@@ -1239,7 +1416,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasCheck(invariantMock1);
             expect(invariantMock1.check()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new CheckTrace(invariantMock1);
+            // protected region CheckTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new CheckTrace(invariantMock1);                    
+            // protected region CheckTraceInit end     
             invariantTrace2 = new InvariantTraceHasCheck(invariantMock2);
             expect(invariantMock2.check()).andReturn(invariantTrace2).anyTimes();
             replay(invariantMock2);
@@ -1259,7 +1439,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasCheck(invariantMock1);
             expect(invariantMock1.check()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new CheckTrace(invariantMock1);
+            // protected region CheckTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new CheckTrace(invariantMock1);                    
+            // protected region CheckTraceInit end     
             boolean result;
             result = classUnderTest.accesses().create(accessesMock1);
             assertTrue(result);
@@ -1280,7 +1463,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasCheck(invariantMock1);
             expect(invariantMock1.check()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new CheckTrace(invariantMock1);
+            // protected region CheckTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new CheckTrace(invariantMock1);                    
+            // protected region CheckTraceInit end     
             classUnderTest.accesses().create(accessesMock1);
             boolean result = classUnderTest.accesses().destroy(accessesMock1);
             assertTrue(result);
@@ -1293,7 +1479,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasCheck(invariantMock1);
             expect(invariantMock1.check()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new CheckTrace(invariantMock1);
+            // protected region CheckTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new CheckTrace(invariantMock1);                    
+            // protected region CheckTraceInit end     
             boolean result;
             result = classUnderTest.parentTrace().create(parentTraceMock2);
             assertFalse(result);
@@ -1312,7 +1501,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasCheck(invariantMock1);
             expect(invariantMock1.check()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new CheckTrace(invariantMock1);
+            // protected region CheckTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new CheckTrace(invariantMock1);                    
+            // protected region CheckTraceInit end     
             boolean result = classUnderTest.parentTrace().destroy(_parentTrace);
             assertTrue(result);
             assertThat(classUnderTest.parentTrace().get(), is(nullValue()));
@@ -1357,30 +1549,35 @@ public class EvlTraceModelTests {
         private IInvariantTraceHasMessage invariantTrace2;
         
         private MessageTrace classUnderTest;
+
         
         @Test
         public void testMessageTraceInstantiation() throws Exception {
             invariantTrace1 = new InvariantTraceHasMessage(invariantMock1);
             expect(invariantMock1.message()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new MessageTrace(invariantMock1);
+            // protected region MessageTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new MessageTrace(invariantMock1);                    
+            // protected region MessageTraceInit end     
             assertThat(classUnderTest.invariant().get(), is(invariantMock1));
             assertThat(invariantMock1.message().get(), is(classUnderTest));
 	    }
 	    
-// protected region IgnoreMessageTraceAttributes on begin
-	    //@Ignore
+// protected region IgnoreMessageTraceAttributes on begin	    
+	    @Ignore
 // protected region IgnoreMessageTraceAttributes end	    
 	    @Test
         public void testMessageTraceAttributes() throws Exception {
             invariantTrace1 = new InvariantTraceHasMessage(invariantMock1);
             expect(invariantMock1.message()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new MessageTrace(invariantMock1);
+            // protected region MessageTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new MessageTrace(invariantMock1);                    
+            // protected region MessageTraceInit end     
 // protected region MessageTraceAttributes on begin
-            String id = "ObjectId";
-            classUnderTest.setId(id);
-            assertThat(classUnderTest.getId(), is(id));                    
+            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region MessageTraceAttributes end
         }
 
@@ -1390,7 +1587,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasMessage(invariantMock1);
             expect(invariantMock1.message()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new MessageTrace(invariantMock1);
+            // protected region MessageTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new MessageTrace(invariantMock1);                    
+            // protected region MessageTraceInit end     
             invariantTrace2 = new InvariantTraceHasMessage(invariantMock2);
             expect(invariantMock2.message()).andReturn(invariantTrace2).anyTimes();
             replay(invariantMock2);
@@ -1405,7 +1605,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasMessage(invariantMock1);
             expect(invariantMock1.message()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new MessageTrace(invariantMock1);
+            // protected region MessageTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new MessageTrace(invariantMock1);                    
+            // protected region MessageTraceInit end     
             boolean result = classUnderTest.invariant().destroy(invariantMock1);
             assertTrue(result);
         }
@@ -1415,7 +1618,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasMessage(invariantMock1);
             expect(invariantMock1.message()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new MessageTrace(invariantMock1);
+            // protected region MessageTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new MessageTrace(invariantMock1);                    
+            // protected region MessageTraceInit end     
             invariantTrace2 = new InvariantTraceHasMessage(invariantMock2);
             expect(invariantMock2.message()).andReturn(invariantTrace2).anyTimes();
             replay(invariantMock2);
@@ -1435,7 +1641,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasMessage(invariantMock1);
             expect(invariantMock1.message()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new MessageTrace(invariantMock1);
+            // protected region MessageTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new MessageTrace(invariantMock1);                    
+            // protected region MessageTraceInit end     
             boolean result;
             result = classUnderTest.accesses().create(accessesMock1);
             assertTrue(result);
@@ -1456,7 +1665,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasMessage(invariantMock1);
             expect(invariantMock1.message()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new MessageTrace(invariantMock1);
+            // protected region MessageTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new MessageTrace(invariantMock1);                    
+            // protected region MessageTraceInit end     
             classUnderTest.accesses().create(accessesMock1);
             boolean result = classUnderTest.accesses().destroy(accessesMock1);
             assertTrue(result);
@@ -1469,7 +1681,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasMessage(invariantMock1);
             expect(invariantMock1.message()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new MessageTrace(invariantMock1);
+            // protected region MessageTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new MessageTrace(invariantMock1);                    
+            // protected region MessageTraceInit end     
             boolean result;
             result = classUnderTest.parentTrace().create(parentTraceMock2);
             assertFalse(result);
@@ -1488,7 +1703,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasMessage(invariantMock1);
             expect(invariantMock1.message()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new MessageTrace(invariantMock1);
+            // protected region MessageTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new MessageTrace(invariantMock1);                    
+            // protected region MessageTraceInit end     
             boolean result = classUnderTest.parentTrace().destroy(_parentTrace);
             assertTrue(result);
             assertThat(classUnderTest.parentTrace().get(), is(nullValue()));
@@ -1541,36 +1759,35 @@ public class EvlTraceModelTests {
         private IInvariantTrace satisfiedInvariantsMock2;
         
         private SatisfiesTrace classUnderTest;
+
         
         @Test
         public void testSatisfiesTraceInstantiation() throws Exception {
             invariantTrace1 = new InvariantTraceHasSatisfies(invariantMock1);
             expect(invariantMock1.satisfies()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new SatisfiesTrace(invariantMock1);
+            // protected region SatisfiesTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new SatisfiesTrace(invariantMock1);                    
+            // protected region SatisfiesTraceInit end     
             assertThat(classUnderTest.invariant().get(), is(invariantMock1));
             assertThat(invariantMock1.satisfies().get(), is(classUnderTest));
 	    }
 	    
-// protected region IgnoreSatisfiesTraceAttributes on begin
-	    //@Ignore
+// protected region IgnoreSatisfiesTraceAttributes on begin	    
+	    @Ignore
 // protected region IgnoreSatisfiesTraceAttributes end	    
 	    @Test
         public void testSatisfiesTraceAttributes() throws Exception {
             invariantTrace1 = new InvariantTraceHasSatisfies(invariantMock1);
             expect(invariantMock1.satisfies()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new SatisfiesTrace(invariantMock1);
+            // protected region SatisfiesTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new SatisfiesTrace(invariantMock1);                    
+            // protected region SatisfiesTraceInit end     
 // protected region SatisfiesTraceAttributes on begin
-            String id = "ObjectId";
-            classUnderTest.setId(id);
-            assertThat(classUnderTest.getId(), is(id));      
-            boolean all = false;
-            classUnderTest.setAll(all);
-            assertThat(classUnderTest.getAll(), is(all));
-            all = false;
-            classUnderTest.setAll(all);
-            assertThat(classUnderTest.getAll(), is(all));
+            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
 // protected region SatisfiesTraceAttributes end
         }
 
@@ -1580,7 +1797,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasSatisfies(invariantMock1);
             expect(invariantMock1.satisfies()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new SatisfiesTrace(invariantMock1);
+            // protected region SatisfiesTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new SatisfiesTrace(invariantMock1);                    
+            // protected region SatisfiesTraceInit end     
             invariantTrace2 = new InvariantTraceHasSatisfies(invariantMock2);
             expect(invariantMock2.satisfies()).andReturn(invariantTrace2).anyTimes();
             replay(invariantMock2);
@@ -1595,7 +1815,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasSatisfies(invariantMock1);
             expect(invariantMock1.satisfies()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new SatisfiesTrace(invariantMock1);
+            // protected region SatisfiesTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new SatisfiesTrace(invariantMock1);                    
+            // protected region SatisfiesTraceInit end     
             boolean result = classUnderTest.invariant().destroy(invariantMock1);
             assertTrue(result);
         }
@@ -1605,7 +1828,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasSatisfies(invariantMock1);
             expect(invariantMock1.satisfies()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new SatisfiesTrace(invariantMock1);
+            // protected region SatisfiesTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new SatisfiesTrace(invariantMock1);                    
+            // protected region SatisfiesTraceInit end     
             invariantTrace2 = new InvariantTraceHasSatisfies(invariantMock2);
             expect(invariantMock2.satisfies()).andReturn(invariantTrace2).anyTimes();
             replay(invariantMock2);
@@ -1625,7 +1851,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasSatisfies(invariantMock1);
             expect(invariantMock1.satisfies()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new SatisfiesTrace(invariantMock1);
+            // protected region SatisfiesTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new SatisfiesTrace(invariantMock1);                    
+            // protected region SatisfiesTraceInit end     
             boolean result;
             result = classUnderTest.accesses().create(accessesMock1);
             assertTrue(result);
@@ -1646,7 +1875,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasSatisfies(invariantMock1);
             expect(invariantMock1.satisfies()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new SatisfiesTrace(invariantMock1);
+            // protected region SatisfiesTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new SatisfiesTrace(invariantMock1);                    
+            // protected region SatisfiesTraceInit end     
             classUnderTest.accesses().create(accessesMock1);
             boolean result = classUnderTest.accesses().destroy(accessesMock1);
             assertTrue(result);
@@ -1659,7 +1891,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasSatisfies(invariantMock1);
             expect(invariantMock1.satisfies()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new SatisfiesTrace(invariantMock1);
+            // protected region SatisfiesTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new SatisfiesTrace(invariantMock1);                    
+            // protected region SatisfiesTraceInit end     
             boolean result;
             result = classUnderTest.parentTrace().create(parentTraceMock2);
             assertFalse(result);
@@ -1678,7 +1913,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasSatisfies(invariantMock1);
             expect(invariantMock1.satisfies()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new SatisfiesTrace(invariantMock1);
+            // protected region SatisfiesTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new SatisfiesTrace(invariantMock1);                    
+            // protected region SatisfiesTraceInit end     
             boolean result = classUnderTest.parentTrace().destroy(_parentTrace);
             assertTrue(result);
             assertThat(classUnderTest.parentTrace().get(), is(nullValue()));
@@ -1690,7 +1928,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasSatisfies(invariantMock1);
             expect(invariantMock1.satisfies()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new SatisfiesTrace(invariantMock1);
+            // protected region SatisfiesTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new SatisfiesTrace(invariantMock1);                    
+            // protected region SatisfiesTraceInit end     
             boolean result;
             result = classUnderTest.satisfiedInvariants().create(satisfiedInvariantsMock1);
             assertTrue(result);
@@ -1711,7 +1952,10 @@ public class EvlTraceModelTests {
             invariantTrace1 = new InvariantTraceHasSatisfies(invariantMock1);
             expect(invariantMock1.satisfies()).andReturn(invariantTrace1).anyTimes();
             replay(invariantMock1);
-            classUnderTest = new SatisfiesTrace(invariantMock1);
+            // protected region SatisfiesTraceInit on begin
+            // Default init parameters can be modified
+            classUnderTest = new SatisfiesTrace(invariantMock1);                    
+            // protected region SatisfiesTraceInit end     
             classUnderTest.satisfiedInvariants().create(satisfiedInvariantsMock1);
             boolean result = classUnderTest.satisfiedInvariants().destroy(satisfiedInvariantsMock1);
             assertTrue(result);

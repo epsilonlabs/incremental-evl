@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-18.
+ * This file was automatically generated on: 2018-04-19.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -59,6 +59,7 @@ public interface IInvariantTrace extends IGuardedElementTrace, INestedModuleElem
      */
     void setResult(boolean value);
             
+
     /** The check reference. */
     IInvariantTraceHasCheck check();
                 

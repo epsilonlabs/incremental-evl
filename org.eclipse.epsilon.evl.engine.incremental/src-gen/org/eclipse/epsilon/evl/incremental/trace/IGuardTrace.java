@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-18.
+ * This file was automatically generated on: 2018-04-19.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -42,6 +42,7 @@ public interface IGuardTrace extends INestedModuleElementTrace {
      */
     void setResult(boolean value);
             
+
     /** The limits reference. */
     IGuardTraceHasLimits limits();
                 
