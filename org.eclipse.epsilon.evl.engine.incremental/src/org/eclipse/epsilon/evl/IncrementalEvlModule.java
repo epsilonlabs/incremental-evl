@@ -452,6 +452,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 				.findFirst()
 				.get()
 				.value().get();//.getUri();
+		// If self and modelObject are not the same, we need to retrieve the object from the model
 		String modelName = selfTrace.model().get().getName();
 		IModel model = null;
 		try {
@@ -460,7 +461,14 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Object self = model.getElementById(selfTrace.getUri());
+		String eventObjectId = model.getElementId(modelObject);
+		Object self;
+		if (eventObjectId.equals(selfTrace.getUri())) {
+			self = modelObject;
+		}
+		else {
+			self = model.getElementById(selfTrace.getUri());
+		}
 		IInvariantTrace invariantT = t.invariant().get();
 		executeInvariantTrace(self, invariantT);
 	}
@@ -493,7 +501,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	 * @throws EolRuntimeException
 	 */
 	private void executeInvariantTrace(Object self, IInvariantTrace invariantT) throws EolRuntimeException {
-		int index = 0;
+		int index = 1;
 		for (ConstraintContext conCtx : getConstraintContexts()) {
 			if (conCtx.getTypeName().equals(invariantT.invariantContext().get().getKind()) &&
 					(index == invariantT.invariantContext().get().getIndex())) {
@@ -504,11 +512,15 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 						.filter(c -> c.getName().equals(invariantT.getName()))
 						.findFirst()
 						.orElse(null);
+				boolean oldResult = invariantT.getResult();
 				if (inv == null) {
 					logger.error("Can not find matching constraint for trace.");
 					throw new IllegalStateException();
 				}
-				inv.check(self, getContext(), true);
+				if (inv.check(self, getContext(), true) != oldResult) {
+					// Forget traces?
+					// Remove old message?
+				}
 				break;
 			}
 		}
