@@ -11,10 +11,8 @@
  *******************************************************************************/
 package org.eclipse.epsilon.evl;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
@@ -45,7 +43,6 @@ import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceRepository;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlModuleIncremental;
 import org.eclipse.epsilon.evl.incremental.execute.context.TracedEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
@@ -247,6 +244,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		IEvlExecutionTraceRepository repo = ((TracedEvlContext) context).getTraceManager().getExecutionTraceRepository();
 		List<IModuleElementTrace> traces = null;
 		traces = repo.findPropertyAccessExecutionTraces(objectId, propertyName);
+		logger.debug("Found {} traces for the model-property pair", traces.size());
 		if (traces != null) {
 			executeTraces(traces, object);
 		}

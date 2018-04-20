@@ -141,12 +141,17 @@ public class TracedConstraintContext extends ConstraintContext
 		for (Constraint c : constraints) {
 			TracedConstraint tc = (TracedConstraint) c;
 			IInvariantTrace tcTrace = currentTrace.createInvariantTrace(tc.getName());
+			repo.add(tcTrace);
 			tc.setCurrentTrace(tcTrace);
-			tc.createGuardTrace();
-			tc.createCheckTrace();
-			tc.createMessageTrace();
-			
+			if (tc.createGuardTrace()) {
+				repo.add(tcTrace.guard().get());
+			}
+			if (	tc.createCheckTrace()) {
+				repo.add(tcTrace.check().get());
+			}
+			if (tc.createMessageTrace()) {
+				repo.add(tcTrace.message().get());
+			}
 		}
 	}
-
 }
