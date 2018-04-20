@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-18.
+ * This file was automatically generated on: 2018-04-20.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -91,7 +91,7 @@ public class ExecutionContext implements IExecutionContext {
             if (other.contextVariables.get() != null)
                 return false;
         }
-        else if (Arrays.equals(contextVariables.get().toArray(), other.contextVariables.get().toArray())) {
+        if (!contextVariables.get().equals(other.contextVariables.get())) {
             return false;
         }
         return true; 

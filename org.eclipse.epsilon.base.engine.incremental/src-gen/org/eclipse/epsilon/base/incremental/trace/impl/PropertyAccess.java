@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-18.
+ * This file was automatically generated on: 2018-04-20.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -111,7 +111,7 @@ public class PropertyAccess implements IPropertyAccess {
             if (other.property.get() != null)
                 return false;
         }
-        else if (!property.get().equals(other.property.get())) {
+        if (!property.get().equals(other.property.get())) {
             return false;
         }
         return true; 

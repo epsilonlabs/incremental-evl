@@ -205,12 +205,25 @@ for (er in ec.getEqualsReferences()) {
             if (other.[%=access%] != null)
                 return false;
         }
-[%      if (er.isMany()) {%]
-        else if (Arrays.equals([%=access%].toArray(), other.[%=access%].toArray())) {
+[%      if (er.isMany()) {
+            if (er.isOrdered) {%]
+        if (not Arrays.equals([%=access%].toArray(), other.[%=access%].toArray())) {
             return false;
         }
-[%      } else {%]
-        else if (![%=access%].equals(other.[%=access%])) {
+[%          } else if (er.isUnique()) {%]
+        if (![%=access%].equals(other.[%=access%])) {
+            return false;
+        }
+[%          } else {%]
+        if ([%=access%].size() != other.[%=access%].size()) {
+        }
+        else if (not ([%=access%].containsAll(other.[%=access%]) &&
+                other.[%=access%].containsAll([%=access%])) {
+            return false;
+        }
+[%          } 
+        } else {%]
+        if (![%=access%].equals(other.[%=access%])) {
             return false;
         }
 [%      }

@@ -76,7 +76,7 @@ public class CheckTrace implements ICheckTrace {
     @Override
     public INestedModuleElementTraceHasParentTrace parentTrace() {
         /** protected region parentTrace on begin **/
-        return null;
+    		return invariant.get().parentTrace();
         /** protected region parentTrace end **/
     }
 

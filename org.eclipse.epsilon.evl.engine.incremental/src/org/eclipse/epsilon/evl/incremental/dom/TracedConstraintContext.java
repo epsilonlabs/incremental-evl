@@ -115,8 +115,10 @@ public class TracedConstraintContext extends ConstraintContext
 			}
 			contextRepo.add(exContext);
 		}
+		exContext.contextVariables().create(selfVariable);
 		currentTrace = repo.getContextTraceFor(getTypeName(), index, moduleTrace, exContext);
 		if (currentTrace == null) {
+			logger.debug("Creating a new context trace");
 			try {
 				currentTrace = new ContextTrace(getTypeName(), index, moduleTrace, exContext);
 			} catch (TraceModelDuplicateRelation e1) {

@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
@@ -24,6 +25,7 @@ import org.eclipse.epsilon.base.incremental.trace.impl.ModuleElementTraceHasAcce
 import org.eclipse.epsilon.base.incremental.trace.impl.NestedModuleElementTraceHasParentTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTraceHasLimits;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.GuardTraceHasLimits;
 
 /**
@@ -90,7 +92,12 @@ public class GuardTrace implements IGuardTrace {
     @Override
     public INestedModuleElementTraceHasParentTrace parentTrace() {
         /** protected region parentTrace on begin **/
-        return null;
+    		if (limits.get() instanceof IContextTrace) {
+    			return null;
+        }
+        else {
+        		return ((IInvariantTrace)limits.get()).parentTrace();
+        }
         /** protected region parentTrace end **/
     }
 

@@ -75,6 +75,20 @@ public class EvlModuleExecutionRepository implements IEvlExecutionTraceRepositor
 		IContextTrace result = null;
 		// FIXME We need the model to create the model, element and elementAccess value objects,
 		// Probably this should be factory methods in the IncrementalModel!
+		for (IModuleElementTrace t : extent ) {
+			if (t instanceof IContextTrace) {
+				IContextTrace ct = (IContextTrace) t;
+				if (ct.getKind().equals(typeName)) {
+					if (ct.getIndex().equals(index)) {
+						if (ct.module().get().equals(moduleTrace)) {
+							if (ct.executionContext().get().equals(exContext)) {
+								
+							}
+						}
+					}
+				}
+			}
+		}
 		result = extent.stream()
 				.filter(IContextTrace.class::isInstance)
 				.map(IContextTrace.class::cast)

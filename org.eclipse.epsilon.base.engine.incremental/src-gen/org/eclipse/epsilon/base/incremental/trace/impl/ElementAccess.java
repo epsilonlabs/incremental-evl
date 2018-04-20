@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-18.
+ * This file was automatically generated on: 2018-04-20.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -97,7 +97,7 @@ public class ElementAccess implements IElementAccess {
             if (other.element.get() != null)
                 return false;
         }
-        else if (!element.get().equals(other.element.get())) {
+        if (!element.get().equals(other.element.get())) {
             return false;
         }
         return true; 

@@ -101,7 +101,7 @@ public class SatisfiesTrace implements ISatisfiesTrace {
     @Override
     public INestedModuleElementTraceHasParentTrace parentTrace() {
         /** protected region parentTrace on begin **/
-        return null;
+    		return invariant.get().parentTrace();
         /** protected region parentTrace end **/
     }
 

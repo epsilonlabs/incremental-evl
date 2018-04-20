@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-18.
+ * This file was automatically generated on: 2018-04-20.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -85,7 +85,7 @@ public class ModelElementVariable implements IModelElementVariable {
             if (other.value.get() != null)
                 return false;
         }
-        else if (!value.get().equals(other.value.get())) {
+        if (!value.get().equals(other.value.get())) {
             return false;
         }
         return true; 
