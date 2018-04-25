@@ -233,6 +233,12 @@ public class BaseTraceModelTests {
         @Mock
         private IModuleElementTrace executionTraceMock2;
         
+        /** Allow the target mock to populate the reference */
+        private IModuleElementTraceHasAccesses moduleElementTrace1;
+        
+        /** Allow the target mock to populate the reference */
+        private IModuleElementTraceHasAccesses moduleElementTrace2;
+        
         /** Mock the target of the element reference. */
         @Mock
         private IModelElementTrace elementMock1;
@@ -250,6 +256,11 @@ public class BaseTraceModelTests {
 	    @Test
         public void testElementAccessAttributes() throws Exception {
             IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+            IModuleElementTraceHasAccesses moduleElementTrace = niceMock(IModuleElementTraceHasAccesses.class);
+            expect(_executionTrace.accesses()).andReturn(moduleElementTrace).anyTimes();
+            replay(_executionTrace);
+            expect(moduleElementTrace.get()).andReturn(null).anyTimes();
+            replay(moduleElementTrace);
         
             IModelElementTrace _element = mock(IModelElementTrace.class);
         
@@ -338,6 +349,9 @@ public class BaseTraceModelTests {
             // Default init parameters can be modified
             classUnderTest = new ElementAccess(_executionTrace, _element);                    
             // protected region ElementAccessInit end     
+            reset(moduleElementTrace);
+            expect(moduleElementTrace.get()).andReturn(classUnderTest).anyTimes();
+            replay(moduleElementTrace);
         
         
             boolean result = classUnderTest.element().destroy(_element);
@@ -361,6 +375,12 @@ public class BaseTraceModelTests {
         @Mock
         private IModuleElementTrace executionTraceMock2;
         
+        /** Allow the target mock to populate the reference */
+        private IModuleElementTraceHasAccesses moduleElementTrace1;
+        
+        /** Allow the target mock to populate the reference */
+        private IModuleElementTraceHasAccesses moduleElementTrace2;
+        
         /** Mock the target of the type reference. */
         @Mock
         private IModelTypeTrace typeMock1;
@@ -378,6 +398,11 @@ public class BaseTraceModelTests {
 	    @Test
         public void testAllInstancesAccessAttributes() throws Exception {
             IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+            IModuleElementTraceHasAccesses moduleElementTrace = niceMock(IModuleElementTraceHasAccesses.class);
+            expect(_executionTrace.accesses()).andReturn(moduleElementTrace).anyTimes();
+            replay(_executionTrace);
+            expect(moduleElementTrace.get()).andReturn(null).anyTimes();
+            replay(moduleElementTrace);
         
             IModelTypeTrace _type = mock(IModelTypeTrace.class);
         
@@ -466,6 +491,9 @@ public class BaseTraceModelTests {
             // Default init parameters can be modified
             classUnderTest = new AllInstancesAccess(false, _executionTrace, _type);                    
             // protected region AllInstancesAccessInit end     
+            reset(moduleElementTrace);
+            expect(moduleElementTrace.get()).andReturn(classUnderTest).anyTimes();
+            replay(moduleElementTrace);
         
         
             boolean result = classUnderTest.type().destroy(_type);
@@ -489,6 +517,12 @@ public class BaseTraceModelTests {
         @Mock
         private IModuleElementTrace executionTraceMock2;
         
+        /** Allow the target mock to populate the reference */
+        private IModuleElementTraceHasAccesses moduleElementTrace1;
+        
+        /** Allow the target mock to populate the reference */
+        private IModuleElementTraceHasAccesses moduleElementTrace2;
+        
         /** Mock the target of the property reference. */
         @Mock
         private IPropertyTrace propertyMock1;
@@ -506,6 +540,11 @@ public class BaseTraceModelTests {
 	    @Test
         public void testPropertyAccessAttributes() throws Exception {
             IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
+            IModuleElementTraceHasAccesses moduleElementTrace = niceMock(IModuleElementTraceHasAccesses.class);
+            expect(_executionTrace.accesses()).andReturn(moduleElementTrace).anyTimes();
+            replay(_executionTrace);
+            expect(moduleElementTrace.get()).andReturn(null).anyTimes();
+            replay(moduleElementTrace);
         
             IPropertyTrace _property = mock(IPropertyTrace.class);
         
@@ -594,6 +633,9 @@ public class BaseTraceModelTests {
             // Default init parameters can be modified
             classUnderTest = new PropertyAccess(_executionTrace, _property);                    
             // protected region PropertyAccessInit end     
+            reset(moduleElementTrace);
+            expect(moduleElementTrace.get()).andReturn(classUnderTest).anyTimes();
+            replay(moduleElementTrace);
         
         
             boolean result = classUnderTest.property().destroy(_property);

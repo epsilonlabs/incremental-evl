@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-20.
+ * This file was automatically generated on: 2018-04-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -53,6 +53,10 @@ public class ModuleElementTraceHasAccesses extends Feature implements IModuleEle
         if (conflict(target)) {
             return false;
         }
+        target.executionTrace().set(source);
+        if (related(target)) {
+            return false;
+        }
         set(target);
         return true;
     }
@@ -62,6 +66,7 @@ public class ModuleElementTraceHasAccesses extends Feature implements IModuleEle
         if (!related(target)) {
             return false;
         }
+        target.executionTrace().remove(source);
         remove(target);
         return true;
     }
@@ -72,13 +77,14 @@ public class ModuleElementTraceHasAccesses extends Feature implements IModuleEle
         if (isUnique) {
             result |= get().contains(target);
         }
+        result |= target.executionTrace().get() != null;
         return result;
     }
     
     @Override
     public boolean related(IAccess target) {
   
-        return get().contains(target) ;
+        return get().contains(target) && source.equals(target.executionTrace().get());
     }
     
     // PRIVATE API

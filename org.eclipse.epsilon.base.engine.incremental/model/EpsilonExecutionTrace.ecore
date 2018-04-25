@@ -31,7 +31,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="ModuleElementTrace" abstract="true"
       eSuperTypes="#//IdElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="accesses" ordered="false"
-        upperBound="-1" eType="#//Access" resolveProxies="false"/>
+        upperBound="-1" eType="#//Access" resolveProxies="false" eOpposite="#//Access/executionTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="NestedModuleElementTrace" abstract="true"
       eSuperTypes="#//ModuleElementTrace">
@@ -47,7 +47,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Access" abstract="true" eSuperTypes="#//IdElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="executionTrace" lowerBound="1"
-        eType="#//ModuleElementTrace"/>
+        eType="#//ModuleElementTrace" eOpposite="#//ModuleElementTrace/accesses"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ElementAccess" eSuperTypes="#//Access">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ElementAccess/element"/>

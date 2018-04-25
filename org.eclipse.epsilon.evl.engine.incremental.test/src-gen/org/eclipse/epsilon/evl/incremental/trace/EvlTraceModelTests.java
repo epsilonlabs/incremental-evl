@@ -158,6 +158,12 @@ public class EvlTraceModelTests {
         @Mock
         private IAccess accessesMock2;
         
+        /** Allow the target mock to populate the reference */
+        private IAccessHasExecutionTrace access1;
+        
+        /** Allow the target mock to populate the reference */
+        private IAccessHasExecutionTrace access2;
+        
         /** Mock the target of the module reference. */
         @Mock
         private IModuleTrace moduleMock1;
@@ -194,36 +200,21 @@ public class EvlTraceModelTests {
         /** Allow the target mock to populate the reference */
         private IInvariantTraceHasInvariantContext invariantTrace2;
         
+        /** Mock the container. */
+        @Mock
+        private IModuleTrace containerMock;
+        
+        /** Allow the container mock to populate the reference */
+        private IModuleTraceHasRuleTraces moduleTrace1;
+        
+        /** Allow the container mock to populate the reference of second instance*/
+        private IModuleTraceHasRuleTraces moduleTrace2;
+
         private ContextTrace classUnderTest;
 
-	    
-// protected region IgnoreContextTraceAttributes on begin
-	    @Ignore
-// protected region IgnoreContextTraceAttributes end	    
-	    @Test
-        public void testContextTraceAttributes() throws Exception {
-            IModuleTrace _module = mock(IModuleTrace.class);
         
-            IExecutionContext _executionContext = mock(IExecutionContext.class);
-            IExecutionContextHasRules executionContext = niceMock(IExecutionContextHasRules.class);
-            expect(_executionContext.rules()).andReturn(executionContext).anyTimes();
-            replay(_executionContext);
-            expect(executionContext.get()).andReturn(null).anyTimes();
-            replay(executionContext);
-        
-            // protected region ContextTraceInit on begin
-            // Default init parameters can be modified
-            classUnderTest = new ContextTrace("kind1", 1, _module, _executionContext, containerMock);                    
-            // protected region ContextTraceInit end     
-            Queue<IRuleTrace> values = containerMock.ruleTraces().get();
-            assertThat(values, hasItem(classUnderTest));
-	    }
-	    
-// protected region IgnoreContextTraceAttributes on begin	    
-	    @Ignore
-// protected region IgnoreContextTraceAttributes end	    
-	    @Test
-        public void testContextTraceAttributes() throws Exception {
+        @Test
+        public void testContextTraceInstantiation() throws Exception {
             moduleTrace1 = new ModuleTraceHasRuleTraces(containerMock);
             expect(containerMock.ruleTraces()).andReturn(moduleTrace1).anyTimes();
             replay(containerMock);
@@ -668,6 +659,12 @@ public class EvlTraceModelTests {
         /** Mock the target of the accesses reference. */
         @Mock
         private IAccess accessesMock2;
+        
+        /** Allow the target mock to populate the reference */
+        private IAccessHasExecutionTrace access1;
+        
+        /** Allow the target mock to populate the reference */
+        private IAccessHasExecutionTrace access2;
         
         /** Mock the target of the parentTrace reference. */
         @Mock
@@ -1122,6 +1119,12 @@ public class EvlTraceModelTests {
         @Mock
         private IAccess accessesMock2;
         
+        /** Allow the target mock to populate the reference */
+        private IAccessHasExecutionTrace access1;
+        
+        /** Allow the target mock to populate the reference */
+        private IAccessHasExecutionTrace access2;
+        
         /** Mock the target of the parentTrace reference. */
         @Mock
         private IRuleTrace parentTraceMock1;
@@ -1323,6 +1326,12 @@ public class EvlTraceModelTests {
         /** Mock the target of the accesses reference. */
         @Mock
         private IAccess accessesMock2;
+        
+        /** Allow the target mock to populate the reference */
+        private IAccessHasExecutionTrace access1;
+        
+        /** Allow the target mock to populate the reference */
+        private IAccessHasExecutionTrace access2;
         
         /** Mock the target of the parentTrace reference. */
         @Mock
@@ -1526,6 +1535,12 @@ public class EvlTraceModelTests {
         @Mock
         private IAccess accessesMock2;
         
+        /** Allow the target mock to populate the reference */
+        private IAccessHasExecutionTrace access1;
+        
+        /** Allow the target mock to populate the reference */
+        private IAccessHasExecutionTrace access2;
+        
         /** Mock the target of the parentTrace reference. */
         @Mock
         private IRuleTrace parentTraceMock1;
@@ -1727,6 +1742,12 @@ public class EvlTraceModelTests {
         /** Mock the target of the accesses reference. */
         @Mock
         private IAccess accessesMock2;
+        
+        /** Allow the target mock to populate the reference */
+        private IAccessHasExecutionTrace access1;
+        
+        /** Allow the target mock to populate the reference */
+        private IAccessHasExecutionTrace access2;
         
         /** Mock the target of the parentTrace reference. */
         @Mock
