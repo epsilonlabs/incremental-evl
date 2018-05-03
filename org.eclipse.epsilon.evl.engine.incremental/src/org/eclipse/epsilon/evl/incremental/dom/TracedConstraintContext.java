@@ -1,8 +1,8 @@
 package org.eclipse.epsilon.evl.incremental.dom;
 
-import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
@@ -120,7 +120,7 @@ public class TracedConstraintContext extends ConstraintContext
 		if (currentTrace == null) {
 			logger.debug("Creating a new context trace");
 			try {
-				currentTrace = new ContextTrace(getTypeName(), index, moduleTrace, exContext);
+				currentTrace = new ContextTrace(getTypeName(), index, exContext, moduleTrace);
 			} catch (TraceModelDuplicateRelation e1) {
 				logger.warn("If the ContextTrace was not in the repo it should have been created correctly.");
 				throw new EolIncrementalExecutionException("Error creating new ContextTrace", e1);
@@ -148,7 +148,7 @@ public class TracedConstraintContext extends ConstraintContext
 			if (tc.createGuardTrace()) {
 				repo.add(tcTrace.guard().get());
 			}
-			if (	tc.createCheckTrace()) {
+			if (tc.createCheckTrace()) {
 				repo.add(tcTrace.check().get());
 			}
 			if (tc.createMessageTrace()) {
@@ -156,4 +156,17 @@ public class TracedConstraintContext extends ConstraintContext
 			}
 		}
 	}
+
+	public void goOnline() {
+		for (Constraint c : constraints) {
+			((TracedConstraint)c).setListeningToChagnes(true);
+		}
+	}
+	
+	public void goOffline() {
+		for (Constraint c : constraints) {
+			((TracedConstraint)c).setListeningToChagnes(false);
+		}
+	}
+	
 }

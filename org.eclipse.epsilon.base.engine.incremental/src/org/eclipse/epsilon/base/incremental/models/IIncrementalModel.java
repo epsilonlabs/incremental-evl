@@ -12,7 +12,9 @@ package org.eclipse.epsilon.base.incremental.models;
 
 import java.util.Collection;
 
-import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.exceptions.models.NotInstantiableModelElementValueException;
+import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
 import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
@@ -22,6 +24,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceFactory;
+import org.eclipse.epsilon.eol.exceptions.models.EolNotAModelElementException;
 import org.eclipse.epsilon.eol.models.IModel;
 
 /**
@@ -76,5 +79,24 @@ public interface IIncrementalModel extends IModel {
 	 * @return
 	 */
 	ModelTraceFactory getModelTraceFactory();
+	
+	/**
+	 * Return a String representation of the object. If the object belongs to the model, it will return a
+	 * serializable version of the object.
+	 *
+	 * @param instance the instance
+	 * @return the string
+	 * @throws EolNotAModelElementException if the instance does not belong to the model
+	 */
+	String convertToString(Object instance) throws NotSerializableModelException;
+	
+	/**
+	 * Craete an object from its string representation. 
+	 *
+	 * @param value the value
+	 * @return the object
+	 * @throws UnsupportedOperationException if the value can not be converted to an object.
+	 */
+	Object createFromString(String value) throws NotInstantiableModelElementValueException;
 	
 }

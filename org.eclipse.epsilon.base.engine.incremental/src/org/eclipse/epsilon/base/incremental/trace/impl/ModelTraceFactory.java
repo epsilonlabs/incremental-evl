@@ -3,8 +3,8 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
@@ -69,12 +69,13 @@ public class ModelTraceFactory {
 	 */
 	public IModelTypeTrace createModelTypeTrace(String typeName) throws EolIncrementalExecutionException {
 		logger.info("Creting ModelTypeTrace for {}", typeName);
+		if (!model.hasType(typeName)) {
+			logger.error("Unknonw type {} in model{}.", typeName, model.getName());
+			throw new EolIncrementalExecutionException("Model does not know about type " + typeName);
+		}
 		if (modelTypeTraces.containsKey(typeName)) {
 			logger.info("Retreiving ModelTypeTrace from cache");
 			return modelTypeTraces.get(typeName);
-		}
-		if (!model.hasType(typeName)) {
-			throw new EolIncrementalExecutionException("Model doe snot know about type " + typeName);
 		}
 		IModelTypeTrace trace;
 		try {
@@ -270,5 +271,7 @@ public class ModelTraceFactory {
 		modelElementVariables.put(variableId, variable);
 		return variable;
 	}
+	
+	//FIXME We could crete delete methods to remove elements from the map, but not entirely necessary.
 
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-19.
+ * This file was automatically generated on: 2018-04-26.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,10 +11,14 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
-import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+
+/** protected region GuardTraceImports on begin **/
+import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
+/** protected region GuardTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
@@ -25,7 +29,6 @@ import org.eclipse.epsilon.base.incremental.trace.impl.ModuleElementTraceHasAcce
 import org.eclipse.epsilon.base.incremental.trace.impl.NestedModuleElementTraceHasParentTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTraceHasLimits;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.GuardTraceHasLimits;
 
 /**
@@ -125,7 +128,7 @@ public class GuardTrace implements IGuardTrace {
             if (other.limits.get() != null)
                 return false;
         }
-        else if (!limits.get().equals(other.limits.get())) {
+        if (!limits.get().equals(other.limits.get())) {
             return false;
         }
         return true; 

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-19.
+ * This file was automatically generated on: 2018-04-26.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,10 +15,9 @@ import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleTraceHasExecutionContexts;
 import org.eclipse.epsilon.base.incremental.trace.IModuleTraceHasRuleTraces;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleTraceHasExecutionContexts;
@@ -81,10 +80,12 @@ public class EvlModuleTrace implements IEvlModuleTrace {
 
 
     @Override
-    public IContextTrace createContextTrace(String kind, Integer index, IModuleTrace module, IExecutionContext executionContext) throws EolIncrementalExecutionException {
+    public IContextTrace createContextTrace(String kind, Integer index, IExecutionContext executionContext) throws EolIncrementalExecutionException {
         IContextTrace contextTrace = null;
         try {
-            contextTrace = new ContextTrace(kind, index, module, executionContext);
+            contextTrace = new ContextTrace(kind, index, executionContext, this);
+            
+            this.ruleTraces().create(contextTrace);
         } catch (TraceModelDuplicateRelation e) {
             // Pass
         } finally {
@@ -97,7 +98,6 @@ public class EvlModuleTrace implements IEvlModuleTrace {
                     .map(IContextTrace.class::cast)
                     .filter(item -> item.getKind().equals(kind))
                     .filter(item -> item.getIndex().equals(index))
-                    .filter(item -> item.module().get().equals(module))
                     .filter(item -> item.executionContext().get().equals(executionContext))
                     .findFirst()
                     .get();

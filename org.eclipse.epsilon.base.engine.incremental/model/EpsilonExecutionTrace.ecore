@@ -11,7 +11,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="source" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="ruleTraces" upperBound="-1"
-        eType="#//RuleTrace" containment="true"/>
+        eType="#//RuleTrace" containment="true" eOpposite="#//RuleTrace/module"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="executionContexts" upperBound="-1"
         eType="#//ExecutionContext"/>
   </eClassifiers>
@@ -41,7 +41,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="RuleTrace" abstract="true" eSuperTypes="#//ModuleElementTrace">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//RuleTrace/executionContext #//RuleTrace/module"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="module" lowerBound="1"
-        eType="#//ModuleTrace"/>
+        eType="#//ModuleTrace" eOpposite="#//ModuleTrace/ruleTraces"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="executionContext" lowerBound="1"
         eType="#//ExecutionContext" eOpposite="#//ExecutionContext/rules"/>
   </eClassifiers>

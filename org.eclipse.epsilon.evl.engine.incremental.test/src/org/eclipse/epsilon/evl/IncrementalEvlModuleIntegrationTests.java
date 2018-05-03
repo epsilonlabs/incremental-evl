@@ -82,7 +82,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({IncrementalEvlModuleIntegrationTests.PreexecutionTests.class,
 			   IncrementalEvlModuleIntegrationTests.ExecutionTests.class,
-	           IncrementalEvlModuleIntegrationTests.PostexecutionTests.class})
+	           IncrementalEvlModuleIntegrationTests.OnlineTests.class})
 public class IncrementalEvlModuleIntegrationTests {
 	
 	/**
@@ -366,7 +366,7 @@ public class IncrementalEvlModuleIntegrationTests {
 	 * @author Horacio Hoyos Rodriguez
 	 *
 	 */
-	public static class PostexecutionTests {
+	public static class OnlineTests {
 		
 		private IncrementalEvlModule module;
 		private File evlFile;
@@ -461,15 +461,14 @@ public class IncrementalEvlModuleIntegrationTests {
 	        while (future.isDone()) { }
 	       	// Wait for CsvModelIncremental to pickup changes and send notifications
 	        for (;;) {
-		        	ExecutionResult r = results.poll(10, TimeUnit.SECONDS);
+		        	ExecutionResult r = results.poll(10, TimeUnit.SECONDS); // 10 Seconds for CVS to pick changes
 		        	//System.out.println(r);
 		        	if (r == null) {
 		        		break;
 		        	}
 	        }
-	        
-//	        executionTraces = ((TracedEvlContext) module.context).getTraceManager()
-//					.getExecutionTraceRepository().getAllExecutionTraces();
+	        // Let Evl finish execute
+	        Thread.sleep(100);
 			
 			long contextExecutionTracesNew = executionTraces.stream()
 					.filter(t -> t instanceof IContextTrace)
@@ -493,15 +492,13 @@ public class IncrementalEvlModuleIntegrationTests {
 	        while (future.isDone()) { }
 	        // Wait for evl to execute again
 	        for (;;) {
-		        	ExecutionResult r = results.poll(10, TimeUnit.SECONDS);
+		        	ExecutionResult r = results.poll(10, TimeUnit.SECONDS); // 10 Seconds for CVS to pick changes
 		        	if (r == null) {
 		        		break;
 		        	}
 	        }
-	        
-//	        executionTraces = ((TracedEvlContext) module.context).getTraceManager()
-//					.getExecutionTraceRepository().getAllExecutionTraces();
-			
+	        // Let Evl finish execute
+	        Thread.sleep(100);
 	        contextExecutionTracesNew = executionTraces.stream()
 					.filter(t -> t instanceof IContextTrace)
 					.map(IContextTrace.class::cast)
@@ -573,14 +570,15 @@ public class IncrementalEvlModuleIntegrationTests {
 		        	}
 	        }
 //	        executionTraces = execution.executions().get();
-	        //Thread.sleep(400000);
+	        // Let Evl execute
+	        Thread.sleep(100);
 	        long contextExecutionTracesNew = executionTraces.stream()
 					.filter(t -> t instanceof IContextTrace)
 					.map(IContextTrace.class::cast)
 					.count();
 			assertThat("Change should not create new traces", contextExecutionTracesNew-contextExecutionTraces, is(0L));
 	        long unsatisfiedNew = module.getContext().getUnsatisfiedConstraints().size();
-			assertThat("Change breaks two constraints", unsatisfiedNew-unsatisfied, is(1L));
+			assertThat("Change breaks one constraint", unsatisfiedNew-unsatisfied, is(1L));
 		}
 		
 		

@@ -13,11 +13,12 @@ package org.eclipse.epsilon.evl.incremental.dom;
 
 import java.util.Iterator;
 
-import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
+import org.eclipse.epsilon.evl.IncrementalEvlModule;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
@@ -27,6 +28,8 @@ import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
 import org.eclipse.epsilon.evl.trace.ConstraintTrace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Subclass of {@link Constraint} for use with incremental evaluation and
@@ -39,8 +42,15 @@ import org.eclipse.epsilon.evl.trace.ConstraintTrace;
 public class TracedConstraint extends Constraint 
 		implements TracedModuleElement<IInvariantTrace> {
 	
+	private static final Logger logger = LoggerFactory.getLogger(TracedConstraint.class);
+	
 	private IInvariantTrace trace;
 	
+	/**
+	 * Flag to indicate that we are on live mode, i.e. listening to model changes
+	 */
+	private boolean listeningToChagnes = false;
+
 	@Override
 	public void setCurrentTrace(IInvariantTrace trace) {
 		this.trace = trace;
@@ -74,24 +84,25 @@ public class TracedConstraint extends Constraint
 	@Override
 	public boolean check(Object self, IEvlContext context, boolean checkType) throws EolRuntimeException {
 		
+		logger.info("Check {} for {}", getName(), self);
 		// First look in the cache
-		if (context.getConstraintTrace().isChecked(this,self)){
+		if (context.getConstraintTrace().isChecked(this,self)) {
+			logger.debug("Result found in cache");
 			return context.getConstraintTrace().isSatisfied(this,self);
 		}
 		// Return immediately if constraint does not apply
 		if (!appliesTo(self, context, checkType)) {
+			logger.debug("Does not apply");
 			trace.setResult(false);
 			return false;
 		}
-		
-		// FIXME Why remove?
-		//removeOldUnsatisfiedConstraint(self, context);
 		
 		final UnsatisfiedConstraint unsatisfiedConstraint = preprocessCheck(self, context);
 		TracedEvlContext tracedEvlContext = (TracedEvlContext)context;
 		tracedEvlContext.getTraceManager().getPropertyAccessListener().aboutToExecute(checkBlock, context);
 		tracedEvlContext.getTraceManager().getAllInstancesAccessListener().aboutToExecute(checkBlock, context);
 		Boolean result = checkBlock.execute(context, false);
+		logger.info("Result: {}", result);
 		tracedEvlContext.getTraceManager().getPropertyAccessListener().finishedExecuting(checkBlock, result, context);
 		tracedEvlContext.getTraceManager().getAllInstancesAccessListener().finishedExecuting(checkBlock, result, context);
 		
@@ -104,9 +115,26 @@ public class TracedConstraint extends Constraint
 			tracedEvlContext.getTraceManager().getPropertyAccessListener().finishedExecuting(messageBlock, postResult, context);
 			tracedEvlContext.getTraceManager().getAllInstancesAccessListener().finishedExecuting(messageBlock, postResult, context);
 		}
+		boolean oldResult = trace.getResult();
+		if (!oldResult && postResult) {
+			logger.debug("Removing unsatisfied constraint");
+			removeUnsatisfiedConstraint(context, self);
+		}
 		trace.setResult(postResult);
 		return postResult;
 		
+	}
+	
+	/**
+	 * @param self
+	 * @param context
+	 */
+	@Override
+	protected void addToCache(Object self, IEvlContext context) {
+		if (!listeningToChagnes) {
+			logger.debug("Adding result to cache");
+			context.getConstraintTrace().addChecked(this, self, false);
+		}
 	}
 	
 	/**
@@ -178,8 +206,15 @@ public class TracedConstraint extends Constraint
 		return false;
 	}
 	
+	public boolean isListeningToChagnes() {
+		return listeningToChagnes;
+	}
+
+	public void setListeningToChagnes(boolean listeningToChagnes) {
+		this.listeningToChagnes = listeningToChagnes;
+	}
 	
-	private void removeOldUnsatisfiedConstraint(Object self, IEvlContext context) {
+	private void removeUnsatisfiedConstraint(IEvlContext context, Object self) {
 		Iterator<UnsatisfiedConstraint> it = context.getUnsatisfiedConstraints().iterator();
 		while(it.hasNext()) {
 			UnsatisfiedConstraint current = it.next();

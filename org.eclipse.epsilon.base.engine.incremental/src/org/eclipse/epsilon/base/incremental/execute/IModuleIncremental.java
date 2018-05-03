@@ -48,12 +48,10 @@ public interface IModuleIncremental extends IModule {
 	 * Called to notify the module that the model has changed. Implementations would usually query the execution trace
 	 * model/store to test if the given property of the objcet that changed has a trace. If so, all elements of the
 	 * module that are related to the object+property should be re-executed.
-	 * 
-	 * @param objectId
 	 * @param object
 	 * @param propertyName
 	 */
-	void onChange(String modelName, String objectId, Object object, String propertyName);
+	void onChange(IIncrementalModel model, Object object, String propertyName);
 	
 	/**
 	 * Notify the module that a new element has been created in a model
@@ -62,17 +60,15 @@ public interface IModuleIncremental extends IModule {
 	 *
 	 * @param newElement
 	 */
-	void onCreate(String modelName, Object newElement);
+	void onCreate(IIncrementalModel model, Object newElement);
 
 	/**
 	 * Notify the module that an element has been deleted form a model.
 	 * Called to notify the module that an object has been deleted from the model. Implementations would usually
 	 * query the execution trace model/store to test if the given object has a trace. If so, all elements of the
 	 * module that are related to the traced properties of the object should be re-executed.
-	 *
-	 * @param objectId
 	 * @param object
 	 */
-	void onDelete(String modelName, String objectId, Object object);
+	void onDelete(IIncrementalModel model, Object object);
 
 }

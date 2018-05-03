@@ -4,8 +4,9 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.WeakHashMap;
 
-import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
@@ -50,7 +51,7 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 		if (moduleElementStack.isEmpty()) {
 			return;
 		}
-		TracedModuleElement tracedModuleElement = moduleElementStack.peekFirst();
+		TracedModuleElement<?> tracedModuleElement = moduleElementStack.peekFirst();
 		if (tracedModuleElement.equals(ast)) {
 			moduleElementStack.pollFirst();
 		}
@@ -65,7 +66,7 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 			PropertyCallExpression propertyCallExpression = (PropertyCallExpression) ast;
 			final Object modelElement = cache.get(propertyCallExpression.getTargetExpression());
 			final String propertyName = propertyCallExpression.getPropertyNameExpression().getName();
-			final IModel model = getModelThatKnowsAboutProperty(modelElement, propertyName, context);
+			final IIncrementalModel model = getModelThatKnowsAboutProperty(modelElement, propertyName, context);
 			if (model != null) {				
 				try {
 					record(tracedModuleElement.getCurrentTrace(), model, modelElement, propertyName, result);
@@ -77,26 +78,33 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 		}
 	}
 
-	private void record(IModuleElementTrace executionTrace, IModel model, Object modelElement,
+	private void record(IModuleElementTrace executionTrace, IIncrementalModel model, Object modelElement,
 			String propertyName, Object result) throws EolIncrementalExecutionException {
 		
 		logger.info("Recording PropertyAccess. model: {}, element: {}, property: {}",
 				model.getName(), modelElement, propertyName);
-		if (!(model instanceof IIncrementalModel)) {
-			logger.warn("Can not trace non-incremental models. Model {} is not an IIncrementalModel",  model);
-			throw new EolIncrementalExecutionException("Can not trace non-incremental models");
+		IPropertyAccess pa = model.getModelTraceFactory().createPropertyAccess(modelElement, propertyName, executionTrace);
+		String value = null;
+		if (model.owns(result)) {
+			try {
+				value = model.convertToString(result);
+			} catch (NotSerializableModelException e) {
+				logger.error(e.getMessage());
+				throw new EolIncrementalExecutionException("Error getting serializable value of result" + e.getMessage());
+			}
 		}
-		IPropertyAccess pa = ((IIncrementalModel)model).getModelTraceFactory().createPropertyAccess(modelElement, propertyName, executionTrace);
-		// FIXME We need a smarter serializer depending on the type of object? Probably ask
-		// the owning model first, if not the use toString();
-		pa.setValue(result.toString());
+		else {
+			// FIXME: Another model might own the result!
+			value = result.toString();
+		}
+		pa.setValue(value);	
 		executionTrace.accesses().create(pa);
 		
 	}
 
 	@Override
 	public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception, IEolContext context) {
-		logger.debug("finishedExecutingWithException");
+		logger.debug("finishedExecutingWithException: ", exception);
 	}
 	
 	public boolean done() {
@@ -118,10 +126,10 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 				((AssignmentStatement) ast.getParent()).getTargetExpression() == ast;
 	}
 	
-	private IModel getModelThatKnowsAboutProperty(Object object, String property, IEolContext context) {
+	private IIncrementalModel getModelThatKnowsAboutProperty(Object object, String property, IEolContext context) {
 		for (IModel model : context.getModelRepository().getModels()) {
 			if (model.knowsAboutProperty(object, property)) {
-				return model;
+				return (IIncrementalModel) model;
 			}
 		}
 		return null;

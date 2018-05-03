@@ -2,9 +2,9 @@
 @template
 operation EClass testClass(interPrefix, interSufix, classPrefix, classSufix) {
     var container = self.getContainerReference().at(0);
+    var containerClass = self.getContainerReference().at(1);
     var containment = self.getContainerReference().at(2);
     var containment_many = false;
-    var containerClass = self.getContainerReference().at(1);
     var contReferenceClass;
     var contReferenceInterface;
     var contReferenceVar;
@@ -267,33 +267,20 @@ operation EClass initClassUnderTest(containerClass, containment, contReferenceCl
             [%=out.stopPreserve()%]     
 [%}
 
-operation EAttribute getInitValue(index) : Any {
-    switch(self.getEAttributeType().getName()) {
-        case "EString": return '"' + self.name + index + '"';
-        case "EIntegerObject": return 0 + index;
-        case "EBoolean": return false and (index.mod(2) == 0);
-        case "AnyURI": return '"url://path/in/model/to/' + self.name + "/" + index + '"';
-        default: self.getEAttributeType().getName(); return null;
-    }
-    
-}
-
 @template
 operation EClass newInitClassUnderTest(index, containerClass, containment, contReferenceClass,
                                     contReferenceVar, container, interPrefix, interSufix, classPrefix, classSufix) {
-    var mockContainer; 
+    var mockContainer;
     if (containerClass.isDefined()) {
         if (container.isUndefined()) {
-            mockContainer = "containerMock";%]
-            reset(containerMock);
-[%      } else {
-            mockContainer = container.name + "Mock" + index;
+            mockContainer = "containerMock";
+        } else {
+            //mockContainer = containerClass.name.firstToLowerCase() + "Mock1";
+            mockContainer = container.name + "Mock1";
         }%]
-            [%=contReferenceVar%][%=index%] = new [%=contReferenceClass%]([%=mockContainer%]);
-            expect([%=mockContainer%].[%=containment.name%]()).andReturn([%=contReferenceVar%][%=index%]).anyTimes();
-            replay([%=mockContainer%]);
+        replay([%=mockContainer%]);
 [%  }%]
-    [%for (rf in self.getRequiredFeatures()) {%]
+[%  for (rf in self.getRequiredFeatures()) {%]
             [%=rf.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix)%] _[%=rf.name%][%=index%] = mock([%=rf.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix)%].class);
 [%      if (not rf.isMany() and rf.getEOpposite().isDefined()) {
             var opp = rf.getEOpposite();
@@ -321,4 +308,15 @@ operation EClass newInitClassUnderTest(index, containerClass, containment, contR
     }%]
             [%=self.getJavaClassName(interPrefix, interSufix)%] classUnderTest[%=index%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=params%]);
 [%}
+
+operation EAttribute getInitValue(index) : Any {
+    switch(self.getEAttributeType().getName()) {
+        case "EString": return '"' + self.name + index + '"';
+        case "EIntegerObject": return 0 + index;
+        case "EBoolean": return false and (index.mod(2) == 0);
+        case "AnyURI": return '"url://path/in/model/to/' + self.name + "/" + index + '"';
+        default: self.getEAttributeType().getName(); return null;
+    }
+    
+}
 %]

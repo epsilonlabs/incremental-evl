@@ -3,10 +3,11 @@ package org.eclipse.epsilon.evl.incremental.execute;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.execute.IRepository;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
+import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
@@ -55,13 +56,13 @@ public interface IEvlExecutionTraceRepository extends IRepository<IModuleElement
 	
 	
 	/**
-	 * Gets the execution traces related to this element. This allows coarse grained incremental execution for
-	 * models that can notify changes at the element level.
+	 * Gets the execution traces indirectly related to this element. That is, the ContextTraces in which this
+	 * element is not the self. 
 	 *
 	 * @param objectId the model object id
 	 * @return the element trace
 	 */
-	//List<ExecutionTrace> findExecutionTraces(String objectId) throws EolIncrementalExecutionException;
+	List<IModuleElementTrace> findIndirectExecutionTraces(String objectId, Object object, IModel model);
 
 
 	/**
@@ -71,6 +72,6 @@ public interface IEvlExecutionTraceRepository extends IRepository<IModuleElement
 	 * @param objectId the id of the object for which the trace information should be deleted.
 	 * @throws EolIncrementalExecutionException
 	 */
-	//void removeTraceInformation(String objectId) throws EolIncrementalExecutionException;
+	void removeTraceInformation(String objectId);
 
 }

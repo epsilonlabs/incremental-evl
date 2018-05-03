@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-19.
+ * This file was automatically generated on: 2018-04-26.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,8 +15,8 @@ import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
 import org.eclipse.epsilon.base.incremental.trace.INestedModuleElementTraceHasParentTrace;
@@ -280,7 +280,7 @@ public class InvariantTrace implements IInvariantTrace {
             if (other.invariantContext.get() != null)
                 return false;
         }
-        else if (!invariantContext.get().equals(other.invariantContext.get())) {
+        if (!invariantContext.get().equals(other.invariantContext.get())) {
             return false;
         }
         return true; 

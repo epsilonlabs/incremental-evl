@@ -8,7 +8,7 @@
  * Contributors:
  *     Horacio Hoyos Rodriguez - initial API and implementation
  ******************************************************************************/
-package org.eclipse.epsilon.base.incremental;
+package org.eclipse.epsilon.base.incremental.exceptions;
 
 /**
  * En EOL exception that is caused by errors in the incremental execution functionality.

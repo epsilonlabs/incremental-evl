@@ -26,8 +26,12 @@ operation EClass getConstructorParameters(signature : Boolean, interPrefix:Strin
     // Requried references
     results.addAll(self.getRequiredFeatureParameters(interPrefix, interSufix));
     // Container
+    var container = self.getContainerReference().at(0);
     var containerType = self.getContainerReference().at(1);
-    if (containerType.isDefined() and not self.getRequiredFeatures().includes(containerType)) {
+    if (container.isDefined() and not self.getRequiredFeatures().includes(container)) {
+        results.add(containerType.getJavaInterfaceName(interPrefix, interSufix) + " container");
+    }
+    else if (containerType.isDefined()) {
         results.add(containerType.getJavaInterfaceName(interPrefix, interSufix) + " container");
     }
 	if (signature) {

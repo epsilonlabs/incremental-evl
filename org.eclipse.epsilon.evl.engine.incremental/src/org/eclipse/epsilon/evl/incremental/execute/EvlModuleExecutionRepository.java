@@ -1,5 +1,6 @@
 package org.eclipse.epsilon.evl.incremental.execute;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -7,10 +8,14 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
+import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
+import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
+import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
@@ -123,7 +128,8 @@ public class EvlModuleExecutionRepository implements IEvlExecutionTraceRepositor
 				.filter(t -> t.accesses().get().stream()
 							.filter(IPropertyAccess.class::isInstance)
 							.map(IPropertyAccess.class::cast)
-							.anyMatch(pa -> pa.property().get().getName().equals(propertyName))
+							.anyMatch(pa -> pa.property().get().getName().equals(propertyName) &&
+									pa.property().get().element().get().getUri().equals(objectId))
 							)
 				.collect(Collectors.toList());
 		return result;
@@ -152,73 +158,88 @@ public class EvlModuleExecutionRepository implements IEvlExecutionTraceRepositor
 		return Collections.unmodifiableSet(extent);
 	}
 
+	@Override
+	public List<IModuleElementTrace> findIndirectExecutionTraces(String objectId, Object object, IModel model) {
+		List<IContextTrace> indirectContextTraces = extent.stream()
+				.filter(IContextTrace.class::isInstance)
+				.map(IContextTrace.class::cast)
+				.filter(ct -> !ct.executionContext().get().contextVariables().get().stream()
+						.anyMatch(v -> v.value().get().getId().equals(objectId))
+						)
+				.collect(Collectors.toList());
+		List<IModuleElementTrace> result = new ArrayList<>();
+		result.addAll(indirectContextTraces.stream()
+				.filter(ct -> accessesElement(ct.guard().get(), objectId, object, model)
+						)
+				.collect(Collectors.toList()));
+		List<IInvariantTrace> allInvaraints = new ArrayList<>();
+		indirectContextTraces.forEach(ct -> allInvaraints.addAll(ct.constraints().get()));
+		result.addAll(allInvaraints.stream()
+						.filter(inv -> accessesElement(inv.guard().get(), objectId, object, model) ||
+									   accessesElement(inv.check().get(), objectId, object, model) ||
+									   accessesElement(inv.message().get(), objectId, object, model)
+					            )
+						.collect(Collectors.toList()));
+		return result;
+	}
 	
-//	@Override
-//	public IContextTrace getContextTraceFor(String typeName, int index, IModelElementTrace modelElement) {
-//		IContextTrace result = null;
-//		result = extent.stream()
-//				.filter(ct -> ct.getKind().equals(typeName) && ct.getIndex().equals(index) && ct.context().get().equals(modelElement))
-//				.findFirst()
-//				.orElseGet(() -> null);
-//		return result;
-//	}
+	@Override
+	public void removeTraceInformation(String objectId) {
+		// Property Accesses
+		List<IPropertyAccess> pas = new ArrayList<>();
+		extent.stream()
+				.forEach(t -> pas.addAll(t.accesses().get().stream()
+						.filter(IPropertyAccess.class::isInstance)
+						.map(IPropertyAccess.class::cast)
+						.filter(pa -> pa.property().get().element().get().getUri().equals(objectId))
+						.collect(Collectors.toList())
+						));
+		for (IPropertyAccess pa : pas) {
+			IModuleElementTrace executionTrace = pa.executionTrace().get();
+			pa.executionTrace().destroy(executionTrace);
+			if (executionTrace.accesses().get().isEmpty()) {
+				extent.remove(executionTrace);
+			}
+		}
+		// ElementAccess
+		List<IElementAccess> eas = new ArrayList<>();
+		extent.stream()
+				.forEach(t -> eas.addAll(t.accesses().get().stream()
+						.filter(IElementAccess.class::isInstance)
+						.map(IElementAccess.class::cast)
+						.filter(ea -> ea.element().get().getUri().equals(objectId))
+						.collect(Collectors.toList())
+						));
+		for (IElementAccess ea : eas) {
+			IModuleElementTrace executionTrace = ea.executionTrace().get();
+			ea.executionTrace().destroy(executionTrace);
+			if (executionTrace.accesses().get().isEmpty()) {
+				extent.remove(executionTrace);
+			}
+		}
+		// TODO We could delete allInstances access is no more elements of the type exist in the model?
+	}
 	
-//	
-//
-//	@Override
-//	public IEvlModuleExecution getEvlModuleExecutionForSource(String string) {
-//		IEvlModuleExecution result = null;
-//		try {
-//			result = extent.stream()
-//						.filter(me -> (me.module().get().getSource() != null) &&
-//									(me.module().get().getSource().equals(string)))
-//						.findFirst()
-//						.get();
-//		} catch (NoSuchElementException e) {
-//			// No info
-//			// FIXME Should we go to the DB here?
-//		}
-//		return result;
-//	}
-//
-//	@Override
-//	public IPropertyAccess getPropertyAccessFor(IExecutionTrace executionTrace, IPropertyTrace property) {
-//		IPropertyAccess result = null;
-//		try {
-//			result = extent.stream()
-//				.flatMap(me -> me.executions().get().stream())
-//				.filter(et -> et.equals(executionTrace))
-//				.flatMap(gt -> gt.accesses().get().stream())
-//				.filter(a -> a instanceof IPropertyAccess)
-//				.map(IPropertyAccess.class::cast)
-//				.filter(pa -> pa.property().get().equals(property))
-//				.findFirst()
-//				.get();
-//		} catch (NoSuchElementException e) {
-//			// No info
-//			// FIXME Should we go to the DB here?
-//		}
-//		return result;
-//	}
-//
-//	@Override
-//	public IAllInstancesAccess getAllInstancesAccessFor(IExecutionTrace executionTrace, IModelTypeTrace modelType) {
-//		IAllInstancesAccess result = null;
-//		try {
-//			result = extent.stream()
-//				.flatMap(me -> me.executions().get().stream())
-//				.filter(et -> et.equals(executionTrace))
-//				.flatMap(gt -> gt.accesses().get().stream())
-//				.filter(a -> a instanceof IAllInstancesAccess)
-//				.map(IAllInstancesAccess.class::cast)
-//				.filter(aa -> aa.type().get().equals(modelType))
-//				.findFirst()
-//				.get();
-//		} catch (NoSuchElementException e) {
-//			// No info
-//			// FIXME Should we go to the DB here?
-//		}
-//		return result;
-//	}
+	private boolean accessesElement(IModuleElementTrace trace, String objectId, Object object, IModel model) {
+		String elementType = model.getTypeNameOf(object);
+		return trace.accesses().get().stream()
+				.filter(IPropertyAccess.class::isInstance)
+				.map(IPropertyAccess.class::cast)
+				.anyMatch(pa -> pa.property().get().element().get().getUri().equals(objectId)) ||
+			trace.accesses().get().stream()
+					.filter(IAllInstancesAccess.class::isInstance)
+					.map(IAllInstancesAccess.class::cast)
+					.anyMatch(aia -> {
+						try {
+							return aia.getOfKind()?model.isOfKind(object, elementType):model.isOfType(object, elementType);
+						} catch (EolModelElementTypeNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						return false;
+					});
+				
+		
+	}
 
 }

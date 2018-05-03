@@ -21,6 +21,10 @@ import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%];
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
+[%=out.startPreserve("/**", "**/", ec.name + "Imports", true)%]
+
+[%=out.stopPreserve()%]
+
 [%if (ec.getEAllReferences().exists(er | er.isContainment())){%]
 import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
 [%}%]
@@ -65,14 +69,22 @@ for (er in ec.getEAllReferences().select(er | not er.isDerived())) {%]
         }
 [%  }%]
 [%}%]
-[%var container = ec.getContainerReference().at(2);
-var containment = ec.getContainerReference().at(0);
-if (container.isDefined()) {%]
-        if (!container.[%=container.name%]().create(this)) {
+[%
+var container = ec.getContainerReference().at(0);
+var type = ec.getContainerReference().at(1);
+var opposite = ec.getContainerReference().at(2);
+if (container.isDefined()) {
+    if (ec.getRequiredFeatures().includes(container)) {%]
+        if (!this.[%=container.name%].[%=opposite.name%]().create(this)) {
             throw new TraceModelDuplicateRelation();
         };
-[%} else if (containment.isDefined()) {%]
-        if (!container.[%=ec.getContainerReference().at(0).name%]().create(this){
+  [%} else {%]
+        if (!container.[%=opposite.name%]().create(this)) {
+            throw new TraceModelDuplicateRelation();
+        };
+[%  }
+} else if (opposite.isDefined()) {%]
+        if (!container.[%=opposite.name%]().create(this){
             throw new TraceModelDuplicateRelation();
         };
 [%}%]

@@ -12,7 +12,7 @@
 <stringAttribute key="outputFilePath" value=""/>
 <listAttribute key="parameters">
 <listEntry value="name=targetLanguage&#10;type=String&#10;value=evl"/>
-<listEntry value="name=baseLanguage&#10;type=String&#10;value="/>
+<listEntry value="name=baseLanguage&#10;type=String&#10;value=base"/>
 <listEntry value="name=interPrefix&#10;type=String&#10;value=I"/>
 <listEntry value="name=interSufix&#10;type=String&#10;value="/>
 <listEntry value="name=classPrefix&#10;type=String&#10;value="/>

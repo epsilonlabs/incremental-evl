@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-19.
+ * This file was automatically generated on: 2018-04-26.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,8 +15,8 @@ import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
@@ -70,20 +70,20 @@ public class ContextTrace implements IContextTrace {
      * Instantiates a new ContextTrace. The ContextTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ContextTrace(String kind, Integer index, IModuleTrace module, IExecutionContext executionContext) throws TraceModelDuplicateRelation {
+    public ContextTrace(String kind, Integer index, IExecutionContext executionContext, IModuleTrace container) throws TraceModelDuplicateRelation {
         this.kind = kind;
         this.index = index;
         this.guard = new GuardedElementTraceHasGuard(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
         this.module = new RuleTraceHasModule(this);
-        if (!this.module.create(module)) {
-            throw new TraceModelDuplicateRelation();
-        }
         this.executionContext = new RuleTraceHasExecutionContext(this);
         if (!this.executionContext.create(executionContext)) {
             throw new TraceModelDuplicateRelation();
         }
         this.constraints = new ContextTraceHasConstraints(this);
+        if (!container.ruleTraces().create(this)) {
+            throw new TraceModelDuplicateRelation();
+        };
     }
     
     @Override
@@ -220,14 +220,14 @@ public class ContextTrace implements IContextTrace {
             if (other.executionContext.get() != null)
                 return false;
         }
-        else if (!executionContext.get().equals(other.executionContext.get())) {
+        if (!executionContext.get().equals(other.executionContext.get())) {
             return false;
         }
         if (module.get() == null) {
             if (other.module.get() != null)
                 return false;
         }
-        else if (!module.get().equals(other.module.get())) {
+        if (!module.get().equals(other.module.get())) {
             return false;
         }
         return true; 

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-19.
+ * This file was automatically generated on: 2018-04-26.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,9 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+
+/** protected region MessageTraceImports on begin **/
+/** protected region MessageTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
@@ -104,7 +107,7 @@ public class MessageTrace implements IMessageTrace {
             if (other.invariant.get() != null)
                 return false;
         }
-        else if (!invariant.get().equals(other.invariant.get())) {
+        if (!invariant.get().equals(other.invariant.get())) {
             return false;
         }
         return true; 

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-19.
+ * This file was automatically generated on: 2018-04-26.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,7 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
-import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;    
 import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;    
@@ -32,7 +32,7 @@ public interface IEvlModuleTrace extends IModuleTrace {
     public boolean sameIdentityAs(final IEvlModuleTrace other);
     
     /** The ContextTrace Factory. */
-    IContextTrace createContextTrace(String kind, Integer index, IModuleTrace module, IExecutionContext executionContext) throws EolIncrementalExecutionException;       
+    IContextTrace createContextTrace(String kind, Integer index, IExecutionContext executionContext) throws EolIncrementalExecutionException;       
             
    
 }
