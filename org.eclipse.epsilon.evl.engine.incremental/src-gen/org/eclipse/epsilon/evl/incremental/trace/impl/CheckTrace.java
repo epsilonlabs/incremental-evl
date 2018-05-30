@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-26.
+ * This file was automatically generated on: 2018-05-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,9 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+
+/** protected region CheckTraceImports on begin **/
+/** protected region CheckTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
@@ -45,8 +48,11 @@ public class CheckTrace implements ICheckTrace {
      * container and any attributes identified as indexes.
      */    
     public CheckTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
-        this.accesses = new ModuleElementTraceHasAccesses(this);
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@54d69d32 (name: invariant) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.invariant = new CheckTraceHasInvariant(this);
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@67c94ece (name: accesses) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: false)
+        this.accesses = new ModuleElementTraceHasAccesses(this);
+
         if (!container.check().create(this)) {
             throw new TraceModelDuplicateRelation();
         };

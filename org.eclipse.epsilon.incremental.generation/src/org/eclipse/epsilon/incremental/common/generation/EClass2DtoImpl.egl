@@ -26,9 +26,9 @@ import java.util.NoSuchElementException;
 [%=out.stopPreserve()%]
 
 [%if (ec.getEAllReferences().exists(er | er.isContainment())){%]
-import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 [%}%]
-import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 [%
 for (imp in ec.getRequriedImports(qp+".trace", interPrefix, interSufix, classPrefix, classSufix, true, true)) {%]
 import [%=imp%];

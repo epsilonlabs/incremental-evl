@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-04.
+ * This file was automatically generated on: 2018-05-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,10 +11,14 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+
+/** protected region ModelTraceImports on begin **/
+/** protected region ModelTraceImports end **/
+
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 
 /**
  * Implementation of IModelTrace. 

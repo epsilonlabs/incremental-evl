@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-26.
+ * This file was automatically generated on: 2018-05-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,9 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+
+/** protected region MessageTraceImports on begin **/
+/** protected region MessageTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
@@ -45,8 +48,11 @@ public class MessageTrace implements IMessageTrace {
      * container and any attributes identified as indexes.
      */    
     public MessageTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
-        this.accesses = new ModuleElementTraceHasAccesses(this);
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@6f0163be (name: invariant) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.invariant = new MessageTraceHasInvariant(this);
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@67c94ece (name: accesses) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: false)
+        this.accesses = new ModuleElementTraceHasAccesses(this);
+
         if (!container.message().create(this)) {
             throw new TraceModelDuplicateRelation();
         };

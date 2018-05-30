@@ -349,9 +349,10 @@ public class BaseTraceModelTests {
             // Default init parameters can be modified
             classUnderTest = new ElementAccess(_executionTrace, _element);                    
             // protected region ElementAccessInit end     
-            reset(moduleElementTrace);
-            expect(moduleElementTrace.get()).andReturn(classUnderTest).anyTimes();
-            replay(moduleElementTrace);
+            // Opposite for executionTrace
+            //reset(moduleElementTrace);
+            //expect(moduleElementTrace.get()).andReturn(classUnderTest).anyTimes();
+            //replay(moduleElementTrace);
         
         
             boolean result = classUnderTest.element().destroy(_element);
@@ -491,9 +492,10 @@ public class BaseTraceModelTests {
             // Default init parameters can be modified
             classUnderTest = new AllInstancesAccess(false, _executionTrace, _type);                    
             // protected region AllInstancesAccessInit end     
-            reset(moduleElementTrace);
-            expect(moduleElementTrace.get()).andReturn(classUnderTest).anyTimes();
-            replay(moduleElementTrace);
+            // Opposite for executionTrace
+            //reset(moduleElementTrace);
+            //expect(moduleElementTrace.get()).andReturn(classUnderTest).anyTimes();
+            //replay(moduleElementTrace);
         
         
             boolean result = classUnderTest.type().destroy(_type);
@@ -633,9 +635,10 @@ public class BaseTraceModelTests {
             // Default init parameters can be modified
             classUnderTest = new PropertyAccess(_executionTrace, _property);                    
             // protected region PropertyAccessInit end     
-            reset(moduleElementTrace);
-            expect(moduleElementTrace.get()).andReturn(classUnderTest).anyTimes();
-            replay(moduleElementTrace);
+            // Opposite for executionTrace
+            //reset(moduleElementTrace);
+            //expect(moduleElementTrace.get()).andReturn(classUnderTest).anyTimes();
+            //replay(moduleElementTrace);
         
         
             boolean result = classUnderTest.property().destroy(_property);

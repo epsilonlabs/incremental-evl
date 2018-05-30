@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-26.
+ * This file was automatically generated on: 2018-05-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,9 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+
+/** protected region EvlModuleTraceImports on begin **/
+/** protected region EvlModuleTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
@@ -48,8 +51,11 @@ public class EvlModuleTrace implements IEvlModuleTrace {
      */    
     public EvlModuleTrace(String source) throws TraceModelDuplicateRelation {
         this.source = source;
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@4e660b90 (name: ruleTraces) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.ruleTraces = new ModuleTraceHasRuleTraces(this);
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@244eeb8e (name: executionContexts) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.executionContexts = new ModuleTraceHasExecutionContexts(this);
+
     }
     
     @Override

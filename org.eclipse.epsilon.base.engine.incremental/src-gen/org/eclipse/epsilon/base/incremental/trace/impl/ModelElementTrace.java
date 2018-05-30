@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-04.
+ * This file was automatically generated on: 2018-05-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,11 +11,14 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
+/** protected region ModelElementTraceImports on begin **/
+/** protected region ModelElementTraceImports end **/
+
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTraceHasModel;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementTraceHasModel;
@@ -40,7 +43,7 @@ public class ModelElementTrace implements IModelElementTrace {
      */    
     public ModelElementTrace(String uri, IModelTrace model) throws TraceModelDuplicateRelation {
         this.uri = uri;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@2956e54f (name: model) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@411db4c9 (name: model) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.model = new ModelElementTraceHasModel(this);
         if (!this.model.create(model)) {
             throw new TraceModelDuplicateRelation();

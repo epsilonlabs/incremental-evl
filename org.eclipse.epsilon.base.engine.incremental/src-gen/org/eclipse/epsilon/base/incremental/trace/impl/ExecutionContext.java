@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-04.
+ * This file was automatically generated on: 2018-05-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,11 +11,14 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
+/** protected region ExecutionContextImports on begin **/
+/** protected region ExecutionContextImports end **/
+
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContextHasContextVariables;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContextHasRules;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementVariable;
@@ -42,9 +45,9 @@ public class ExecutionContext implements IExecutionContext {
      * container and any attributes identified as indexes.
      */    
     public ExecutionContext() throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@19b5769d (name: contextVariables) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@2a5f5db1 (name: contextVariables) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.contextVariables = new ExecutionContextHasContextVariables(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@1f3e3dc0 (name: rules) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@33cc7fda (name: rules) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.rules = new ExecutionContextHasRules(this);
 
     }

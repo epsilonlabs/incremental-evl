@@ -197,9 +197,10 @@ operation EClass testClass(interPrefix, interSufix, classPrefix, classSufix) {
         if (not rf.isMany() and rf.getEOpposite().isDefined()) {
             var opp = rf.getEOpposite();
             var oppVar = opp.getEContainingClass().name.firstToLowerCase();%]
-            reset([%=oppVar%]);
-            expect([%=oppVar%].get()).andReturn(classUnderTest).anyTimes();
-            replay([%=oppVar%]);
+            // Opposite for [%=rf.name%]
+            //reset([%=oppVar%]);
+            //expect([%=oppVar%].get()).andReturn(classUnderTest).anyTimes();
+            //replay([%=oppVar%]);
 [%      }%]        
 [%  }%]
             boolean result = classUnderTest.[%=er.name%]().destroy([%=mockTarget%]);

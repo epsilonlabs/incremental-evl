@@ -61,7 +61,7 @@ public class EvlTraceModelTests {
         private EvlModuleTrace classUnderTest;
 
 	    
-// protected region IgnoreEvlModuleTraceAttributes on begin	    
+// protected region IgnoreEvlModuleTraceAttributes on begin
 	    @Ignore
 // protected region IgnoreEvlModuleTraceAttributes end	    
 	    @Test

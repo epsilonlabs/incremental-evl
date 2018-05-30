@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-26.
+ * This file was automatically generated on: 2018-05-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,9 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+
+/** protected region ContextTraceImports on begin **/
+/** protected region ContextTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
@@ -73,14 +76,20 @@ public class ContextTrace implements IContextTrace {
     public ContextTrace(String kind, Integer index, IExecutionContext executionContext, IModuleTrace container) throws TraceModelDuplicateRelation {
         this.kind = kind;
         this.index = index;
-        this.guard = new GuardedElementTraceHasGuard(this);
-        this.accesses = new ModuleElementTraceHasAccesses(this);
-        this.module = new RuleTraceHasModule(this);
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@7e67b6ea (name: executionContext) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.executionContext = new RuleTraceHasExecutionContext(this);
         if (!this.executionContext.create(executionContext)) {
             throw new TraceModelDuplicateRelation();
         }
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@5ba1d1ea (name: module) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        this.module = new RuleTraceHasModule(this);
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@4a0ea0ac (name: guard) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        this.guard = new GuardedElementTraceHasGuard(this);
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@67c94ece (name: accesses) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: false)
+        this.accesses = new ModuleElementTraceHasAccesses(this);
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@7e8bf69d (name: constraints) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: false)
         this.constraints = new ContextTraceHasConstraints(this);
+
         if (!container.ruleTraces().create(this)) {
             throw new TraceModelDuplicateRelation();
         };

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-26.
+ * This file was automatically generated on: 2018-05-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,9 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+
+/** protected region InvariantTraceImports on begin **/
+/** protected region InvariantTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
@@ -83,12 +86,19 @@ public class InvariantTrace implements IInvariantTrace {
      */    
     public InvariantTrace(String name, IContextTrace container) throws TraceModelDuplicateRelation {
         this.name = name;
-        this.guard = new GuardedElementTraceHasGuard(this);
-        this.accesses = new ModuleElementTraceHasAccesses(this);
-        this.check = new InvariantTraceHasCheck(this);
-        this.message = new InvariantTraceHasMessage(this);
-        this.satisfies = new InvariantTraceHasSatisfies(this);
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@76734035 (name: invariantContext) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.invariantContext = new InvariantTraceHasInvariantContext(this);
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@4a0ea0ac (name: guard) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        this.guard = new GuardedElementTraceHasGuard(this);
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@67c94ece (name: accesses) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: false)
+        this.accesses = new ModuleElementTraceHasAccesses(this);
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@1c6f0960 (name: check) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        this.check = new InvariantTraceHasCheck(this);
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@53ad00d6 (name: message) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        this.message = new InvariantTraceHasMessage(this);
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@55a73505 (name: satisfies) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        this.satisfies = new InvariantTraceHasSatisfies(this);
+
         if (!container.constraints().create(this)) {
             throw new TraceModelDuplicateRelation();
         };

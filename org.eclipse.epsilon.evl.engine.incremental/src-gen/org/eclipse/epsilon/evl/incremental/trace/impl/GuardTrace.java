@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-26.
+ * This file was automatically generated on: 2018-05-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -19,6 +19,7 @@ import java.util.NoSuchElementException;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 /** protected region GuardTraceImports end **/
+
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
@@ -52,8 +53,11 @@ public class GuardTrace implements IGuardTrace {
      * container and any attributes identified as indexes.
      */    
     public GuardTrace(IGuardedElementTrace container) throws TraceModelDuplicateRelation {
-        this.accesses = new ModuleElementTraceHasAccesses(this);
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@20f8b6b1 (name: limits) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.limits = new GuardTraceHasLimits(this);
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@67c94ece (name: accesses) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: false)
+        this.accesses = new ModuleElementTraceHasAccesses(this);
+
         if (!container.guard().create(this)) {
             throw new TraceModelDuplicateRelation();
         };

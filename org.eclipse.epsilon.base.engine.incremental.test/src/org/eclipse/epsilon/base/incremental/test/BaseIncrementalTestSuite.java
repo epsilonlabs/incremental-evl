@@ -1,7 +1,7 @@
-package org.eclipse.epsilon.eol.incremental.test;
+package org.eclipse.epsilon.base.incremental.test;
 
+import org.eclipse.epsilon.base.incremental.execute.introspection.recording.ExecutionListenerTests;
 import org.eclipse.epsilon.base.incremental.trace.BaseTraceModelTests;
-import org.eclipse.epsilon.eol.incremental.execute.introspection.recording.ExecutionListenerTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -12,10 +12,10 @@ import junit.framework.Test;
 @RunWith(Suite.class)
 @SuiteClasses({	BaseTraceModelTests.class,
 				ExecutionListenerTests.class})
-public class EolIncrementalTestSuite {
+public class BaseIncrementalTestSuite {
 	
 	public static Test suite() {
-		return new JUnit4TestAdapter(EolIncrementalTestSuite.class);
+		return new JUnit4TestAdapter(BaseIncrementalTestSuite.class);
 	}
 
 }

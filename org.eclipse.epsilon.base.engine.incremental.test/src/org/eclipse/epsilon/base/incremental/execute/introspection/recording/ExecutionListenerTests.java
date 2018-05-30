@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.eol.incremental.execute.introspection.recording;
+package org.eclipse.epsilon.base.incremental.execute.introspection.recording;
 
 import static org.junit.Assert.assertTrue;
 
