@@ -19,7 +19,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
  * container references. That is, elements contained in the ModelElementVariable must be
  * created through this interface.
  */
-public interface IModelElementVariable {
+public interface IModelElementVariable extends IIdElement {
 
     /**
      * Returns the value of the '<em><b>Name</b></em>' attribute.

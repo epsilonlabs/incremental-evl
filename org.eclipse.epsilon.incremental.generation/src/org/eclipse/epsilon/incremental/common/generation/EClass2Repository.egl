@@ -1,0 +1,29 @@
+[%
+/*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Horacio Hoyos Rodriguez - initial API and implementation
+ ******************************************************************************/
+import "Ecore2JavaTemplates.egl";  
+%]
+[%=getHeader()%]
+package [%=qp%].trace;
+
+import org.eclipse.epsilon.base.incremental.execute.IRepository;
+[%=out.startPreserve("/**", "**/", ec.getJavaInterfaceName(interPrefix, interSufix) + "RepositoryImports", true)%]
+
+[%=out.stopPreserve()%]
+
+public interface [%=ec.getJavaInterfaceName(interPrefix, interSufix)%]Repository extends IRepository<[%=ec.getJavaInterfaceName(interPrefix, interSufix)%]> {
+
+[%=out.startPreserve("/**", "**/", ec.getJavaInterfaceName(interPrefix, interSufix) + "Repositry", true)%]
+    // Specialised search methods
+
+[%=out.stopPreserve()%]
+
+}

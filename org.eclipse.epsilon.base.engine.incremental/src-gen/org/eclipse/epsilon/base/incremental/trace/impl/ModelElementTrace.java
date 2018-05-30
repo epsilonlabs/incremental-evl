@@ -43,7 +43,7 @@ public class ModelElementTrace implements IModelElementTrace {
      */    
     public ModelElementTrace(String uri, IModelTrace model) throws TraceModelDuplicateRelation {
         this.uri = uri;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@411db4c9 (name: model) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@2f0a4d25 (name: model) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.model = new ModelElementTraceHasModel(this);
         if (!this.model.create(model)) {
             throw new TraceModelDuplicateRelation();

@@ -45,9 +45,9 @@ public class ExecutionContext implements IExecutionContext {
      * container and any attributes identified as indexes.
      */    
     public ExecutionContext() throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@2a5f5db1 (name: contextVariables) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@35eb4e76 (name: contextVariables) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.contextVariables = new ExecutionContextHasContextVariables(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@33cc7fda (name: rules) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@6b21ed95 (name: rules) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.rules = new ExecutionContextHasRules(this);
 
     }

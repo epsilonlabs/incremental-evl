@@ -342,7 +342,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 				.get()
 				.value().get();
 		Object self = getSelf(model, null, modelElementTrace);
-		ConstraintContext conCtx = getContraintContextForTrace(contextT);
+		ConstraintContext conCtx = getConstraintContextForTrace(contextT);
 		try {
 			if (conCtx.appliesTo(self, getContext(), false)) {
 				for (ModuleElement me : conCtx.getChildren()) {
@@ -441,7 +441,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 			logger.info("GuardTrace applies to Context");
 			IContextTrace contextT = (IContextTrace) guardedElement;
 			// Execute all the invariants in the InvariantContext
-			ConstraintContext conCtx = getContraintContextForTrace(contextT);
+			ConstraintContext conCtx = getConstraintContextForTrace(contextT);
 			if (conCtx.appliesTo(self, getContext())) {
 				for (Constraint constraint : conCtx.getConstraints()) {
 					// Find trace
@@ -511,7 +511,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	private void executeInvariantTrace(Object self, IInvariantTrace invariantT) throws EolRuntimeException {
 		
 		logger.info("executeInvariantTrace for {}", invariantT.getName());
-		ConstraintContext conCtx = getContraintContextForTrace(invariantT.invariantContext().get());
+		ConstraintContext conCtx = getConstraintContextForTrace(invariantT.invariantContext().get());
 		if (conCtx != null) {
 			// Found the context, now find the invariant
 			// FIXME	 Need to modify EVL so we can individually modify constraints (invariants)
@@ -529,7 +529,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		throw new IllegalStateException();
 	}
 	
-	private ConstraintContext getContraintContextForTrace(IContextTrace trace) {
+	private ConstraintContext getConstraintContextForTrace(IContextTrace trace) {
 		int index = 1;
 		for (ConstraintContext conCtx : getConstraintContexts()) {
 			if (conCtx.getTypeName().equals(trace.getKind()) &&

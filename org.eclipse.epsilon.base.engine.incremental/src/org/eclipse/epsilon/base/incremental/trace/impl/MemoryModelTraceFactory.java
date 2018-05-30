@@ -26,9 +26,9 @@ import org.slf4j.LoggerFactory;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class ModelTraceFactory {
+public class MemoryModelTraceFactory {
 	
-	private static final Logger logger = LoggerFactory.getLogger(ModelTraceFactory.class);
+	private static final Logger logger = LoggerFactory.getLogger(MemoryModelTraceFactory.class);
 	
 	private final IIncrementalModel model;
 	private final IModelTrace modelTrace;
@@ -41,7 +41,7 @@ public class ModelTraceFactory {
 	private final Map<String, IElementAccess> elementAccesses = new HashMap<>();
 	private final Map<String, IModelElementVariable> modelElementVariables = new HashMap<>();
 
-	public ModelTraceFactory(IIncrementalModel model) throws EolIncrementalExecutionException {
+	public MemoryModelTraceFactory(IIncrementalModel model) throws EolIncrementalExecutionException {
 		super();
 		this.model = model;
 		try {

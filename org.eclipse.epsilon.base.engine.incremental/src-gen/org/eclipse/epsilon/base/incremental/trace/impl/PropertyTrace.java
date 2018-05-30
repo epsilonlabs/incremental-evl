@@ -43,7 +43,7 @@ public class PropertyTrace implements IPropertyTrace {
      */    
     public PropertyTrace(String name, IModelElementTrace element) throws TraceModelDuplicateRelation {
         this.name = name;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@b895fe3 (name: element) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@50f2949f (name: element) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.element = new PropertyTraceHasElement(this);
         if (!this.element.create(element)) {
             throw new TraceModelDuplicateRelation();

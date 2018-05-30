@@ -11,21 +11,16 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
-import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;    
+import org.eclipse.epsilon.base.incremental.execute.IRepository;
+/** protected region IContextTraceRepositoryImports on begin **/
 
-/**
- * The EvlModuleTrace defines the access methods for the EClass features.
- * Additionally, the IEvlModuleTrace acts as the root entity of the AGGREGATE of its
- * container references. That is, elements contained in the EvlModuleTrace must be
- * created through this interface.
- */
-public interface IEvlModuleTrace extends IModuleTrace {
+/** protected region IContextTraceRepositoryImports end **/
 
+public interface IContextTraceRepository extends IRepository<IContextTrace> {
 
- 
-    /**
-     * EvlModuleTrace has same identity in the aggregate.
-     */
-    public boolean sameIdentityAs(final IEvlModuleTrace other);
-    
+/** protected region IContextTraceRepositry on begin **/
+    // Specialised search methods
+
+/** protected region IContextTraceRepositry end **/
+
 }

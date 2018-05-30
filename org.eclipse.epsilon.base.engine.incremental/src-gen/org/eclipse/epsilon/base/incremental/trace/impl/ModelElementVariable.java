@@ -28,6 +28,9 @@ import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementVariableHasVa
  */
 public class ModelElementVariable implements IModelElementVariable {
 
+    /** The id */
+    private Object id;
+
     /** The name */
     private String name;
 
@@ -40,7 +43,7 @@ public class ModelElementVariable implements IModelElementVariable {
      */    
     public ModelElementVariable(String name, IModelElementTrace value) throws TraceModelDuplicateRelation {
         this.name = name;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@7ffe4d0e (name: value) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@5968e52 (name: value) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.value = new ModelElementVariableHasValue(this);
         if (!this.value.create(value)) {
             throw new TraceModelDuplicateRelation();
@@ -48,6 +51,17 @@ public class ModelElementVariable implements IModelElementVariable {
 
     }
     
+    @Override
+    public Object getId() {
+        return id;
+    }
+    
+    
+    @Override
+    public void setId(Object value) {
+        this.id = value;
+    }   
+     
     @Override
     public String getName() {
         return name;

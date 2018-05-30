@@ -228,12 +228,19 @@ public class EvlTraceModelTests {
         
         private ContextTrace classUnderTest;
 
+	    
+// protected region IgnoreContextTraceAttributes on begin
+	    @Ignore
+// protected region IgnoreContextTraceAttributes end	    
+	    @Test
+        public void testContextTraceAttributes() throws Exception {
+            IModuleTrace _module = mock(IModuleTrace.class);
+            IModuleTraceHasRuleTraces moduleTrace = niceMock(IModuleTraceHasRuleTraces.class);
+            expect(_module.ruleTraces()).andReturn(moduleTrace).anyTimes();
+            replay(_module);
+            expect(moduleTrace.get()).andReturn(null).anyTimes();
+            replay(moduleTrace);
         
-        @Test
-        public void testContextTraceInstantiation() throws Exception {
-            moduleTrace1 = new ModuleTraceHasRuleTraces(moduleMock1);
-            expect(moduleMock1.ruleTraces()).andReturn(moduleTrace1).anyTimes();
-            replay(moduleMock1);
             IExecutionContext _executionContext = mock(IExecutionContext.class);
             IExecutionContextHasRules executionContext = niceMock(IExecutionContextHasRules.class);
             expect(_executionContext.rules()).andReturn(executionContext).anyTimes();
@@ -634,9 +641,15 @@ public class EvlTraceModelTests {
             expect(constraintsMock1.invariantContext()).andReturn(invariantTrace1).anyTimes();
             replay(constraintsMock1);
             classUnderTest.constraints().create(constraintsMock1);
-            reset(executionContext);
-            expect(executionContext.get()).andReturn(classUnderTest).anyTimes();
-            replay(executionContext);
+            // Opposite for module
+            //reset(moduleTrace);
+            //expect(moduleTrace.get()).andReturn(classUnderTest).anyTimes();
+            //replay(moduleTrace);
+        
+            // Opposite for executionContext
+            //reset(executionContext);
+            //expect(executionContext.get()).andReturn(classUnderTest).anyTimes();
+            //replay(executionContext);
         
             boolean result = classUnderTest.constraints().destroy(constraintsMock1);
             assertTrue(result);

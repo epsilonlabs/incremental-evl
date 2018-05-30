@@ -1,0 +1,70 @@
+[%
+/*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Horacio Hoyos Rodriguez - initial API and implementation
+ ******************************************************************************/
+import "Ecore2JavaTemplates.egl";
+ %]
+[%=getHeader()%]
+package [%=qp%].trace.impl;
+
+import java.util.LinkedHashSet;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
+import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%];
+import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%]Repository;
+
+[%=out.startPreserve("/**", "**/", ec.name + "Imports", true)%]
+
+[%=out.stopPreserve()%]
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class [%=ec.getJavaClassName(classPrefix, classSufix)%]RepositoryImpl implements [%=ec.getJavaInterfaceName(interPrefix, interSufix)%]Repository {
+
+    private static final Logger logger = LoggerFactory.getLogger([%=ec.getJavaClassName(classPrefix, classSufix)%]RepositoryImpl.class);
+    
+    private final Set<[%=ec.getJavaInterfaceName(interPrefix, interSufix)%]> extent;
+    
+    public [%=ec.getJavaClassName(classPrefix, classSufix)%]RepositoryImpl() {
+        this.extent = new LinkedHashSet<>();
+    }
+    
+    @Override
+    public boolean add([%=ec.getJavaInterfaceName(interPrefix, interSufix)%] item) {
+        logger.info("Adding {} to repository", item);
+        return extent.add(item);
+    }
+
+    @Override
+    public boolean remove([%=ec.getJavaInterfaceName(interPrefix, interSufix)%] item) {
+        logger.info("Removing {} from repository", item);
+        return extent.remove(item);
+    }
+    
+    @Override
+    public [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] get(Object id) {
+        
+        logger.debug("Get [%=ec.name%] with id:{}", id);
+        [%=ec.getJavaInterfaceName(interPrefix, interSufix)%]  result = null;
+        try {
+            result = extent.stream()
+                    .filter(item -> item.getId().equals(id))
+                    .findFirst()
+                    .get();
+        } catch (NoSuchElementException  e) {
+            // No info about the ModelTrace
+        }
+        return result;
+    }
+
+}

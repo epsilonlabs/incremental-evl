@@ -86,17 +86,17 @@ public class InvariantTrace implements IInvariantTrace {
      */    
     public InvariantTrace(String name, IContextTrace container) throws TraceModelDuplicateRelation {
         this.name = name;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@76734035 (name: invariantContext) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@5bf9f371 (name: invariantContext) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.invariantContext = new InvariantTraceHasInvariantContext(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@4a0ea0ac (name: guard) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@2b8d49f5 (name: guard) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.guard = new GuardedElementTraceHasGuard(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@67c94ece (name: accesses) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: false)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@4044e6e1 (name: accesses) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: false)
         this.accesses = new ModuleElementTraceHasAccesses(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@1c6f0960 (name: check) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@6e3ffa1d (name: check) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.check = new InvariantTraceHasCheck(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@53ad00d6 (name: message) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@5a008092 (name: message) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.message = new InvariantTraceHasMessage(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@55a73505 (name: satisfies) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@77376d92 (name: satisfies) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.satisfies = new InvariantTraceHasSatisfies(this);
 
         if (!container.constraints().create(this)) {

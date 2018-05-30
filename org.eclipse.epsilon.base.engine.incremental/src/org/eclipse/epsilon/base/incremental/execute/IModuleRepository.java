@@ -11,9 +11,9 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
 public interface IModuleRepository<T extends IModuleTrace> extends IRepository<T> {
 	
 	/**
-	 * Search a model by name.
+	 * Search a module by source (path).
 	 * 
-	 * @param name the name of the model
+	 * @param source the path/uri of the source file
 	 * @return
 	 */
 	T getModuleTraceBySource(String source);

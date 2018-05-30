@@ -73,26 +73,26 @@ public class ContextTrace implements IContextTrace {
      * Instantiates a new ContextTrace. The ContextTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ContextTrace(String kind, Integer index, IExecutionContext executionContext, IModuleTrace container) throws TraceModelDuplicateRelation {
+    public ContextTrace(String kind, Integer index, IModuleTrace module, IExecutionContext executionContext) throws TraceModelDuplicateRelation {
         this.kind = kind;
         this.index = index;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@7e67b6ea (name: executionContext) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@18766d70 (name: executionContext) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.executionContext = new RuleTraceHasExecutionContext(this);
         if (!this.executionContext.create(executionContext)) {
             throw new TraceModelDuplicateRelation();
         }
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@5ba1d1ea (name: module) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@227793be (name: module) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.module = new RuleTraceHasModule(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@4a0ea0ac (name: guard) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        if (!this.module.create(module)) {
+            throw new TraceModelDuplicateRelation();
+        }
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@2b8d49f5 (name: guard) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.guard = new GuardedElementTraceHasGuard(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@67c94ece (name: accesses) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: false)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@4044e6e1 (name: accesses) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: false)
         this.accesses = new ModuleElementTraceHasAccesses(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@7e8bf69d (name: constraints) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: false)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@58414a22 (name: constraints) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: false)
         this.constraints = new ContextTraceHasConstraints(this);
 
-        if (!container.ruleTraces().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
     }
     
     @Override

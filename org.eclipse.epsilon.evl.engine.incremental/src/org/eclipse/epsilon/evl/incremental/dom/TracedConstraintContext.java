@@ -120,7 +120,7 @@ public class TracedConstraintContext extends ConstraintContext
 		if (currentTrace == null) {
 			logger.debug("Creating a new context trace");
 			try {
-				currentTrace = new ContextTrace(getTypeName(), index, exContext, moduleTrace);
+				currentTrace = new ContextTrace(getTypeName(), index, moduleTrace, exContext);
 			} catch (TraceModelDuplicateRelation e1) {
 				logger.warn("If the ContextTrace was not in the repo it should have been created correctly.");
 				throw new EolIncrementalExecutionException("Error creating new ContextTrace", e1);

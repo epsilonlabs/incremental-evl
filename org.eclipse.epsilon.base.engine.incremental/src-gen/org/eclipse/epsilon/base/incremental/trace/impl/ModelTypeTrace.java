@@ -43,7 +43,7 @@ public class ModelTypeTrace implements IModelTypeTrace {
      */    
     public ModelTypeTrace(String name, IModelTrace model) throws TraceModelDuplicateRelation {
         this.name = name;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@fdc3326 (name: model) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@54a66c78 (name: model) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.model = new ModelTypeTraceHasModel(this);
         if (!this.model.create(model)) {
             throw new TraceModelDuplicateRelation();

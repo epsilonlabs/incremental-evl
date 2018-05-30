@@ -18,15 +18,13 @@ import java.util.NoSuchElementException;
 /** protected region EvlModuleTraceImports on begin **/
 /** protected region EvlModuleTraceImports end **/
 
-import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModuleTraceHasExecutionContexts;
 import org.eclipse.epsilon.base.incremental.trace.IModuleTraceHasRuleTraces;
+import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleTraceHasExecutionContexts;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleTraceHasRuleTraces;
-import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.ContextTrace;
 
 /**
  * Implementation of IEvlModuleTrace. 
@@ -51,9 +49,9 @@ public class EvlModuleTrace implements IEvlModuleTrace {
      */    
     public EvlModuleTrace(String source) throws TraceModelDuplicateRelation {
         this.source = source;
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@4e660b90 (name: ruleTraces) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@145da888 (name: ruleTraces) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.ruleTraces = new ModuleTraceHasRuleTraces(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@244eeb8e (name: executionContexts) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@4724ac67 (name: executionContexts) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.executionContexts = new ModuleTraceHasExecutionContexts(this);
 
     }
@@ -85,37 +83,6 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     }
 
 
-    @Override
-    public IContextTrace createContextTrace(String kind, Integer index, IExecutionContext executionContext) throws EolIncrementalExecutionException {
-        IContextTrace contextTrace = null;
-        try {
-            contextTrace = new ContextTrace(kind, index, executionContext, this);
-            
-            this.ruleTraces().create(contextTrace);
-        } catch (TraceModelDuplicateRelation e) {
-            // Pass
-        } finally {
-    	    if (contextTrace != null) {
-    	        return contextTrace;
-    	    }
-            try {
-                contextTrace = this.ruleTraces.get().stream()
-                    .filter(t -> t instanceof IContextTrace)
-                    .map(IContextTrace.class::cast)
-                    .filter(item -> item.getKind().equals(kind))
-                    .filter(item -> item.getIndex().equals(index))
-                    .filter(item -> item.executionContext().get().equals(executionContext))
-                    .findFirst()
-                    .get();
-            } catch (NoSuchElementException ex) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ContextTrace was "
-                        + "duplicate but previous one was not found.");
-            }
-        }
-        return contextTrace;
-    }      
-            
-                  
     @Override
     public boolean sameIdentityAs(final IEvlModuleTrace other) {
         if (other == null) {
