@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-25.
+ * This file was automatically generated on: 2018-05-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,7 +15,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTraceHasModel;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTypeTraceHasModel;
@@ -40,10 +40,12 @@ public class ModelTypeTrace implements IModelTypeTrace {
      */    
     public ModelTypeTrace(String name, IModelTrace model) throws TraceModelDuplicateRelation {
         this.name = name;
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@4c208f4a (name: model) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.model = new ModelTypeTraceHasModel(this);
         if (!this.model.create(model)) {
             throw new TraceModelDuplicateRelation();
         }
+
     }
     
     @Override

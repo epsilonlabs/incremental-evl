@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.base.incremental;
+package org.eclipse.epsilon.base.incremental.exceptions;
 
 /**
  * An exception to indicate that creating a relation between two elements of the trace model would result in duplicate

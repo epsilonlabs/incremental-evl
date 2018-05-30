@@ -81,8 +81,9 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 	private void record(IModuleElementTrace executionTrace, IIncrementalModel model, Object modelElement,
 			String propertyName, Object result) throws EolIncrementalExecutionException {
 		
-		logger.info("Recording PropertyAccess. model: {}, element: {}, property: {}",
-				model.getName(), modelElement, propertyName);
+		logger.info("Recording PropertyAccess. model: {}, element: {}, property: {}, result: {}",
+				model.getName(), modelElement, propertyName, result==null ? "Null":"SomeValue");
+		logger.debug("result: {}", result);
 		IPropertyAccess pa = model.getModelTraceFactory().createPropertyAccess(modelElement, propertyName, executionTrace);
 		String value = null;
 		if (model.owns(result)) {
@@ -95,7 +96,9 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 		}
 		else {
 			// FIXME: Another model might own the result!
-			value = result.toString();
+			if (result != null) {
+				value = result.toString();
+			}
 		}
 		pa.setValue(value);	
 		executionTrace.accesses().create(pa);

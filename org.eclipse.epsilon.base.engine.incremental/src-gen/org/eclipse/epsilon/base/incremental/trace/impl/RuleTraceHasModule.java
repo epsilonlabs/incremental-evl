@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-25.
+ * This file was automatically generated on: 2018-05-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -50,6 +50,10 @@ public class RuleTraceHasModule extends Feature implements IRuleTraceHasModule {
         if (conflict(target)) {
             return false;
         }
+        target.ruleTraces().set(source);
+        if (related(target)) {
+            return false;
+        }
         set(target);
         return true;
     }
@@ -59,6 +63,7 @@ public class RuleTraceHasModule extends Feature implements IRuleTraceHasModule {
         if (!related(target)) {
             return false;
         }
+        target.ruleTraces().remove(source);
         remove(target);
         return true;
     }
@@ -67,13 +72,14 @@ public class RuleTraceHasModule extends Feature implements IRuleTraceHasModule {
     public boolean conflict(IModuleTrace target) {
         boolean result = false;
         result |= get() != null;
+        result |= target.ruleTraces().isUnique() && target.ruleTraces().get().contains(source);
         return result;
     }
     
     @Override
     public boolean related(IModuleTrace target) {
   
-        return target.equals(this.target) ;
+        return target.equals(this.target) && target.ruleTraces().get().contains(source);
     }
     
     // PRIVATE API

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-25.
+ * This file was automatically generated on: 2018-05-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,7 +15,7 @@ import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccessHasExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccessHasType;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
@@ -46,14 +46,17 @@ public class AllInstancesAccess implements IAllInstancesAccess {
      */    
     public AllInstancesAccess(boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type) throws TraceModelDuplicateRelation {
         this.ofKind = ofKind;
-        this.executionTrace = new AccessHasExecutionTrace(this);
-        if (!this.executionTrace.create(executionTrace)) {
-            throw new TraceModelDuplicateRelation();
-        }
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@36f5215f (name: type) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.type = new AllInstancesAccessHasType(this);
         if (!this.type.create(type)) {
             throw new TraceModelDuplicateRelation();
         }
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@3076cf72 (name: executionTrace) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        this.executionTrace = new AccessHasExecutionTrace(this);
+        if (!this.executionTrace.create(executionTrace)) {
+            throw new TraceModelDuplicateRelation();
+        }
+
     }
     
     @Override

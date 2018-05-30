@@ -287,6 +287,39 @@ public class ExecutionListenerTests {
 			verifyAll();
 		}
 		
+		@Test
+		public void testPropertyAccessNullValue() throws Exception {
+			String result = null;
+			String instance = "someObject";
+			
+			// Init the listener
+			listener = new PropertyAccessExecutionListener();
+
+			// 1. Trigger listener by executing a TracedExecutableBlock
+			TracedExecutableBlock<IModuleElementTrace, Boolean> blockMock = new TracedExecutableBlock<IModuleElementTrace, Boolean>(Boolean.class);
+			IModuleElementTrace executionTraceMock = mock(IModuleElementTrace.class);
+			blockMock.setCurrentTrace(executionTraceMock);
+			listener.aboutToExecute(blockMock, contextMock);
+			
+			// 2. Save the leftHand side result 1st.
+			StringLiteral objectValue = createLeftSideExpression("ObjectRef");
+			listener.finishedExecuting(objectValue, instance, null);
+			
+			//3. Create an operation call expression
+			StringLiteral[] params = new StringLiteral[0];
+			OperationCallExpression ast = createOperationCallExpression(objectValue, "someOp", params);
+			
+			// Test
+			replayAll();
+			// 5. Finish executing property access, should trigger ExecutionTrace access
+			listener.finishedExecuting(ast, result, contextMock);
+			// 6. Finish executing block
+			listener.finishedExecuting(blockMock, result, contextMock);
+			assertTrue(listener.done());
+			verifyAll();
+			
+		}
+		
 		// FIXME TO HARD TO TEST WITH EASYMOCK, MOCKITO?
 		// OR move to EVL tests where we can fully instantiate the ExecutionTrace...
 //		@Test

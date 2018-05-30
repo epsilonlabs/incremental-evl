@@ -24,6 +24,7 @@
     <module>org.eclipse.epsilon.base.engine.incremental</module>
     <module>org.eclipse.epsilon.evl.engine.incremental</module>
     <module>org.eclipse.epsilon.emc.csv.incremental</module>
+    <module>org.eclipse.epsilon.emc.emf.incremental</module>
   </modules>
 
   <build>

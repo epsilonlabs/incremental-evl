@@ -8,10 +8,10 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
@@ -238,7 +238,6 @@ public class EvlModuleExecutionRepository implements IEvlExecutionTraceRepositor
 						}
 						return false;
 					});
-				
 		
 	}
 

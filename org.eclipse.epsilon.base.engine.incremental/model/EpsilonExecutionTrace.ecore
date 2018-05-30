@@ -78,7 +78,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelElementTrace" eSuperTypes="#//IdElement">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelElementTrace/uri"/>
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ModelTypeTrace/model"/>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ModelElementTrace/model"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="uri" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//AnyURI"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="model" lowerBound="1" eType="#//ModelTrace"/>
   </eClassifiers>

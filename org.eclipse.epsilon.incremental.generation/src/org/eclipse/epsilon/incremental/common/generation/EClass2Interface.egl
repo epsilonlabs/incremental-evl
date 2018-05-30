@@ -19,7 +19,7 @@ import "Ecore2JavaTemplates.egl";
 package [%=qp%].trace;
 
 [%if (ec.getEAllReferences().exists(er | er.isContainment())){%]
-import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
+//import org.eclipse.epsilon.base.incremental.EolIncrementalExecutionException;
 [%}
 for (imp in ec.getRequriedImports(qp+".trace", interPrefix, interSufix, classPrefix, classSufix)) {%]
 import [%=imp%];    

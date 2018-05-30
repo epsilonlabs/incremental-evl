@@ -10,19 +10,17 @@
  ******************************************************************************/
 package org.eclipse.epsilon.emc.emf.online;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentAdapter;
-import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
-import org.eclipse.epsilon.eol.incremental.trace.Trace;
-import org.eclipse.epsilon.eol.models.IModel;
+import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
+import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  the live EVL validation is to be performed.
@@ -35,45 +33,53 @@ import org.eclipse.epsilon.eol.models.IModel;
  */
 public class EmfPropertyChangeListener extends EContentAdapter {
 	
+	private static final Logger logger = LoggerFactory.getLogger(EmfPropertyChangeListener.class);
+	
 	private boolean checkNew = false;
 	
-	private IModel model;
-	private IIncrementalModule module;
+	private IIncrementalModel model;
 	
-	private Map<EObject, String> idMap = new HashMap<EObject, String>();
-
-	public EmfPropertyChangeListener(IModel model, IIncrementalModule module) {
+	private IModuleIncremental module;
+	
+	private final Set<String> elementsOfInterest;
+	
+	
+	public EmfPropertyChangeListener(IIncrementalModel model, IModuleIncremental module,
+			Set<String> elementIds) {
 		this.model = model;
 		this.module = module;
+		this.elementsOfInterest = elementIds;
 	}
 
 	public void onCreate(EObject notifier) {
-		 module.onCreate(notifier);	
+		logger.debug("onCreate {}", notifier);
+		module.onCreate(model, notifier);	
 	}
 	
 	public void onChange(EObject notifier, EStructuralFeature feature) {
+		logger.debug("onChange {}", notifier);
 		if (notifier == null || feature == null) {
 			return;
 		}
-		String elementId = model.getElementId(notifier);
 		String propertyName = feature.getName();
-		module.onChange(elementId, notifier, propertyName);
+		module.onChange(model, notifier, propertyName);
 	}
 
 	public void onDelete(EObject notifier, EStructuralFeature feature) {
+		logger.debug("onDelete {}", notifier);
 		if (notifier == null || feature == null) {
 			return;
 		}
-		String elementId = model.getElementId(notifier);
-		//String propertyName = feature.getName();
-		module.onDelete(elementId, notifier);
+		module.onDelete(model, notifier);
+		model.getModelTraceFactory().removeModelElement(model.getElementId(notifier));
 	}
 
 	@Override
 	protected void setTarget(EObject target) {		
-		//this.idMap.put(target, model.getElementId(target));
 		super.setTarget(target);
-		if (checkNew && !this.idMap.containsKey(target)) {
+		String id = model.getElementId(target);
+		if (checkNew && !elementsOfInterest.contains(id)) {
+			elementsOfInterest.add(id);
 			onCreate(target);
 		}
 	}
@@ -112,41 +118,13 @@ public class EmfPropertyChangeListener extends EContentAdapter {
 
 	public EObject getEObject(Notification notice) {
 		final Object notifier = notice.getNotifier();
-		return (EObject) (notifier instanceof EObject ? notifier : null);
+		return (notifier instanceof EObject ? (EObject) notifier : null);
 	}
 	
 	public EStructuralFeature getFeature(Notification notice) {
 		Object feature = notice.getFeature();
-		return (EStructuralFeature) (feature instanceof EStructuralFeature ? feature : null);
+		return (feature instanceof EStructuralFeature ? (EStructuralFeature) feature : null);
 	}
 	
-	public List<EObject> getElements(Trace executionTrace) {
-		
-		List<EObject> result = executionTrace.getInvolves().stream()
-			.map(me -> me.getElementId())
-			.map(id -> this.model.getElementById(id))
-			.map(EObject.class::cast)
-			.collect(Collectors.toList());
-		return result;
-	}
-	
-//	public ModuleElement getConstraint(IExecutionTrace scope) {
-////		EObject element = this.getElement(scope);
-////		if (element == null) {
-////			return null;
-////		}
-//		
-//		String constraintName = scope.getConstraint().getName();
-//		String contextName = scope.getConstraint().getContext().getName();
-//		// FIXME Trace Metamodel needs:
-//		//	String moduleElementId = scope.getModuleElement().getId(); 
-//		String moduleElementId = contextName + "." + constraintName;
-// 		//try {
-//			return module.getModuleElementById(moduleElementId);
-//			//return module.getConstraints().getConstraint(name, element, this.module.getContext());
-//		//} catch (EolRuntimeException e) {
-//		//	return null;
-//		//}
-//	}
 	
 }

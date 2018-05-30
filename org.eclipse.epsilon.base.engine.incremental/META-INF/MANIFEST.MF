@@ -4,8 +4,7 @@ Bundle-Name: Epsilon Incremental Base Code
 Bundle-SymbolicName: org.eclipse.epsilon.base.engine.incremental
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.eclipse.epsilon.base.incremental,
- org.eclipse.epsilon.base.incremental.dom;uses:="org.eclipse.epsilon.eol.incremental.execute,org.eclipse.epsilon.common.module",
+Export-Package: org.eclipse.epsilon.base.incremental.dom;uses:="org.eclipse.epsilon.eol.incremental.execute,org.eclipse.epsilon.common.module",
  org.eclipse.epsilon.base.incremental.exceptions,
  org.eclipse.epsilon.base.incremental.exceptions.models,
  org.eclipse.epsilon.base.incremental.execute;uses:="org.eclipse.epsilon.eol.incremental.models,org.eclipse.epsilon.eol.execute.context",

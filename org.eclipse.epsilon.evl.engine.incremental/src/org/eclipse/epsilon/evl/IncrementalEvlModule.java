@@ -15,8 +15,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
@@ -107,7 +107,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	
 	@Override
 	public ModuleElement adapt(AST cst, ModuleElement parentAst) {
-		logger.debug("Adapting {} from {}", cst, parentAst);
+		logger.debug("Adapting {} from {}", cst, parentAst.getUri());
 		switch (cst.getType()) {
 			case EvlParser.MESSAGE: return createMessageBlock();
 			case EvlParser.CHECK: return createCheckBlock();
@@ -151,6 +151,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 			return super.execute();
 		}
 		if (isLive()) {
+			logger.info("Execution is Live.");
 			return null;
 		}
 		prepareContext(getContext());
@@ -192,6 +193,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		logger.info("Persisting traces");
 		etManager.persistTraceInformation();
 		if (onlineExecution) {
+			logger.info("Going to live execution.");
 //			for (ConstraintContext conCtx : getConstraintContexts()) { 
 //				((TracedConstraintContext)conCtx).goOnline();
 //			}
@@ -221,10 +223,6 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		return targets;
 	}
 
-	public boolean isOnlineExecution() {
-		return onlineExecution;
-	}
-
 	@Override
 	public void listenToModelChanges(boolean listen) {
 		logger.info("Listening to model changes");
@@ -239,8 +237,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 					if (listen) {
 						logger.info("Resgitering with model {} to recieve notifications.", model.getName());
 						incrementalModel.getModules().add(this);
-						getTargets().add(incrementalModel);
-						incrementalModel.setDeliver(listen);
+						getTargets().add(incrementalModel);			
 					}
 					else {
 						logger.debug("Un-resgitering with model {} to recieve notifications.", model.getName());
@@ -248,6 +245,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 						//incrementalModel.setDeliver(false);  	// DO NOT disable notifications unless you are 100% no one else is listening
 						getTargets().remove(incrementalModel);
 					}
+					incrementalModel.setDeliver(listen);
 				}
 			}
 		}
@@ -331,6 +329,10 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	
 	public void setOnlineExecution(boolean onlineExecution) {
 		this.onlineExecution = onlineExecution;
+	}
+	
+	public boolean isOnlineExecution() {
+		return onlineExecution;
 	}
 	
 	private void executeContextTrace(IContextTrace contextT, IIncrementalModel model) {
@@ -519,7 +521,8 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 					.filter(c -> c.getName().equals(invariantT.getName()))
 					.findFirst()
 					.get();
-			logger.debug("Found invariant for trace.");			
+			logger.debug("Found invariant for trace.");
+			inv.check(self, getContext());
 			return;
 		}		
 		logger.info("Can not find matching constraint for trace.");

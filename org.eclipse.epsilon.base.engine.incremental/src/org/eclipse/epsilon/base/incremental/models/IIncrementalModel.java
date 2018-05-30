@@ -12,17 +12,9 @@ package org.eclipse.epsilon.base.incremental.models;
 
 import java.util.Collection;
 
-import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotInstantiableModelElementValueException;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
 import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
-import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
-import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
-import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
-import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceFactory;
 import org.eclipse.epsilon.eol.exceptions.models.EolNotAModelElementException;
 import org.eclipse.epsilon.eol.models.IModel;
@@ -52,10 +44,13 @@ public interface IIncrementalModel extends IModel {
 	boolean supportsNotifications();
 	
 	/**
-	 * Sets whether this model will deliver notifications to the modules. The notifications are usually enabled after
-	 * the intial traces have been executed (e.g. first execution of the ExL script).
+	 * Sets whether this model will deliver notifications to the modules. The notifications are usually
+	 * enabled after the initial traces have been executed (e.g. first execution of the ExL script).
+	 * For models where listening to all model changes can be expensive, the set of element ids can be used
+	 * to just listen to chenges in the elements of interest
 	 *
 	 * @param deliver the new deliver
+	 * @param elementIds the element ids
 	 */
 	void setDeliver(boolean deliver);
 	

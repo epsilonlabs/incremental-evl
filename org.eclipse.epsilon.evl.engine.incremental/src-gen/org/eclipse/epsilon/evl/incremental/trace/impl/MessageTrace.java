@@ -15,10 +15,7 @@ import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-/** protected region MessageTraceImports on begin **/
-/** protected region MessageTraceImports end **/
-
-import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
 import org.eclipse.epsilon.base.incremental.trace.INestedModuleElementTraceHasParentTrace;

@@ -12,7 +12,7 @@ package org.eclipse.epsilon.evl.incremental.dt.launching;
 
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.epsilon.evl.dt.launching.EvlLaunchConfigurationTabGroup;
-import org.eclipse.epsilon.evl.dt.launching.tabs.EvlAdvancedOptionsTab;
+import org.eclipse.epsilon.evl.dt.launching.tabs.EvlAdvancedConfigurationTab;
 import org.eclipse.epsilon.evl.incremental.dt.launching.tabs.EvlIncrementalTab;
 
 /**
@@ -23,6 +23,6 @@ public class EvlIncrementalLaunchConfigurationTabGroup extends EvlLaunchConfigur
 	
 	@Override
 	public ILaunchConfigurationTab[] getOtherConfigurationTabs() {
-		return new ILaunchConfigurationTab[]{new EvlAdvancedOptionsTab(), new EvlIncrementalTab()};
+		return new ILaunchConfigurationTab[]{new EvlAdvancedConfigurationTab(), new EvlIncrementalTab()};
 	}
 }

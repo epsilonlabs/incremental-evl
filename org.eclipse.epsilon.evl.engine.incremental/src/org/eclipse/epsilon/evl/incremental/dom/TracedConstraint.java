@@ -62,7 +62,7 @@ public class TracedConstraint extends Constraint
 	}
 
 
-	public boolean appliesTo(Object object, IEvlContext context, final boolean checkType) throws EolRuntimeException{
+	public boolean appliesTo(Object object, IEvlContext context, final boolean checkType) throws EolRuntimeException {
 		if (checkType && !constraintContext.getAllOfSourceKind(context).contains(object)) return false;
 		Boolean result = true;
 		if (guardBlock != null) {

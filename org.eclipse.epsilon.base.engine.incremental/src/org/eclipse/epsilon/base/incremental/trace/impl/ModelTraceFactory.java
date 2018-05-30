@@ -2,9 +2,11 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.eclipse.epsilon.base.incremental.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
@@ -271,7 +273,24 @@ public class ModelTraceFactory {
 		modelElementVariables.put(variableId, variable);
 		return variable;
 	}
-	
-	//FIXME We could crete delete methods to remove elements from the map, but not entirely necessary.
+
+	public Set<String> getAllModelElementIds() {
+		return modelElementTraces.keySet();
+	}
+
+	public void removeModelElement(String uri) {
+		IModelElementTrace deleted = modelElementTraces.remove(uri);
+		if (deleted != null) {
+			elementAccesses.remove(uri);
+			Set<IPropertyTrace> ownedProperties = propertyTraces.values().stream()
+					.filter(pt -> pt.element().get().equals(deleted))
+					.collect(Collectors.toSet());
+			Set<IPropertyAccess> accessedProperties = propertyAccesses.values().stream()
+					.filter(pa -> ownedProperties.contains(pa.property().get()))
+					.collect(Collectors.toSet());
+			ownedProperties.forEach(op -> propertyTraces.remove(String.format("%s:%s", uri, op.getName())));
+			accessedProperties.forEach(ap -> propertyAccesses.remove(String.format("%s:%s", uri, ap.property().get().getName())));
+		}
+	}
 
 }

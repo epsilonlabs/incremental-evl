@@ -2,7 +2,7 @@
 .sonar
 
 # Binaries
-bin/
+/**/bin/
 
 # Ignore examples
 *examples*
