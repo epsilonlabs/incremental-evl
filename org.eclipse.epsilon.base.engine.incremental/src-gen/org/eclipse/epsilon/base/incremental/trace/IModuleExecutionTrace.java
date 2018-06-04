@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-31.
+ * This file was automatically generated on: 2018-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -26,30 +26,37 @@ import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 
 /**
  * A ModuleExecutionTrace represents the trace of the execution of a particular Epsilon module
-   (e.g. Eol, Etl, etc.) for a given script (identified by the source) and a given set of Models.
- 
+ * (e.g. Eol, Etl, etc.) for a given script (identified by the source) and a given set of Models.
  */
 public interface IModuleExecutionTrace extends IIdElement {
+    
+    /**
+     * Returns the value of the '{@link ModuleExecutionTrace#source <em>source</em>}' attribute.
+     * The path of the source file executed
+     * @return the value of the '<em>source</em>' attribute.
+     */
+    String getSource();
 
     /**
-     * Returns the value of the '<em><b>Source</b></em>' attribute.
-     * <!-- protected region source-getter-doc on begin -->
-     * <p>
-     * If the meaning of the '<em>Source</em>' attribute isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- protected region source-getter-doc end --> 
-     * @return the value of the '<em>Source</em>' attribute.
+     * Returns the value of the '<em><b>Module Elements</b></em>' reference.
+     * The module elements that conform the module.
+     * Each language shoud specialize this class to represent the structure of its AST.
+     * @return the value of the '<em>Module Elements</em>' reference.
      */
-    String getSource();            
-
-    /** The moduleElements reference. */
     IModuleExecutionTraceHasModuleElements moduleElements();
                 
-    /** The accesses reference. */
+    /**
+     * Returns the value of the '<em><b>accesses</b></em>' reference.
+     * The different accesses that where recorded during execution.
+     * @return the value of the '<em>accesses</em>' reference.
+     */
     IModuleExecutionTraceHasAccesses accesses();
                 
-    /** The models reference. */
+    /**
+     * Returns the value of the '<em><b>models</b></em>' reference.
+     * The different models involved in the execution
+     * @return the value of the '<em>models</em>' reference.
+     */
     IModuleExecutionTraceHasModels models();
                 
    

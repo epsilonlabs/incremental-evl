@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-31.
+ * This file was automatically generated on: 2018-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -17,12 +17,14 @@ import org.eclipse.epsilon.base.incremental.trace.IModelElementVariable;
 
 /**
  * The ExecutionContext Interface.
- 
  */
 public interface IExecutionContext extends IIdElement {
 
-
-    /** The contextVariables reference. */
+    /**
+     * Returns the value of the '<em><b>Context Variables</b></em>' reference.
+     * The variables that make up the context.
+     * @return the value of the '<em>Context Variables</em>' reference.
+     */
     IExecutionContextHasContextVariables contextVariables();
                 
  

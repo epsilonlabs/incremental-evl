@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-31.
+ * This file was automatically generated on: 2018-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,29 +14,27 @@ package org.eclipse.epsilon.base.incremental.trace;
 
 /**
  * The IdElement Interface.
- 
  */
 public interface IIdElement {
-
+    
     /**
-     * Returns the value of the '<em><b>Id</b></em>' attribute.
+     * Returns the value of the '{@link IdElement#id <em>id</em>}' attribute.
      * <!-- protected region id-getter-doc on begin -->
      * <p>
      * If the meaning of the '<em>Id</em>' attribute isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- protected region id-getter-doc end --> 
-     * @return the value of the '<em>Id</em>' attribute.
+     * @return the value of the '<em>id</em>' attribute.
      */
-    Object getId();    
+    Object getId();
 
     /**
-     * Sets the value of the '{@link IdElement#Id <em>Id</em>}' attribute.
+     * Sets the value of the '{@link IdElement#id <em>id</em>}' attribute.
      * <!-- protected region id-setter-doc on begin -->
      * <!-- protected region id-setter-doc end --> 
-     * @param value the new value of the '<em>Id/em>' attribute.
+     * @param value the new value of the '<em>id</em>' attribute.
      */
     void setId(Object value);
-            
 
 }

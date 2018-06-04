@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-31.
+ * This file was automatically generated on: 2018-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /** protected region ModelTraceImports on begin **/
-
 /** protected region ModelTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
@@ -47,7 +46,7 @@ public class ModelTrace implements IModelTrace {
     private String name;
 
     /**
-	 * The uri of the model.
+	 * The uri.
 	 */
     private String uri;
 
@@ -67,9 +66,9 @@ public class ModelTrace implements IModelTrace {
      */    
     public ModelTrace(String name, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
         this.name = name;
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@56a01b19 (name: elements) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@7a6b981c (name: elements) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.elements = new ModelTraceHasElements(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@6d098f04 (name: types) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@2c53d6ab (name: types) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.types = new ModelTraceHasTypes(this);
 
         if (!container.models().create(this)) {

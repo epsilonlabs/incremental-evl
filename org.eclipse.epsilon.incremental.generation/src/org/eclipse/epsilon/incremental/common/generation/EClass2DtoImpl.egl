@@ -44,12 +44,7 @@ for (ea in ec.getEAllAttributes().select(ea | not ea.derived)) {
     var multi = "List";
     if (ea.isOrdered()) { multi = "Set"; }%]
     /**
-[%      var docs = ea.getDocumentation();
-	    if (docs.isDefined()) {%]
-	 * [%=docs%]
-[%     } else {%]
 	 * The [%=ea.name%].
-	[%}%]
 	 */
     private [%=ea.getGetterReturnType(multi)%] [%=ea.name%];
 
@@ -57,7 +52,7 @@ for (ea in ec.getEAllAttributes().select(ea | not ea.derived)) {
 [%  // Craete a field for each reference
 for (er in ec.getEAllReferences().select(er | not er.isDerived())) {%]
     /**
-[%  var docs = er.getDocumentation();
+[%  var docs = er.getDocumentation(0);
     if (docs.isDefined()) {%]
      * [%=docs%]
     [%} else {%]

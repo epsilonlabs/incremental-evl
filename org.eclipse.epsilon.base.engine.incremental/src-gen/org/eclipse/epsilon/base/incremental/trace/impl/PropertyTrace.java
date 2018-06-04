@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-31.
+ * This file was automatically generated on: 2018-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /** protected region PropertyTraceImports on begin **/
-
 /** protected region PropertyTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;

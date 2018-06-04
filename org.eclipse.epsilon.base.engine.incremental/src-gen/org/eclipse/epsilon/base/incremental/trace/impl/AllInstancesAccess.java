@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-31.
+ * This file was automatically generated on: 2018-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /** protected region AllInstancesAccessImports on begin **/
-
 /** protected region AllInstancesAccessImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
@@ -59,12 +58,12 @@ public class AllInstancesAccess implements IAllInstancesAccess {
      */    
     public AllInstancesAccess(boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
         this.ofKind = ofKind;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@45aef086 (name: type) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@4a44b164 (name: type) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.type = new AllInstancesAccessHasType(this);
         if (!this.type.create(type)) {
             throw new TraceModelDuplicateRelation();
         }
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@44df5bb4 (name: executionTrace) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@7014f8d3 (name: executionTrace) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.executionTrace = new AccessHasExecutionTrace(this);
         if (!this.executionTrace.create(executionTrace)) {
             throw new TraceModelDuplicateRelation();

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-31.
+ * This file was automatically generated on: 2018-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /** protected region ElementAccessImports on begin **/
-
 /** protected region ElementAccessImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
@@ -53,12 +52,12 @@ public class ElementAccess implements IElementAccess {
      * container and any attributes identified as indexes.
      */    
     public ElementAccess(IModuleElementTrace executionTrace, IModelElementTrace element, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@49a4001a (name: element) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@b09adea (name: element) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.element = new ElementAccessHasElement(this);
         if (!this.element.create(element)) {
             throw new TraceModelDuplicateRelation();
         }
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@44df5bb4 (name: executionTrace) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@7014f8d3 (name: executionTrace) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.executionTrace = new AccessHasExecutionTrace(this);
         if (!this.executionTrace.create(executionTrace)) {
             throw new TraceModelDuplicateRelation();

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-31.
+ * This file was automatically generated on: 2018-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,32 +15,33 @@ import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 
 /**
  * A PropertyAccess denotes access to property of a model element.
- 
  */
 public interface IPropertyAccess extends IAccess {
-
+    
     /**
-     * Returns the value of the '<em><b>Value</b></em>' attribute.
-     * <!-- protected region value-getter-doc on begin -->
-     * <p>
-     * If the meaning of the '<em>Value</em>' attribute isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- protected region value-getter-doc end --> 
-     * @return the value of the '<em>Value</em>' attribute.
+     * Returns the value of the '{@link PropertyAccess#value <em>value</em>}' attribute.
+     * The value of the property when it was accessed.
+     * @return the value of the '<em>value</em>' attribute.
      */
-    String getValue();    
+    String getValue();
 
     /**
-     * Sets the value of the '{@link PropertyAccess#Value <em>Value</em>}' attribute.
-     * <!-- protected region value-setter-doc on begin -->
-     * <!-- protected region value-setter-doc end --> 
-     * @param value the new value of the '<em>Value/em>' attribute.
+     * Sets the value of the '{@link PropertyAccess#value <em>value</em>}' attribute.
+     * The value of the property when it was accessed.
+     * @param value the new value of the '<em>value</em>' attribute.
      */
     void setValue(String value);
-            
 
-    /** The property reference. */
+    /**
+     * Returns the value of the '<em><b>property</b></em>' reference.
+     * <!-- protected region property-getter-doc on begin -->
+     * <p>
+     * If the meaning of the '<em>Property</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
+     * </p>
+    * <!-- protected region property-getter-doc end --> 
+     * @return the value of the '<em>property</em>' reference.
+     */
     IPropertyAccessHasProperty property();
                 
  

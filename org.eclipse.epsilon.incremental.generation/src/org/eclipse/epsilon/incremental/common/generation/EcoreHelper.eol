@@ -347,23 +347,23 @@ operation EClass getEqualsReferences() : Sequence {
 /**
  * Returns the first documentaiton entry found in the class hierarchy
  */
-operation EClass getDocumentation() : String {
+operation EClass getDocumentation(indent: Integer) : String {
     var annots = self.getAnnotations("http://www.eclipse.org/emf/2002/GenModel");
     if (not annots.isEmpty()) {
         var docs = annots.at(0).getDetails().get("documentation");
         if (docs.isDefined()) {
-            return docs;
+            return "* " + docs.replace("\n", "\n* ");
         }
     }
     return null;
 }
 
-operation EStructuralFeature getDocumentation() : String {
+operation EStructuralFeature getDocumentation(indent: Integer) : String {
     var an = self.getEAnnotation("http://www.eclipse.org/emf/2002/GenModel");
     if (an.isDefined()) {
 	    var docs = an.getDetails().get("documentation");
 	    if (docs.isDefined()) {
-	        return docs;
+	        return "* " + docs.replace("\n", "\n* ");
 	    }
 	}
     return null;
@@ -413,5 +413,8 @@ operation String splitCamelCase() : String {
 
 operation String splitCamelCase(char : String) : String {
 	var sp = self.split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
-	return sp.concat(char).firstToUpperCase();
+	if (sp.size() > 1) {
+	   return sp.concat(char).firstToUpperCase();
+	}
+	return sp.first();
 }

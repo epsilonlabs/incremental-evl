@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-31.
+ * This file was automatically generated on: 2018-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,13 +15,20 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 
 /**
  * An Access is the super class of all possible types of accesses that can ocurr during
-   execution.
- 
+ * execution.
  */
 public interface IAccess extends IIdElement {
 
-
-    /** The executionTrace reference. */
+    /**
+     * Returns the value of the '<em><b>Execution Trace</b></em>' reference.
+     * <!-- protected region executionTrace-getter-doc on begin -->
+     * <p>
+     * If the meaning of the '<em>Execution Trace</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
+     * </p>
+    * <!-- protected region executionTrace-getter-doc end --> 
+     * @return the value of the '<em>Execution Trace</em>' reference.
+     */
     IAccessHasExecutionTrace executionTrace();
                 
 }

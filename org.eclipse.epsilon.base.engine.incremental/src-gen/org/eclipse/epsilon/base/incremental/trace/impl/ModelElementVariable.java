@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-31.
+ * This file was automatically generated on: 2018-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /** protected region ModelElementVariableImports on begin **/
-
 /** protected region ModelElementVariableImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
@@ -51,7 +50,7 @@ public class ModelElementVariable implements IModelElementVariable {
      */    
     public ModelElementVariable(String name, IModelElementTrace value, IExecutionContext container) throws TraceModelDuplicateRelation {
         this.name = name;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@13c5ffe4 (name: value) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@5ace6114 (name: value) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.value = new ModelElementVariableHasValue(this);
         if (!this.value.create(value)) {
             throw new TraceModelDuplicateRelation();

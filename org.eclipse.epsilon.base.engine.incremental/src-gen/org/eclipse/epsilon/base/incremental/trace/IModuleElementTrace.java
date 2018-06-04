@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-31.
+ * This file was automatically generated on: 2018-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,14 +15,17 @@ import org.eclipse.epsilon.base.incremental.trace.IAccess;
 
 /**
  * A ModuleElementTrace represents the trace of the execution of a particular element of 
-   an Epsilon module (e.g. Eol, Etl, etc.). The ModuleElementTrace containts information
-   about the different types of accesses that occured during its execution.
- 
+ * an Epsilon module (e.g. Eol, Etl, etc.). The ModuleElementTrace containts information
+ * about the different types of accesses that occured during its execution.
  */
 public interface IModuleElementTrace extends IIdElement {
 
-
-    /** The accesses reference. */
+    /**
+     * Returns the value of the '<em><b>accesses</b></em>' reference.
+     * The different accesses that where recorded during execution for this particular 
+     * module element.
+     * @return the value of the '<em>accesses</em>' reference.
+     */
     IModuleElementTraceHasAccesses accesses();
                 
 }

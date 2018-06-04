@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-31.
+ * This file was automatically generated on: 2018-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,13 +15,20 @@ import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
 
 /**
  * A module element that is not executed in a context, but that is nested in one that
-   is (e.g. guard, check, etc.)
- 
+ * is (e.g. guard, check, etc.)
  */
 public interface IInContextModuleElementTrace extends IModuleElementTrace {
 
-
-    /** The parentTrace reference. */
+    /**
+     * Returns the value of the '<em><b>Parent Trace</b></em>' reference.
+     * <!-- protected region parentTrace-getter-doc on begin -->
+     * <p>
+     * If the meaning of the '<em>Parent Trace</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
+     * </p>
+    * <!-- protected region parentTrace-getter-doc end --> 
+     * @return the value of the '<em>Parent Trace</em>' reference.
+     */
     IInContextModuleElementTraceHasParentTrace parentTrace();
                 
 }

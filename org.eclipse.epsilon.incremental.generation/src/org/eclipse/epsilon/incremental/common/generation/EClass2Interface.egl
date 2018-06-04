@@ -27,34 +27,34 @@ import [%=imp%];
 
 /**
 [%
-var docs = ec.getDocumentation();
+var docs = ec.getDocumentation(0);
 if (docs.isDefined()) {%]
- * [%=docs%]
+ [%=docs%]
 [%} else {%]
  * The [%=ec.name%] Interface.
-[%}%] 
+[%}%]
  */
 public interface [%=ec.getFullInterfaceName(interPrefix, interSufix)%] {
-
 [%
 for (ea in ec.getEAttributes()) {
     var multi = "List";
     if (ea.isUnique()) {
         multi = "Set";
     }%]
+    
     [%=ea.makeGetterDoc()%]
-    [%=ea.makeGetterSignature(multi)%];[%
-    if (not ea.isMany() and (not ec.getIndexAttributes().includes(ea))) {%]    
+    [%=ea.makeGetterSignature(multi)%];
+[%  if (not ea.isMany() and (not ec.getIndexAttributes().includes(ea))) {%]
 
     [%=ea.makeSetterDoc()%]
     [%=ea.makeSetterSignature(multi)%];
-[%      }%]
-            
+[%  }%]
 [%}%]
 
 [%
+//ea.makeGetterDoc()
 for (er in ec.getEReferences()) {%]
-    /** The [%=er.name%] reference. */
+    [%=er.makeGetterDoc()%]
     [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] [%=er.name%]();
                 
 [%

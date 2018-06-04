@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-31.
+ * This file was automatically generated on: 2018-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /** protected region ModelElementTraceImports on begin **/
-
 /** protected region ModelElementTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
@@ -53,7 +52,7 @@ public class ModelElementTrace implements IModelElementTrace {
      */    
     public ModelElementTrace(String uri, IModelTrace container) throws TraceModelDuplicateRelation {
         this.uri = uri;
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@d21fd12 (name: properties) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@20ec9c40 (name: properties) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.properties = new ModelElementTraceHasProperties(this);
 
         if (!container.elements().create(this)) {

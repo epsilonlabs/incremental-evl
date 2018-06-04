@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-31.
+ * This file was automatically generated on: 2018-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,13 +15,12 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 
 /**
  * An AllInstancesAccess denotes access to all elemens of a given type/kind. This 
-   is the result of a call to all() (and its derivatives).
- 
+ * is the result of a call to all() (and its derivatives).
  */
 public interface IAllInstancesAccess extends IAccess {
-
+    
     /**
-     * Returns the value of the '<em><b>Of Kind</b></em>' attribute.
+     * Returns the value of the '{@link AllInstancesAccess#ofKind <em>ofKind</em>}' attribute.
      * <!-- protected region ofKind-getter-doc on begin -->
      * <p>
      * If the meaning of the '<em>Of Kind</em>' attribute isn't clear,
@@ -30,9 +29,18 @@ public interface IAllInstancesAccess extends IAccess {
      * <!-- protected region ofKind-getter-doc end --> 
      * @return the value of the '<em>Of Kind</em>' attribute.
      */
-    boolean getOfKind();            
+    boolean getOfKind();
 
-    /** The type reference. */
+    /**
+     * Returns the value of the '<em><b>type</b></em>' reference.
+     * <!-- protected region type-getter-doc on begin -->
+     * <p>
+     * If the meaning of the '<em>Type</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
+     * </p>
+    * <!-- protected region type-getter-doc end --> 
+     * @return the value of the '<em>type</em>' reference.
+     */
     IAllInstancesAccessHasType type();
                 
  

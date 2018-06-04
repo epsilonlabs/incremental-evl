@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-31.
+ * This file was automatically generated on: 2018-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,13 +15,20 @@ import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 
 /**
  * An ElementAccess denotes access to a model element as a whole. This usually
-   happens when an element is used for a context.
- 
+ * happens when an element is used for a context.
  */
 public interface IElementAccess extends IAccess {
 
-
-    /** The element reference. */
+    /**
+     * Returns the value of the '<em><b>element</b></em>' reference.
+     * <!-- protected region element-getter-doc on begin -->
+     * <p>
+     * If the meaning of the '<em>Element</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
+     * </p>
+    * <!-- protected region element-getter-doc end --> 
+     * @return the value of the '<em>element</em>' reference.
+     */
     IElementAccessHasElement element();
                 
  
