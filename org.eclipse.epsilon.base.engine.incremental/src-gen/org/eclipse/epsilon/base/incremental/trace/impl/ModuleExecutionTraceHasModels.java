@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,29 +11,31 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
+import java.util.Queue;
+import org.eclipse.epsilon.base.incremental.trace.util.ConcurrentSetQueue;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTraceHasModel;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceHasModels;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of IModelElementTraceHasModel reference. 
+ * Implementation of IModuleExecutionTraceHasModels reference. 
  */
-public class ModelElementTraceHasModel extends Feature implements IModelElementTraceHasModel {
+public class ModuleExecutionTraceHasModels extends Feature implements IModuleExecutionTraceHasModels {
     
     /** The source(s) of the reference */
-    protected IModelElementTrace source;
+    protected IModuleExecutionTrace source;
     
     /** The target(s) of the reference */
-    protected IModelTrace target;
+    protected Queue<IModelTrace> target =  new ConcurrentSetQueue<IModelTrace>();
     
     /**
-     * Instantiates a new IModelElementTraceHasModel.
+     * Instantiates a new IModuleExecutionTraceHasModels.
      *
      * @param source the source of the reference
      */
-    public ModelElementTraceHasModel (IModelElementTrace source) {
+    public ModuleExecutionTraceHasModels (IModuleExecutionTrace source) {
         super(true);
         this.source = source;
     }
@@ -41,7 +43,8 @@ public class ModelElementTraceHasModel extends Feature implements IModelElementT
     // PUBLIC API
         
     @Override
-    public IModelTrace get() {
+    
+    public Queue<IModelTrace> get() {
         return target;
     }
     
@@ -66,26 +69,28 @@ public class ModelElementTraceHasModel extends Feature implements IModelElementT
     @Override
     public boolean conflict(IModelTrace target) {
         boolean result = false;
-        result |= get() != null;
+        if (isUnique) {
+            result |= get().contains(target);
+        }
         return result;
     }
     
     @Override
     public boolean related(IModelTrace target) {
   
-        return target.equals(this.target) ;
+        return get().contains(target) ;
     }
     
     // PRIVATE API
     
     @Override
     public void set(IModelTrace target) {
-        this.target = target;
+        this.target.add(target);
     }
     
     @Override
     public void remove(IModelTrace target) {
-        this.target = null;
+        this.target.remove(target);
     }
 
 }

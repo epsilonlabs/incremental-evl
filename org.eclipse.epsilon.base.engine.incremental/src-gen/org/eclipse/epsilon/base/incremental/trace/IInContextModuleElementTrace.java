@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,15 +11,17 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
-import org.eclipse.epsilon.base.incremental.execute.IRepository;
-/** protected region IModelElementTraceRepositoryImports on begin **/
-/** protected region IModelElementTraceRepositoryImports end **/
+import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;    
 
-public interface IModelElementTraceRepository extends IRepository<IModelElementTrace> {
+/**
+ * A module element that is not executed in a context, but that is nested in one that
+   is (e.g. guard, check, etc.)
+ 
+ */
+public interface IInContextModuleElementTrace extends IModuleElementTrace {
 
-/** protected region IModelElementTraceRepositry on begin **/
-    // Sepecialized search methods
 
-/** protected region IModelElementTraceRepositry end **/
-
+    /** The parentTrace reference. */
+    IInContextModuleElementTraceHasParentTrace parentTrace();
+                
 }

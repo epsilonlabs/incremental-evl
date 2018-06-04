@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-13.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-05-31.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -11,10 +11,11 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
+import java.util.Queue;
 
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
+import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 
-public interface IAccessHasExecutionContext {
+public interface IModuleExecutionTraceHasModels {
 
     // PUBLIC API
     
@@ -23,27 +24,28 @@ public interface IAccessHasExecutionContext {
     /**
      * Get the value(s) for the reference
      */
-    public IExecutionContext get();
+    
+    public Queue<IModelTrace> get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the
      * relation already existed. 
-     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IExecutionContext)}).
+     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IModelTrace)}).
      * If the reference has an opposite, that relation is also created.
      *
-     * @see ExecutionHasAccesses#conflict(IExecutionContext)
-     * @see ExecutionHasAccesses#related(IExecutionContext)
+     * @see ExecutionHasAccesses#conflict(IModelTrace)
+     * @see ExecutionHasAccesses#related(IModelTrace)
      */
-    boolean create(IExecutionContext target);
+    boolean create(IModelTrace target);
     
     /**
      * Destroy a reference to the target element. Returns true, if the reference existed
      * and was properly destroyed. If the reference has an opposite, that relation
      * is also destroyed.
      *
-     * @see ExecutionHasAccesses#related(IExecutionContext)
+     * @see ExecutionHasAccesses#related(IModelTrace)
      */    
-    boolean destroy(IExecutionContext target);
+    boolean destroy(IModelTrace target);
     
     /**
      * Determines if there is a conflict with a possible target. Conflicts can only arise for if
@@ -67,12 +69,12 @@ public interface IAccessHasExecutionContext {
      *      </ul>
      *  </li>
      */
-    boolean conflict(IExecutionContext target);
+    boolean conflict(IModelTrace target);
     
     /**
      * Returns true if the target is already related via this reference.
      */
-    boolean related(IExecutionContext target);
+    boolean related(IModelTrace target);
 
     // PRIVATE API
 
@@ -80,15 +82,15 @@ public interface IAccessHasExecutionContext {
      * Set a new value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#create(IExecutionContext)
+     * @see ExecutionHasAccesses#create(IModelTrace)
      */
-    void set(IExecutionContext target);
+    void set(IModelTrace target);
 
     /**
      * Remove a value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#destroy(IExecutionContext)
+     * @see ExecutionHasAccesses#destroy(IModelTrace)
      */
-    void remove(IExecutionContext target);
+    void remove(IModelTrace target);
 }

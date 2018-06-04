@@ -3,7 +3,6 @@ package org.eclipse.epsilon.base.incremental.execute;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
-import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
 import org.eclipse.epsilon.common.module.IModule;
 
 /**

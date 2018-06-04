@@ -8,6 +8,7 @@ import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementVariable;
 import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionContext;
+import org.eclipse.epsilon.base.incremental.trace.util.IExecutionContextRepository;
 import org.eclipse.epsilon.common.module.IModule;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -16,7 +17,6 @@ import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
-import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionContextRepository;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceRepository;
 import org.eclipse.epsilon.evl.incremental.execute.context.TracedEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
@@ -101,8 +101,11 @@ public class TracedConstraintContext extends ConstraintContext
 			throw new EolIncrementalExecutionException("Cannot trace non-incremental models");
 		}
 		IEvlExecutionTraceRepository repo = context.getTraceManager().getExecutionTraceRepository();
-		IEvlExecutionContextRepository contextRepo = context.getTraceManager().getExecutionContextRepository();
+		IExecutionContextRepository contextRepo = context.getTraceManager().getExecutionContextRepository();
 		IEvlModuleTrace moduleTrace = context.getEvlModuleTrace();
+		
+		
+		
 		IModelElementVariable selfVariable =  ((IIncrementalModel)model).getModelTraceFactory()
 				.createModelElementVariable("self", element);
 		IExecutionContext exContext = contextRepo.getExecutionContextFor(selfVariable);

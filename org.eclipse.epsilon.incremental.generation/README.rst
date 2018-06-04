@@ -22,3 +22,6 @@ https://eclipse.org/epsilon/incremental/equivalency
   added to this annotation should not result in loops (otherwise the hash and equals
   functions would result in infinite loops).  
     
+http://www.eclipse.org/emf/2002/GenModel
+  It is recommended to add documentation details to EClasses and EFeatures. This helps
+  better understand the metamodel and allows better javadoc generation. 

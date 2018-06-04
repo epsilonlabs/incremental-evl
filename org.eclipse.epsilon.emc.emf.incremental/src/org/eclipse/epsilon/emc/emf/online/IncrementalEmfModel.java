@@ -21,27 +21,27 @@ import org.eclipse.epsilon.base.incremental.exceptions.models.NotInstantiableMod
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
 import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceFactory;
+import org.eclipse.epsilon.base.incremental.trace.impl.MemoryModelTraceFactory;
 import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
 
 public class IncrementalEmfModel extends EmfModel implements IIncrementalModel {
 	
-	private final ModelTraceFactory modelTraceFactory;
+	private final MemoryModelTraceFactory modelTraceFactory;
 	private boolean deliver;
 	private ArrayList<IModuleIncremental> modules;
 	
 	public IncrementalEmfModel() throws EolModelLoadingException {
 		super();
 		try {
-			modelTraceFactory = new ModelTraceFactory(this);
+			modelTraceFactory = new MemoryModelTraceFactory(this);
 		} catch (EolIncrementalExecutionException e) {
 			throw new EolModelLoadingException(e, this);
 		}
 	}
 
 	@Override
-	public ModelTraceFactory getModelTraceFactory() {
+	public MemoryModelTraceFactory getModelTraceFactory() {
 		return modelTraceFactory;
 	}
 

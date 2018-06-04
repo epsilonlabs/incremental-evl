@@ -21,7 +21,7 @@ import java.util.Set;
 import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%];
 import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%]Repository;
 
-[%=out.startPreserve("/**", "**/", ec.name + "Imports", true)%]
+[%=out.startPreserve("/**", "**/", ec.name + "RepositoryImplImports", true)%]
 
 [%=out.stopPreserve()%]
 
@@ -66,5 +66,10 @@ public class [%=ec.getJavaClassName(classPrefix, classSufix)%]RepositoryImpl imp
         }
         return result;
     }
+    
+    [%=out.startPreserve("/**", "**/", ec.getJavaClassName(interPrefix, interSufix) + "Repositry", true)%]
+    // Specialised search methods
+
+    [%=out.stopPreserve()%]
 
 }

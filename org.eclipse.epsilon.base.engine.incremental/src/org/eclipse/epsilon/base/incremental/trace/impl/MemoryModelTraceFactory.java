@@ -31,15 +31,15 @@ public class MemoryModelTraceFactory {
 	private static final Logger logger = LoggerFactory.getLogger(MemoryModelTraceFactory.class);
 	
 	private final IIncrementalModel model;
-	private final IModelTrace modelTrace;
-	private final Map<String, IModelTypeTrace> modelTypeTraces = new HashMap<>();
-	private final Map<String, IModelElementTrace> modelElementTraces = new HashMap<>();
-	private final Map<String, IPropertyTrace> propertyTraces = new HashMap<>();
-	private final Map<String, IAllInstancesAccess> ofKindAccesses = new HashMap<>();
-	private final Map<String, IAllInstancesAccess> ofTypeAccesses = new HashMap<>();
-	private final Map<String, IPropertyAccess> propertyAccesses = new HashMap<>();
-	private final Map<String, IElementAccess> elementAccesses = new HashMap<>();
-	private final Map<String, IModelElementVariable> modelElementVariables = new HashMap<>();
+//	private final IModelTrace modelTrace;
+//	private final Map<String, IModelTypeTrace> modelTypeTraces = new HashMap<>();
+//	private final Map<String, IModelElementTrace> modelElementTraces = new HashMap<>();
+//	private final Map<String, IPropertyTrace> propertyTraces = new HashMap<>();
+//	private final Map<String, IAllInstancesAccess> ofKindAccesses = new HashMap<>();
+//	private final Map<String, IAllInstancesAccess> ofTypeAccesses = new HashMap<>();
+//	private final Map<String, IPropertyAccess> propertyAccesses = new HashMap<>();
+//	private final Map<String, IElementAccess> elementAccesses = new HashMap<>();
+//	private final Map<String, IModelElementVariable> modelElementVariables = new HashMap<>();
 
 	public MemoryModelTraceFactory(IIncrementalModel model) throws EolIncrementalExecutionException {
 		super();

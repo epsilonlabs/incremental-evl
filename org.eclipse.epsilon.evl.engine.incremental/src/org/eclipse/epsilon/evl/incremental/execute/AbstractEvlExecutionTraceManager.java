@@ -4,6 +4,8 @@ package org.eclipse.epsilon.evl.incremental.execute;
 import org.eclipse.epsilon.base.incremental.execute.AbstractEolExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
+import org.eclipse.epsilon.base.incremental.trace.util.ExecutionContextRepositoryImpl;
+import org.eclipse.epsilon.base.incremental.trace.util.IExecutionContextRepository;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.incremental.execute.introspection.recording.SatisfiesInvocationExecutionListener;
 
@@ -15,13 +17,13 @@ import org.eclipse.epsilon.evl.incremental.execute.introspection.recording.Satis
  *
  */
 public abstract class AbstractEvlExecutionTraceManager
-		extends AbstractEolExecutionTraceManager<IEvlExecutionTraceRepository, IEvlExecutionContextRepository>
+		extends AbstractEolExecutionTraceManager<IEvlExecutionTraceRepository>
     	implements IEvlExecutionTraceManager {
 	
 	/** Repository of execution traces executions */
 	protected IEvlExecutionTraceRepository executionTraceRepository;
 	
-	protected IEvlExecutionContextRepository executionContextTraceRepository;
+	protected IExecutionContextRepository executionContextTraceRepository;
 	
 	private PropertyAccessExecutionListener propertyAccessListener = new PropertyAccessExecutionListener();
 	private AllInstancesInvocationExecutionListener allAccessListener = new AllInstancesInvocationExecutionListener();
@@ -37,9 +39,9 @@ public abstract class AbstractEvlExecutionTraceManager
 	}
 	
 	@Override
-	public IEvlExecutionContextRepository getExecutionContextRepository() {
+	public IExecutionContextRepository getExecutionContextRepository() {
 		if (executionContextTraceRepository == null) {
-			executionContextTraceRepository = new EvlExecutionContextRepository(inParallel);
+			executionContextTraceRepository = new ExecutionContextRepositoryImpl();
 		}
 		return executionContextTraceRepository;
 	}

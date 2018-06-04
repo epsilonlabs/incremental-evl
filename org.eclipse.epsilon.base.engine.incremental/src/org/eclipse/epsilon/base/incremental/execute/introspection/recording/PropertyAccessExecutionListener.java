@@ -21,7 +21,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An {@link IExecutionListener} that monitors property access
+ * An {@link IExecutionListener} that monitors property access. In a PropertyCallExpression 
+ * 	<targetExpression>.<propertyNameExpression>
+ * 
+ * We need to wait for the targetExpression to be evaluated so the element on with the property is accessed
+ * is resolved.
+ * Additionally, if the PropertyCallExpression is inside an AssignmentStatement, we are only interested
+ * in PropertyCallExpressions that happen in the left hand side (access). 
  *  
  * @author Horacio Hoyos Rodriguez
  *
@@ -118,6 +124,11 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 		return ast.getParent() instanceof PropertyCallExpression && ((PropertyCallExpression)ast.getParent()).getTargetExpression() == ast;
 	}
 	
+	/**
+	 * Validate that the PropertyCallExpression is in the left hand side of an AssignmentStatement
+	 * @param ast
+	 * @return
+	 */
 	private boolean isPropertyAccessExpression(ModuleElement ast) {
 		return ast instanceof PropertyCallExpression &&          // AST is a point expression 
 		       !isAssignee(ast);                            // AST is not the left-hand side of an assignment

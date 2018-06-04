@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,10 +14,10 @@ package org.eclipse.epsilon.base.incremental.trace;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;    
 
 /**
- * The ModuleElementTrace defines the access methods for the EClass features.
- * Additionally, the IModuleElementTrace acts as the root entity of the AGGREGATE of its
- * container references. That is, elements contained in the ModuleElementTrace must be
- * created through this interface.
+ * A ModuleElementTrace represents the trace of the execution of a particular element of 
+   an Epsilon module (e.g. Eol, Etl, etc.). The ModuleElementTrace containts information
+   about the different types of accesses that occured during its execution.
+ 
  */
 public interface IModuleElementTrace extends IIdElement {
 

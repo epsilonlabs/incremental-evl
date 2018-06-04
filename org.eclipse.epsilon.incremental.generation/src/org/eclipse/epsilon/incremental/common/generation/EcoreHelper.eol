@@ -345,6 +345,31 @@ operation EClass getEqualsReferences() : Sequence {
 }
 
 /**
+ * Returns the first documentaiton entry found in the class hierarchy
+ */
+operation EClass getDocumentation() : String {
+    var annots = self.getAnnotations("http://www.eclipse.org/emf/2002/GenModel");
+    if (not annots.isEmpty()) {
+        var docs = annots.at(0).getDetails().get("documentation");
+        if (docs.isDefined()) {
+            return docs;
+        }
+    }
+    return null;
+}
+
+operation EStructuralFeature getDocumentation() : String {
+    var an = self.getEAnnotation("http://www.eclipse.org/emf/2002/GenModel");
+    if (an.isDefined()) {
+	    var docs = an.getDetails().get("documentation");
+	    if (docs.isDefined()) {
+	        return docs;
+	    }
+	}
+    return null;
+}
+
+/**
  * Get the annotations for the given annotationUri from the class hierarchy
  */
 operation EClass getAnnotations(annotationUri : String) : Sequence {

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,11 +11,10 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
-import java.util.Queue;
 
-import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;
+import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
 
-public interface IExecutionContextHasRules {
+public interface IInContextModuleElementTraceHasParentTrace {
 
     // PUBLIC API
     
@@ -24,28 +23,27 @@ public interface IExecutionContextHasRules {
     /**
      * Get the value(s) for the reference
      */
-    
-    public Queue<IRuleTrace> get();
+    public IContextModuleElementTrace get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the
      * relation already existed. 
-     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IRuleTrace)}).
+     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IContextModuleElementTrace)}).
      * If the reference has an opposite, that relation is also created.
      *
-     * @see ExecutionHasAccesses#conflict(IRuleTrace)
-     * @see ExecutionHasAccesses#related(IRuleTrace)
+     * @see ExecutionHasAccesses#conflict(IContextModuleElementTrace)
+     * @see ExecutionHasAccesses#related(IContextModuleElementTrace)
      */
-    boolean create(IRuleTrace target);
+    boolean create(IContextModuleElementTrace target);
     
     /**
      * Destroy a reference to the target element. Returns true, if the reference existed
      * and was properly destroyed. If the reference has an opposite, that relation
      * is also destroyed.
      *
-     * @see ExecutionHasAccesses#related(IRuleTrace)
+     * @see ExecutionHasAccesses#related(IContextModuleElementTrace)
      */    
-    boolean destroy(IRuleTrace target);
+    boolean destroy(IContextModuleElementTrace target);
     
     /**
      * Determines if there is a conflict with a possible target. Conflicts can only arise for if
@@ -69,12 +67,12 @@ public interface IExecutionContextHasRules {
      *      </ul>
      *  </li>
      */
-    boolean conflict(IRuleTrace target);
+    boolean conflict(IContextModuleElementTrace target);
     
     /**
      * Returns true if the target is already related via this reference.
      */
-    boolean related(IRuleTrace target);
+    boolean related(IContextModuleElementTrace target);
 
     // PRIVATE API
 
@@ -82,15 +80,15 @@ public interface IExecutionContextHasRules {
      * Set a new value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#create(IRuleTrace)
+     * @see ExecutionHasAccesses#create(IContextModuleElementTrace)
      */
-    void set(IRuleTrace target);
+    void set(IContextModuleElementTrace target);
 
     /**
      * Remove a value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#destroy(IRuleTrace)
+     * @see ExecutionHasAccesses#destroy(IContextModuleElementTrace)
      */
-    void remove(IRuleTrace target);
+    void remove(IContextModuleElementTrace target);
 }

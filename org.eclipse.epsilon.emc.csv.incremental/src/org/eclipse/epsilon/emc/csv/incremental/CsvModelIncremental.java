@@ -34,7 +34,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.models.NotInstantiableMod
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
 import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceFactory;
+import org.eclipse.epsilon.base.incremental.trace.impl.MemoryModelTraceFactory;
 import org.eclipse.epsilon.emc.csv.CsvModel;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
 import org.slf4j.Logger;
@@ -294,7 +294,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 	private ExecutorService executor;
 
 	private Future<?> future;
-	private ModelTraceFactory modelTraceFactory;
+	private MemoryModelTraceFactory modelTraceFactory;
 	
 	@Override
 	protected void loadModel() throws EolModelLoadingException {		
@@ -306,7 +306,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 			throw new EolModelLoadingException(e, this);
 		}
 		try {
-			modelTraceFactory = new ModelTraceFactory(this);
+			modelTraceFactory = new MemoryModelTraceFactory(this);
 		} catch (EolIncrementalExecutionException e) {
 			throw new EolModelLoadingException(e, this);
 		}
@@ -378,7 +378,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 	}
 
 	@Override
-	public ModelTraceFactory getModelTraceFactory() {
+	public MemoryModelTraceFactory getModelTraceFactory() {
 		return modelTraceFactory;
 	}
 

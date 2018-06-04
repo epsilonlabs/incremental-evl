@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,40 +16,44 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /** protected region ExecutionContextImports on begin **/
+
 /** protected region ExecutionContextImports end **/
 
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContextHasContextVariables;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContextHasRules;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementVariable;
-import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionContextHasContextVariables;
-import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionContextHasRules;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementVariable;
 
 /**
  * Implementation of IExecutionContext. 
  */
 public class ExecutionContext implements IExecutionContext {
 
-    /** The id */
+    /**
+	 * The id.
+	 */
     private Object id;
 
-    /** The contextVariables relation */
+    /**
+     * The variables that make up the context.
+     */
     private final IExecutionContextHasContextVariables contextVariables;
-
-    /** The rules relation */
-    private final IExecutionContextHasRules rules;
 
     /**
      * Instantiates a new ExecutionContext. The ExecutionContext is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ExecutionContext() throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@35eb4e76 (name: contextVariables) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+    public ExecutionContext(IContextModuleElementTrace container) throws TraceModelDuplicateRelation {
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@75484128 (name: contextVariables) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.contextVariables = new ExecutionContextHasContextVariables(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@6b21ed95 (name: rules) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
-        this.rules = new ExecutionContextHasRules(this);
 
+        if (!container.executionContext().create(this)) {
+            throw new TraceModelDuplicateRelation();
+        };
     }
     
     @Override
@@ -68,12 +72,32 @@ public class ExecutionContext implements IExecutionContext {
         return contextVariables;
     }
 
+
     @Override
-    public IExecutionContextHasRules rules() {
-        return rules;
-    }
-
-
+    public IModelElementVariable createModelElementVariable(String name, IModelElementTrace value) throws EolIncrementalExecutionException {
+        IModelElementVariable modelElementVariable = null;
+        try {
+            modelElementVariable = new ModelElementVariable(name, value, this);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (modelElementVariable != null) {
+    	        return modelElementVariable;
+    	    }
+            try {
+                modelElementVariable = this.contextVariables.get().stream()
+                    .filter(item -> item.getName().equals(name))
+                    .filter(item -> item.value().get().equals(value))
+                    .findFirst()
+                    .get();
+            } catch (NoSuchElementException ex) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelElementVariable was "
+                        + "duplicate but previous one was not found.");
+            }
+        }
+        return modelElementVariable;
+    }      
+                  
     @Override
     public boolean sameIdentityAs(final IExecutionContext other) {
         if (other == null) {

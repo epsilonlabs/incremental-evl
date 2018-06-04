@@ -12,6 +12,7 @@ package org.eclipse.epsilon.base.incremental.execute;
 
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
+//import org.eclipse.epsilon.base.incremental.trace.util.IExecutionContextRepository;
 
 /**
  * The manager holds the reference to the Trace Model, keeps a queue of model changes and flushes the changes
@@ -28,7 +29,7 @@ import org.eclipse.epsilon.base.incremental.execute.introspection.recording.Prop
  * @author Horacio Hoyos Rodriguez
  * @param <T> the generic type of the specific trace repository
  */
-public interface IEolExecutionTraceManager<T extends IRepository<?>, V extends IRepository<?>> {
+public interface IEolExecutionTraceManager<T extends IRepository<?>> {
 	
 	/**
 	 * Instruct the manager to persist the model changes using a parallel execution.
@@ -58,9 +59,6 @@ public interface IEolExecutionTraceManager<T extends IRepository<?>, V extends I
 	 */
 	T getExecutionTraceRepository();
 	
-
-	V getExecutionContextRepository();
-	
 	/**
 	 * Makes the trace manager persist any temporal trace information in the trace model.
 	 *
@@ -82,5 +80,6 @@ public interface IEolExecutionTraceManager<T extends IRepository<?>, V extends I
 	 */
 	AllInstancesInvocationExecutionListener getAllInstancesAccessListener();
 
-	
+	// All available repositories
+	//IExecutionContextRepository getExecutionContextRepository();
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,29 +13,29 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import java.util.Queue;
 import org.eclipse.epsilon.base.incremental.trace.util.ConcurrentSetQueue;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContextHasRules;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTraceHasProperties;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of IExecutionContextHasRules reference. 
+ * Implementation of IModelElementTraceHasProperties reference. 
  */
-public class ExecutionContextHasRules extends Feature implements IExecutionContextHasRules {
+public class ModelElementTraceHasProperties extends Feature implements IModelElementTraceHasProperties {
     
     /** The source(s) of the reference */
-    protected IExecutionContext source;
+    protected IModelElementTrace source;
     
     /** The target(s) of the reference */
-    protected Queue<IRuleTrace> target =  new ConcurrentSetQueue<IRuleTrace>();
+    protected Queue<IPropertyTrace> target =  new ConcurrentSetQueue<IPropertyTrace>();
     
     /**
-     * Instantiates a new IExecutionContextHasRules.
+     * Instantiates a new IModelElementTraceHasProperties.
      *
      * @param source the source of the reference
      */
-    public ExecutionContextHasRules (IExecutionContext source) {
+    public ModelElementTraceHasProperties (IModelElementTrace source) {
         super(true);
         this.source = source;
     }
@@ -44,17 +44,13 @@ public class ExecutionContextHasRules extends Feature implements IExecutionConte
         
     @Override
     
-    public Queue<IRuleTrace> get() {
+    public Queue<IPropertyTrace> get() {
         return target;
     }
     
     @Override
-    public boolean create(IRuleTrace target) {
+    public boolean create(IPropertyTrace target) {
         if (conflict(target)) {
-            return false;
-        }
-        target.executionContext().set(source);
-        if (related(target)) {
             return false;
         }
         set(target);
@@ -62,40 +58,38 @@ public class ExecutionContextHasRules extends Feature implements IExecutionConte
     }
 
     @Override
-    public boolean destroy(IRuleTrace target) {
+    public boolean destroy(IPropertyTrace target) {
         if (!related(target)) {
             return false;
         }
-        target.executionContext().remove(source);
         remove(target);
         return true;
     }
     
     @Override
-    public boolean conflict(IRuleTrace target) {
+    public boolean conflict(IPropertyTrace target) {
         boolean result = false;
         if (isUnique) {
             result |= get().contains(target);
         }
-        result |= target.executionContext().get() != null;
         return result;
     }
     
     @Override
-    public boolean related(IRuleTrace target) {
+    public boolean related(IPropertyTrace target) {
   
-        return get().contains(target) && source.equals(target.executionContext().get());
+        return get().contains(target) ;
     }
     
     // PRIVATE API
     
     @Override
-    public void set(IRuleTrace target) {
+    public void set(IPropertyTrace target) {
         this.target.add(target);
     }
     
     @Override
-    public void remove(IRuleTrace target) {
+    public void remove(IPropertyTrace target) {
         this.target.remove(target);
     }
 

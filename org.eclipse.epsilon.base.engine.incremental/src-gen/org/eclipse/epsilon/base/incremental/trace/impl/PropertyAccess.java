@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,11 +16,13 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /** protected region PropertyAccessImports on begin **/
+
 /** protected region PropertyAccessImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccessHasExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccessHasProperty;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.AccessHasExecutionTrace;
@@ -31,34 +33,45 @@ import org.eclipse.epsilon.base.incremental.trace.impl.PropertyAccessHasProperty
  */
 public class PropertyAccess implements IPropertyAccess {
 
-    /** The id */
+    /**
+	 * The id.
+	 */
     private Object id;
 
-    /** The value */
+    /**
+	 * The value of the property when it was accessed.
+	 */
     private String value;
 
-    /** The executionTrace relation */
+    /**
+     * The executionTrace.
+     */
     private final IAccessHasExecutionTrace executionTrace;
 
-    /** The property relation */
+    /**
+     * The property.
+     */
     private final IPropertyAccessHasProperty property;
 
     /**
      * Instantiates a new PropertyAccess. The PropertyAccess is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public PropertyAccess(IModuleElementTrace executionTrace, IPropertyTrace property) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@5dedcd85 (name: property) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+    public PropertyAccess(IModuleElementTrace executionTrace, IPropertyTrace property, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@2cac5b06 (name: property) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.property = new PropertyAccessHasProperty(this);
         if (!this.property.create(property)) {
             throw new TraceModelDuplicateRelation();
         }
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@3ca0a055 (name: executionTrace) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@44df5bb4 (name: executionTrace) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.executionTrace = new AccessHasExecutionTrace(this);
         if (!this.executionTrace.create(executionTrace)) {
             throw new TraceModelDuplicateRelation();
         }
 
+        if (!container.accesses().create(this)) {
+            throw new TraceModelDuplicateRelation();
+        };
     }
     
     @Override

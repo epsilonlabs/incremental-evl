@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,39 +16,37 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /** protected region PropertyTraceImports on begin **/
+
 /** protected region PropertyTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IPropertyTraceHasElement;
-import org.eclipse.epsilon.base.incremental.trace.impl.PropertyTraceHasElement;
 
 /**
  * Implementation of IPropertyTrace. 
  */
 public class PropertyTrace implements IPropertyTrace {
 
-    /** The id */
+    /**
+	 * The id.
+	 */
     private Object id;
 
-    /** The name */
+    /**
+	 * The name.
+	 */
     private String name;
-
-    /** The element relation */
-    private final IPropertyTraceHasElement element;
 
     /**
      * Instantiates a new PropertyTrace. The PropertyTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public PropertyTrace(String name, IModelElementTrace element) throws TraceModelDuplicateRelation {
+    public PropertyTrace(String name, IModelElementTrace container) throws TraceModelDuplicateRelation {
         this.name = name;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@50f2949f (name: element) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
-        this.element = new PropertyTraceHasElement(this);
-        if (!this.element.create(element)) {
-            throw new TraceModelDuplicateRelation();
-        }
 
+        if (!container.properties().create(this)) {
+            throw new TraceModelDuplicateRelation();
+        };
     }
     
     @Override
@@ -67,11 +65,6 @@ public class PropertyTrace implements IPropertyTrace {
         return name;
     }
     
-    @Override
-    public IPropertyTraceHasElement element() {
-        return element;
-    }
-
 
     @Override
     public boolean sameIdentityAs(final IPropertyTrace other) {
@@ -100,13 +93,6 @@ public class PropertyTrace implements IPropertyTrace {
         PropertyTrace other = (PropertyTrace) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (element.get() == null) {
-            if (other.element.get() != null)
-                return false;
-        }
-        if (!element.get().equals(other.element.get())) {
-            return false;
-        }
         return true; 
   }
 
@@ -115,7 +101,6 @@ public class PropertyTrace implements IPropertyTrace {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((element.get() == null) ? 0 : element.get().hashCode());
         return result;
     }
 }

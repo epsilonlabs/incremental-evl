@@ -44,28 +44,24 @@ public class BaseTraceModelTests {
         @Mock
         private IModelElementVariable contextVariablesMock2;
         
-        /** Mock the target of the rules reference. */
+        /** Mock the container. */
         @Mock
-        private IRuleTrace rulesMock1;
+        private IContextModuleElementTrace containerMock;
         
-        /** Mock the target of the rules reference. */
-        @Mock
-        private IRuleTrace rulesMock2;
+        /** Allow the container mock to populate the reference */
+        private IContextModuleElementTraceHasExecutionContext contextModuleElementTrace1;
         
-        /** Allow the target mock to populate the reference */
-        private IRuleTraceHasExecutionContext ruleTrace1;
-        
-        /** Allow the target mock to populate the reference */
-        private IRuleTraceHasExecutionContext ruleTrace2;
-        
+        /** Allow the container mock to populate the reference of second instance*/
+        private IContextModuleElementTraceHasExecutionContext contextModuleElementTrace2;
+
         private ExecutionContext classUnderTest;
 
-	    
-// protected region IgnoreExecutionContextAttributes on begin
-	    @Ignore
-// protected region IgnoreExecutionContextAttributes end	    
-	    @Test
-        public void testExecutionContextAttributes() throws Exception {
+        
+        @Test
+        public void testExecutionContextInstantiation() throws Exception {
+            contextModuleElementTrace1 = new ContextModuleElementTraceHasExecutionContext(containerMock);
+            expect(containerMock.executionContext()).andReturn(contextModuleElementTrace1).anyTimes();
+            replay(containerMock);
             // protected region ExecutionContextInit on begin
             // Default init parameters can be modified
             classUnderTest = new ExecutionContext();                    
@@ -136,17 +132,11 @@ public class BaseTraceModelTests {
             // Default init parameters can be modified
             classUnderTest = new ExecutionContext();                    
             // protected region ExecutionContextInit end     
-            ruleTrace1 = new RuleTraceHasExecutionContext(rulesMock1);
-            expect(rulesMock1.executionContext()).andReturn(ruleTrace1).anyTimes();
-            replay(rulesMock1);
-            classUnderTest.rules().create(rulesMock1);
-            boolean result = classUnderTest.rules().destroy(rulesMock1);
+            classUnderTest.contextVariables().create(contextVariablesMock1);
+            boolean result = classUnderTest.contextVariables().destroy(contextVariablesMock1);
             assertTrue(result);
-            assertThat(classUnderTest.rules().get(), not(hasItem(rulesMock1)));
-            ruleTrace2 = new RuleTraceHasExecutionContext(rulesMock2);
-            expect(rulesMock2.executionContext()).andReturn(ruleTrace2).anyTimes();
-            replay(rulesMock2);
-            result = classUnderTest.rules().destroy(rulesMock2);
+            assertThat(classUnderTest.contextVariables().get(), not(hasItem(contextVariablesMock1)));
+            result = classUnderTest.contextVariables().destroy(contextVariablesMock2);
             assertFalse(result);
         }
     }
@@ -164,14 +154,24 @@ public class BaseTraceModelTests {
         @Mock
         private IModelElementTrace valueMock2;
         
+        /** Mock the container. */
+        @Mock
+        private IExecutionContext containerMock;
+        
+        /** Allow the container mock to populate the reference */
+        private IExecutionContextHasContextVariables executionContext1;
+        
+        /** Allow the container mock to populate the reference of second instance*/
+        private IExecutionContextHasContextVariables executionContext2;
+
         private ModelElementVariable classUnderTest;
 
-	    
-// protected region IgnoreModelElementVariableAttributes on begin
-	    @Ignore
-// protected region IgnoreModelElementVariableAttributes end	    
-	    @Test
-        public void testModelElementVariableAttributes() throws Exception {
+        
+        @Test
+        public void testModelElementVariableInstantiation() throws Exception {
+            executionContext1 = new ExecutionContextHasContextVariables(containerMock);
+            expect(containerMock.contextVariables()).andReturn(executionContext1).anyTimes();
+            replay(containerMock);
             IModelElementTrace _value = mock(IModelElementTrace.class);
         
             // protected region ModelElementVariableInit on begin
@@ -247,14 +247,24 @@ public class BaseTraceModelTests {
         @Mock
         private IModelElementTrace elementMock2;
         
+        /** Mock the container. */
+        @Mock
+        private IModuleExecutionTrace containerMock;
+        
+        /** Allow the container mock to populate the reference */
+        private IModuleExecutionTraceHasAccesses moduleExecutionTrace1;
+        
+        /** Allow the container mock to populate the reference of second instance*/
+        private IModuleExecutionTraceHasAccesses moduleExecutionTrace2;
+
         private ElementAccess classUnderTest;
 
-	    
-// protected region IgnoreElementAccessAttributes on begin
-	    @Ignore
-// protected region IgnoreElementAccessAttributes end	    
-	    @Test
-        public void testElementAccessAttributes() throws Exception {
+        
+        @Test
+        public void testElementAccessInstantiation() throws Exception {
+            moduleExecutionTrace1 = new ModuleExecutionTraceHasAccesses(containerMock);
+            expect(containerMock.accesses()).andReturn(moduleExecutionTrace1).anyTimes();
+            replay(containerMock);
             IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
             IModuleElementTraceHasAccesses moduleElementTrace = niceMock(IModuleElementTraceHasAccesses.class);
             expect(_executionTrace.accesses()).andReturn(moduleElementTrace).anyTimes();
@@ -390,14 +400,24 @@ public class BaseTraceModelTests {
         @Mock
         private IModelTypeTrace typeMock2;
         
+        /** Mock the container. */
+        @Mock
+        private IModuleExecutionTrace containerMock;
+        
+        /** Allow the container mock to populate the reference */
+        private IModuleExecutionTraceHasAccesses moduleExecutionTrace1;
+        
+        /** Allow the container mock to populate the reference of second instance*/
+        private IModuleExecutionTraceHasAccesses moduleExecutionTrace2;
+
         private AllInstancesAccess classUnderTest;
 
-	    
-// protected region IgnoreAllInstancesAccessAttributes on begin
-	    @Ignore
-// protected region IgnoreAllInstancesAccessAttributes end	    
-	    @Test
-        public void testAllInstancesAccessAttributes() throws Exception {
+        
+        @Test
+        public void testAllInstancesAccessInstantiation() throws Exception {
+            moduleExecutionTrace1 = new ModuleExecutionTraceHasAccesses(containerMock);
+            expect(containerMock.accesses()).andReturn(moduleExecutionTrace1).anyTimes();
+            replay(containerMock);
             IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
             IModuleElementTraceHasAccesses moduleElementTrace = niceMock(IModuleElementTraceHasAccesses.class);
             expect(_executionTrace.accesses()).andReturn(moduleElementTrace).anyTimes();
@@ -533,14 +553,24 @@ public class BaseTraceModelTests {
         @Mock
         private IPropertyTrace propertyMock2;
         
+        /** Mock the container. */
+        @Mock
+        private IModuleExecutionTrace containerMock;
+        
+        /** Allow the container mock to populate the reference */
+        private IModuleExecutionTraceHasAccesses moduleExecutionTrace1;
+        
+        /** Allow the container mock to populate the reference of second instance*/
+        private IModuleExecutionTraceHasAccesses moduleExecutionTrace2;
+
         private PropertyAccess classUnderTest;
 
-	    
-// protected region IgnorePropertyAccessAttributes on begin
-	    @Ignore
-// protected region IgnorePropertyAccessAttributes end	    
-	    @Test
-        public void testPropertyAccessAttributes() throws Exception {
+        
+        @Test
+        public void testPropertyAccessInstantiation() throws Exception {
+            moduleExecutionTrace1 = new ModuleExecutionTraceHasAccesses(containerMock);
+            expect(containerMock.accesses()).andReturn(moduleExecutionTrace1).anyTimes();
+            replay(containerMock);
             IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
             IModuleElementTraceHasAccesses moduleElementTrace = niceMock(IModuleElementTraceHasAccesses.class);
             expect(_executionTrace.accesses()).andReturn(moduleElementTrace).anyTimes();
@@ -654,23 +684,51 @@ public class BaseTraceModelTests {
         @Rule
         public EasyMockRule rule = new EasyMockRule(this);
 
+        /** Mock the target of the elements reference. */
+        @Mock
+        private IModelElementTrace elementsMock1;
+        
+        /** Mock the target of the elements reference. */
+        @Mock
+        private IModelElementTrace elementsMock2;
+        
+        /** Mock the target of the types reference. */
+        @Mock
+        private IModelTypeTrace typesMock1;
+        
+        /** Mock the target of the types reference. */
+        @Mock
+        private IModelTypeTrace typesMock2;
+        
+        /** Mock the container. */
+        @Mock
+        private IModuleExecutionTrace containerMock;
+        
+        /** Allow the container mock to populate the reference */
+        private IModuleExecutionTraceHasModels moduleExecutionTrace1;
+        
+        /** Allow the container mock to populate the reference of second instance*/
+        private IModuleExecutionTraceHasModels moduleExecutionTrace2;
+
         private ModelTrace classUnderTest;
 
-	    
-// protected region IgnoreModelTraceAttributes on begin
-	    @Ignore
-// protected region IgnoreModelTraceAttributes end	    
-	    @Test
-        public void testModelTraceAttributes() throws Exception {
+        
+        @Test
+        public void testModelTraceInstantiation() throws Exception {
+            moduleExecutionTrace1 = new ModuleExecutionTraceHasModels(containerMock);
+            expect(containerMock.models()).andReturn(moduleExecutionTrace1).anyTimes();
+            replay(containerMock);
             // protected region ModelTraceInit on begin
             // Default init parameters can be modified
             classUnderTest = new ModelTrace("name1");                    
             // protected region ModelTraceInit end     
-// protected region ModelTraceAttributes on begin
-            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
-// protected region ModelTraceAttributes end
+            classUnderTest.types().create(typesMock1);
+            boolean result = classUnderTest.types().destroy(typesMock1);
+            assertTrue(result);
+            assertThat(classUnderTest.types().get(), not(hasItem(typesMock1)));
+            result = classUnderTest.types().destroy(typesMock2);
+            assertFalse(result);
         }
-
     }
     
     public static class ModelTypeTraceTests extends EasyMockSupport {
@@ -678,24 +736,24 @@ public class BaseTraceModelTests {
         @Rule
         public EasyMockRule rule = new EasyMockRule(this);
 
-        /** Mock the target of the model reference. */
+        /** Mock the container. */
         @Mock
-        private IModelTrace modelMock1;
+        private IModelTrace containerMock;
         
-        /** Mock the target of the model reference. */
-        @Mock
-        private IModelTrace modelMock2;
+        /** Allow the container mock to populate the reference */
+        private IModelTraceHasTypes modelTrace1;
         
+        /** Allow the container mock to populate the reference of second instance*/
+        private IModelTraceHasTypes modelTrace2;
+
         private ModelTypeTrace classUnderTest;
 
-	    
-// protected region IgnoreModelTypeTraceAttributes on begin
-	    @Ignore
-// protected region IgnoreModelTypeTraceAttributes end	    
-	    @Test
-        public void testModelTypeTraceAttributes() throws Exception {
-            IModelTrace _model = mock(IModelTrace.class);
         
+        @Test
+        public void testModelTypeTraceInstantiation() throws Exception {
+            modelTrace1 = new ModelTraceHasTypes(containerMock);
+            expect(containerMock.types()).andReturn(modelTrace1).anyTimes();
+            replay(containerMock);
             // protected region ModelTypeTraceInit on begin
             // Default init parameters can be modified
             classUnderTest = new ModelTypeTrace("name1", _model);                    
@@ -733,13 +791,11 @@ public class BaseTraceModelTests {
             // Default init parameters can be modified
             classUnderTest = new ModelTypeTrace("name1", _model);                    
             // protected region ModelTypeTraceInit end     
-        
-            boolean result = classUnderTest.model().destroy(_model);
-            assertTrue(result);
-            assertThat(classUnderTest.model().get(), is(nullValue()));
-            result = classUnderTest.model().destroy(modelMock2);
-            assertFalse(result);
+// protected region ModelTypeTraceAttributes on begin
+            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
+// protected region ModelTypeTraceAttributes end
         }
+
     }
     
     public static class ModelElementTraceTests extends EasyMockSupport {
@@ -747,24 +803,32 @@ public class BaseTraceModelTests {
         @Rule
         public EasyMockRule rule = new EasyMockRule(this);
 
-        /** Mock the target of the model reference. */
+        /** Mock the target of the properties reference. */
         @Mock
-        private IModelTrace modelMock1;
+        private IPropertyTrace propertiesMock1;
         
-        /** Mock the target of the model reference. */
+        /** Mock the target of the properties reference. */
         @Mock
-        private IModelTrace modelMock2;
+        private IPropertyTrace propertiesMock2;
         
+        /** Mock the container. */
+        @Mock
+        private IModelTrace containerMock;
+        
+        /** Allow the container mock to populate the reference */
+        private IModelTraceHasElements modelTrace1;
+        
+        /** Allow the container mock to populate the reference of second instance*/
+        private IModelTraceHasElements modelTrace2;
+
         private ModelElementTrace classUnderTest;
 
-	    
-// protected region IgnoreModelElementTraceAttributes on begin
-	    @Ignore
-// protected region IgnoreModelElementTraceAttributes end	    
-	    @Test
-        public void testModelElementTraceAttributes() throws Exception {
-            IModelTrace _model = mock(IModelTrace.class);
         
+        @Test
+        public void testModelElementTraceInstantiation() throws Exception {
+            modelTrace1 = new ModelTraceHasElements(containerMock);
+            expect(containerMock.elements()).andReturn(modelTrace1).anyTimes();
+            replay(containerMock);
             // protected region ModelElementTraceInit on begin
             // Default init parameters can be modified
             classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _model);                    
@@ -802,11 +866,11 @@ public class BaseTraceModelTests {
             // Default init parameters can be modified
             classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _model);                    
             // protected region ModelElementTraceInit end     
-        
-            boolean result = classUnderTest.model().destroy(_model);
+            classUnderTest.properties().create(propertiesMock1);
+            boolean result = classUnderTest.properties().destroy(propertiesMock1);
             assertTrue(result);
-            assertThat(classUnderTest.model().get(), is(nullValue()));
-            result = classUnderTest.model().destroy(modelMock2);
+            assertThat(classUnderTest.properties().get(), not(hasItem(propertiesMock1)));
+            result = classUnderTest.properties().destroy(propertiesMock2);
             assertFalse(result);
         }
     }
@@ -816,24 +880,24 @@ public class BaseTraceModelTests {
         @Rule
         public EasyMockRule rule = new EasyMockRule(this);
 
-        /** Mock the target of the element reference. */
+        /** Mock the container. */
         @Mock
-        private IModelElementTrace elementMock1;
+        private IModelElementTrace containerMock;
         
-        /** Mock the target of the element reference. */
-        @Mock
-        private IModelElementTrace elementMock2;
+        /** Allow the container mock to populate the reference */
+        private IModelElementTraceHasProperties modelElementTrace1;
         
+        /** Allow the container mock to populate the reference of second instance*/
+        private IModelElementTraceHasProperties modelElementTrace2;
+
         private PropertyTrace classUnderTest;
 
-	    
-// protected region IgnorePropertyTraceAttributes on begin
-	    @Ignore
-// protected region IgnorePropertyTraceAttributes end	    
-	    @Test
-        public void testPropertyTraceAttributes() throws Exception {
-            IModelElementTrace _element = mock(IModelElementTrace.class);
         
+        @Test
+        public void testPropertyTraceInstantiation() throws Exception {
+            modelElementTrace1 = new ModelElementTraceHasProperties(containerMock);
+            expect(containerMock.properties()).andReturn(modelElementTrace1).anyTimes();
+            replay(containerMock);
             // protected region PropertyTraceInit on begin
             // Default init parameters can be modified
             classUnderTest = new PropertyTrace("name1", _element);                    
@@ -871,13 +935,11 @@ public class BaseTraceModelTests {
             // Default init parameters can be modified
             classUnderTest = new PropertyTrace("name1", _element);                    
             // protected region PropertyTraceInit end     
-        
-            boolean result = classUnderTest.element().destroy(_element);
-            assertTrue(result);
-            assertThat(classUnderTest.element().get(), is(nullValue()));
-            result = classUnderTest.element().destroy(elementMock2);
-            assertFalse(result);
+// protected region PropertyTraceAttributes on begin
+            // TODO Add test code for parameters (to hard to generate correct code for any type).                    
+// protected region PropertyTraceAttributes end
         }
+
     }
 
 }

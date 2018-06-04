@@ -366,17 +366,17 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 			// - if we have both a check and a guard trace for the same invariant it will be good to execute
 			// the guard first, as if the guard fails then there is no need to execute the check. Actually,
 			// if the guard is false, the check trace should be deleted.
-			// If the trace is only a message, we can only reexecute that (FIGURE OUT HOW TO UPDATE THE EGL VIEW)
+			// If the trace is only a message, we can only re-execute that (FIGURE OUT HOW TO UPDATE THE EGL VIEW)
 			// - If we have satisfies traces they should only trigger an execution
 			// - If the invariant that owns the other evl constructs does not has a modelaccess for 
-			// the modelObject, then for each modelaccess of the invariant we need to reexecute it (i.e. the
+			// the modelObject, then for each modelaccess of the invariant we need to re-execute it (i.e. the
 			// modelObject was not the one being checked by the invariant).
 			// Do allInstances access superseed property access for the same object?
 			
 			// ALL THIS RELATES TO TRIMMING THE TRACE MODEL. READ SOME REALTED LIT ABOUT IT.
 			
-			// To start, just rexecute the parent invariant if it matches the modelObject, if not do it for
-			// all model accesses. Fine granurality comes next!
+			// To start, just re-execute the parent invariant if it matches the modelObject, if not do it for
+			// all model accesses. Fine granularity comes next!
 			
 			// This could be done with runtime dispatch, but having distinct methods might be required?
 			try {

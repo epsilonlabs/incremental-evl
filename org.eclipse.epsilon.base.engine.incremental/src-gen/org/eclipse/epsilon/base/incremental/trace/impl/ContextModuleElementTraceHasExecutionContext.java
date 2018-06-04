@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-13.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-05-31.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -11,29 +11,29 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import org.eclipse.epsilon.base.incremental.trace.IExecutionAccess;
+import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionAccessHasExecutionContext;
+import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTraceHasExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of IExecutionAccessHasExecutionContext reference. 
+ * Implementation of IContextModuleElementTraceHasExecutionContext reference. 
  */
-public class ExecutionAccessHasExecutionContext extends Feature implements IExecutionAccessHasExecutionContext {
+public class ContextModuleElementTraceHasExecutionContext extends Feature implements IContextModuleElementTraceHasExecutionContext {
     
     /** The source(s) of the reference */
-    protected IExecutionAccess source;
+    protected IContextModuleElementTrace source;
     
     /** The target(s) of the reference */
     protected IExecutionContext target;
     
     /**
-     * Instantiates a new IExecutionAccessHasExecutionContext.
+     * Instantiates a new IContextModuleElementTraceHasExecutionContext.
      *
      * @param source the source of the reference
      */
-    public ExecutionAccessHasExecutionContext (IExecutionAccess source) {
+    public ContextModuleElementTraceHasExecutionContext (IContextModuleElementTrace source) {
         super(true);
         this.source = source;
     }

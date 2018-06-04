@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,29 +13,29 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import java.util.Queue;
 import org.eclipse.epsilon.base.incremental.trace.util.ConcurrentSetQueue;
-import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
-import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleTraceHasRuleTraces;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceHasModuleElements;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of IModuleTraceHasRuleTraces reference. 
+ * Implementation of IModuleExecutionTraceHasModuleElements reference. 
  */
-public class ModuleTraceHasRuleTraces extends Feature implements IModuleTraceHasRuleTraces {
+public class ModuleExecutionTraceHasModuleElements extends Feature implements IModuleExecutionTraceHasModuleElements {
     
     /** The source(s) of the reference */
-    protected IModuleTrace source;
+    protected IModuleExecutionTrace source;
     
     /** The target(s) of the reference */
-    protected Queue<IRuleTrace> target =  new ConcurrentSetQueue<IRuleTrace>();
+    protected Queue<IModuleElementTrace> target =  new ConcurrentSetQueue<IModuleElementTrace>();
     
     /**
-     * Instantiates a new IModuleTraceHasRuleTraces.
+     * Instantiates a new IModuleExecutionTraceHasModuleElements.
      *
      * @param source the source of the reference
      */
-    public ModuleTraceHasRuleTraces (IModuleTrace source) {
+    public ModuleExecutionTraceHasModuleElements (IModuleExecutionTrace source) {
         super(true);
         this.source = source;
     }
@@ -44,17 +44,13 @@ public class ModuleTraceHasRuleTraces extends Feature implements IModuleTraceHas
         
     @Override
     
-    public Queue<IRuleTrace> get() {
+    public Queue<IModuleElementTrace> get() {
         return target;
     }
     
     @Override
-    public boolean create(IRuleTrace target) {
+    public boolean create(IModuleElementTrace target) {
         if (conflict(target)) {
-            return false;
-        }
-        target.module().set(source);
-        if (related(target)) {
             return false;
         }
         set(target);
@@ -62,40 +58,38 @@ public class ModuleTraceHasRuleTraces extends Feature implements IModuleTraceHas
     }
 
     @Override
-    public boolean destroy(IRuleTrace target) {
+    public boolean destroy(IModuleElementTrace target) {
         if (!related(target)) {
             return false;
         }
-        target.module().remove(source);
         remove(target);
         return true;
     }
     
     @Override
-    public boolean conflict(IRuleTrace target) {
+    public boolean conflict(IModuleElementTrace target) {
         boolean result = false;
         if (isUnique) {
             result |= get().contains(target);
         }
-        result |= target.module().get() != null;
         return result;
     }
     
     @Override
-    public boolean related(IRuleTrace target) {
+    public boolean related(IModuleElementTrace target) {
   
-        return get().contains(target) && source.equals(target.module().get());
+        return get().contains(target) ;
     }
     
     // PRIVATE API
     
     @Override
-    public void set(IRuleTrace target) {
+    public void set(IModuleElementTrace target) {
         this.target.add(target);
     }
     
     @Override
-    public void remove(IRuleTrace target) {
+    public void remove(IModuleElementTrace target) {
         this.target.remove(target);
     }
 

@@ -6,87 +6,162 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
         changeable="false" iD="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ModuleTrace" abstract="true" eSuperTypes="#//IdElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModuleTrace/source"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ModuleExecutionTrace" abstract="true"
+      eSuperTypes="#//IdElement">
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModuleExecutionTrace/source"/>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A ModuleExecutionTrace represents the trace of the execution of a particular Epsilon module&#xA;(e.g. Eol, Etl, etc.) for a given script (identified by the source) and a given set of Models."/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="source" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="ruleTraces" upperBound="-1"
-        eType="#//RuleTrace" eOpposite="#//RuleTrace/module"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="executionContexts" upperBound="-1"
-        eType="#//ExecutionContext"/>
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The path of the source file executed"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="moduleElements" upperBound="-1"
+        eType="#//ModuleElementTrace" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The module elements that conform the module.&#xA;Each language shoud specialize this class to represent the structure of its AST."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="accesses" ordered="false"
+        upperBound="-1" eType="#//Access" containment="true" resolveProxies="false">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The different accesses that where recorded during execution."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="models" upperBound="-1"
+        eType="#//ModelTrace" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The different models involved in the execution"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModuleElementTrace" abstract="true"
+      eSuperTypes="#//IdElement">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A ModuleElementTrace represents the trace of the execution of a particular element of &#xA;an Epsilon module (e.g. Eol, Etl, etc.). The ModuleElementTrace containts information&#xA;about the different types of accesses that occured during its execution."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="accesses" ordered="false"
+        upperBound="-1" eType="#//Access" resolveProxies="false" eOpposite="#//Access/executionTrace">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The different accesses that where recorded during execution for this particular &#xA;module element."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ContextModuleElementTrace" abstract="true"
+      eSuperTypes="#//ModuleElementTrace">
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ContextModuleElementTrace/executionContext"/>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A module element that is executed in a context (e.g. contex operation, Etl rule, &#xA;etc.)."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="executionContext" lowerBound="1"
+        eType="#//ExecutionContext" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The execution context in which this module was executed. This is constitued&#xA;by the variables that define the context of the module element. In EVL this would&#xA;be ‘self’ (model element of the Context type) in ETL this would be the input (and &#xA;output variables). "/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InContextModuleElementTrace" abstract="true"
+      eSuperTypes="#//ModuleElementTrace">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A module element that is not executed in a context, but that is nested in one that&#xA;is (e.g. guard, check, etc.)"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parentTrace" lowerBound="1"
+        eType="#//ContextModuleElementTrace" derived="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ExecutionContext" eSuperTypes="#//IdElement">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ExecutionContext/contextVariables"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="contextVariables" ordered="false"
-        upperBound="-1" eType="#//ModelElementVariable"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="rules" upperBound="-1"
-        eType="#//RuleTrace" eOpposite="#//RuleTrace/executionContext"/>
+        upperBound="-1" eType="#//ModelElementVariable" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The variables that make up the context."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelElementVariable" eSuperTypes="#//IdElement">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelElementVariable/name"/>
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ModelElementVariable/value"/>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A ModelElementVariable pairs a variable name to the model element assigned to &#xA;that variable during execution."/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" lowerBound="1" eType="#//ModelElementTrace"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ModuleElementTrace" abstract="true"
-      eSuperTypes="#//IdElement">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="accesses" ordered="false"
-        upperBound="-1" eType="#//Access" resolveProxies="false" eOpposite="#//Access/executionTrace"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="NestedModuleElementTrace" abstract="true"
-      eSuperTypes="#//ModuleElementTrace">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="parentTrace" lowerBound="1"
-        eType="#//RuleTrace" derived="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="RuleTrace" abstract="true" eSuperTypes="#//ModuleElementTrace">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//RuleTrace/executionContext #//RuleTrace/module"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="module" lowerBound="1"
-        eType="#//ModuleTrace" eOpposite="#//ModuleTrace/ruleTraces"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="executionContext" lowerBound="1"
-        eType="#//ExecutionContext" eOpposite="#//ExecutionContext/rules"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Access" abstract="true" eSuperTypes="#//IdElement">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="An Access is the super class of all possible types of accesses that can ocurr during&#xA;execution."/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="executionTrace" lowerBound="1"
         eType="#//ModuleElementTrace" eOpposite="#//ModuleElementTrace/accesses"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ElementAccess" eSuperTypes="#//Access">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ElementAccess/element"/>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="An ElementAccess denotes access to a model element as a whole. This usually&#xA;happens when an element is used for a context."/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="element" lowerBound="1"
         eType="#//ModelElementTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AllInstancesAccess" eSuperTypes="#//Access">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//AllInstancesAccess/ofKind"/>
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//AllInstancesAccess/type"/>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="An AllInstancesAccess denotes access to all elemens of a given type/kind. This &#xA;is the result of a call to all() (and its derivatives)."/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ofKind" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1" eType="#//ModelTypeTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PropertyAccess" eSuperTypes="#//Access">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//PropertyAccess/property"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A PropertyAccess denotes access to property of a model element."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The value of the property when it was accessed."/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="property" lowerBound="1"
         eType="#//PropertyTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelTrace" eSuperTypes="#//IdElement">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelTrace/name"/>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A ModelTrace contains trace information for the elements and types in the model &#xA;that were accessed during execution."/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="uri" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The uri of the model."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
+        eType="#//ModelElementTrace" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="types" upperBound="-1"
+        eType="#//ModelTypeTrace" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelTypeTrace" eSuperTypes="#//IdElement">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelTypeTrace/name"/>
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ModelTypeTrace/model"/>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A PropertyAccess denotes access to property of a model element."/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="model" lowerBound="1" eType="#//ModelTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelElementTrace" eSuperTypes="#//IdElement">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelElementTrace/uri"/>
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ModelElementTrace/model"/>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A ModelElementTrace represents a model element that was accessed during &#xA;execution. The element represented is identified by its uri."/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="uri" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//AnyURI"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="model" lowerBound="1" eType="#//ModelTrace"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
+        eType="#//PropertyTrace" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PropertyTrace" eSuperTypes="#//IdElement">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//PropertyTrace/name"/>
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//PropertyTrace/element"/>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A ModelElementTrace represents a model element that was accessed during &#xA;execution. The element represented is identified by its uri."/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="element" lowerBound="1"
-        eType="#//ModelElementTrace"/>
   </eClassifiers>
 </ecore:EPackage>

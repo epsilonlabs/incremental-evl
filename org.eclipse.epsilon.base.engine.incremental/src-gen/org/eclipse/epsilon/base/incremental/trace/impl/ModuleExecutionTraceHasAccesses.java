@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,30 +12,31 @@
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import java.util.Queue;
-import org.eclipse.epsilon.base.incremental.trace.util.ConcurrentSetQueue;
-import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.IModuleTraceHasExecutionContexts;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.IAccess;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceHasAccesses;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of IModuleTraceHasExecutionContexts reference. 
+ * Implementation of IModuleExecutionTraceHasAccesses reference. 
  */
-public class ModuleTraceHasExecutionContexts extends Feature implements IModuleTraceHasExecutionContexts {
+public class ModuleExecutionTraceHasAccesses extends Feature implements IModuleExecutionTraceHasAccesses {
     
     /** The source(s) of the reference */
-    protected IModuleTrace source;
+    protected IModuleExecutionTrace source;
     
     /** The target(s) of the reference */
-    protected Queue<IExecutionContext> target =  new ConcurrentSetQueue<IExecutionContext>();
+    protected Set<IAccess> target =  ConcurrentHashMap.newKeySet();
     
     /**
-     * Instantiates a new IModuleTraceHasExecutionContexts.
+     * Instantiates a new IModuleExecutionTraceHasAccesses.
      *
      * @param source the source of the reference
      */
-    public ModuleTraceHasExecutionContexts (IModuleTrace source) {
+    public ModuleExecutionTraceHasAccesses (IModuleExecutionTrace source) {
         super(true);
         this.source = source;
     }
@@ -43,13 +44,12 @@ public class ModuleTraceHasExecutionContexts extends Feature implements IModuleT
     // PUBLIC API
         
     @Override
-    
-    public Queue<IExecutionContext> get() {
+    public Set<IAccess> get() {
         return target;
     }
     
     @Override
-    public boolean create(IExecutionContext target) {
+    public boolean create(IAccess target) {
         if (conflict(target)) {
             return false;
         }
@@ -58,7 +58,7 @@ public class ModuleTraceHasExecutionContexts extends Feature implements IModuleT
     }
 
     @Override
-    public boolean destroy(IExecutionContext target) {
+    public boolean destroy(IAccess target) {
         if (!related(target)) {
             return false;
         }
@@ -67,7 +67,7 @@ public class ModuleTraceHasExecutionContexts extends Feature implements IModuleT
     }
     
     @Override
-    public boolean conflict(IExecutionContext target) {
+    public boolean conflict(IAccess target) {
         boolean result = false;
         if (isUnique) {
             result |= get().contains(target);
@@ -76,7 +76,7 @@ public class ModuleTraceHasExecutionContexts extends Feature implements IModuleT
     }
     
     @Override
-    public boolean related(IExecutionContext target) {
+    public boolean related(IAccess target) {
   
         return get().contains(target) ;
     }
@@ -84,12 +84,12 @@ public class ModuleTraceHasExecutionContexts extends Feature implements IModuleT
     // PRIVATE API
     
     @Override
-    public void set(IExecutionContext target) {
+    public void set(IAccess target) {
         this.target.add(target);
     }
     
     @Override
-    public void remove(IExecutionContext target) {
+    public void remove(IAccess target) {
         this.target.remove(target);
     }
 

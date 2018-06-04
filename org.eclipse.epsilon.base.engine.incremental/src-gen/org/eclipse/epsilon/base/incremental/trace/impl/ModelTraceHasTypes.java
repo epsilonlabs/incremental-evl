@@ -1,6 +1,6 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-04-13.
- * Only modify protected regions indicated by "<!-- -->"
+ * This file was automatically generated on: 2018-05-31.
+ * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
  * All rights reserved. This program and the accompanying materials
@@ -11,29 +11,31 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import org.eclipse.epsilon.base.incremental.trace.IExecutionAccess;
-import org.eclipse.epsilon.base.incremental.trace.IAccess;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionAccessHasAccess;
+import java.util.Queue;
+import org.eclipse.epsilon.base.incremental.trace.util.ConcurrentSetQueue;
+import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTraceHasTypes;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of IExecutionAccessHasAccess reference. 
+ * Implementation of IModelTraceHasTypes reference. 
  */
-public class ExecutionAccessHasAccess extends Feature implements IExecutionAccessHasAccess {
+public class ModelTraceHasTypes extends Feature implements IModelTraceHasTypes {
     
     /** The source(s) of the reference */
-    protected IExecutionAccess source;
+    protected IModelTrace source;
     
     /** The target(s) of the reference */
-    protected IAccess target;
+    protected Queue<IModelTypeTrace> target =  new ConcurrentSetQueue<IModelTypeTrace>();
     
     /**
-     * Instantiates a new IExecutionAccessHasAccess.
+     * Instantiates a new IModelTraceHasTypes.
      *
      * @param source the source of the reference
      */
-    public ExecutionAccessHasAccess (IExecutionAccess source) {
+    public ModelTraceHasTypes (IModelTrace source) {
         super(true);
         this.source = source;
     }
@@ -41,12 +43,13 @@ public class ExecutionAccessHasAccess extends Feature implements IExecutionAcces
     // PUBLIC API
         
     @Override
-    public IAccess get() {
+    
+    public Queue<IModelTypeTrace> get() {
         return target;
     }
     
     @Override
-    public boolean create(IAccess target) {
+    public boolean create(IModelTypeTrace target) {
         if (conflict(target)) {
             return false;
         }
@@ -55,7 +58,7 @@ public class ExecutionAccessHasAccess extends Feature implements IExecutionAcces
     }
 
     @Override
-    public boolean destroy(IAccess target) {
+    public boolean destroy(IModelTypeTrace target) {
         if (!related(target)) {
             return false;
         }
@@ -64,28 +67,30 @@ public class ExecutionAccessHasAccess extends Feature implements IExecutionAcces
     }
     
     @Override
-    public boolean conflict(IAccess target) {
+    public boolean conflict(IModelTypeTrace target) {
         boolean result = false;
-        result |= get() != null;
+        if (isUnique) {
+            result |= get().contains(target);
+        }
         return result;
     }
     
     @Override
-    public boolean related(IAccess target) {
+    public boolean related(IModelTypeTrace target) {
   
-        return target.equals(this.target) ;
+        return get().contains(target) ;
     }
     
     // PRIVATE API
     
     @Override
-    public void set(IAccess target) {
-        this.target = target;
+    public void set(IModelTypeTrace target) {
+        this.target.add(target);
     }
     
     @Override
-    public void remove(IAccess target) {
-        this.target = null;
+    public void remove(IModelTypeTrace target) {
+        this.target.remove(target);
     }
 
 }

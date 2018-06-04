@@ -8,8 +8,8 @@ import java.time.LocalDate;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public abstract class AbstractEolExecutionTraceManager<T extends IRepository<?>, V extends IRepository<?>>
-		implements IEolExecutionTraceManager<T, V> {
+public abstract class AbstractEolExecutionTraceManager<T extends IRepository<?>>
+		implements IEolExecutionTraceManager<T> {
 
 	/** A flag to signal parallel persistence */
 	protected boolean inParallel;

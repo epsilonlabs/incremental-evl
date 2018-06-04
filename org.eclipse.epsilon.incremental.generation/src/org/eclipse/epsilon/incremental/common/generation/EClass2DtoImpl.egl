@@ -43,13 +43,27 @@ public class [%=ec.getJavaClassName(classPrefix, classSufix)%] implements [%=ec.
 for (ea in ec.getEAllAttributes().select(ea | not ea.derived)) {
     var multi = "List";
     if (ea.isOrdered()) { multi = "Set"; }%]
-    /** The [%=ea.name%] */
+    /**
+[%      var docs = ea.getDocumentation();
+	    if (docs.isDefined()) {%]
+	 * [%=docs%]
+[%     } else {%]
+	 * The [%=ea.name%].
+	[%}%]
+	 */
     private [%=ea.getGetterReturnType(multi)%] [%=ea.name%];
 
 [%}%]
 [%  // Craete a field for each reference
 for (er in ec.getEAllReferences().select(er | not er.isDerived())) {%]
-    /** The [%=er.name%] relation */
+    /**
+[%  var docs = er.getDocumentation();
+    if (docs.isDefined()) {%]
+     * [%=docs%]
+    [%} else {%]
+     * The [%=er.name%].
+    [%}%]
+     */
     private final [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] [%=er.name%];
 
 [%}%]
@@ -96,7 +110,7 @@ if (container.isDefined()) {
         };
 [%  }
 } else if (opposite.isDefined()) {%]
-        if (!container.[%=opposite.name%]().create(this){
+        if (!container.[%=opposite.name%]().create(this)) {
             throw new TraceModelDuplicateRelation();
         };
 [%}%]

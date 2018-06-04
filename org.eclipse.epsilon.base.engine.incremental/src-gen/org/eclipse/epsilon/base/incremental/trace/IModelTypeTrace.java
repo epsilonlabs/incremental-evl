@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,13 +11,10 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;    
 
 /**
- * The ModelTypeTrace defines the access methods for the EClass features.
- * Additionally, the IModelTypeTrace acts as the root entity of the AGGREGATE of its
- * container references. That is, elements contained in the ModelTypeTrace must be
- * created through this interface.
+ * A PropertyAccess denotes access to property of a model element.
+ 
  */
 public interface IModelTypeTrace extends IIdElement {
 
@@ -33,9 +30,6 @@ public interface IModelTypeTrace extends IIdElement {
      */
     String getName();            
 
-    /** The model reference. */
-    IModelTypeTraceHasModel model();
-                
  
     /**
      * ModelTypeTrace has same identity in the aggregate.

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,39 +16,37 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /** protected region ModelTypeTraceImports on begin **/
+
 /** protected region ModelTypeTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTypeTraceHasModel;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelTypeTraceHasModel;
 
 /**
  * Implementation of IModelTypeTrace. 
  */
 public class ModelTypeTrace implements IModelTypeTrace {
 
-    /** The id */
+    /**
+	 * The id.
+	 */
     private Object id;
 
-    /** The name */
+    /**
+	 * The name.
+	 */
     private String name;
-
-    /** The model relation */
-    private final IModelTypeTraceHasModel model;
 
     /**
      * Instantiates a new ModelTypeTrace. The ModelTypeTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ModelTypeTrace(String name, IModelTrace model) throws TraceModelDuplicateRelation {
+    public ModelTypeTrace(String name, IModelTrace container) throws TraceModelDuplicateRelation {
         this.name = name;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@54a66c78 (name: model) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
-        this.model = new ModelTypeTraceHasModel(this);
-        if (!this.model.create(model)) {
-            throw new TraceModelDuplicateRelation();
-        }
 
+        if (!container.types().create(this)) {
+            throw new TraceModelDuplicateRelation();
+        };
     }
     
     @Override
@@ -67,11 +65,6 @@ public class ModelTypeTrace implements IModelTypeTrace {
         return name;
     }
     
-    @Override
-    public IModelTypeTraceHasModel model() {
-        return model;
-    }
-
 
     @Override
     public boolean sameIdentityAs(final IModelTypeTrace other) {
@@ -100,13 +93,6 @@ public class ModelTypeTrace implements IModelTypeTrace {
         ModelTypeTrace other = (ModelTypeTrace) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (model.get() == null) {
-            if (other.model.get() != null)
-                return false;
-        }
-        if (!model.get().equals(other.model.get())) {
-            return false;
-        }
         return true; 
   }
 
@@ -115,7 +101,6 @@ public class ModelTypeTrace implements IModelTypeTrace {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((model.get() == null) ? 0 : model.get().hashCode());
         return result;
     }
 }

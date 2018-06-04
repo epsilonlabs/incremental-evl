@@ -26,10 +26,13 @@ import [%=imp%];
 [%}%]
 
 /**
- * The [%=ec.name%] defines the access methods for the EClass features.
- * Additionally, the [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] acts as the root entity of the AGGREGATE of its
- * container references. That is, elements contained in the [%=ec.name%] must be
- * created through this interface.
+[%
+var docs = ec.getDocumentation();
+if (docs.isDefined()) {%]
+ * [%=docs%]
+[%} else {%]
+ * The [%=ec.name%] Interface.
+[%}%] 
  */
 public interface [%=ec.getFullInterfaceName(interPrefix, interSufix)%] {
 

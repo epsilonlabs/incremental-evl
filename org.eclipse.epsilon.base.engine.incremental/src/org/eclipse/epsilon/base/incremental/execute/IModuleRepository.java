@@ -1,6 +1,6 @@
 package org.eclipse.epsilon.base.incremental.execute;
 
-import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 
 /**
  * A repository of model traces.
@@ -8,7 +8,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public interface IModuleRepository<T extends IModuleTrace> extends IRepository<T> {
+public interface IModuleRepository<T extends IModuleExecutionTrace> extends IRepository<T> {
 	
 	/**
 	 * Search a module by source (path).

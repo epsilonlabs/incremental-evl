@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,10 +11,11 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
+import java.util.Queue;
 
-import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;
+import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 
-public interface INestedModuleElementTraceHasParentTrace {
+public interface IModelElementTraceHasProperties {
 
     // PUBLIC API
     
@@ -23,27 +24,28 @@ public interface INestedModuleElementTraceHasParentTrace {
     /**
      * Get the value(s) for the reference
      */
-    public IRuleTrace get();
+    
+    public Queue<IPropertyTrace> get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the
      * relation already existed. 
-     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IRuleTrace)}).
+     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IPropertyTrace)}).
      * If the reference has an opposite, that relation is also created.
      *
-     * @see ExecutionHasAccesses#conflict(IRuleTrace)
-     * @see ExecutionHasAccesses#related(IRuleTrace)
+     * @see ExecutionHasAccesses#conflict(IPropertyTrace)
+     * @see ExecutionHasAccesses#related(IPropertyTrace)
      */
-    boolean create(IRuleTrace target);
+    boolean create(IPropertyTrace target);
     
     /**
      * Destroy a reference to the target element. Returns true, if the reference existed
      * and was properly destroyed. If the reference has an opposite, that relation
      * is also destroyed.
      *
-     * @see ExecutionHasAccesses#related(IRuleTrace)
+     * @see ExecutionHasAccesses#related(IPropertyTrace)
      */    
-    boolean destroy(IRuleTrace target);
+    boolean destroy(IPropertyTrace target);
     
     /**
      * Determines if there is a conflict with a possible target. Conflicts can only arise for if
@@ -67,12 +69,12 @@ public interface INestedModuleElementTraceHasParentTrace {
      *      </ul>
      *  </li>
      */
-    boolean conflict(IRuleTrace target);
+    boolean conflict(IPropertyTrace target);
     
     /**
      * Returns true if the target is already related via this reference.
      */
-    boolean related(IRuleTrace target);
+    boolean related(IPropertyTrace target);
 
     // PRIVATE API
 
@@ -80,15 +82,15 @@ public interface INestedModuleElementTraceHasParentTrace {
      * Set a new value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#create(IRuleTrace)
+     * @see ExecutionHasAccesses#create(IPropertyTrace)
      */
-    void set(IRuleTrace target);
+    void set(IPropertyTrace target);
 
     /**
      * Remove a value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#destroy(IRuleTrace)
+     * @see ExecutionHasAccesses#destroy(IPropertyTrace)
      */
-    void remove(IRuleTrace target);
+    void remove(IPropertyTrace target);
 }

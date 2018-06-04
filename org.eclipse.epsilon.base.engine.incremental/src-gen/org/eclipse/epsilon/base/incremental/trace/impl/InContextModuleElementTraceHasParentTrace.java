@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,29 +11,29 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
-import org.eclipse.epsilon.base.incremental.trace.IRuleTraceHasModule;
+import org.eclipse.epsilon.base.incremental.trace.IInContextModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IInContextModuleElementTraceHasParentTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of IRuleTraceHasModule reference. 
+ * Implementation of IInContextModuleElementTraceHasParentTrace reference. 
  */
-public class RuleTraceHasModule extends Feature implements IRuleTraceHasModule {
+public class InContextModuleElementTraceHasParentTrace extends Feature implements IInContextModuleElementTraceHasParentTrace {
     
     /** The source(s) of the reference */
-    protected IRuleTrace source;
+    protected IInContextModuleElementTrace source;
     
     /** The target(s) of the reference */
-    protected IModuleTrace target;
+    protected IContextModuleElementTrace target;
     
     /**
-     * Instantiates a new IRuleTraceHasModule.
+     * Instantiates a new IInContextModuleElementTraceHasParentTrace.
      *
      * @param source the source of the reference
      */
-    public RuleTraceHasModule (IRuleTrace source) {
+    public InContextModuleElementTraceHasParentTrace (IInContextModuleElementTrace source) {
         super(true);
         this.source = source;
     }
@@ -41,17 +41,13 @@ public class RuleTraceHasModule extends Feature implements IRuleTraceHasModule {
     // PUBLIC API
         
     @Override
-    public IModuleTrace get() {
+    public IContextModuleElementTrace get() {
         return target;
     }
     
     @Override
-    public boolean create(IModuleTrace target) {
+    public boolean create(IContextModuleElementTrace target) {
         if (conflict(target)) {
-            return false;
-        }
-        target.ruleTraces().set(source);
-        if (related(target)) {
             return false;
         }
         set(target);
@@ -59,38 +55,36 @@ public class RuleTraceHasModule extends Feature implements IRuleTraceHasModule {
     }
 
     @Override
-    public boolean destroy(IModuleTrace target) {
+    public boolean destroy(IContextModuleElementTrace target) {
         if (!related(target)) {
             return false;
         }
-        target.ruleTraces().remove(source);
         remove(target);
         return true;
     }
     
     @Override
-    public boolean conflict(IModuleTrace target) {
+    public boolean conflict(IContextModuleElementTrace target) {
         boolean result = false;
         result |= get() != null;
-        result |= target.ruleTraces().isUnique() && target.ruleTraces().get().contains(source);
         return result;
     }
     
     @Override
-    public boolean related(IModuleTrace target) {
+    public boolean related(IContextModuleElementTrace target) {
   
-        return target.equals(this.target) && target.ruleTraces().get().contains(source);
+        return target.equals(this.target) ;
     }
     
     // PRIVATE API
     
     @Override
-    public void set(IModuleTrace target) {
+    public void set(IContextModuleElementTrace target) {
         this.target = target;
     }
     
     @Override
-    public void remove(IModuleTrace target) {
+    public void remove(IContextModuleElementTrace target) {
         this.target = null;
     }
 
