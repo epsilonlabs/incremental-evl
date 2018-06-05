@@ -190,6 +190,27 @@ rule EClass2RepositoryImpl
     target   : project + folder + "/trace/impl/" + classPrefix+ ec.name + classSufix + "RepositoryImpl.java"
   }
 
+rule EClass2JUnit
+  transform ec : EClass {
+  
+    parameters {
+      var params : new Map;
+      params.put("today", now.toString());
+      params.put("year", now.getYear().toString()); 
+      params.put("qp", qp);
+      params.put("interPrefix", interPrefix);
+      params.put("interSufix", interSufix);
+      params.put("classPrefix", classPrefix);
+      params.put("classSufix", classSufix);
+      params.put("primitives", primitives);
+      return params;
+    }
+    guard    : not ec.isInterface() and not ec.isAbstract and (ec.getEPackage().name == targetLanguage)
+    template : "test/EClass2Junit.egl"
+    target   : project + ".test" + folder + "/trace/" + classPrefix + ec.name + "Test.java"
+  }
+
+
 rule EPackage2Tests
   transform ep : EPackage {
   
@@ -208,7 +229,7 @@ rule EPackage2Tests
   
   guard: ep.name == targetLanguage
   template : "test/EPackageToModelTests.egl"
-  target : project + ".test" + folder + "/trace/" + ep.name.firstToUpperCase() + "TraceModelTests.java"
+  target : project + ".test" + folder + "/trace/" + ep.name.firstToUpperCase() + "Tests.java"
   
 }
 /*

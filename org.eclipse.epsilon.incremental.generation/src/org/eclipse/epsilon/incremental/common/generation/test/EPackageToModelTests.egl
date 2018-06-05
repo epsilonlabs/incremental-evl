@@ -1,45 +1,26 @@
 [%
 import "../Ecore2JavaTemplates.egl";
-import "EClass2DtoTests.egl";
 out.setContentType("Java");
 %]
+[%=getHeader()%]
 package [%=qp%].trace;
 
-import static org.easymock.EasyMock.*;
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Queue;
-
-import org.easymock.EasyMockRule;
-import org.easymock.EasyMockSupport;
-import org.easymock.Mock;
-[%if (baseLanguage.isDefined()) { // Not enough, we need to actually collect all packages%]
-import org.eclipse.epsilon.[%=baseLanguage%].incremental.trace.*;
-import org.eclipse.epsilon.[%=baseLanguage%].incremental.trace.impl.*;
-[%}%]
-import org.eclipse.epsilon.[%=ep.name%].incremental.trace.impl.*;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 [%
 var testClasses : Sequence;
 for (ec in ep.getEClassifiers().select(c | not c.isAbstract() and not c.isInterface())) {
-    testClasses.add(ep.name.firstToUpperCase() + "TraceModelTests." + ec.name +"Tests.class");
+    testClasses.add(ec.getJavaClassName(classPrefix, classSufix) +"Test.class");
 }
 var testClassesList = testClasses.concat(",\n");
 %]
 @RunWith(Suite.class)
 @Suite.SuiteClasses({[%=testClassesList%]})
-public class [%=ep.name.firstToUpperCase()%]TraceModelTests {
-
-[%for (ec in ep.getEClassifiers().select(c | not c.isAbstract() and not c.isInterface())) {%]
-[%=ec.testClass(interPrefix, interSufix, classPrefix, classSufix)%]
-[%}%]
-
+public class [%=ep.name.firstToUpperCase()%]Tests {
+    // All tests in classes
+    
+    [%=out.startPreserve(ep.name + "Tests", true)%]
+    // TODO Add additional test code         
+    [%=out.stopPreserve()%]
 }

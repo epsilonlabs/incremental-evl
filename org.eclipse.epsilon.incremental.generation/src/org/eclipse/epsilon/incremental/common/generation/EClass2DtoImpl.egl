@@ -81,7 +81,6 @@ for (er in ec.getEAllReferences().select(er | not er.isDerived())) {%]
 [%}%]
 [% var derivedFeatures = ec.getEAllReferences().select(er | not er.isDerived());
 for (er in derivedFeatures.excludingAll(ec.getEqualsReferences())) {%]
-        // Not derived [%=er%]
         this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this);
 [%  if ((er <> ec.getContainerReference().at(0)) and er.isRequired() and not er.isMany()) {%]
         if (!this.[%=er.name%].create([%=er.name%])) {
