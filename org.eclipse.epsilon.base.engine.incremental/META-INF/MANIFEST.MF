@@ -8,6 +8,7 @@ Export-Package: org.eclipse.epsilon.base.incremental.dom;uses:="org.eclipse.epsi
  org.eclipse.epsilon.base.incremental.exceptions,
  org.eclipse.epsilon.base.incremental.exceptions.models,
  org.eclipse.epsilon.base.incremental.execute;uses:="org.eclipse.epsilon.eol.incremental.models,org.eclipse.epsilon.eol.execute.context",
+ org.eclipse.epsilon.base.incremental.execute.context,
  org.eclipse.epsilon.base.incremental.execute.introspection.recording,
  org.eclipse.epsilon.base.incremental.models;uses:="org.eclipse.epsilon.eol.models,org.eclipse.epsilon.common.util,org.eclipse.epsilon.eol.compile.m3",
  org.eclipse.epsilon.base.incremental.trace,

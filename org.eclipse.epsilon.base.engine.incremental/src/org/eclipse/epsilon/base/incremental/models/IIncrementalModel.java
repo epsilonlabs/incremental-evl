@@ -14,7 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotInstantiableModelElementValueException;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
-import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
+import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
 import org.eclipse.epsilon.base.incremental.trace.impl.MemoryModelTraceFactory;
 import org.eclipse.epsilon.eol.exceptions.models.EolNotAModelElementException;
 import org.eclipse.epsilon.eol.models.IModel;
@@ -67,13 +67,7 @@ public interface IIncrementalModel extends IModel {
 	 *
 	 * @return the modules
 	 */
-	Collection<IModuleIncremental> getModules();
-	
-	/**
-	 * Return the factory for creating model traces
-	 * @return
-	 */
-	MemoryModelTraceFactory getModelTraceFactory();
+	Collection<IIncrementalModule> getModules();
 	
 	/**
 	 * Return a String representation of the object. If the object belongs to the model, it will return a

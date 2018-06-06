@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
  * @author Horacio Hoyos Rodriguez
  *
  */
+@Deprecated
 public class MemoryModelTraceFactory {
 	
 	private static final Logger logger = LoggerFactory.getLogger(MemoryModelTraceFactory.class);
@@ -44,12 +45,12 @@ public class MemoryModelTraceFactory {
 	public MemoryModelTraceFactory(IIncrementalModel model) throws EolIncrementalExecutionException {
 		super();
 		this.model = model;
-		try {
-			modelTrace = new ModelTrace(model.getName());
-		} catch (TraceModelDuplicateRelation e) {
-			logger.error("Error creating modelTrace", e);
-			throw new EolIncrementalExecutionException("Error creating modelTrace");
-		}
+//		try {
+//			modelTrace = new ModelTrace(model.getName());
+//		} catch (TraceModelDuplicateRelation e) {
+//			logger.error("Error creating modelTrace", e);
+//			throw new EolIncrementalExecutionException("Error creating modelTrace");
+//		}
 	};
 	
 	/**
@@ -57,9 +58,9 @@ public class MemoryModelTraceFactory {
 	 *
 	 * @return the model trace
 	 */
-	public IModelTrace createModelTrace() {
-		return modelTrace;
-	}
+//	public IModelTrace createModelTrace() {
+//		return modelTrace;
+//	}
 
 	/**
 	 * Create a type trace for this type.
@@ -71,22 +72,22 @@ public class MemoryModelTraceFactory {
 	 */
 	public IModelTypeTrace createModelTypeTrace(String typeName) throws EolIncrementalExecutionException {
 		logger.info("Creting ModelTypeTrace for {}", typeName);
-		if (!model.hasType(typeName)) {
-			logger.error("Unknonw type {} in model{}.", typeName, model.getName());
-			throw new EolIncrementalExecutionException("Model does not know about type " + typeName);
-		}
-		if (modelTypeTraces.containsKey(typeName)) {
-			logger.info("Retreiving ModelTypeTrace from cache");
-			return modelTypeTraces.get(typeName);
-		}
-		IModelTypeTrace trace;
-		try {
-			logger.info("Creating new ModelTypeTrace");
-			trace = new ModelTypeTrace(typeName, modelTrace);
-		} catch (TraceModelDuplicateRelation e) {
-			throw new EolIncrementalExecutionException("Error creating ModelTypeTrace trace for " + typeName);
-		}
-		modelTypeTraces.put(typeName, trace);
+//		if (!model.hasType(typeName)) {
+//			logger.error("Unknonw type {} in model{}.", typeName, model.getName());
+//			throw new EolIncrementalExecutionException("Model does not know about type " + typeName);
+//		}
+//		if (modelTypeTraces.containsKey(typeName)) {
+//			logger.info("Retreiving ModelTypeTrace from cache");
+//			return modelTypeTraces.get(typeName);
+//		}
+		IModelTypeTrace trace = null;
+//		try {
+//			logger.info("Creating new ModelTypeTrace");
+//			trace = new ModelTypeTrace(typeName, modelTrace);
+//		} catch (TraceModelDuplicateRelation e) {
+//			throw new EolIncrementalExecutionException("Error creating ModelTypeTrace trace for " + typeName);
+//		}
+//		modelTypeTraces.put(typeName, trace);
 		return trace;
 	}
 
@@ -100,23 +101,23 @@ public class MemoryModelTraceFactory {
 	 * @see #owns(Object)
 	 */
 	public IModelElementTrace createModelElementTrace(Object element) throws EolIncrementalExecutionException {
-		logger.info("Creting ModelElementTrace for {}", element);
-		String elementId = model.getElementId(element);
-		if (modelElementTraces.containsKey(elementId)) {
-			logger.info("Retreiving ModelElementTrace from cache");
-			return modelElementTraces.get(elementId);
-		}
-		if (!model.owns(element)) {
-			throw new EolIncrementalExecutionException("Model does not know about element " + element);
-		}
-		IModelElementTrace trace;
-		try {
-			logger.info("Creating new ModelElementTrace");
-			trace = new ModelElementTrace(elementId, modelTrace);
-		} catch (TraceModelDuplicateRelation e) {
-			throw new EolIncrementalExecutionException("Error creating ModelElementTrace trace for " + element);
-		}
-		modelElementTraces.put(elementId, trace);
+//		logger.info("Creting ModelElementTrace for {}", element);
+//		String elementId = model.getElementId(element);
+//		if (modelElementTraces.containsKey(elementId)) {
+//			logger.info("Retreiving ModelElementTrace from cache");
+//			return modelElementTraces.get(elementId);
+//		}
+//		if (!model.owns(element)) {
+//			throw new EolIncrementalExecutionException("Model does not know about element " + element);
+//		}
+		IModelElementTrace trace = null;
+//		try {
+//			logger.info("Creating new ModelElementTrace");
+//			trace = new ModelElementTrace(elementId, modelTrace);
+//		} catch (TraceModelDuplicateRelation e) {
+//			throw new EolIncrementalExecutionException("Error creating ModelElementTrace trace for " + element);
+//		}
+//		modelElementTraces.put(elementId, trace);
 		return trace;
 	}
 
@@ -132,24 +133,24 @@ public class MemoryModelTraceFactory {
 	public IPropertyTrace createPropertyTrace(Object element, String propertyName)
 			throws EolIncrementalExecutionException {
 		
-		String elementId = model.getElementId(element);
-		logger.info("Creting PropertyTrace for {}.{}", elementId, propertyName);
-		String propertyId = String.format("%s:%s", elementId, propertyName);
-		if (propertyTraces.containsKey(propertyId)) {
-			logger.info("Retreiving PropertyTrace from cache");
-			return propertyTraces.get(propertyId);
-		}
-		if (!model.knowsAboutProperty(element, propertyName)) {
-			throw new EolIncrementalExecutionException("Model does not know about property " + propertyName +" for element " + element);
-		}
-		IPropertyTrace trace;
-		try {
-			logger.info("Creating new PropertyTrace");
-			trace = new PropertyTrace(propertyName, createModelElementTrace(element));
-		} catch (TraceModelDuplicateRelation e) {
-			throw new EolIncrementalExecutionException("Error creating PropertyTrace trace property for " + propertyName +" for element " + element);
-		}
-		propertyTraces.put(propertyId, trace);
+//		String elementId = model.getElementId(element);
+//		logger.info("Creting PropertyTrace for {}.{}", elementId, propertyName);
+//		String propertyId = String.format("%s:%s", elementId, propertyName);
+//		if (propertyTraces.containsKey(propertyId)) {
+//			logger.info("Retreiving PropertyTrace from cache");
+//			return propertyTraces.get(propertyId);
+//		}
+//		if (!model.knowsAboutProperty(element, propertyName)) {
+//			throw new EolIncrementalExecutionException("Model does not know about property " + propertyName +" for element " + element);
+//		}
+		IPropertyTrace trace = null;
+//		try {
+//			logger.info("Creating new PropertyTrace");
+//			trace = new PropertyTrace(propertyName, createModelElementTrace(element));
+//		} catch (TraceModelDuplicateRelation e) {
+//			throw new EolIncrementalExecutionException("Error creating PropertyTrace trace property for " + propertyName +" for element " + element);
+//		}
+//		propertyTraces.put(propertyId, trace);
 		return trace;
 	}
 
@@ -166,26 +167,26 @@ public class MemoryModelTraceFactory {
 	public IAllInstancesAccess createAllInstancesAccess(boolean ofKind, String typeName, IModuleElementTrace executionTrace)
 			throws EolIncrementalExecutionException {
 		
-		logger.info("Creting AllInstancesAccess for {} , kind: {}", typeName, ofKind);
-		Map<String, IAllInstancesAccess> cache;
-		if (ofKind) {
-			cache = ofKindAccesses;
-		}
-		else {
-			cache = ofTypeAccesses;
-		}
-		if (cache.containsKey(typeName)) {
-			logger.info("Retreiving AllInstancesAccess from cache");
-			return cache.get(typeName);
-		}
-		IAllInstancesAccess access;
-		try {
-			logger.info("Creating new AllInstancesAccess");
-			access = new AllInstancesAccess(ofKind, executionTrace, createModelTypeTrace(typeName));
-		} catch (TraceModelDuplicateRelation e) {
-			throw new EolIncrementalExecutionException("Error creating AllInstancesAccess for " + typeName, e);
-		}
-		cache.put(typeName, access);
+//		logger.info("Creting AllInstancesAccess for {} , kind: {}", typeName, ofKind);
+//		Map<String, IAllInstancesAccess> cache;
+//		if (ofKind) {
+//			cache = ofKindAccesses;
+//		}
+//		else {
+//			cache = ofTypeAccesses;
+//		}
+//		if (cache.containsKey(typeName)) {
+//			logger.info("Retreiving AllInstancesAccess from cache");
+//			return cache.get(typeName);
+//		}
+		IAllInstancesAccess access = null;
+//		try {
+//			logger.info("Creating new AllInstancesAccess");
+//			access = new AllInstancesAccess(ofKind, executionTrace, createModelTypeTrace(typeName));
+//		} catch (TraceModelDuplicateRelation e) {
+//			throw new EolIncrementalExecutionException("Error creating AllInstancesAccess for " + typeName, e);
+//		}
+//		cache.put(typeName, access);
 		return access;
 	}
 
@@ -202,21 +203,21 @@ public class MemoryModelTraceFactory {
 	public IPropertyAccess createPropertyAccess(Object element, String propertyName, IModuleElementTrace executionTrace)
 			throws EolIncrementalExecutionException {
 		
-		logger.info("Creting PropertyAccess for {} , proerty: {}", element, propertyName);
-		String elementId = model.getElementId(element);
-		String propertyId = String.format("%s:%s", elementId, propertyName);
-		if (propertyAccesses.containsKey(propertyId)) {
-			logger.info("Retreiving PropertyAccess from cache");
-			return propertyAccesses.get(propertyId);
-		}
-		IPropertyAccess access;
-		try {
-			logger.info("Creating new PropertyAccess");
-			access = new PropertyAccess(executionTrace, createPropertyTrace(element, propertyName));
-		} catch (TraceModelDuplicateRelation e) {
-			throw new EolIncrementalExecutionException("Error creating AllInstancesAccess for " + element + " and property " + propertyName, e);
-		}
-		propertyAccesses.put(propertyId, access);
+//		logger.info("Creting PropertyAccess for {} , proerty: {}", element, propertyName);
+//		String elementId = model.getElementId(element);
+//		String propertyId = String.format("%s:%s", elementId, propertyName);
+//		if (propertyAccesses.containsKey(propertyId)) {
+//			logger.info("Retreiving PropertyAccess from cache");
+//			return propertyAccesses.get(propertyId);
+//		}
+		IPropertyAccess access = null;
+//		try {
+//			logger.info("Creating new PropertyAccess");
+//			access = new PropertyAccess(executionTrace, createPropertyTrace(element, propertyName));
+//		} catch (TraceModelDuplicateRelation e) {
+//			throw new EolIncrementalExecutionException("Error creating AllInstancesAccess for " + element + " and property " + propertyName, e);
+//		}
+//		propertyAccesses.put(propertyId, access);
 		return access;
 	}
 
@@ -230,20 +231,20 @@ public class MemoryModelTraceFactory {
 	 * @see #owns(Object)
 	 */
 	public IElementAccess createElementAccess(Object element, IModuleElementTrace currentTrace) throws EolIncrementalExecutionException {
-		logger.info("Creting ElementAccess for {}", element);
-		String elementId = model.getElementId(element);
-		if (elementAccesses.containsKey(elementId)) {
-			logger.info("Retreiving ElementAccess from cache");
-			return elementAccesses.get(elementId);
-		}
-		IElementAccess access;
-		try {
-			logger.info("Creating new ElementAccess");
-			access = new ElementAccess(currentTrace, createModelElementTrace(element));
-		} catch (TraceModelDuplicateRelation e) {
-			throw new EolIncrementalExecutionException("Error creating ElementAccess for " + element, e);
-		}
-		elementAccesses.put(elementId, access);
+//		logger.info("Creting ElementAccess for {}", element);
+//		String elementId = model.getElementId(element);
+//		if (elementAccesses.containsKey(elementId)) {
+//			logger.info("Retreiving ElementAccess from cache");
+//			return elementAccesses.get(elementId);
+//		}
+		IElementAccess access = null;
+//		try {
+//			logger.info("Creating new ElementAccess");
+//			access = new ElementAccess(currentTrace, createModelElementTrace(element));
+//		} catch (TraceModelDuplicateRelation e) {
+//			throw new EolIncrementalExecutionException("Error creating ElementAccess for " + element, e);
+//		}
+//		elementAccesses.put(elementId, access);
 		return access;
 	}
 	
@@ -256,41 +257,42 @@ public class MemoryModelTraceFactory {
 	 */
 	public IModelElementVariable createModelElementVariable(String name, Object element) throws EolIncrementalExecutionException {
 		
-		String elementId = model.getElementId(element);
-		logger.info("Creting ModelElementVariable for {}@{}", name, elementId);
-		String variableId = String.format("%s:%s", name, elementId);
-		if (modelElementVariables.containsKey(variableId)) {
-			logger.info("Retreiving ModelElementVariable from cache");
-			return modelElementVariables.get(variableId);
-		}
-		IModelElementVariable variable;
-		try {
-			logger.info("Creating new ModelElementVariable");
-			variable = new ModelElementVariable(name, createModelElementTrace(element));
-		} catch (TraceModelDuplicateRelation e) {
-			throw new EolIncrementalExecutionException("Error creating ModelElementVariable for " + name + " for element " + element);
-		}
-		modelElementVariables.put(variableId, variable);
+//		String elementId = model.getElementId(element);
+//		logger.info("Creting ModelElementVariable for {}@{}", name, elementId);
+//		String variableId = String.format("%s:%s", name, elementId);
+//		if (modelElementVariables.containsKey(variableId)) {
+//			logger.info("Retreiving ModelElementVariable from cache");
+//			return modelElementVariables.get(variableId);
+//		}
+		IModelElementVariable variable = null;
+//		try {
+//			logger.info("Creating new ModelElementVariable");
+//			variable = new ModelElementVariable(name, createModelElementTrace(element));
+//		} catch (TraceModelDuplicateRelation e) {
+//			throw new EolIncrementalExecutionException("Error creating ModelElementVariable for " + name + " for element " + element);
+//		}
+//		modelElementVariables.put(variableId, variable);
 		return variable;
 	}
 
 	public Set<String> getAllModelElementIds() {
-		return modelElementTraces.keySet();
+		//return modelElementTraces.keySet();
+		return null;
 	}
 
 	public void removeModelElement(String uri) {
-		IModelElementTrace deleted = modelElementTraces.remove(uri);
-		if (deleted != null) {
-			elementAccesses.remove(uri);
-			Set<IPropertyTrace> ownedProperties = propertyTraces.values().stream()
-					.filter(pt -> pt.element().get().equals(deleted))
-					.collect(Collectors.toSet());
-			Set<IPropertyAccess> accessedProperties = propertyAccesses.values().stream()
-					.filter(pa -> ownedProperties.contains(pa.property().get()))
-					.collect(Collectors.toSet());
-			ownedProperties.forEach(op -> propertyTraces.remove(String.format("%s:%s", uri, op.getName())));
-			accessedProperties.forEach(ap -> propertyAccesses.remove(String.format("%s:%s", uri, ap.property().get().getName())));
-		}
+//		IModelElementTrace deleted = modelElementTraces.remove(uri);
+//		if (deleted != null) {
+//			elementAccesses.remove(uri);
+//			Set<IPropertyTrace> ownedProperties = propertyTraces.values().stream()
+//					.filter(pt -> pt.element().get().equals(deleted))
+//					.collect(Collectors.toSet());
+//			Set<IPropertyAccess> accessedProperties = propertyAccesses.values().stream()
+//					.filter(pa -> ownedProperties.contains(pa.property().get()))
+//					.collect(Collectors.toSet());
+//			ownedProperties.forEach(op -> propertyTraces.remove(String.format("%s:%s", uri, op.getName())));
+//			accessedProperties.forEach(ap -> propertyAccesses.remove(String.format("%s:%s", uri, ap.property().get().getName())));
+//		}
 	}
 
 }

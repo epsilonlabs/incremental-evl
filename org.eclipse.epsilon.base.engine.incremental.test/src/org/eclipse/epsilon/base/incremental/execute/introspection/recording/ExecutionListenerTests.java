@@ -1,19 +1,19 @@
 package org.eclipse.epsilon.base.incremental.execute.introspection.recording;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
-import org.easymock.EasyMock;
-import org.easymock.EasyMockRule;
-import org.easymock.EasyMockSupport;
-import org.easymock.Mock;
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
+import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.compile.context.EolCompilationContext;
 import org.eclipse.epsilon.eol.dom.Expression;
@@ -30,22 +30,25 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
+
 
 @RunWith(Suite.class)
 @SuiteClasses({	ExecutionListenerTests.AllInstancesInvocationExetionListenerTest.class,
 				ExecutionListenerTests.PropertyAccessExecutionListenerTest.class})
 public class ExecutionListenerTests {
 	
-	private interface TestModuleExecution extends IModuleTrace { }
 	
-	public static class AllInstancesInvocationExetionListenerTest extends EasyMockSupport {
+	public static class AllInstancesInvocationExetionListenerTest {
 		
 		private final String result = "someValue";
 		private final String typeName = "modelA!typeB";
 		private final StringLiteral[] params = new StringLiteral[0];
 		
 		@Rule
-        public EasyMockRule rule = new EasyMockRule(this);
+	    public MockitoRule mockitoRule = MockitoJUnit.rule();
 		
 		//@Mock
 		//private IEolExecutionTraceManager<TestModuleExecution> traceManagerMock;
@@ -77,11 +80,10 @@ public class ExecutionListenerTests {
 			// 2. Execute other expression
 			ModuleElement me = mock(ModuleElement.class);
 			listener.finishedExecuting(me, result, null);
-			replayAll();
 			// 3. Finish executing block
 			listener.finishedExecuting(blockMock, result, contextMock);
 			assertTrue(listener.done());
-			verifyAll();
+			
 		}
 		
 		@Test
@@ -94,11 +96,9 @@ public class ExecutionListenerTests {
 			// 2. Execute a non-all operation
 			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, "getOne", params);
 			listener.finishedExecuting(ast, result, null);
-			replayAll();
 			// 3. Finish executing block
 			listener.finishedExecuting(blockMock, result, contextMock);
 			assertTrue(listener.done());
-			verifyAll();
 		}
 		
 		@Test
@@ -111,7 +111,6 @@ public class ExecutionListenerTests {
 			
 			// 2. Record invocations
 			recordExecutionTrace("modelA", "typeB", executionTraceMock);
-			replayAll();
 			// Test
 			// 3. Execute all operation
 			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, "all", params);
@@ -120,7 +119,6 @@ public class ExecutionListenerTests {
 			// 4. Finish executing block
 			listener.finishedExecuting(blockMock, result, contextMock);
 			assertTrue(listener.done());
-			verifyAll();
 		}
 		
 		@Test
@@ -130,10 +128,14 @@ public class ExecutionListenerTests {
 			IModuleElementTrace executionTraceMock = mock(IModuleElementTrace.class);
 			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
+			IIncrementalModel contextMock = mock(IEolContext.class);
+			IModel modelMock = mock(IIncrementalModel.class);
+			ModelRepository repositoryMock = mock(ModelRepository.class);
+			when(contextMock.getModelRepository()).thenReturn(repositoryMock);
+			when(repositoryMock.getModelByName("modelA")).thenReturn(modelMock);
 			
 			// 2. Record invocations
 			recordExecutionTrace("modelA", "typeB", executionTraceMock);
-			replayAll();
 			
 			// Test
 			// 3. Execute all operation
@@ -143,7 +145,6 @@ public class ExecutionListenerTests {
 			// 4. Finish executing block
 			listener.finishedExecuting(blockMock, result, contextMock);
 			assertTrue(listener.done());
-			verifyAll();
 		}
 		
 		@Test
@@ -156,7 +157,6 @@ public class ExecutionListenerTests {
 			
 			// 2. Record invocations
 			recordExecutionTrace("modelA", "typeB", executionTraceMock);
-			replayAll();
 			
 			// Test
 			// 3. Execute all operation
@@ -166,7 +166,6 @@ public class ExecutionListenerTests {
 			// 4. Finish executing block
 			listener.finishedExecuting(blockMock, result, contextMock);
 			assertTrue(listener.done());
-			verifyAll();
 		}
 		
 		@Test
@@ -179,7 +178,6 @@ public class ExecutionListenerTests {
 			
 			// 2. Record invocations
 			recordExecutionTrace("modelA", "typeB", executionTraceMock);
-			replayAll();
 			
 			// Test
 			// 3. Execute all operation
@@ -189,24 +187,23 @@ public class ExecutionListenerTests {
 			// 4. Finish executing block
 			listener.finishedExecuting(blockMock, result, contextMock);
 			assertTrue(listener.done());
-			verifyAll();
 		}
 		
 		private void recordExecutionTrace(String modelName, String modelTypeName, IModuleElementTrace executionTraceMock) throws Exception {
 			// Setup mocks
 			IModel model = mock(IModel.class);
-			IModuleElementTraceHasAccesses hasAccesses = createNiceMock(IModuleElementTraceHasAccesses.class);
-			EasyMock.expect(model.getName()).andReturn(modelName).anyTimes();
-			EasyMock.expect(executionTraceMock.accesses()).andReturn(hasAccesses);
+			IModuleElementTraceHasAccesses hasAccesses = mock(IModuleElementTraceHasAccesses.class);
+			when(model.getName()).thenReturn(modelName);
+			when(executionTraceMock.accesses()).thenReturn(hasAccesses);
 		}
 	}
 
-	public static class PropertyAccessExecutionListenerTest extends EasyMockSupport {
+	public static class PropertyAccessExecutionListenerTest  {
 		
 		private String modelName = "modelA";
 		
 		@Rule
-        public EasyMockRule rule = new EasyMockRule(this);
+	    public MockitoRule mockitoRule = MockitoJUnit.rule();
 		
 		//@Mock
 		//private IEolExecutionTraceManager<TestModuleExecution> traceManagerMock;
@@ -245,14 +242,12 @@ public class ExecutionListenerTests {
 			// 4. Record invocations
 			recordExecutionTrace(elementId, instance, propertyName, executionTraceMock);
 			// Test
-			replayAll();
 			
 			// 5. Finish executing property access, should trigger ExecutionTrace access
 			listener.finishedExecuting(ast, propertyvalue, contextMock);
 			// 6. Finish executing block
 			listener.finishedExecuting(blockMock, result, contextMock);
 			assertTrue(listener.done());
-			verifyAll();
 		}
 		
 		@Test
@@ -278,13 +273,11 @@ public class ExecutionListenerTests {
 			OperationCallExpression ast = createOperationCallExpression(objectValue, "someOp", params);
 			
 			// Test
-			replayAll();
 			// 5. Finish executing property access, should trigger ExecutionTrace access
 			listener.finishedExecuting(ast, result, contextMock);
 			// 6. Finish executing block
 			listener.finishedExecuting(blockMock, result, contextMock);
 			assertTrue(listener.done());
-			verifyAll();
 		}
 		
 		@Test
@@ -310,13 +303,11 @@ public class ExecutionListenerTests {
 			OperationCallExpression ast = createOperationCallExpression(objectValue, "someOp", params);
 			
 			// Test
-			replayAll();
 			// 5. Finish executing property access, should trigger ExecutionTrace access
 			listener.finishedExecuting(ast, result, contextMock);
 			// 6. Finish executing block
 			listener.finishedExecuting(blockMock, result, contextMock);
 			assertTrue(listener.done());
-			verifyAll();
 			
 		}
 		
@@ -406,10 +397,10 @@ public class ExecutionListenerTests {
 			
 			ModelRepository modelRepo = new ModelRepository();
 			modelRepo.addModel(modelMock);
-			EasyMock.expect(contextMock.getModelRepository()).andReturn(modelRepo).times(1);
-			EasyMock.expect(modelMock.getName()).andReturn(modelName).anyTimes();
-			EasyMock.expect(modelMock.getElementId(instance)).andReturn(elementId).anyTimes();
-			EasyMock.expect(modelMock.knowsAboutProperty(instance, propertyName)).andReturn(true).times(1);
+			when(contextMock.getModelRepository()).thenReturn(modelRepo);
+			when(modelMock.getName()).thenReturn(modelName);
+			when(modelMock.getElementId(instance)).thenReturn(elementId);
+			when(modelMock.knowsAboutProperty(instance, propertyName)).thenReturn(true);
 			
 //			// Model repo has no model by that name
 //			IModelTraceRepository modelTraceRepoMock = createNiceMock(IModelTraceRepository.class);  // Nice so it allows add()

@@ -10,26 +10,22 @@
  *******************************************************************************/
 package org.eclipse.epsilon.base.incremental.execute;
 
-import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
-import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
-//import org.eclipse.epsilon.base.incremental.trace.util.IExecutionContextRepository;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 
 /**
- * The manager holds the reference to the Trace Model, keeps a queue of model changes and flushes the changes
- * when the queue has a specific size, when the user requests a flush or when the ExL module finishes execution.
+ * The trace manager is responsible form provisioning the required repositories and for implementing
+ * different persistence action strategies. That is, how and when to flush changes from memory to 
+ * a long term location.
  * 
- * An IIncrementalExecutionManager is responsible for creating and managing the different trace model elements that
- * are created during execution of an ExL module. The manager works both as a factory to create traces and as a manager
- * to find traces relevant to specific model elements and properties.
- * 
- * Implementations are free to select the preferred persistence technology for the traces, e.g. a database, EMF
- * Resource, etc. Implementations are also free to implement a transaction mechanism.  
+ * By providing different repositories, particular implementations can store the trace information in 
+ * different formats. Further, the can also pick queueing, flushing and scheduling implementations
+ * that work better for a particular technology. Further, some of this parameters can be made available
+ * to the user so it can fine tune its execution.  
  *  
- *
  * @author Horacio Hoyos Rodriguez
- * @param <T> the generic type of the specific trace repository
+ * @param <T> the generic type of the specific module execution trace repository {@link IModuleExecutionTrace}
  */
-public interface IEolExecutionTraceManager<T extends IRepository<?>> {
+public interface IEolExecutionTraceManager<T extends IModuleExecutionTraceRepository> {
 	
 	/**
 	 * Instruct the manager to persist the model changes using a parallel execution.
@@ -66,20 +62,7 @@ public interface IEolExecutionTraceManager<T extends IRepository<?>> {
 	 */
 	boolean persistTraceInformation();
 
-	/**
-	 * Gets the property access listener.
-	 *
-	 * @return the property access listener
-	 */
-	PropertyAccessExecutionListener getPropertyAccessListener();
-
-	/**
-	 * Gets the all instances access listener.
-	 *
-	 * @return the all instances access listener
-	 */
-	AllInstancesInvocationExecutionListener getAllInstancesAccessListener();
-
+	
 	// All available repositories
 	//IExecutionContextRepository getExecutionContextRepository();
 }

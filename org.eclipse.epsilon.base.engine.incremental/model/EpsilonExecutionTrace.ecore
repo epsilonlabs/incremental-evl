@@ -126,7 +126,7 @@
         eType="#//PropertyTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelTrace" eSuperTypes="#//IdElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelTrace/name"/>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelTrace/name #//ModelTrace/uri"/>
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A ModelTrace contains trace information for the elements and types in the model &#xA;that were accessed during execution."/>
     </eAnnotations>

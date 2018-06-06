@@ -3,6 +3,7 @@ package org.eclipse.epsilon.base.incremental.execute;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 import org.eclipse.epsilon.common.module.IModule;
 
 /**
@@ -20,19 +21,20 @@ import org.eclipse.epsilon.common.module.IModule;
  * 
  * @author Horacio Hoyos Rodriguez
  */
-public interface IModuleIncremental extends IModule {
-	
-	/**
-	 * Get the trace of the module being executed.
-	 * @return
-	 */
-	IModuleTrace getModuleTrace();
+public interface IIncrementalModule<R extends IModuleExecutionTraceRepository,
+		M extends IEolExecutionTraceManager<R>> extends IModule {
 
 	/**
 	 * Gets the incremental models that are used in this execution
 	 * @return
 	 */
 	Set<IIncrementalModel> getTargets();
+	
+	/**
+	 * Set the execution trace manager that will be used by this module.
+	 * @param manager
+	 */
+	void setExecutionTraceManager(M manager);
 
 	/**
 	 * Enable/disable listening to model changes (in the used incremental models)

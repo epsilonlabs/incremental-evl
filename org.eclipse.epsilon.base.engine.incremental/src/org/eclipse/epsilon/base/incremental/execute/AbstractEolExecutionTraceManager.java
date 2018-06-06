@@ -2,13 +2,15 @@ package org.eclipse.epsilon.base.incremental.execute;
 
 import java.time.LocalDate;
 
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
+
 /**
  * A base implementation of the IEolExecutionTraceManager.
  * 
  * @author Horacio Hoyos Rodriguez
  *
  */
-public abstract class AbstractEolExecutionTraceManager<T extends IRepository<?>>
+public abstract class AbstractEolExecutionTraceManager<T extends IModuleExecutionTraceRepository>
 		implements IEolExecutionTraceManager<T> {
 
 	/** A flag to signal parallel persistence */
