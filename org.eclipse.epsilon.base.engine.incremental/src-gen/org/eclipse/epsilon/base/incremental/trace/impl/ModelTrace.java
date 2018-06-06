@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-05.
+ * This file was automatically generated on: 2018-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -64,8 +64,9 @@ public class ModelTrace implements IModelTrace {
      * Instantiates a new ModelTrace. The ModelTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ModelTrace(String name, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
+    public ModelTrace(String name, String uri, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
         this.name = name;
+        this.uri = uri;
         this.elements = new ModelTraceHasElements(this);
         this.types = new ModelTraceHasTypes(this);
 
@@ -95,12 +96,6 @@ public class ModelTrace implements IModelTrace {
         return uri;
     }
     
-    
-    @Override
-    public void setUri(String value) {
-        this.uri = value;
-    }   
-     
     @Override
     public IModelTraceHasElements elements() {
         return elements;
@@ -173,6 +168,14 @@ public class ModelTrace implements IModelTrace {
         } else if (!name.equals(otherName)) {
             return false;
         }
+        String uri = getUri();
+        String otherUri = other.getUri();
+        if (uri == null) {
+            if (otherUri != null)
+                return false;
+        } else if (!uri.equals(otherUri)) {
+            return false;
+        }
         return true;
     }
 
@@ -195,6 +198,7 @@ public class ModelTrace implements IModelTrace {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((uri == null) ? 0 : uri.hashCode());
         return result;
     }
 }

@@ -29,7 +29,7 @@ import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%]Reposi
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class [%=ec.getJavaClassName(classPrefix, classSufix)%]RepositoryImpl implements [%=ec.getJavaInterfaceName(interPrefix, interSufix)%]Repository {
+public [%if(ec.isAbstract){%]abstract [%}%]class [%=ec.getJavaClassName(classPrefix, classSufix)%]RepositoryImpl implements [%=ec.getJavaInterfaceName(interPrefix, interSufix)%]Repository {
 
     private static final Logger logger = LoggerFactory.getLogger([%=ec.getJavaClassName(classPrefix, classSufix)%]RepositoryImpl.class);
     

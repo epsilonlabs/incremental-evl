@@ -20,6 +20,12 @@ import org.eclipse.epsilon.base.incremental.execute.IRepository;
 [%=out.stopPreserve()%]
 
 public interface [%=ec.getJavaInterfaceName(interPrefix, interSufix)%]Repository extends IRepository<[%=ec.getJavaInterfaceName(interPrefix, interSufix)%]> {
+[%
+var ids = ec.getIndexAttributes();
+if (not ids.isEmpty()) {%]
+
+    [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] get[%=ec.name%]ByIdentity([%=ec.getEAttributeParameters().concat(", ")%]);
+[%}%]
 
 [%=out.startPreserve("/**", "**/", ec.getJavaInterfaceName(interPrefix, interSufix) + "Repositry", true)%]
     // Specialised search methods

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-05.
+ * This file was automatically generated on: 2018-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -39,13 +39,6 @@ public interface IModelTrace extends IIdElement {
      * @return the value of the '<em>uri</em>' attribute.
      */
     String getUri();
-
-    /**
-     * Sets the value of the '{@link ModelTrace#uri <em>uri</em>}' attribute.
-     * The uri of the model.
-     * @param value the new value of the '<em>uri</em>' attribute.
-     */
-    void setUri(String value);
 
     /**
      * Returns the value of the '<em><b>elements</b></em>' reference.

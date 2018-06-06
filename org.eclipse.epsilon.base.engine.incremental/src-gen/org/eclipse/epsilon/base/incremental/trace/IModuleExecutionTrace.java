@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-05.
+ * This file was automatically generated on: 2018-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -71,6 +71,6 @@ public interface IModuleExecutionTrace extends IIdElement {
             
    
     /** The ModelTrace Factory. */
-    IModelTrace createModelTrace(String name) throws EolIncrementalExecutionException;       
+    IModelTrace createModelTrace(String name, String uri) throws EolIncrementalExecutionException;       
    
 }

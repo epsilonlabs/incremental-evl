@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-05.
+ * This file was automatically generated on: 2018-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -47,7 +47,7 @@ public class ModelTraceTest {
         when(containerMock.models()).thenReturn(containerReference);
         // protected region ModelTraceInit on begin
         // Default init parameters can be modified
-        classUnderTest = new ModelTrace("name1", containerMock);                    
+        classUnderTest = new ModelTrace("name1", "uri1", containerMock);                    
         // protected region ModelTraceInit end
         
         assertThat(containerReference.get(), contains(classUnderTest));
@@ -63,7 +63,7 @@ public class ModelTraceTest {
         when(containerMock.models()).thenReturn(containerReference);
         // protected region ModelTraceInit on begin
         // Default init parameters can be modified
-        classUnderTest = new ModelTrace("name1", containerMock);                    
+        classUnderTest = new ModelTrace("name1", "uri1", containerMock);                    
         // protected region ModelTraceInit end
         
         IModelElementTrace child1 = classUnderTest.createModelElementTrace("url://path/in/model/to/uri/1");
@@ -83,7 +83,7 @@ public class ModelTraceTest {
         when(containerMock.models()).thenReturn(containerReference);
         // protected region ModelTraceInit on begin
         // Default init parameters can be modified
-        classUnderTest = new ModelTrace("name1", containerMock);                    
+        classUnderTest = new ModelTrace("name1", "uri1", containerMock);                    
         // protected region ModelTraceInit end
         
         IModelTypeTrace child1 = classUnderTest.createModelTypeTrace("name1");
