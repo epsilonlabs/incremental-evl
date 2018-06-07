@@ -11,11 +11,11 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
-import org.eclipse.epsilon.base.incremental.execute.IRepository;
+import org.eclipse.epsilon.base.incremental.trace.IIdElementRepository;
 /** protected region IGuardedElementTraceRepositoryImports on begin **/
 /** protected region IGuardedElementTraceRepositoryImports end **/
 
-public interface IGuardedElementTraceRepository extends IRepository<IGuardedElementTrace> {
+public interface IGuardedElementTraceRepository<E extends IGuardedElementTrace> extends IIdElementRepository<E> {
 
 /** protected region IGuardedElementTraceRepositry on begin **/
     // Specialised search methods

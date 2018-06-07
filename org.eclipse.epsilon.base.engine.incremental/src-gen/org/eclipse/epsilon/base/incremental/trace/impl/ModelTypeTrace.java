@@ -64,7 +64,6 @@ public class ModelTypeTrace implements IModelTypeTrace {
         return name;
     }
     
-
     @Override
     public boolean sameIdentityAs(final IModelTypeTrace other) {
         if (other == null) {

@@ -36,4 +36,5 @@ public interface IPropertyTrace extends IIdElement {
      */
     public boolean sameIdentityAs(final IPropertyTrace other);
     
+
 }

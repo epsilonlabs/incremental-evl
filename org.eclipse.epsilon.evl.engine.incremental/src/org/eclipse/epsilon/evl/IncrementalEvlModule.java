@@ -20,8 +20,6 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelati
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
-import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;

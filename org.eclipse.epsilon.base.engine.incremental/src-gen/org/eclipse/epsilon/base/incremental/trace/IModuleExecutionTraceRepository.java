@@ -11,11 +11,11 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
-import org.eclipse.epsilon.base.incremental.execute.IRepository;
+import org.eclipse.epsilon.base.incremental.trace.IIdElementRepository;
 /** protected region IModuleExecutionTraceRepositoryImports on begin **/
 /** protected region IModuleExecutionTraceRepositoryImports end **/
 
-public interface IModuleExecutionTraceRepository extends IRepository<IModuleExecutionTrace> {
+public interface IModuleExecutionTraceRepository<E extends IModuleExecutionTrace> extends IIdElementRepository<E> {
 
     IModuleExecutionTrace getModuleExecutionTraceByIdentity(String source);
 

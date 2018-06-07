@@ -76,17 +76,18 @@ for (er in ec.getEAllReferences().select(er | er.isContainment())) {
     [%=er.getEReferenceType().factorySignature(interPrefix, interSufix)%]
 [%  } else {
         var subClasses = er.getEReferenceType().getEAllSubclasses()
-            .select(sc | (sc.getEPackage() == ec.getEPackage()) and
-                not sc.isAbstract() and
-                not EReference.all().exists(er | er.isContainer and not (er.getEReferenceType() == ec)));
+                .select(sc | not sc.isAbstract() and
+                    not EReference.all().exists(aller |
+                    (aller.getEReferenceType() == sc) and 
+                    aller.isContainment)
+                );
         for (sc in subClasses) {%]
     [%=sc.factorySignature(interPrefix, interSufix)%]
-            
+
 [%      }%]
 [%  }%]
-   
-[%
-}%]
+[%}%]
+
 }
 [%
 @template

@@ -166,22 +166,25 @@ if (container.isDefined()) {
     }
 
 [%}%]
-
 [%/* Factory Methods
- * If the EReferenceType is abstract, we add factory methods for each of the subclasses of the
- * EReferenceType. We only look for all classes as we are implementing the methods.
+ * If the EReferenceType is abstract, we add factory methods for each of the subclasses
+ * of the EReferenceType. We only add subclasses that are not contained elsewhere or 
+ * contained in this EClass supertypes (i.e. we need to implement all factories from
+ * inhereted interfaces).
  */
 for (er in ec.getEAllReferences().select(er | er.isContainment())) {
     if (not er.getEReferenceType().isAbstract()) {%]
     [%=er.getEReferenceType().factoryMethod(er, false, interPrefix, interSufix, classPrefix, classSufix)%]
 [%  } else {
         var subClasses = er.getEReferenceType().getEAllSubclasses()
-            .select(sc | (sc.getEPackage() == ec.getEPackage()) and
-                not sc.isAbstract() and
-                not EReference.all().exists(er | er.isContainer and not (er.getEReferenceType() == ec)));
+                .select(sc | not sc.isAbstract() and
+                    not EReference.all().exists(aller |
+                    (aller.getEReferenceType() == sc) and 
+                    aller.isContainment)
+                );
         for (sc in subClasses) {%]
     [%=sc.factoryMethod(er, true, interPrefix, interSufix, classPrefix, classSufix)%]
-            
+
 [%      }%]
 [%  }%]
                   
@@ -326,9 +329,13 @@ public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] create[%=self.nam
                 .filter(t -> t instanceof [%=self.getJavaInterfaceName(interPrefix, interSufix)%])
                 .map([%=self.getJavaInterfaceName(interPrefix, interSufix)%].class::cast)
 [%      }%]
-[%      for (param in self.getIndexAttributes()) {%]
+[%      for (param in self.getIndexAttributes()) {
+            if (isJavaPrimitiveType(param.getEAttributeType().name)) {%]
+                .filter(item -> item.get[%=param.name.firstToUpperCase()%]() == [%=param.name%])
+[%          } else {%]
                 .filter(item -> item.get[%=param.name.firstToUpperCase()%]().equals([%=param.name%]))
-[%      }%]
+[%          }
+        }%]
 [%      for (param in self.getRequiredFeatures()) {%]
                 .filter(item -> item.[%=param.name%]().get().equals([%=param.name%]))
 [%      }%]

@@ -13,10 +13,7 @@ package org.eclipse.epsilon.base.incremental.trace;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;    
-import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;    
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;    
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;    
-import org.eclipse.epsilon.base.incremental.trace.IInContextModuleElementTrace;    
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;    
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;    
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;    
@@ -59,18 +56,16 @@ public interface IModuleExecutionTrace extends IIdElement {
      */
     IModuleExecutionTraceHasModels models();
                 
-   
     /** The ElementAccess Factory. */
     IElementAccess createElementAccess(IModuleElementTrace executionTrace, IModelElementTrace element) throws EolIncrementalExecutionException;       
-            
+
     /** The AllInstancesAccess Factory. */
     IAllInstancesAccess createAllInstancesAccess(boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type) throws EolIncrementalExecutionException;       
-            
+
     /** The PropertyAccess Factory. */
     IPropertyAccess createPropertyAccess(IModuleElementTrace executionTrace, IPropertyTrace property) throws EolIncrementalExecutionException;       
-            
-   
+
     /** The ModelTrace Factory. */
     IModelTrace createModelTrace(String name, String uri) throws EolIncrementalExecutionException;       
-   
+
 }

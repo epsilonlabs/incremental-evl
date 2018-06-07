@@ -35,5 +35,5 @@ public interface IExecutionContext extends IIdElement {
     
     /** The ModelElementVariable Factory. */
     IModelElementVariable createModelElementVariable(String name, IModelElementTrace value) throws EolIncrementalExecutionException;       
-   
+
 }

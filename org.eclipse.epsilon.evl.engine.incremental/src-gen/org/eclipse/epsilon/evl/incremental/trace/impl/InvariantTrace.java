@@ -105,7 +105,7 @@ public class InvariantTrace implements IInvariantTrace {
      */    
     public InvariantTrace(String name, IContextTrace container) throws TraceModelDuplicateRelation {
         this.name = name;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@697f43c0 (name: invariantContext) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@2f6c1e69 (name: invariantContext) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.invariantContext = new InvariantTraceHasInvariantContext(this);
         this.guard = new GuardedElementTraceHasGuard(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
@@ -181,7 +181,6 @@ public class InvariantTrace implements IInvariantTrace {
         return null;
         /** protected region parentTrace end **/
     }
-
 
     @Override
     public IGuardTrace createGuardTrace() throws EolIncrementalExecutionException {

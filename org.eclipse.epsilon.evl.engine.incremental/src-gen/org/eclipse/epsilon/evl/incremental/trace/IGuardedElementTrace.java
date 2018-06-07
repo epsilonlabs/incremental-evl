@@ -35,5 +35,5 @@ public interface IGuardedElementTrace extends IIdElement {
                 
     /** The GuardTrace Factory. */
     IGuardTrace createGuardTrace() throws EolIncrementalExecutionException;       
-   
+
 }

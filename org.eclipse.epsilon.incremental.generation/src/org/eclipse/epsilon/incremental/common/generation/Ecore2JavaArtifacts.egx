@@ -161,7 +161,6 @@ rule EClass2Repository
       return params;
     }
     guard    : (ec.getEPackage().name == targetLanguage) and
-                // not ec.isAbstract() and
                 not EReference.all().exists(ref | ref.isContainment() and (ec.getEAllSuperTypes().including(ec).includes(ref.getEReferenceType())))
                 
     template : "EClass2RepoInterface.egl"
@@ -184,7 +183,7 @@ rule EClass2RepositoryImpl
       return params;
     }
     guard    : (ec.getEPackage().name == targetLanguage) and
-                //not ec.isAbstract() and
+                not ec.isInterface and
                 not EReference.all().exists(ref | ref.isContainment() and (ec.getEAllSuperTypes().including(ec).includes(ref.getEReferenceType())))
     template : "EClass2RepoImpl.egl"
     target   : project + folder + "/trace/impl/" + classPrefix+ ec.name + classSufix + "RepositoryImpl.java"

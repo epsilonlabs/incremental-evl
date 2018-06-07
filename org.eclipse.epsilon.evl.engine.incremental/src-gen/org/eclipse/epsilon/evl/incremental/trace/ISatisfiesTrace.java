@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
+import org.eclipse.epsilon.base.incremental.trace.IAccess;    
+import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;    
 import org.eclipse.epsilon.base.incremental.trace.IInContextModuleElementTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;    
 
@@ -75,4 +77,5 @@ public interface ISatisfiesTrace extends IInContextModuleElementTrace {
      */
     public boolean sameIdentityAs(final ISatisfiesTrace other);
     
+
 }

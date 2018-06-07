@@ -47,7 +47,7 @@ public class ExecutionContext implements IExecutionContext {
      * container and any attributes identified as indexes.
      */    
     public ExecutionContext(IContextModuleElementTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@1f7f235b (name: contextVariables) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@41b36ea8 (name: contextVariables) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.contextVariables = new ExecutionContextHasContextVariables(this);
 
         if (!container.executionContext().create(this)) {
@@ -71,7 +71,6 @@ public class ExecutionContext implements IExecutionContext {
         return contextVariables;
     }
 
-
     @Override
     public IModelElementVariable createModelElementVariable(String name, IModelElementTrace value) throws EolIncrementalExecutionException {
         IModelElementVariable modelElementVariable = null;
@@ -85,7 +84,7 @@ public class ExecutionContext implements IExecutionContext {
     	    }
             try {
                 modelElementVariable = this.contextVariables.get().stream()
-                    .filter(item -> item.getName().equals(name))
+                    .filter(item -> item.getName() == name)
                     .filter(item -> item.value().get().equals(value))
                     .findFirst()
                     .get();

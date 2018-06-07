@@ -49,4 +49,5 @@ public interface IModelElementVariable extends IIdElement {
      */
     public boolean sameIdentityAs(final IModelElementVariable other);
     
+
 }

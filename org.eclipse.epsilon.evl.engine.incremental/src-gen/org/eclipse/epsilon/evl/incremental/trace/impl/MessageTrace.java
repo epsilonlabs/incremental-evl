@@ -55,7 +55,7 @@ public class MessageTrace implements IMessageTrace {
      * container and any attributes identified as indexes.
      */    
     public MessageTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@636769bf (name: invariant) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@1d6558f3 (name: invariant) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.invariant = new MessageTraceHasInvariant(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
 
@@ -91,7 +91,6 @@ public class MessageTrace implements IMessageTrace {
         return null;
         /** protected region parentTrace end **/
     }
-
 
     @Override
     public boolean sameIdentityAs(final IMessageTrace other) {

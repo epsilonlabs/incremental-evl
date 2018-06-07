@@ -52,5 +52,5 @@ public interface IModelElementTrace extends IIdElement {
     
     /** The PropertyTrace Factory. */
     IPropertyTrace createPropertyTrace(String name) throws EolIncrementalExecutionException;       
-   
+
 }

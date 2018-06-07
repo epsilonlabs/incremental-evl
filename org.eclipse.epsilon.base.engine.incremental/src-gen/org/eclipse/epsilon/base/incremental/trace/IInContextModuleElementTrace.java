@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
+import org.eclipse.epsilon.base.incremental.trace.IAccess;    
 import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;    
 
 /**
@@ -31,4 +32,5 @@ public interface IInContextModuleElementTrace extends IModuleElementTrace {
      */
     IInContextModuleElementTraceHasParentTrace parentTrace();
                 
+
 }

@@ -12,6 +12,7 @@
 package org.eclipse.epsilon.base.incremental.trace;
 
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;    
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;    
 
 /**
  * An AllInstancesAccess denotes access to all elemens of a given type/kind. This 
@@ -49,4 +50,5 @@ public interface IAllInstancesAccess extends IAccess {
      */
     public boolean sameIdentityAs(final IAllInstancesAccess other);
     
+
 }

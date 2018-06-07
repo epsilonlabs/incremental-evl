@@ -58,7 +58,7 @@ public class AllInstancesAccess implements IAllInstancesAccess {
      */    
     public AllInstancesAccess(boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
         this.ofKind = ofKind;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@2dcefb61 (name: type) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@4bdb9ebb (name: type) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.type = new AllInstancesAccessHasType(this);
         if (!this.type.create(type)) {
             throw new TraceModelDuplicateRelation();
@@ -98,7 +98,6 @@ public class AllInstancesAccess implements IAllInstancesAccess {
     public IAllInstancesAccessHasType type() {
         return type;
     }
-
 
     @Override
     public boolean sameIdentityAs(final IAllInstancesAccess other) {

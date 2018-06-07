@@ -57,7 +57,7 @@ public class ContextTrace implements IContextTrace {
     /**
 	 * The index.
 	 */
-    private Integer index;
+    private int index;
 
     /**
      * The guard.
@@ -87,14 +87,11 @@ public class ContextTrace implements IContextTrace {
      * Instantiates a new ContextTrace. The ContextTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ContextTrace(String kind, Integer index, IExecutionContext executionContext, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
+    public ContextTrace(String kind, int index, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
         this.kind = kind;
         this.index = index;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@f9c40f4 (name: executionContext) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@2fbb629d (name: executionContext) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.executionContext = new ContextModuleElementTraceHasExecutionContext(this);
-        if (!this.executionContext.create(executionContext)) {
-            throw new TraceModelDuplicateRelation();
-        }
         this.guard = new GuardedElementTraceHasGuard(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
         this.constraints = new ContextTraceHasConstraints(this);
@@ -121,7 +118,7 @@ public class ContextTrace implements IContextTrace {
     }
     
     @Override
-    public Integer getIndex() {
+    public int getIndex() {
         return index;
     }
     
@@ -144,7 +141,6 @@ public class ContextTrace implements IContextTrace {
     public IContextTraceHasConstraints constraints() {
         return constraints;
     }
-
 
     @Override
     public IGuardTrace createGuardTrace() throws EolIncrementalExecutionException {
@@ -203,7 +199,7 @@ public class ContextTrace implements IContextTrace {
     	    }
             try {
                 invariantTrace = this.constraints.get().stream()
-                    .filter(item -> item.getName().equals(name))
+                    .filter(item -> item.getName() == name)
                     .findFirst()
                     .get();
             } catch (NoSuchElementException ex) {
@@ -227,8 +223,8 @@ public class ContextTrace implements IContextTrace {
         } else if (!kind.equals(otherKind)) {
             return false;
         }
-        Integer index = getIndex();
-        Integer otherIndex = other.getIndex();
+        Integer index = Integer.valueOf(getIndex());
+        Integer otherIndex = Integer.valueOf(other.getIndex());
         if (index == null) {
             if (otherIndex != null)
                 return false;
@@ -264,6 +260,7 @@ public class ContextTrace implements IContextTrace {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((kind == null) ? 0 : kind.hashCode());
+        Integer index = Integer.valueOf(getIndex());
         result = prime * result + ((index == null) ? 0 : index.hashCode());
         result = prime * result + ((executionContext.get() == null) ? 0 : executionContext.get().hashCode());
         return result;

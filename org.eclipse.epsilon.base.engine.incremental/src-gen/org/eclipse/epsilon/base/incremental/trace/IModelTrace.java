@@ -72,8 +72,7 @@ public interface IModelTrace extends IIdElement {
     
     /** The ModelElementTrace Factory. */
     IModelElementTrace createModelElementTrace(String uri) throws EolIncrementalExecutionException;       
-   
     /** The ModelTypeTrace Factory. */
     IModelTypeTrace createModelTypeTrace(String name) throws EolIncrementalExecutionException;       
-   
+
 }

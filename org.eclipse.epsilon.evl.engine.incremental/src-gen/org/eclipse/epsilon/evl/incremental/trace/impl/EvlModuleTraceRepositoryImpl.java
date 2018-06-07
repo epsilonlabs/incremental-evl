@@ -17,15 +17,20 @@ import java.util.Set;
 
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
-
+import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceRepositoryImpl;
 /** protected region EvlModuleTraceRepositoryImplImports on begin **/
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 /** protected region EvlModuleTraceRepositoryImplImports end **/
 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EvlModuleTraceRepositoryImpl implements IEvlModuleTraceRepository {
+public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepositoryImpl<IEvlModuleTrace> implements IEvlModuleTraceRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(EvlModuleTraceRepositoryImpl.class);
     
@@ -65,6 +70,42 @@ public class EvlModuleTraceRepositoryImpl implements IEvlModuleTraceRepository {
     
     /** protected region IEvlModuleTraceRepositry on begin **/
     // Specialised search methods
+	@Override
+	public IEvlModuleTrace getEvlModuleTraceByIdentity(String source) {
+		// TODO Implement IEvlModuleTraceRepository.getEvlModuleTraceByIdentity
+		throw new UnsupportedOperationException("Unimplemented Method    IEvlModuleTraceRepository.getEvlModuleTraceByIdentity invoked.");
+	}
+
+	@Override
+	public IModuleExecutionTrace getModuleExecutionTraceByIdentity(String source) {
+		// TODO Implement IModuleExecutionTraceRepository<IEvlModuleTrace>.getModuleExecutionTraceByIdentity
+		throw new UnsupportedOperationException("Unimplemented Method    IModuleExecutionTraceRepository<IEvlModuleTrace>.getModuleExecutionTraceByIdentity invoked.");
+	}
+
+	@Override
+	public IPropertyTrace getPropertyTraceFor(IModuleExecutionTrace moduleExecutionTrace, String modelName,
+			String modelId, String elementId, String propertyName) {
+		// TODO Implement IModuleExecutionTraceRepository<IEvlModuleTrace>.getPropertyTraceFor
+		throw new UnsupportedOperationException("Unimplemented Method    IModuleExecutionTraceRepository<IEvlModuleTrace>.getPropertyTraceFor invoked.");
+	}
+
+	@Override
+	public IModelTypeTrace getTypeTraceFor(String modelName, String modelId, String typeName) {
+		// TODO Implement IModuleExecutionTraceRepository<IEvlModuleTrace>.getTypeTraceFor
+		throw new UnsupportedOperationException("Unimplemented Method    IModuleExecutionTraceRepository<IEvlModuleTrace>.getTypeTraceFor invoked.");
+	}
+
+	@Override
+	public IModelTrace getModelTraceFor(String name, String modelId) {
+		// TODO Implement IModuleExecutionTraceRepository<IEvlModuleTrace>.getModelTraceFor
+		throw new UnsupportedOperationException("Unimplemented Method    IModuleExecutionTraceRepository<IEvlModuleTrace>.getModelTraceFor invoked.");
+	}
+
+	@Override
+	public IModelElementTrace getModelElementTraceFor(String modelName, String modelId, String elementId) {
+		// TODO Implement IModuleExecutionTraceRepository<IEvlModuleTrace>.getModelElementTraceFor
+		throw new UnsupportedOperationException("Unimplemented Method    IModuleExecutionTraceRepository<IEvlModuleTrace>.getModelElementTraceFor invoked.");
+	}
 
     /** protected region IEvlModuleTraceRepositry end **/
 

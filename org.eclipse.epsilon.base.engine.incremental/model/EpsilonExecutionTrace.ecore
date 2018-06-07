@@ -55,8 +55,8 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A module element that is executed in a context (e.g. contex operation, Etl rule, &#xA;etc.)."/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="executionContext" lowerBound="1"
-        eType="#//ExecutionContext" containment="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="executionContext" eType="#//ExecutionContext"
+        containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="The execution context in which this module was executed. This is constitued&#xA;by the variables that define the context of the module element. In EVL this would&#xA;be ‘self’ (model element of the Context type) in ETL this would be the input (and &#xA;output variables). "/>
       </eAnnotations>

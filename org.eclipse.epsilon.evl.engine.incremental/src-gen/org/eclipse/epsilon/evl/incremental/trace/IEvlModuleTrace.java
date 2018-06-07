@@ -12,8 +12,16 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;    
+import org.eclipse.epsilon.base.incremental.trace.IElementAccess;    
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;    
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;    
+import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;    
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;    
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;    
+import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;    
+import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;    
+import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;    
 
 /**
  * A ModuleExecutionTrace represents the trace of the execution of a particular Epsilon module
@@ -27,9 +35,19 @@ public interface IEvlModuleTrace extends IModuleExecutionTrace {
      */
     public boolean sameIdentityAs(final IEvlModuleTrace other);
     
-   
-   
+    /** The ContextTrace Factory. */
+    IContextTrace createContextTrace(String kind, int index) throws EolIncrementalExecutionException;       
+
+    /** The ElementAccess Factory. */
+    IElementAccess createElementAccess(IModuleElementTrace executionTrace, IModelElementTrace element) throws EolIncrementalExecutionException;       
+
+    /** The AllInstancesAccess Factory. */
+    IAllInstancesAccess createAllInstancesAccess(boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type) throws EolIncrementalExecutionException;       
+
+    /** The PropertyAccess Factory. */
+    IPropertyAccess createPropertyAccess(IModuleElementTrace executionTrace, IPropertyTrace property) throws EolIncrementalExecutionException;       
+
     /** The ModelTrace Factory. */
     IModelTrace createModelTrace(String name, String uri) throws EolIncrementalExecutionException;       
-   
+
 }

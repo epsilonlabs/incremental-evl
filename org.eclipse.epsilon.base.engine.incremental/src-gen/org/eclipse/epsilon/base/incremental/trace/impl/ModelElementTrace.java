@@ -80,7 +80,6 @@ public class ModelElementTrace implements IModelElementTrace {
         return properties;
     }
 
-
     @Override
     public IPropertyTrace createPropertyTrace(String name) throws EolIncrementalExecutionException {
         IPropertyTrace propertyTrace = null;
@@ -94,7 +93,7 @@ public class ModelElementTrace implements IModelElementTrace {
     	    }
             try {
                 propertyTrace = this.properties.get().stream()
-                    .filter(item -> item.getName().equals(name))
+                    .filter(item -> item.getName() == name)
                     .findFirst()
                     .get();
             } catch (NoSuchElementException ex) {

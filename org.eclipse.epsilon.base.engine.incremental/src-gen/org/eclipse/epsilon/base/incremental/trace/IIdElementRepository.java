@@ -15,7 +15,7 @@ import org.eclipse.epsilon.base.incremental.execute.IRepository;
 /** protected region IIdElementRepositoryImports on begin **/
 /** protected region IIdElementRepositoryImports end **/
 
-public interface IIdElementRepository extends IRepository<IIdElement> {
+public interface IIdElementRepository<E extends IIdElement> extends IRepository<E> {
 
 /** protected region IIdElementRepositry on begin **/
     // Specialised search methods

@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;    
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;    
 
 /**
@@ -50,4 +51,5 @@ public interface IPropertyAccess extends IAccess {
      */
     public boolean sameIdentityAs(final IPropertyAccess other);
     
+
 }

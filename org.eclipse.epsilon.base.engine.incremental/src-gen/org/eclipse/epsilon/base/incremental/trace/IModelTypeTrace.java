@@ -35,4 +35,5 @@ public interface IModelTypeTrace extends IIdElement {
      */
     public boolean sameIdentityAs(final IModelTypeTrace other);
     
+
 }

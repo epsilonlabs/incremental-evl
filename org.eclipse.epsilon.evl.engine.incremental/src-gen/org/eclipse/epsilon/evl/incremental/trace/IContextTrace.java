@@ -12,10 +12,12 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.trace.IAccess;    
 import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;    
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;    
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;    
+import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;    
 
 /**
@@ -47,7 +49,7 @@ public interface IContextTrace extends IGuardedElementTrace, IContextModuleEleme
      * <!-- protected region index-getter-doc end --> 
      * @return the value of the '<em>index</em>' attribute.
      */
-    Integer getIndex();
+    int getIndex();
 
     /**
      * Returns the value of the '<em><b>constraints</b></em>' reference.
@@ -69,11 +71,9 @@ public interface IContextTrace extends IGuardedElementTrace, IContextModuleEleme
     
     /** The GuardTrace Factory. */
     IGuardTrace createGuardTrace() throws EolIncrementalExecutionException;       
-   
     /** The ExecutionContext Factory. */
     IExecutionContext createExecutionContext() throws EolIncrementalExecutionException;       
-   
     /** The InvariantTrace Factory. */
     IInvariantTrace createInvariantTrace(String name) throws EolIncrementalExecutionException;       
-   
+
 }

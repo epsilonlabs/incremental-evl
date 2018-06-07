@@ -67,7 +67,7 @@ public class SatisfiesTrace implements ISatisfiesTrace {
      * container and any attributes identified as indexes.
      */    
     public SatisfiesTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@26cecaa4 (name: invariant) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@24d3b0d8 (name: invariant) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.invariant = new SatisfiesTraceHasInvariant(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
         this.satisfiedInvariants = new SatisfiesTraceHasSatisfiedInvariants(this);
@@ -120,7 +120,6 @@ public class SatisfiesTrace implements ISatisfiesTrace {
         return null;
         /** protected region parentTrace end **/
     }
-
 
     @Override
     public boolean sameIdentityAs(final ISatisfiesTrace other) {

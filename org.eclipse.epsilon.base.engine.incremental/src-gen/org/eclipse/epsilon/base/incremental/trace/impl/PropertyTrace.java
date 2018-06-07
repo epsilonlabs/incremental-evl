@@ -64,7 +64,6 @@ public class PropertyTrace implements IPropertyTrace {
         return name;
     }
     
-
     @Override
     public boolean sameIdentityAs(final IPropertyTrace other) {
         if (other == null) {

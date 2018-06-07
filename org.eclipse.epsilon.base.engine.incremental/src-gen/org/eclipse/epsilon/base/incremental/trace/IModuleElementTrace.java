@@ -28,4 +28,5 @@ public interface IModuleElementTrace extends IIdElement {
      */
     IModuleElementTraceHasAccesses accesses();
                 
+
 }

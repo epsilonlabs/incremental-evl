@@ -60,7 +60,7 @@ public class GuardTrace implements IGuardTrace {
      * container and any attributes identified as indexes.
      */    
     public GuardTrace(IGuardedElementTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@7a569611 (name: limits) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@59397d17 (name: limits) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.limits = new GuardTraceHasLimits(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
 
@@ -107,7 +107,6 @@ public class GuardTrace implements IGuardTrace {
         return null;
         /** protected region parentTrace end **/
     }
-
 
     @Override
     public boolean sameIdentityAs(final IGuardTrace other) {

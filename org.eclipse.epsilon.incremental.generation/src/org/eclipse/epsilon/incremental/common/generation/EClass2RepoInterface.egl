@@ -9,17 +9,43 @@
  * Contributors:
  *     Horacio Hoyos Rodriguez - initial API and implementation
  ******************************************************************************/
-import "Ecore2JavaTemplates.egl";  
+import "Ecore2JavaTemplates.egl";
 %]
 [%=getHeader()%]
 package [%=qp%].trace;
 
+[%var superClass = "";
+var name = "";
+if (ec.getESuperTypes().isEmpty) {
+    superClass = "IRepository<E>";
+    name = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<E extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";%]
 import org.eclipse.epsilon.base.incremental.execute.IRepository;
+[%}
+else {
+    superClass = ec.getESuperTypes().first();
+    var erqp = superClass.getCorrectPackage(qp+".trace", ec);%]
+import [%=erqp%].[%="I" + superClass.name + "Repository"%];
+[%  if (ec.getEAllSubclasses().isEmpty()) {
+        if (ec.isAbstract) {
+            superClass = "I" + superClass.name + "Repository<E>";
+            name = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<E extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+        }
+        else {    
+            superClass = "I" + superClass.name + "Repository<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+            name = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository";
+        }
+    }
+    else {
+        superClass = "I" + superClass.name + "Repository<E>";
+        name = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<E extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+    }
+}
+%]
 [%=out.startPreserve("/**", "**/", ec.getJavaInterfaceName(interPrefix, interSufix) + "RepositoryImports", true)%]
 
 [%=out.stopPreserve()%]
 
-public interface [%=ec.getJavaInterfaceName(interPrefix, interSufix)%]Repository extends IRepository<[%=ec.getJavaInterfaceName(interPrefix, interSufix)%]> {
+public interface [%=name%] extends [%=superClass%] {
 [%
 var ids = ec.getIndexAttributes();
 if (not ids.isEmpty()) {%]

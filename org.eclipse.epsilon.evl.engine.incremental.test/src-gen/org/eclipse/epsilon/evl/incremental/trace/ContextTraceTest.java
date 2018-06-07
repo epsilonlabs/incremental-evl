@@ -49,8 +49,6 @@ public class ContextTraceTest {
         
         ModuleExecutionTraceHasModuleElements containerReference = new ModuleExecutionTraceHasModuleElements(containerMock);
         when(containerMock.moduleElements()).thenReturn(containerReference);
-        IExecutionContext _executionContext = mock(IExecutionContext.class);
-                
         // protected region ContextTraceInit on begin
         // Default init parameters can be modified
         classUnderTest = new ContextTrace("kind1", 1, _executionContext, containerMock);                    

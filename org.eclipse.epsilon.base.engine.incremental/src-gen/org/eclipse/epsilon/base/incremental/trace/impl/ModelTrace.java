@@ -106,7 +106,6 @@ public class ModelTrace implements IModelTrace {
         return types;
     }
 
-
     @Override
     public IModelElementTrace createModelElementTrace(String uri) throws EolIncrementalExecutionException {
         IModelElementTrace modelElementTrace = null;
@@ -120,7 +119,7 @@ public class ModelTrace implements IModelTrace {
     	    }
             try {
                 modelElementTrace = this.elements.get().stream()
-                    .filter(item -> item.getUri().equals(uri))
+                    .filter(item -> item.getUri() == uri)
                     .findFirst()
                     .get();
             } catch (NoSuchElementException ex) {
@@ -144,7 +143,7 @@ public class ModelTrace implements IModelTrace {
     	    }
             try {
                 modelTypeTrace = this.types.get().stream()
-                    .filter(item -> item.getName().equals(name))
+                    .filter(item -> item.getName() == name)
                     .findFirst()
                     .get();
             } catch (NoSuchElementException ex) {

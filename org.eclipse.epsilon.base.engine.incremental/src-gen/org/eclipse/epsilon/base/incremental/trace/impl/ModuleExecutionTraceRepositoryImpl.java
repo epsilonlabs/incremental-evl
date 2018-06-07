@@ -17,7 +17,6 @@ import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
-
 /** protected region ModuleExecutionTraceRepositoryImplImports on begin **/
 /** protected region ModuleExecutionTraceRepositoryImplImports end **/
 
@@ -25,7 +24,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepositor
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ModuleExecutionTraceRepositoryImpl implements IModuleExecutionTraceRepository {
+public abstract class ModuleExecutionTraceRepositoryImpl<E extends IModuleExecutionTrace> implements IModuleExecutionTraceRepository<E> {
 
     private static final Logger logger = LoggerFactory.getLogger(ModuleExecutionTraceRepositoryImpl.class);
     
@@ -45,22 +44,6 @@ public abstract class ModuleExecutionTraceRepositoryImpl implements IModuleExecu
     public boolean remove(IModuleExecutionTrace item) {
         logger.info("Removing {} from repository", item);
         return extent.remove(item);
-    }
-    
-    @Override
-    public IModuleExecutionTrace get(Object id) {
-        
-        logger.debug("Get ModuleExecutionTrace with id:{}", id);
-        IModuleExecutionTrace  result = null;
-        try {
-            result = extent.stream()
-                    .filter(item -> item.getId().equals(id))
-                    .findFirst()
-                    .get();
-        } catch (NoSuchElementException  e) {
-            // No info about the ModelTrace
-        }
-        return result;
     }
     
     /** protected region IModuleExecutionTraceRepositry on begin **/

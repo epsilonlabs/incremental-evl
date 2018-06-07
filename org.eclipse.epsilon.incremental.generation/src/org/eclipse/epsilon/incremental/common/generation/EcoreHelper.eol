@@ -48,15 +48,15 @@ operation EClass getRequiredImports(basePackage:String, interPrefix:String, inte
     var imports : Set;
     var eas;
     var ers;
-    if (not flatten) {
-        eas = self.getEAttributes();
-        ers = self.getEReferences();
-    }
-    else {
+    //if (not flatten) {
+    //    eas = self.getEAttributes();
+    //    ers = self.getEReferences();
+    //}
+    //else {
         //self.name.println("EAllFeatures ");
         eas = self.getEAllAttributes();
         ers = self.getEAllReferences();
-    }
+    //}
     for (ea in eas) {
         imports.addAll(ea.getImports(isImpl));
     }
@@ -67,8 +67,12 @@ operation EClass getRequiredImports(basePackage:String, interPrefix:String, inte
         //var erqp = basePackage.replace("." + self.getEPackage().name + ".", "." + pack + ".");
         if (er.isContainment()) {
             if (type.isAbstract()) {
-                var subClasses = er.getEReferenceType().getEAllSubclasses().select(sc |
-                        not EReference.all().exists(er | er.isContainer and not (er.getEReferenceType() == sc)));
+                var subClasses = er.getEReferenceType().getEAllSubclasses()
+		                .select(sc | not sc.isAbstract() and
+		                    not EReference.all().exists(aller |
+		                    (aller.getEReferenceType() == sc) and 
+		                    aller.isContainment)
+		                );
 		        for (sc in subClasses) {
 		            erqp = sc.getCorrectPackage(basePackage, self);
 		            imports.add(erqp + "." + sc.getJavaInterfaceName(interPrefix, interSufix));
@@ -124,38 +128,6 @@ operation EClass getRequiredImports(basePackage:String, interPrefix:String, inte
             }
             else {
                 imports.add(basePackage + ".impl." + er.getRelationJavaClassName(classPrefix, classSufix));
-            }
-        }
-    }
-    for (er in self.getEAllReferences().select(er | er.isContainment())) {
-        var type = er.getEReferenceType();
-        //basePackage.println("factory types ");
-        var erqp = type.getCorrectPackage(basePackage, self);
-        if (type.isAbstract()) {
-            var subClasses = er.getEReferenceType().getEAllSubclasses().select(sc |
-                        not EReference.all().exists(er | er.isContainer and not (er.getEReferenceType() == sc)));
-            for (sc in subClasses) {
-                erqp = sc.getCorrectPackage(basePackage, self);
-                if (not sc.isAbstract()) {
-	                imports.add(erqp + "." + sc.getJavaInterfaceName(interPrefix, interSufix));
-	                if (isImpl) {
-	                    imports.add(erqp + ".impl." + sc.getJavaClassName(classPrefix, classSufix));
-	                }
-	            }
-                // Add imports for the constructor 
-                for (ea in sc.getIndexAttributes()) {
-                   imports.addAll(ea.getImports(isImpl));
-                }
-                for (er in sc.getRequiredFeatures()) {
-                   var rferqp = er.getEReferenceType().getCorrectPackage(basePackage, self);
-                   imports.add(rferqp + "." + er.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix));
-                }
-            }
-        }
-        else {
-            imports.add(erqp + "." + type.getJavaInterfaceName(interPrefix, interSufix));
-            if (isImpl) {
-                imports.add(erqp + ".impl." + type.getJavaClassName(classPrefix, classSufix));
             }
         }
     }
@@ -235,12 +207,21 @@ operation EStructuralFeature getRequiredImports(isImpl:Boolean) : Set {
 
 operation EAttribute getImports(isImpl : Boolean) : Set {
     var result = new Set();
-    var dataTypeName = self.getEAttributeType().getInstanceTypeName();
-    if (not dataTypeName.startsWith("java.lang.") and ".".isSubstringOf(dataTypeName)) {
+    var dataTypeName = self.getEAttributeType().name;
+    if (not isJavaPrimitiveType(dataTypeName)) {
         result.add(dataTypeName);
     }
     result.addAll(self.getRequiredImports(isImpl));
     return result;
+}
+
+operation isJavaPrimitiveType(ecorePrimitive : String) : Boolean {
+    return getEcorePrimitives().exists(jp | jp.isSubstringOf(ecorePrimitive)); 
+}
+
+@cached
+operation getEcorePrimitives() {
+    return Sequence {"EJavaObject", "AnyURI", "Byte", "Short", "Int", "Long", "Float", "Double", "Character", "Boolean", "String"};
 }
 
 /**
