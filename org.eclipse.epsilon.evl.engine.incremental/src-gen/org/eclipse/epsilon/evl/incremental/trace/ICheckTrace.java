@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-06-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,19 +11,26 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
-import org.eclipse.epsilon.base.incremental.trace.INestedModuleElementTrace;    
+import org.eclipse.epsilon.base.incremental.trace.IInContextModuleElementTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;    
 
 /**
- * The CheckTrace defines the access methods for the EClass features.
- * Additionally, the ICheckTrace acts as the root entity of the AGGREGATE of its
- * container references. That is, elements contained in the CheckTrace must be
- * created through this interface.
+ * A ModuleElementTrace represents the trace of the execution of a particular element of 
+ * an Epsilon module (e.g. Eol, Etl, etc.). The ModuleElementTrace containts information
+ * about the different types of accesses that occured during its execution.
  */
-public interface ICheckTrace extends INestedModuleElementTrace {
+public interface ICheckTrace extends IInContextModuleElementTrace {
 
-
-    /** The invariant reference. */
+    /**
+     * Returns the value of the '<em><b>invariant</b></em>' reference.
+     * <!-- protected region invariant-getter-doc on begin -->
+     * <p>
+     * If the meaning of the '<em>invariant</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
+     * </p>
+     * <!-- protected region invariant-getter-doc end --> 
+     * @return the value of the '<em>invariant</em>' reference.
+     */
     ICheckTraceHasInvariant invariant();
                 
  

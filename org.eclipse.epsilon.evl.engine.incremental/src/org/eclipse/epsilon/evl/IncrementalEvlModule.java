@@ -40,7 +40,7 @@ import org.eclipse.epsilon.evl.incremental.dom.TracedGuardBlock;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceRepository;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlModuleIncremental;
-import org.eclipse.epsilon.evl.incremental.execute.context.TracedEvlContext;
+import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
@@ -98,11 +98,11 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	protected IEvlModuleTrace evlModuleTrace;
 
 	/** The context. */
-	protected TracedEvlContext context;
+	protected IncrementalEvlContext context;
 	
 	public IncrementalEvlModule() {
 		super();
-		context = new TracedEvlContext();
+		context = new IncrementalEvlContext();
 	}
 	
 	@Override
@@ -167,7 +167,8 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		} catch (TraceModelDuplicateRelation e) {
 			throw new EolRuntimeException(e.getMessage());
 		}
-		IEvlExecutionTraceManager etManager = ((TracedEvlContext) context).getTraceManager();
+		IEvlExecutionTraceManager etManager = ((IncrementalEvlContext) context).getTraceManager();
+		
 		getContext().setEvlModuleTrace(evlModuleTrace);
 		logger.info("Adding execution listeners");
 		context.getExecutorFactory().addExecutionListener(etManager.getAllInstancesAccessListener());
@@ -206,7 +207,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	}
 
 	@Override
-	public TracedEvlContext getContext(){
+	public IncrementalEvlContext getContext(){
 		return context;
 	}
 	
@@ -269,7 +270,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	public void onCreate(IIncrementalModel model, Object newElement) {
 		
 		logger.info("On Craete event for {}", newElement);
-		IEvlExecutionTraceManager  etManager = ((TracedEvlContext) context).getTraceManager();
+		IEvlExecutionTraceManager  etManager = ((IncrementalEvlContext) context).getTraceManager();
 		// Do we need to execute the pre blocks to restore context?
 		//logger.info("Executing pre{}");
 		//execute(getPre(), context);

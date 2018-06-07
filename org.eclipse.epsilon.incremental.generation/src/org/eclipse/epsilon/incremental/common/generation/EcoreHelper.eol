@@ -29,20 +29,20 @@ operation EReference getRelationJavaClassName(classPrefix:String, classSufix:Str
 // Get all EDataTypes that are not java.lang.* and all EClasses that are not
 // in the same pacakge. Assumes other packages are generated in the same
 // base package
-operation EClass getRequriedImports(basePackage:String, interPrefix:String, interSufix:String,
+operation EClass getRequiredImports(basePackage:String, interPrefix:String, interSufix:String,
                                     classPrefix:String, classSufix:String) : Sequence {
-    return self.getRequriedImports(basePackage, interPrefix, interSufix, classPrefix, classSufix, false);
+    return self.getRequiredImports(basePackage, interPrefix, interSufix, classPrefix, classSufix, false);
 }
 /**
  * If isImpl is True, it will also add concrete implementations of the collections imports
  */
-operation EClass getRequriedImports(basePackage:String, interPrefix:String, interSufix:String,
+operation EClass getRequiredImports(basePackage:String, interPrefix:String, interSufix:String,
                                     classPrefix:String, classSufix:String,
                                     isImpl:Boolean) : Sequence {
-    return self.getRequriedImports(basePackage, interPrefix, interSufix, classPrefix, classSufix, false, false);
+    return self.getRequiredImports(basePackage, interPrefix, interSufix, classPrefix, classSufix, false, false);
 }
 
-operation EClass getRequriedImports(basePackage:String, interPrefix:String, interSufix:String,
+operation EClass getRequiredImports(basePackage:String, interPrefix:String, interSufix:String,
                                     classPrefix:String, classSufix:String, isImpl:Boolean,
                                     flatten:Boolean) : Sequence {
     var imports : Set;
@@ -67,7 +67,8 @@ operation EClass getRequriedImports(basePackage:String, interPrefix:String, inte
         //var erqp = basePackage.replace("." + self.getEPackage().name + ".", "." + pack + ".");
         if (er.isContainment()) {
             if (type.isAbstract()) {
-                var subClasses = er.getEReferenceType().getEAllSubclasses();
+                var subClasses = er.getEReferenceType().getEAllSubclasses().select(sc |
+                        not EReference.all().exists(er | er.isContainer and not (er.getEReferenceType() == sc)));
 		        for (sc in subClasses) {
 		            erqp = sc.getCorrectPackage(basePackage, self);
 		            imports.add(erqp + "." + sc.getJavaInterfaceName(interPrefix, interSufix));
@@ -131,7 +132,8 @@ operation EClass getRequriedImports(basePackage:String, interPrefix:String, inte
         //basePackage.println("factory types ");
         var erqp = type.getCorrectPackage(basePackage, self);
         if (type.isAbstract()) {
-            var subClasses = er.getEReferenceType().getEAllSubclasses();
+            var subClasses = er.getEReferenceType().getEAllSubclasses().select(sc |
+                        not EReference.all().exists(er | er.isContainer and not (er.getEReferenceType() == sc)));
             for (sc in subClasses) {
                 erqp = sc.getCorrectPackage(basePackage, self);
                 if (not sc.isAbstract()) {

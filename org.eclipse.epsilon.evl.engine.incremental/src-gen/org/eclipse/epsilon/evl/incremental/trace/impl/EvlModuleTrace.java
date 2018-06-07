@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-06-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,30 +18,47 @@ import java.util.NoSuchElementException;
 /** protected region EvlModuleTraceImports on begin **/
 /** protected region EvlModuleTraceImports end **/
 
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.IModuleTraceHasExecutionContexts;
-import org.eclipse.epsilon.base.incremental.trace.IModuleTraceHasRuleTraces;
-import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModuleTraceHasExecutionContexts;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModuleTraceHasRuleTraces;
+import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceHasModels;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceHasModuleElements;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasModels;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasModuleElements;
 
 /**
  * Implementation of IEvlModuleTrace. 
  */
 public class EvlModuleTrace implements IEvlModuleTrace {
 
-    /** The id */
+    /**
+	 * The id.
+	 */
     private Object id;
 
-    /** The source */
+    /**
+	 * The source.
+	 */
     private String source;
 
-    /** The ruleTraces relation */
-    private final IModuleTraceHasRuleTraces ruleTraces;
+    /**
+     * * The module elements that conform the module.
+       * Each language shoud specialize this class to represent the structure of its AST.
+     */
+    private final IModuleExecutionTraceHasModuleElements moduleElements;
 
-    /** The executionContexts relation */
-    private final IModuleTraceHasExecutionContexts executionContexts;
+    /**
+     * * The different accesses that where recorded during execution.
+     */
+    private final IModuleExecutionTraceHasAccesses accesses;
+
+    /**
+     * * The different models involved in the execution
+     */
+    private final IModuleExecutionTraceHasModels models;
 
     /**
      * Instantiates a new EvlModuleTrace. The EvlModuleTrace is uniquely identified by its
@@ -49,10 +66,9 @@ public class EvlModuleTrace implements IEvlModuleTrace {
      */    
     public EvlModuleTrace(String source) throws TraceModelDuplicateRelation {
         this.source = source;
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@145da888 (name: ruleTraces) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
-        this.ruleTraces = new ModuleTraceHasRuleTraces(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@4724ac67 (name: executionContexts) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
-        this.executionContexts = new ModuleTraceHasExecutionContexts(this);
+        this.moduleElements = new ModuleExecutionTraceHasModuleElements(this);
+        this.accesses = new ModuleExecutionTraceHasAccesses(this);
+        this.models = new ModuleExecutionTraceHasModels(this);
 
     }
     
@@ -73,16 +89,48 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     }
     
     @Override
-    public IModuleTraceHasRuleTraces ruleTraces() {
-        return ruleTraces;
+    public IModuleExecutionTraceHasModuleElements moduleElements() {
+        return moduleElements;
     }
 
     @Override
-    public IModuleTraceHasExecutionContexts executionContexts() {
-        return executionContexts;
+    public IModuleExecutionTraceHasAccesses accesses() {
+        return accesses;
+    }
+
+    @Override
+    public IModuleExecutionTraceHasModels models() {
+        return models;
     }
 
 
+                  
+                  
+    @Override
+    public IModelTrace createModelTrace(String name, String uri) throws EolIncrementalExecutionException {
+        IModelTrace modelTrace = null;
+        try {
+            modelTrace = new ModelTrace(name, uri, this);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (modelTrace != null) {
+    	        return modelTrace;
+    	    }
+            try {
+                modelTrace = this.models.get().stream()
+                    .filter(item -> item.getName().equals(name))
+                    .filter(item -> item.getUri().equals(uri))
+                    .findFirst()
+                    .get();
+            } catch (NoSuchElementException ex) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelTrace was "
+                        + "duplicate but previous one was not found.");
+            }
+        }
+        return modelTrace;
+    }      
+                  
     @Override
     public boolean sameIdentityAs(final IEvlModuleTrace other) {
         if (other == null) {

@@ -21,7 +21,7 @@ package [%=qp%].trace;
 [%if (ec.getEAllReferences().exists(er | er.isContainment())){%]
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 [%}
-for (imp in ec.getRequriedImports(qp+".trace", interPrefix, interSufix, classPrefix, classSufix)) {%]
+for (imp in ec.getRequiredImports(qp+".trace", interPrefix, interSufix, classPrefix, classSufix)) {%]
 import [%=imp%];    
 [%}%]
 
@@ -68,14 +68,17 @@ for (er in ec.getEReferences()) {%]
 [%}%]
 [%/* Factory Methods
  * If the EReferenceType is abstract, we add factory methods for each of the subclasses of the
- * EReferenceType. We only look for classes in the EClass Package
+ * EReferenceType. We only add subclasses that are not contained elsewhere. We only look
+ for classes in the EClass Package
  */
 for (er in ec.getEAllReferences().select(er | er.isContainment())) {
     if (not er.getEReferenceType().isAbstract()) {%]
     [%=er.getEReferenceType().factorySignature(interPrefix, interSufix)%]
 [%  } else {
         var subClasses = er.getEReferenceType().getEAllSubclasses()
-            .select(sc | (sc.getEPackage() == ec.getEPackage()) and not sc.isAbstract());
+            .select(sc | (sc.getEPackage() == ec.getEPackage()) and
+                not sc.isAbstract() and
+                not EReference.all().exists(er | er.isContainer and not (er.getEReferenceType() == ec)));
         for (sc in subClasses) {%]
     [%=sc.factorySignature(interPrefix, interSufix)%]
             

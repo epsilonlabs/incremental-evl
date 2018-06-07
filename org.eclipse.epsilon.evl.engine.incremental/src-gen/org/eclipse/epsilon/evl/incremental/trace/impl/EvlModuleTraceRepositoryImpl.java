@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-06-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,8 +18,8 @@ import java.util.Set;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 
-/** protected region EvlModuleTraceImports on begin **/
-/** protected region EvlModuleTraceImports end **/
+/** protected region EvlModuleTraceRepositoryImplImports on begin **/
+/** protected region EvlModuleTraceRepositoryImplImports end **/
 
 
 import org.slf4j.Logger;
@@ -62,5 +62,10 @@ public class EvlModuleTraceRepositoryImpl implements IEvlModuleTraceRepository {
         }
         return result;
     }
+    
+    /** protected region IEvlModuleTraceRepositry on begin **/
+    // Specialised search methods
+
+    /** protected region IEvlModuleTraceRepositry end **/
 
 }

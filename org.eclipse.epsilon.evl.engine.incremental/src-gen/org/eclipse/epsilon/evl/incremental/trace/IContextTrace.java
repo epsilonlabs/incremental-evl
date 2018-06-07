@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-06-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,43 +12,53 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;    
+import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;    
+import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;    
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;    
 
 /**
- * The ContextTrace defines the access methods for the EClass features.
- * Additionally, the IContextTrace acts as the root entity of the AGGREGATE of its
- * container references. That is, elements contained in the ContextTrace must be
- * created through this interface.
+ * A ModuleElementTrace represents the trace of the execution of a particular element of 
+ * an Epsilon module (e.g. Eol, Etl, etc.). The ModuleElementTrace containts information
+ * about the different types of accesses that occured during its execution.
  */
-public interface IContextTrace extends IGuardedElementTrace, IRuleTrace {
-
+public interface IContextTrace extends IGuardedElementTrace, IContextModuleElementTrace {
+    
     /**
-     * Returns the value of the '<em><b>Kind</b></em>' attribute.
+     * Returns the value of the '{@link ContextTrace#kind <em>kind</em>}' attribute.
      * <!-- protected region kind-getter-doc on begin -->
      * <p>
-     * If the meaning of the '<em>Kind</em>' attribute isn't clear,
-     * there really should be more of a description here...
+     * If the meaning of the '<em>kind</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
      * </p>
      * <!-- protected region kind-getter-doc end --> 
-     * @return the value of the '<em>Kind</em>' attribute.
+     * @return the value of the '<em>kind</em>' attribute.
      */
-    String getKind();            
+    String getKind();
+    
     /**
-     * Returns the value of the '<em><b>Index</b></em>' attribute.
+     * Returns the value of the '{@link ContextTrace#index <em>index</em>}' attribute.
      * <!-- protected region index-getter-doc on begin -->
      * <p>
-     * If the meaning of the '<em>Index</em>' attribute isn't clear,
-     * there really should be more of a description here...
+     * If the meaning of the '<em>index</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
      * </p>
      * <!-- protected region index-getter-doc end --> 
-     * @return the value of the '<em>Index</em>' attribute.
+     * @return the value of the '<em>index</em>' attribute.
      */
-    Integer getIndex();            
+    Integer getIndex();
 
-    /** The constraints reference. */
+    /**
+     * Returns the value of the '<em><b>constraints</b></em>' reference.
+     * <!-- protected region constraints-getter-doc on begin -->
+     * <p>
+     * If the meaning of the '<em>constraints</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
+     * </p>
+     * <!-- protected region constraints-getter-doc end --> 
+     * @return the value of the '<em>constraints</em>' reference.
+     */
     IContextTraceHasConstraints constraints();
                 
  
@@ -59,6 +69,9 @@ public interface IContextTrace extends IGuardedElementTrace, IRuleTrace {
     
     /** The GuardTrace Factory. */
     IGuardTrace createGuardTrace() throws EolIncrementalExecutionException;       
+   
+    /** The ExecutionContext Factory. */
+    IExecutionContext createExecutionContext() throws EolIncrementalExecutionException;       
    
     /** The InvariantTrace Factory. */
     IInvariantTrace createInvariantTrace(String name) throws EolIncrementalExecutionException;       

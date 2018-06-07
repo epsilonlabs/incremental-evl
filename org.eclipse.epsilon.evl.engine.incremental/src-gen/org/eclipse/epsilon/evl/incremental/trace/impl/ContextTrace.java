@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-06-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,14 +21,13 @@ import java.util.NoSuchElementException;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
+import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTraceHasExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
-import org.eclipse.epsilon.base.incremental.trace.IRuleTraceHasExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.IRuleTraceHasModule;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.ContextModuleElementTraceHasExecutionContext;
+import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.impl.RuleTraceHasExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.impl.RuleTraceHasModule;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTraceHasConstraints;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
@@ -45,54 +44,64 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTrace;
  */
 public class ContextTrace implements IContextTrace {
 
-    /** The id */
+    /**
+	 * The id.
+	 */
     private Object id;
 
-    /** The kind */
+    /**
+	 * The kind.
+	 */
     private String kind;
 
-    /** The index */
+    /**
+	 * The index.
+	 */
     private Integer index;
 
-    /** The guard relation */
+    /**
+     * The guard.
+     */
     private final IGuardedElementTraceHasGuard guard;
 
-    /** The accesses relation */
+    /**
+     * * The different accesses that where recorded during execution for this particular 
+       * module element.
+     */
     private final IModuleElementTraceHasAccesses accesses;
 
-    /** The module relation */
-    private final IRuleTraceHasModule module;
+    /**
+     * * The execution context in which this module was executed. This is constitued
+       * by the variables that define the context of the module element. In EVL this would
+       * be ‘self’ (model element of the Context type) in ETL this would be the input (and 
+       * output variables). 
+     */
+    private final IContextModuleElementTraceHasExecutionContext executionContext;
 
-    /** The executionContext relation */
-    private final IRuleTraceHasExecutionContext executionContext;
-
-    /** The constraints relation */
+    /**
+     * The constraints.
+     */
     private final IContextTraceHasConstraints constraints;
 
     /**
      * Instantiates a new ContextTrace. The ContextTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ContextTrace(String kind, Integer index, IModuleTrace module, IExecutionContext executionContext) throws TraceModelDuplicateRelation {
+    public ContextTrace(String kind, Integer index, IExecutionContext executionContext, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
         this.kind = kind;
         this.index = index;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@18766d70 (name: executionContext) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
-        this.executionContext = new RuleTraceHasExecutionContext(this);
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@f9c40f4 (name: executionContext) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        this.executionContext = new ContextModuleElementTraceHasExecutionContext(this);
         if (!this.executionContext.create(executionContext)) {
             throw new TraceModelDuplicateRelation();
         }
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@227793be (name: module) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
-        this.module = new RuleTraceHasModule(this);
-        if (!this.module.create(module)) {
-            throw new TraceModelDuplicateRelation();
-        }
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@2b8d49f5 (name: guard) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.guard = new GuardedElementTraceHasGuard(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@4044e6e1 (name: accesses) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: false)
         this.accesses = new ModuleElementTraceHasAccesses(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@58414a22 (name: constraints) (ordered: true, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: false)
         this.constraints = new ContextTraceHasConstraints(this);
 
+        if (!container.moduleElements().create(this)) {
+            throw new TraceModelDuplicateRelation();
+        };
     }
     
     @Override
@@ -127,12 +136,7 @@ public class ContextTrace implements IContextTrace {
     }
 
     @Override
-    public IRuleTraceHasModule module() {
-        return module;
-    }
-
-    @Override
-    public IRuleTraceHasExecutionContext executionContext() {
+    public IContextModuleElementTraceHasExecutionContext executionContext() {
         return executionContext;
     }
 
@@ -162,6 +166,26 @@ public class ContextTrace implements IContextTrace {
             }
         }
         return guardTrace;
+    }      
+                  
+    @Override
+    public IExecutionContext createExecutionContext() throws EolIncrementalExecutionException {
+        IExecutionContext executionContext = null;
+        try {
+            executionContext = new ExecutionContext(this);
+        } catch (TraceModelDuplicateRelation e) {
+            // Pass
+        } finally {
+    	    if (executionContext != null) {
+    	        return executionContext;
+    	    }
+            executionContext = this.executionContext.get();
+            if (executionContext  == null) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ExecutionContext was "
+                        + "duplicate but previous one was not found.");
+            }
+        }
+        return executionContext;
     }      
                   
     @Override
@@ -232,13 +256,6 @@ public class ContextTrace implements IContextTrace {
         if (!executionContext.get().equals(other.executionContext.get())) {
             return false;
         }
-        if (module.get() == null) {
-            if (other.module.get() != null)
-                return false;
-        }
-        if (!module.get().equals(other.module.get())) {
-            return false;
-        }
         return true; 
   }
 
@@ -249,7 +266,6 @@ public class ContextTrace implements IContextTrace {
         result = prime * result + ((kind == null) ? 0 : kind.hashCode());
         result = prime * result + ((index == null) ? 0 : index.hashCode());
         result = prime * result + ((executionContext.get() == null) ? 0 : executionContext.get().hashCode());
-        result = prime * result + ((module.get() == null) ? 0 : module.get().hashCode());
         return result;
     }
 }

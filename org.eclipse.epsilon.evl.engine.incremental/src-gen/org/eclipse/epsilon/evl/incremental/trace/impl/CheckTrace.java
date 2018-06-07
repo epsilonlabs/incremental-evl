@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-06-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,11 +20,11 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
+import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IInContextModuleElementTraceHasParentTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.INestedModuleElementTraceHasParentTrace;
-import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.InContextModuleElementTraceHasParentTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.impl.NestedModuleElementTraceHasParentTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTraceHasInvariant;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.CheckTraceHasInvariant;
@@ -34,13 +34,20 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.CheckTraceHasInvariant;
  */
 public class CheckTrace implements ICheckTrace {
 
-    /** The id */
+    /**
+	 * The id.
+	 */
     private Object id;
 
-    /** The accesses relation */
+    /**
+     * * The different accesses that where recorded during execution for this particular 
+       * module element.
+     */
     private final IModuleElementTraceHasAccesses accesses;
 
-    /** The invariant relation */
+    /**
+     * The invariant.
+     */
     private final ICheckTraceHasInvariant invariant;
 
     /**
@@ -48,9 +55,8 @@ public class CheckTrace implements ICheckTrace {
      * container and any attributes identified as indexes.
      */    
     public CheckTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@4fa03ec3 (name: invariant) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@616af88b (name: invariant) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.invariant = new CheckTraceHasInvariant(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@4044e6e1 (name: accesses) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: false)
         this.accesses = new ModuleElementTraceHasAccesses(this);
 
         if (!container.check().create(this)) {
@@ -80,9 +86,9 @@ public class CheckTrace implements ICheckTrace {
     }
 
     @Override
-    public INestedModuleElementTraceHasParentTrace parentTrace() {
+    public IInContextModuleElementTraceHasParentTrace parentTrace() {
         /** protected region parentTrace on begin **/
-    		return invariant.get().parentTrace();
+        return null;
         /** protected region parentTrace end **/
     }
 

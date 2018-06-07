@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-06-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,39 +11,50 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
-import org.eclipse.epsilon.base.incremental.trace.INestedModuleElementTrace;    
+import org.eclipse.epsilon.base.incremental.trace.IInContextModuleElementTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;    
 
 /**
- * The GuardTrace defines the access methods for the EClass features.
- * Additionally, the IGuardTrace acts as the root entity of the AGGREGATE of its
- * container references. That is, elements contained in the GuardTrace must be
- * created through this interface.
+ * A ModuleElementTrace represents the trace of the execution of a particular element of 
+ * an Epsilon module (e.g. Eol, Etl, etc.). The ModuleElementTrace containts information
+ * about the different types of accesses that occured during its execution.
  */
-public interface IGuardTrace extends INestedModuleElementTrace {
-
+public interface IGuardTrace extends IInContextModuleElementTrace {
+    
     /**
-     * Returns the value of the '<em><b>Result</b></em>' attribute.
+     * Returns the value of the '{@link GuardTrace#result <em>result</em>}' attribute.
      * <!-- protected region result-getter-doc on begin -->
      * <p>
-     * If the meaning of the '<em>Result</em>' attribute isn't clear,
-     * there really should be more of a description here...
+     * If the meaning of the '<em>result</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
      * </p>
      * <!-- protected region result-getter-doc end --> 
-     * @return the value of the '<em>Result</em>' attribute.
+     * @return the value of the '<em>result</em>' attribute.
      */
-    boolean getResult();    
+    boolean getResult();
 
     /**
-     * Sets the value of the '{@link GuardTrace#Result <em>Result</em>}' attribute.
+     * Sets the value of the '{@link GuardTrace#result <em>result</em>}' attribute.
      * <!-- protected region result-setter-doc on begin -->
+     * <p>
+     * If the meaning of the '<em>result</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
+     * </p>
      * <!-- protected region result-setter-doc end --> 
-     * @param value the new value of the '<em>Result/em>' attribute.
+     * @param value the new value of the '<em>result</em>' attribute.
      */
     void setResult(boolean value);
-            
 
-    /** The limits reference. */
+    /**
+     * Returns the value of the '<em><b>limits</b></em>' reference.
+     * <!-- protected region limits-getter-doc on begin -->
+     * <p>
+     * If the meaning of the '<em>limits</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
+     * </p>
+     * <!-- protected region limits-getter-doc end --> 
+     * @return the value of the '<em>limits</em>' reference.
+     */
     IGuardTraceHasLimits limits();
                 
  

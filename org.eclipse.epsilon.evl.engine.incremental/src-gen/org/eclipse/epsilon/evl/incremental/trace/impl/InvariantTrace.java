@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-06-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,11 +21,11 @@ import java.util.NoSuchElementException;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
+import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IInContextModuleElementTraceHasParentTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.INestedModuleElementTraceHasParentTrace;
-import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.InContextModuleElementTraceHasParentTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.impl.NestedModuleElementTraceHasParentTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
@@ -53,31 +53,50 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.SatisfiesTrace;
  */
 public class InvariantTrace implements IInvariantTrace {
 
-    /** The id */
+    /**
+	 * The id.
+	 */
     private Object id;
 
-    /** The name */
+    /**
+	 * The name.
+	 */
     private String name;
 
-    /** The result */
+    /**
+	 * The result.
+	 */
     private boolean result;
 
-    /** The guard relation */
+    /**
+     * The guard.
+     */
     private final IGuardedElementTraceHasGuard guard;
 
-    /** The accesses relation */
+    /**
+     * * The different accesses that where recorded during execution for this particular 
+       * module element.
+     */
     private final IModuleElementTraceHasAccesses accesses;
 
-    /** The check relation */
+    /**
+     * The check.
+     */
     private final IInvariantTraceHasCheck check;
 
-    /** The message relation */
+    /**
+     * The message.
+     */
     private final IInvariantTraceHasMessage message;
 
-    /** The satisfies relation */
+    /**
+     * The satisfies.
+     */
     private final IInvariantTraceHasSatisfies satisfies;
 
-    /** The invariantContext relation */
+    /**
+     * The invariantContext.
+     */
     private final IInvariantTraceHasInvariantContext invariantContext;
 
     /**
@@ -86,17 +105,12 @@ public class InvariantTrace implements IInvariantTrace {
      */    
     public InvariantTrace(String name, IContextTrace container) throws TraceModelDuplicateRelation {
         this.name = name;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@5bf9f371 (name: invariantContext) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@697f43c0 (name: invariantContext) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.invariantContext = new InvariantTraceHasInvariantContext(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@2b8d49f5 (name: guard) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.guard = new GuardedElementTraceHasGuard(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@4044e6e1 (name: accesses) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: false)
         this.accesses = new ModuleElementTraceHasAccesses(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@6e3ffa1d (name: check) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.check = new InvariantTraceHasCheck(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@5a008092 (name: message) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.message = new InvariantTraceHasMessage(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@77376d92 (name: satisfies) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.satisfies = new InvariantTraceHasSatisfies(this);
 
         if (!container.constraints().create(this)) {
@@ -162,11 +176,9 @@ public class InvariantTrace implements IInvariantTrace {
     }
 
     @Override
-    public INestedModuleElementTraceHasParentTrace parentTrace() {
+    public IInContextModuleElementTraceHasParentTrace parentTrace() {
         /** protected region parentTrace on begin **/
-    	    INestedModuleElementTraceHasParentTrace result = new NestedModuleElementTraceHasParentTrace(this);
-    	    result.create(invariantContext.get());
-        return result;
+        return null;
         /** protected region parentTrace end **/
     }
 

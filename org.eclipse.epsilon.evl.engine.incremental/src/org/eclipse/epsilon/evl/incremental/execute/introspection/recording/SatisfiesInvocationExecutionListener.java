@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class SatisfiesInvocationExecutionListener implements IExecutionListener {
+public class SatisfiesInvocationExecutionListener implements IExecutionListener<IEolContext> {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SatisfiesInvocationExecutionListener.class);
 	

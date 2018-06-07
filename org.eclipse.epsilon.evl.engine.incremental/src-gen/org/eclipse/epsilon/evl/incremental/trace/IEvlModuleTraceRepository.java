@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-06-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,6 +16,8 @@ import org.eclipse.epsilon.base.incremental.execute.IRepository;
 /** protected region IEvlModuleTraceRepositoryImports end **/
 
 public interface IEvlModuleTraceRepository extends IRepository<IEvlModuleTrace> {
+
+    IEvlModuleTrace getEvlModuleTraceByIdentity(String source);
 
 /** protected region IEvlModuleTraceRepositry on begin **/
     // Specialised search methods

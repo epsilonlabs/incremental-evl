@@ -18,7 +18,7 @@ import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceRepository;
-import org.eclipse.epsilon.evl.incremental.execute.context.TracedEvlContext;
+import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
@@ -64,7 +64,7 @@ public class TracedConstraintContext extends ConstraintContext
 		if (checkType && !owningModel.isOfType(object, getTypeName())) {
 			return false;
 		}
-		TracedEvlContext tracedEvlContext = (TracedEvlContext)context;
+		IncrementalEvlContext tracedEvlContext = (IncrementalEvlContext)context;
 		try {
 			createContextTrace(object, tracedEvlContext, owningModel);
 		} catch (EolIncrementalExecutionException e) {
@@ -92,7 +92,7 @@ public class TracedConstraintContext extends ConstraintContext
 	 * @param owningModel	The model that owns the element
 	 * @throws TraceModelDuplicateRelation 
 	 */
-	private void createContextTrace(Object element, TracedEvlContext context, final IModel model)
+	private void createContextTrace(Object element, IncrementalEvlContext context, final IModel model)
 			throws EolIncrementalExecutionException {
 		
 		logger.info("Create ContextTrace: element: {}, context: {}", element, getTypeName());

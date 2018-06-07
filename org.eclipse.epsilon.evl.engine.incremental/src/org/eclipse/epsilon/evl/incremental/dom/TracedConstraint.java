@@ -22,7 +22,7 @@ import org.eclipse.epsilon.evl.IncrementalEvlModule;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
-import org.eclipse.epsilon.evl.incremental.execute.context.TracedEvlContext;
+import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
@@ -66,7 +66,7 @@ public class TracedConstraint extends Constraint
 		if (checkType && !constraintContext.getAllOfSourceKind(context).contains(object)) return false;
 		Boolean result = true;
 		if (guardBlock != null) {
-			TracedEvlContext tracedEvlContext = (TracedEvlContext)context;
+			IncrementalEvlContext tracedEvlContext = (IncrementalEvlContext)context;
 			tracedEvlContext.getTraceManager().getSatisfiesListener().aboutToExecute(this, context);
 			tracedEvlContext.getTraceManager().getPropertyAccessListener().aboutToExecute(guardBlock, context);
 			tracedEvlContext.getTraceManager().getAllInstancesAccessListener().aboutToExecute(guardBlock, context);
@@ -98,7 +98,7 @@ public class TracedConstraint extends Constraint
 		}
 		
 		final UnsatisfiedConstraint unsatisfiedConstraint = preprocessCheck(self, context);
-		TracedEvlContext tracedEvlContext = (TracedEvlContext)context;
+		IncrementalEvlContext tracedEvlContext = (IncrementalEvlContext)context;
 		tracedEvlContext.getTraceManager().getPropertyAccessListener().aboutToExecute(checkBlock, context);
 		tracedEvlContext.getTraceManager().getAllInstancesAccessListener().aboutToExecute(checkBlock, context);
 		Boolean result = checkBlock.execute(context, false);

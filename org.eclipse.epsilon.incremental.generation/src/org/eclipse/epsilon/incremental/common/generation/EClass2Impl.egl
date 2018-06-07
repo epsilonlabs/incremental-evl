@@ -30,7 +30,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionEx
 [%}%]
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 [%
-for (imp in ec.getRequriedImports(qp+".trace", interPrefix, interSufix, classPrefix, classSufix, true, true)) {%]
+for (imp in ec.getRequiredImports(qp+".trace", interPrefix, interSufix, classPrefix, classSufix, true, true)) {%]
 import [%=imp%];
 [%}%]
 
@@ -175,8 +175,11 @@ for (er in ec.getEAllReferences().select(er | er.isContainment())) {
     if (not er.getEReferenceType().isAbstract()) {%]
     [%=er.getEReferenceType().factoryMethod(er, false, interPrefix, interSufix, classPrefix, classSufix)%]
 [%  } else {
-        var subClasses = er.getEReferenceType().getEAllSubclasses();
-        for (sc in subClasses.select(sc | not sc.isAbstract())) {%]
+        var subClasses = er.getEReferenceType().getEAllSubclasses()
+            .select(sc | (sc.getEPackage() == ec.getEPackage()) and
+                not sc.isAbstract() and
+                not EReference.all().exists(er | er.isContainer and not (er.getEReferenceType() == ec)));
+        for (sc in subClasses) {%]
     [%=sc.factoryMethod(er, true, interPrefix, interSufix, classPrefix, classSufix)%]
             
 [%      }%]

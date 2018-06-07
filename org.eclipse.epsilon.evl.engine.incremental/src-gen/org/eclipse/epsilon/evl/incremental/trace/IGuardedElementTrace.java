@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-06-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,19 +12,25 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.trace.IIdElement;    
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;    
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;    
 
 /**
- * The GuardedElementTrace defines the access methods for the EClass features.
- * Additionally, the IGuardedElementTrace acts as the root entity of the AGGREGATE of its
- * container references. That is, elements contained in the GuardedElementTrace must be
- * created through this interface.
+ * The GuardedElementTrace Interface.
  */
-public interface IGuardedElementTrace {
+public interface IGuardedElementTrace extends IIdElement {
 
-
-    /** The guard reference. */
+    /**
+     * Returns the value of the '<em><b>guard</b></em>' reference.
+     * <!-- protected region guard-getter-doc on begin -->
+     * <p>
+     * If the meaning of the '<em>guard</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
+     * </p>
+     * <!-- protected region guard-getter-doc end --> 
+     * @return the value of the '<em>guard</em>' reference.
+     */
     IGuardedElementTraceHasGuard guard();
                 
     /** The GuardTrace Factory. */

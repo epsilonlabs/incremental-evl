@@ -2,12 +2,13 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="evl" nsURI="http://www.eclipse.epsilon.org/incremental/evl/ExecutionTrace"
     nsPrefix="evl_et">
-  <eClassifiers xsi:type="ecore:EClass" name="EvlModuleTrace" eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//ModuleTrace"/>
-  <eClassifiers xsi:type="ecore:EClass" name="GuardedElementTrace" abstract="true">
+  <eClassifiers xsi:type="ecore:EClass" name="EvlModuleTrace" eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//ModuleExecutionTrace"/>
+  <eClassifiers xsi:type="ecore:EClass" name="GuardedElementTrace" abstract="true"
+      eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//IdElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="guard" eType="#//GuardTrace"
         containment="true" eOpposite="#//GuardTrace/limits"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ContextTrace" eSuperTypes="#//GuardedElementTrace ../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//RuleTrace">
+  <eClassifiers xsi:type="ecore:EClass" name="ContextTrace" eSuperTypes="#//GuardedElementTrace ../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//ContextModuleElementTrace">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ContextTrace/kind #//ContextTrace/index"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="kind" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="index" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
@@ -18,7 +19,7 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="InvariantTrace" eSuperTypes="#//GuardedElementTrace ../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//NestedModuleElementTrace">
+  <eClassifiers xsi:type="ecore:EClass" name="InvariantTrace" eSuperTypes="#//GuardedElementTrace ../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//InContextModuleElementTrace">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//InvariantTrace/name"/>
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//InvariantTrace/invariantContext"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -45,7 +46,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="invariantContext" lowerBound="1"
         eType="#//ContextTrace" eOpposite="#//ContextTrace/constraints"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="GuardTrace" eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//NestedModuleElementTrace">
+  <eClassifiers xsi:type="ecore:EClass" name="GuardTrace" eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//InContextModuleElementTrace">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//GuardTrace/limits"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="result" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
@@ -56,17 +57,17 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="CheckTrace" eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//NestedModuleElementTrace">
+  <eClassifiers xsi:type="ecore:EClass" name="CheckTrace" eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//InContextModuleElementTrace">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//CheckTrace/invariant"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="invariant" lowerBound="1"
         eType="#//InvariantTrace" eOpposite="#//InvariantTrace/check"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="MessageTrace" eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//NestedModuleElementTrace">
+  <eClassifiers xsi:type="ecore:EClass" name="MessageTrace" eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//InContextModuleElementTrace">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//MessageTrace/invariant"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="invariant" lowerBound="1"
         eType="#//InvariantTrace" eOpposite="#//InvariantTrace/message"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="SatisfiesTrace" eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//NestedModuleElementTrace">
+  <eClassifiers xsi:type="ecore:EClass" name="SatisfiesTrace" eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//InContextModuleElementTrace">
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//SatisfiesTrace/invariant"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="all" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
         defaultValueLiteral="true"/>

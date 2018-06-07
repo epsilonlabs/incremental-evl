@@ -61,7 +61,7 @@ import org.eclipse.epsilon.evl.engine.incremental.test.util.InMemoryEvlTraceMana
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraintContext;
 import org.eclipse.epsilon.evl.incremental.dom.TracedGuardBlock;
-import org.eclipse.epsilon.evl.incremental.execute.context.TracedEvlContext;
+import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
@@ -239,12 +239,12 @@ public class IncrementalEvlModuleIntegrationTests {
 				}
 			});
 			
-			((TracedEvlContext) module.context).setTraceManager(new InMemoryEvlTraceManager());
+			((IncrementalEvlContext) module.context).setTraceManager(new InMemoryEvlTraceManager());
 			module.parse(evlFile);
 			module.context.getModelRepository().addModel(model);
 			module.execute();
 			
-			Set<IModuleElementTrace> executionTraces = ((TracedEvlContext) module.context).getTraceManager()
+			Set<IModuleElementTrace> executionTraces = ((IncrementalEvlContext) module.context).getTraceManager()
 					.getExecutionTraceRepository().getAllExecutionTraces();
 			List<IContextTrace> contextExecutionTraces = executionTraces.stream()
 					.filter(t -> t instanceof IContextTrace)
@@ -391,7 +391,7 @@ public class IncrementalEvlModuleIntegrationTests {
 			});
 			module = new IncrementalEvlModule();
 			evlFile = new File(IncrementalEvlModuleIntegrationTests.class.getResource("testExecution.evl").toURI());
-			((TracedEvlContext) module.context).setTraceManager(new InMemoryEvlTraceManager());
+			((IncrementalEvlContext) module.context).setTraceManager(new InMemoryEvlTraceManager());
 			module.parse(evlFile);
 			module.context.getModelRepository().addModel(model);
 			// Make model copy
@@ -410,7 +410,7 @@ public class IncrementalEvlModuleIntegrationTests {
 			module.execute();
 			// Save the previous state so we can compare changes
 			// ContextTraces
-			Set<IModuleElementTrace> executionTraces = ((TracedEvlContext) module.context).getTraceManager()
+			Set<IModuleElementTrace> executionTraces = ((IncrementalEvlContext) module.context).getTraceManager()
 					.getExecutionTraceRepository().getAllExecutionTraces();
 			
 			long contextExecutionTraces = executionTraces.stream()
@@ -422,7 +422,7 @@ public class IncrementalEvlModuleIntegrationTests {
 			
 			// Add a listener so we can synchronise the execution.
 			BlockingQueue<ExecutionResult> results = new SynchronousQueue<ExecutionResult>();
-			IExecutionListener assertExecutionListener = new IExecutionListener() {
+			IExecutionListener<IEolContext> assertExecutionListener = new IExecutionListener<IEolContext>() {
 				
 				@Override
 				public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception, IEolContext context) {
@@ -514,7 +514,7 @@ public class IncrementalEvlModuleIntegrationTests {
 			module.execute();
 			// Save the previous state so we can compare changes
 			// ContextTraces
-			Set<IModuleElementTrace> executionTraces = ((TracedEvlContext) module.context).getTraceManager()
+			Set<IModuleElementTrace> executionTraces = ((IncrementalEvlContext) module.context).getTraceManager()
 					.getExecutionTraceRepository().getAllExecutionTraces();
 			long contextExecutionTraces = executionTraces.stream()
 					.filter(t -> t instanceof IContextTrace)
@@ -525,7 +525,7 @@ public class IncrementalEvlModuleIntegrationTests {
 			
 			// Add a listener so we can synchronise the execution.
 			BlockingQueue<ExecutionResult> results = new SynchronousQueue<ExecutionResult>();
-			IExecutionListener assertExecutionListener = new IExecutionListener() {
+			IExecutionListener<IEolContext> assertExecutionListener = new IExecutionListener<IEolContext>() {
 				
 				@Override
 				public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception, IEolContext context) {

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-06-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,17 +16,15 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /** protected region GuardTraceImports on begin **/
-import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 /** protected region GuardTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
+import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IInContextModuleElementTraceHasParentTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.INestedModuleElementTraceHasParentTrace;
-import org.eclipse.epsilon.base.incremental.trace.IRuleTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.InContextModuleElementTraceHasParentTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.impl.NestedModuleElementTraceHasParentTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTraceHasLimits;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.GuardTraceHasLimits;
@@ -36,16 +34,25 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.GuardTraceHasLimits;
  */
 public class GuardTrace implements IGuardTrace {
 
-    /** The id */
+    /**
+	 * The id.
+	 */
     private Object id;
 
-    /** The result */
+    /**
+	 * The result.
+	 */
     private boolean result;
 
-    /** The accesses relation */
+    /**
+     * * The different accesses that where recorded during execution for this particular 
+       * module element.
+     */
     private final IModuleElementTraceHasAccesses accesses;
 
-    /** The limits relation */
+    /**
+     * The limits.
+     */
     private final IGuardTraceHasLimits limits;
 
     /**
@@ -53,9 +60,8 @@ public class GuardTrace implements IGuardTrace {
      * container and any attributes identified as indexes.
      */    
     public GuardTrace(IGuardedElementTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@3ee115bf (name: limits) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@7a569611 (name: limits) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.limits = new GuardTraceHasLimits(this);
-        // Not derived org.eclipse.emf.ecore.impl.EReferenceImpl@4044e6e1 (name: accesses) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: false)
         this.accesses = new ModuleElementTraceHasAccesses(this);
 
         if (!container.guard().create(this)) {
@@ -96,14 +102,9 @@ public class GuardTrace implements IGuardTrace {
     }
 
     @Override
-    public INestedModuleElementTraceHasParentTrace parentTrace() {
+    public IInContextModuleElementTraceHasParentTrace parentTrace() {
         /** protected region parentTrace on begin **/
-    		if (limits.get() instanceof IContextTrace) {
-    			return null;
-        }
-        else {
-        		return ((IInvariantTrace)limits.get()).parentTrace();
-        }
+        return null;
         /** protected region parentTrace end **/
     }
 

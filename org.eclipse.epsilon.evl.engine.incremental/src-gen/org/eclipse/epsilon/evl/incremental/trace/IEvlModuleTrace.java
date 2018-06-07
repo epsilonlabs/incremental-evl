@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-05-30.
+ * This file was automatically generated on: 2018-06-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,16 +11,15 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
-import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;    
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.trace.IModelTrace;    
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;    
 
 /**
- * The EvlModuleTrace defines the access methods for the EClass features.
- * Additionally, the IEvlModuleTrace acts as the root entity of the AGGREGATE of its
- * container references. That is, elements contained in the EvlModuleTrace must be
- * created through this interface.
+ * A ModuleExecutionTrace represents the trace of the execution of a particular Epsilon module
+ * (e.g. Eol, Etl, etc.) for a given script (identified by the source) and a given set of Models.
  */
-public interface IEvlModuleTrace extends IModuleTrace {
-
+public interface IEvlModuleTrace extends IModuleExecutionTrace {
 
  
     /**
@@ -28,4 +27,9 @@ public interface IEvlModuleTrace extends IModuleTrace {
      */
     public boolean sameIdentityAs(final IEvlModuleTrace other);
     
+   
+   
+    /** The ModelTrace Factory. */
+    IModelTrace createModelTrace(String name, String uri) throws EolIncrementalExecutionException;       
+   
 }
