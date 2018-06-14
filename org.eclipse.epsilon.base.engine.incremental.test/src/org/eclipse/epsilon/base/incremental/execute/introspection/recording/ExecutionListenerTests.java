@@ -8,7 +8,7 @@ import static org.mockito.Mockito.*;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.execute.IEolExecutionTraceManager;
+import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;

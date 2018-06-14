@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-07.
+ * This file was automatically generated on: 2018-06-14.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;    
 
 /**
  * A ModelElementTrace represents a model element that was accessed during 
@@ -30,6 +31,18 @@ public interface IPropertyTrace extends IIdElement {
      */
     String getName();
 
+    /**
+     * Returns the value of the '<em><b>Element Trace</b></em>' reference.
+     * <!-- protected region elementTrace-getter-doc on begin -->
+     * <p>
+     * If the meaning of the '<em>Element Trace</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
+     * </p>
+     * <!-- protected region elementTrace-getter-doc end --> 
+     * @return the value of the '<em>Element Trace</em>' reference.
+     */
+    IPropertyTraceHasElementTrace elementTrace();
+                
  
     /**
      * PropertyTrace has same identity in the aggregate.

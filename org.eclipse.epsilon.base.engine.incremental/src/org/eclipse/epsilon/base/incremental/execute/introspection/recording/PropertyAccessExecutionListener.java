@@ -7,8 +7,8 @@ import java.util.WeakHashMap;
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
-import org.eclipse.epsilon.base.incremental.execute.IEolExecutionTraceManager;
-import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalEolContext;
+import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
+import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
@@ -39,9 +39,10 @@ import org.slf4j.LoggerFactory;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class PropertyAccessExecutionListener
-		implements IExecutionListener<IIncrementalEolContext<IModuleExecutionTraceRepository, 
-									  IEolExecutionTraceManager<IModuleExecutionTraceRepository>>> {
+public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace,
+											 R extends IModuleExecutionTraceRepository<?>, 
+											 M extends IExecutionTraceManager<?,?>>
+		implements IExecutionListener<IIncrementalBaseContext<T, R, M>> {
 	
 	private static final Logger logger = LoggerFactory.getLogger(PropertyAccessExecutionListener.class);
 	
@@ -51,19 +52,13 @@ public class PropertyAccessExecutionListener
 	/** For property access we need to save the value of the left side expression */
 	private final WeakHashMap<ModuleElement, Object> cache = new WeakHashMap<ModuleElement, Object>();
 	
-	/**
-	 * Keep a reference to the module execution trace because it works as a factory
-	 */
-	private final IModuleExecutionTrace moduleExecutionTrace;
 
-	public PropertyAccessExecutionListener(IModuleExecutionTrace moduleExecutionTrace) {
+	public PropertyAccessExecutionListener() {
 		super();
-		this.moduleExecutionTrace = moduleExecutionTrace;
 	}
 
 	@Override
-	public void aboutToExecute(ModuleElement ast, IIncrementalEolContext<IModuleExecutionTraceRepository, 
-			  IEolExecutionTraceManager<IModuleExecutionTraceRepository>> context) {
+	public void aboutToExecute(ModuleElement ast, IIncrementalBaseContext<T, R, M> context) {
 		logger.debug("aboutToExecute {}", ast);
 		if (ast instanceof TracedModuleElement) {
 			moduleElementStack.addLast((TracedModuleElement<?>) ast);
@@ -71,8 +66,7 @@ public class PropertyAccessExecutionListener
 	}
 
 	@Override
-	public void finishedExecuting(ModuleElement ast, Object result, IIncrementalEolContext<IModuleExecutionTraceRepository, 
-			  IEolExecutionTraceManager<IModuleExecutionTraceRepository>> context) {
+	public void finishedExecuting(ModuleElement ast, Object result, IIncrementalBaseContext<T, R, M> context) {
 		logger.debug("finishedExecuting {} for {}", ast, result);
 		if (moduleElementStack.isEmpty()) {
 			return;
@@ -106,8 +100,7 @@ public class PropertyAccessExecutionListener
 
 	@Override
 	public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception, 
-			IIncrementalEolContext<IModuleExecutionTraceRepository, 
-			  IEolExecutionTraceManager<IModuleExecutionTraceRepository>> context) {
+			IIncrementalBaseContext<T, R, M> context) {
 		logger.debug("finishedExecutingWithException: ", exception);
 	}
 	
@@ -125,24 +118,30 @@ public class PropertyAccessExecutionListener
 	 * @throws EolIncrementalExecutionException
 	 */
 	private void record(IModuleElementTrace executionTrace, IIncrementalModel model, Object modelElement,
-			String propertyName, Object result, IIncrementalEolContext<IModuleExecutionTraceRepository, 
-			  IEolExecutionTraceManager<IModuleExecutionTraceRepository>> context) throws EolIncrementalExecutionException {
+			String propertyName, Object result, IIncrementalBaseContext<T, R, M> context) throws EolIncrementalExecutionException {
 		
 		logger.info("Recording PropertyAccess. model: {}, element: {}, property: {}, result: {}",
 				model.getName(), modelElement, propertyName, result==null ? "Null":"SomeValue");
 		logger.debug("result: {}", result);
 		
-		
-		IPropertyTrace propertyTrace = context.getTraceManager().getExecutionTraceRepository()
-				.getPropertyTraceFor(moduleExecutionTrace, model.getName(), model.getModelId(), model.getElementId(modelElement), propertyName);
+		IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager().getExecutionTraceRepository();
+		String moduleUri = context.getModule().getUri().toString();
+		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository.getModuleExecutionTraceByIdentity(moduleUri);
+		if (moduleExecutionTrace == null) {
+			throw new EolIncrementalExecutionException("A moduleExecutionTrace was not found for the module under execution. "
+					+ "The module execution trace must be created at the begining of the execution of the module.");
+		}
+		IPropertyTrace propertyTrace = executionTraceRepository
+				.getPropertyTraceFor(moduleUri, model.getName(), model.getModelUri(),
+						model.getElementId(modelElement), propertyName);
 		if (propertyTrace == null) {
 			IModelElementTrace elementTrace = context.getTraceManager().getExecutionTraceRepository()
-					.getModelElementTraceFor(model.getName(), ((IIncrementalModel)model).getModelId(), model.getElementId(modelElement));
+					.getModelElementTraceFor(moduleUri, model.getName(), model.getModelUri(), model.getElementId(modelElement));
 			if (elementTrace == null) {
 				IModelTrace modelTrace = context.getTraceManager().getExecutionTraceRepository()
-						.getModelTraceFor(model.getName(), ((IIncrementalModel)model).getModelId());
+						.getModelTraceByIdentity(null, model.getName(), ((IIncrementalModel)model).getModelUri());
 				if (modelTrace == null) {
-					modelTrace = moduleExecutionTrace.createModelTrace(model.getName(), model.getModelId());
+					modelTrace = moduleExecutionTrace.createModelTrace(model.getName(), model.getModelUri());
 				}
 				elementTrace = modelTrace.createModelElementTrace(model.getElementId(modelElement));
 			}

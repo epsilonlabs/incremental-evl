@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-07.
+ * This file was automatically generated on: 2018-06-14.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -55,7 +55,7 @@ public class MessageTrace implements IMessageTrace {
      * container and any attributes identified as indexes.
      */    
     public MessageTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@1d6558f3 (name: invariant) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@41482bb (name: invariant) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.invariant = new MessageTraceHasInvariant(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
 

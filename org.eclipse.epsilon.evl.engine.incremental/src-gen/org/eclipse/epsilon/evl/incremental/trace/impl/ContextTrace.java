@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-07.
+ * This file was automatically generated on: 2018-06-14.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -90,7 +90,7 @@ public class ContextTrace implements IContextTrace {
     public ContextTrace(String kind, int index, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
         this.kind = kind;
         this.index = index;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@2fbb629d (name: executionContext) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@4588042a (name: executionContext) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.executionContext = new ContextModuleElementTraceHasExecutionContext(this);
         this.guard = new GuardedElementTraceHasGuard(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);

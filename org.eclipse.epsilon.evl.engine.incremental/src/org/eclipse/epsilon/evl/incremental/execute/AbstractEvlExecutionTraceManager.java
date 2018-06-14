@@ -16,6 +16,7 @@ import org.eclipse.epsilon.evl.incremental.execute.introspection.recording.Satis
  * @author Horacio Hoyos Rodriguez
  *
  */
+@Deprecated
 public abstract class AbstractEvlExecutionTraceManager
 		extends AbstractEolExecutionTraceManager<IEvlExecutionTraceRepository>
     	implements IEvlExecutionTraceManager {

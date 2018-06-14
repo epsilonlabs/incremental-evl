@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-07.
+ * This file was automatically generated on: 2018-06-14.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -111,6 +111,8 @@ public class ModelTrace implements IModelTrace {
         IModelElementTrace modelElementTrace = null;
         try {
             modelElementTrace = new ModelElementTrace(uri, this);
+            
+            this.elements().create(modelElementTrace);
         } catch (TraceModelDuplicateRelation e) {
             // Pass
         } finally {
@@ -135,6 +137,8 @@ public class ModelTrace implements IModelTrace {
         IModelTypeTrace modelTypeTrace = null;
         try {
             modelTypeTrace = new ModelTypeTrace(name, this);
+            
+            this.types().create(modelTypeTrace);
         } catch (TraceModelDuplicateRelation e) {
             // Pass
         } finally {

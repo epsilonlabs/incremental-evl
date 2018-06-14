@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.epsilon.base.incremental.execute;
 
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceRepositoryImpl;
 
 /**
  * The trace manager is responsible form provisioning the required repositories and for implementing
@@ -25,7 +27,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepositor
  * @author Horacio Hoyos Rodriguez
  * @param <T> the generic type of the specific module execution trace repository {@link IModuleExecutionTrace}
  */
-public interface IEolExecutionTraceManager<T extends IModuleExecutionTraceRepository> {
+public interface IExecutionTraceManager<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<T>> {
 	
 	/**
 	 * Instruct the manager to persist the model changes using a parallel execution.
@@ -49,20 +51,17 @@ public interface IEolExecutionTraceManager<T extends IModuleExecutionTraceReposi
 	void setFlushTimeout(float period);
 	
 	/**
-	 * The repository of module executions. Each Epsilon language will return a specialised repository.
-	 *
-	 * @return the exl module execution repository
-	 */
-	T getExecutionTraceRepository();
-	
-	/**
 	 * Makes the trace manager persist any temporal trace information in the trace model.
 	 *
 	 * @return true, if successful
 	 */
 	boolean persistTraceInformation();
-
 	
-	// All available repositories
-	//IExecutionContextRepository getExecutionContextRepository();
+	/**
+	 * The repository of module executions. Each Epsilon language will return a specialised repository.
+	 *
+	 * @return the exl module execution repository
+	 */
+	R getExecutionTraceRepository();
+
 }

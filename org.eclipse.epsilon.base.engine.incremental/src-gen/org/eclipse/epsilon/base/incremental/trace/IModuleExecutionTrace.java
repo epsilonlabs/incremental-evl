@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-07.
+ * This file was automatically generated on: 2018-06-14.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -28,11 +28,11 @@ import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 public interface IModuleExecutionTrace extends IIdElement {
     
     /**
-     * Returns the value of the '{@link ModuleExecutionTrace#source <em>source</em>}' attribute.
+     * Returns the value of the '{@link ModuleExecutionTrace#uri <em>uri</em>}' attribute.
      * The path of the source file executed
-     * @return the value of the '<em>source</em>' attribute.
+     * @return the value of the '<em>uri</em>' attribute.
      */
-    String getSource();
+    String getUri();
 
     /**
      * Returns the value of the '<em><b>Module Elements</b></em>' reference.

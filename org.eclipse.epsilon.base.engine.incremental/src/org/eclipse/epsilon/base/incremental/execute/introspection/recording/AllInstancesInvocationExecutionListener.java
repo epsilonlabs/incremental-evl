@@ -8,8 +8,8 @@ import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.execute.IEolExecutionTraceManager;
-import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalEolContext;
+import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
+import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
@@ -32,9 +32,10 @@ import org.slf4j.LoggerFactory;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class AllInstancesInvocationExecutionListener
-		implements IExecutionListener<IIncrementalEolContext<IModuleExecutionTraceRepository, 
-								      IEolExecutionTraceManager<IModuleExecutionTraceRepository>>> {
+public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionTrace,
+													 R extends IModuleExecutionTraceRepository<?>, 
+													 M extends IExecutionTraceManager<?,?>>
+			implements IExecutionListener<IIncrementalBaseContext<T, R, M>> {
 	
 	private static final Logger logger = LoggerFactory.getLogger(AllInstancesInvocationExecutionListener.class);
 	
@@ -51,20 +52,13 @@ public class AllInstancesInvocationExecutionListener
 	/** Keep track of ModuleElements executing */
 	private final Deque<TracedModuleElement<?>> moduleElementStack = new ArrayDeque<>();
 	
-	/**
-	 * Keep a reference to the module execution trace because it works as a factory
-	 */
-	private final IModuleExecutionTrace moduleExecutionTrace;
 
-
-	public AllInstancesInvocationExecutionListener(IModuleExecutionTrace moduleExecutionTrace) {
+	public AllInstancesInvocationExecutionListener() {
 		super();
-		this.moduleExecutionTrace = moduleExecutionTrace;
 	}
 
 	@Override
-	public void aboutToExecute(ModuleElement ast, IIncrementalEolContext<IModuleExecutionTraceRepository, 
-		      IEolExecutionTraceManager<IModuleExecutionTraceRepository>> context) {
+	public void aboutToExecute(ModuleElement ast, IIncrementalBaseContext<T, R, M> context) {
 		logger.debug("aboutToExecute {}", ast);
 		if (ast instanceof TracedModuleElement) {
 			moduleElementStack.addLast((TracedModuleElement<?>) ast);
@@ -72,8 +66,7 @@ public class AllInstancesInvocationExecutionListener
 	}
 
 	@Override
-	public void finishedExecuting(ModuleElement ast, Object result, IIncrementalEolContext<IModuleExecutionTraceRepository, 
-		      IEolExecutionTraceManager<IModuleExecutionTraceRepository>> context) {
+	public void finishedExecuting(ModuleElement ast, Object result, IIncrementalBaseContext<T, R, M> context) {
 		logger.debug("finishedExecuting {} for {}", ast, result);
 		if (moduleElementStack.isEmpty()) {
 			return;
@@ -99,8 +92,7 @@ public class AllInstancesInvocationExecutionListener
 	}
 	
 	@Override
-	public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception, IIncrementalEolContext<IModuleExecutionTraceRepository, 
-		      IEolExecutionTraceManager<IModuleExecutionTraceRepository>> context) {
+	public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception, IIncrementalBaseContext<T, R, M> context) {
 		logger.debug("finishedExecutingWithException");
 	}
 	
@@ -108,8 +100,7 @@ public class AllInstancesInvocationExecutionListener
 		return moduleElementStack.isEmpty();
 	}
 
-	private void record(IModuleElementTrace executionTrace, boolean ofKind, String modelAndMetaClass, IIncrementalEolContext<IModuleExecutionTraceRepository, 
-		      IEolExecutionTraceManager<IModuleExecutionTraceRepository>>context)
+	private void record(IModuleElementTrace executionTrace, boolean ofKind, String modelAndMetaClass, IIncrementalBaseContext<T, R, M> context)
 			throws EolIncrementalExecutionException {
 		
 		logger.info("Recording AllInstancesAccess. Type: {}, ofKind: {}", modelAndMetaClass, ofKind);
@@ -136,13 +127,20 @@ public class AllInstancesInvocationExecutionListener
 			throw new EolIncrementalExecutionException(modelName);
 		}
 		
+		IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager().getExecutionTraceRepository();
+		String moduleUri = context.getModule().getUri().toString();
+		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository.getModuleExecutionTraceByIdentity(moduleUri);
+		if (moduleExecutionTrace == null) {
+			throw new EolIncrementalExecutionException("A moduleExecutionTrace was not found for the module under execution. "
+					+ "The module execution trace must be created at the begining of the execution of the module.");
+		}
 		IModelTypeTrace typeTrace = context.getTraceManager().getExecutionTraceRepository()
-				.getTypeTraceFor(model.getName(), ((IIncrementalModel)model).getModelId(), typeName);
+				.getTypeTraceFor(null, model.getName(), null, typeName);
 		if (typeTrace == null) {
 			IModelTrace modelTrace = context.getTraceManager().getExecutionTraceRepository()
-					.getModelTraceFor(model.getName(), ((IIncrementalModel)model).getModelId());
+					.getModelTraceByIdentity(moduleUri, model.getName(), ((IIncrementalModel)model).getModelUri());
 			if (modelTrace == null) {
-				modelTrace = moduleExecutionTrace.createModelTrace(model.getName(), ((IIncrementalModel)model).getModelId());
+				modelTrace = moduleExecutionTrace.createModelTrace(model.getName(), ((IIncrementalModel)model).getModelUri());
 			}
 			typeTrace = modelTrace.createModelTypeTrace(typeName);
 		}

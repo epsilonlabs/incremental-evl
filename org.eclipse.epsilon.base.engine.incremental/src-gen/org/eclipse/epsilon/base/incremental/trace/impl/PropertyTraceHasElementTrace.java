@@ -9,31 +9,31 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  ******************************************************************************/
-package org.eclipse.epsilon.evl.incremental.trace.impl;
+package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IMessageTraceHasInvariant;
+import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IPropertyTraceHasElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of IMessageTraceHasInvariant reference. 
+ * Implementation of IPropertyTraceHasElementTrace reference. 
  */
-public class MessageTraceHasInvariant extends Feature implements IMessageTraceHasInvariant {
+public class PropertyTraceHasElementTrace extends Feature implements IPropertyTraceHasElementTrace {
     
     /** The source(s) of the reference */
-    protected IMessageTrace source;
+    protected IPropertyTrace source;
     
     /** The target(s) of the reference */
-    protected IInvariantTrace target;
+    protected IModelElementTrace target;
     
     /**
-     * Instantiates a new IMessageTraceHasInvariant.
+     * Instantiates a new IPropertyTraceHasElementTrace.
      *
      * @param source the source of the reference
      */
-    public MessageTraceHasInvariant (IMessageTrace source) {
+    public PropertyTraceHasElementTrace (IPropertyTrace source) {
         super(true);
         this.source = source;
     }
@@ -41,16 +41,16 @@ public class MessageTraceHasInvariant extends Feature implements IMessageTraceHa
     // PUBLIC API
         
     @Override
-    public IInvariantTrace get() {
+    public IModelElementTrace get() {
         return target;
     }
     
     @Override
-    public boolean create(IInvariantTrace target) {
+    public boolean create(IModelElementTrace target) {
         if (conflict(target)) {
             return false;
         }
-        target.message().set(source);
+        target.properties().set(source);
         if (related(target)) {
             return false;
         }
@@ -59,38 +59,38 @@ public class MessageTraceHasInvariant extends Feature implements IMessageTraceHa
     }
 
     @Override
-    public boolean destroy(IInvariantTrace target) {
+    public boolean destroy(IModelElementTrace target) {
         if (!related(target)) {
             return false;
         }
-        target.message().remove(source);
+        target.properties().remove(source);
         remove(target);
         return true;
     }
     
     @Override
-    public boolean conflict(IInvariantTrace target) {
+    public boolean conflict(IModelElementTrace target) {
         boolean result = false;
         result |= get() != null;
-        result |= target.message().get() != null;
+        result |= target.properties().isUnique() && target.properties().get().contains(source);
         return result;
     }
     
     @Override
-    public boolean related(IInvariantTrace target) {
+    public boolean related(IModelElementTrace target) {
   
-        return target.equals(this.target) && source.equals(target.message().get());
+        return target.equals(this.target) && target.properties().get().contains(source);
     }
     
     // PRIVATE API
     
     @Override
-    public void set(IInvariantTrace target) {
+    public void set(IModelElementTrace target) {
         this.target = target;
     }
     
     @Override
-    public void remove(IInvariantTrace target) {
+    public void remove(IModelElementTrace target) {
         this.target = null;
     }
 

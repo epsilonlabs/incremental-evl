@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-07.
+ * This file was automatically generated on: 2018-06-14.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,6 +20,8 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IPropertyTraceHasElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.PropertyTraceHasElementTrace;
 
 /**
  * Implementation of IPropertyTrace. 
@@ -37,11 +39,17 @@ public class PropertyTrace implements IPropertyTrace {
     private String name;
 
     /**
+     * The elementTrace.
+     */
+    private final IPropertyTraceHasElementTrace elementTrace;
+
+    /**
      * Instantiates a new PropertyTrace. The PropertyTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
     public PropertyTrace(String name, IModelElementTrace container) throws TraceModelDuplicateRelation {
         this.name = name;
+        this.elementTrace = new PropertyTraceHasElementTrace(this);
 
         if (!container.properties().create(this)) {
             throw new TraceModelDuplicateRelation();
@@ -64,6 +72,11 @@ public class PropertyTrace implements IPropertyTrace {
         return name;
     }
     
+    @Override
+    public IPropertyTraceHasElementTrace elementTrace() {
+        return elementTrace;
+    }
+
     @Override
     public boolean sameIdentityAs(final IPropertyTrace other) {
         if (other == null) {

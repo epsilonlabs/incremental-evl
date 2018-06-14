@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-07.
+ * This file was automatically generated on: 2018-06-14.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -52,9 +52,9 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     private Object id;
 
     /**
-	 * The source.
+	 * The uri.
 	 */
-    private String source;
+    private String uri;
 
     /**
      * * The module elements that conform the module.
@@ -76,8 +76,8 @@ public class EvlModuleTrace implements IEvlModuleTrace {
      * Instantiates a new EvlModuleTrace. The EvlModuleTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public EvlModuleTrace(String source) throws TraceModelDuplicateRelation {
-        this.source = source;
+    public EvlModuleTrace(String uri) throws TraceModelDuplicateRelation {
+        this.uri = uri;
         this.moduleElements = new ModuleExecutionTraceHasModuleElements(this);
         this.accesses = new ModuleExecutionTraceHasAccesses(this);
         this.models = new ModuleExecutionTraceHasModels(this);
@@ -96,8 +96,8 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     }   
      
     @Override
-    public String getSource() {
-        return source;
+    public String getUri() {
+        return uri;
     }
     
     @Override
@@ -256,12 +256,12 @@ public class EvlModuleTrace implements IEvlModuleTrace {
         if (other == null) {
             return false;
         }
-        String source = getSource();
-        String otherSource = other.getSource();
-        if (source == null) {
-            if (otherSource != null)
+        String uri = getUri();
+        String otherUri = other.getUri();
+        if (uri == null) {
+            if (otherUri != null)
                 return false;
-        } else if (!source.equals(otherSource)) {
+        } else if (!uri.equals(otherUri)) {
             return false;
         }
         return true;
@@ -285,7 +285,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((source == null) ? 0 : source.hashCode());
+        result = prime * result + ((uri == null) ? 0 : uri.hashCode());
         return result;
     }
 }

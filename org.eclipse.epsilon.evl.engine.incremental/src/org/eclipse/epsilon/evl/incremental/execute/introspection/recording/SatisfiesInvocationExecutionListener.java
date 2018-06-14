@@ -11,6 +11,10 @@ import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
+import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.Expression;
 import org.eclipse.epsilon.eol.dom.OperationCallExpression;
@@ -35,7 +39,10 @@ import org.slf4j.LoggerFactory;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class SatisfiesInvocationExecutionListener implements IExecutionListener<IEolContext> {
+public class SatisfiesInvocationExecutionListener <T extends IModuleExecutionTrace,
+												   R extends IModuleExecutionTraceRepository<?>, 
+												   M extends IExecutionTraceManager<?,?>>
+		implements IExecutionListener<IIncrementalBaseContext<T, R, M>> {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SatisfiesInvocationExecutionListener.class);
 	
@@ -72,7 +79,7 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener<
 	}
 
 	@Override
-	public void aboutToExecute(ModuleElement ast, IEolContext context) {
+	public void aboutToExecute(ModuleElement ast, IIncrementalBaseContext<T, R, M> context) {
 		logger.debug("aboutToExecute {}", ast);
 		if (ast instanceof TracedModuleElement) {
 			moduleElementStack.addLast((TracedModuleElement<IInvariantTrace>) ast);
@@ -91,7 +98,7 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener<
 	}
 
 	@Override
-	public void finishedExecuting(ModuleElement ast, Object result, IEolContext context) {
+	public void finishedExecuting(ModuleElement ast, Object result, IIncrementalBaseContext<T, R, M> context) {
 		logger.debug("finishedExecuting {} for {}", ast, result);
 		if (moduleElementStack.isEmpty()) {
 			return;
@@ -168,7 +175,7 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener<
 	}
 
 	@Override
-	public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception, IEolContext context) {
+	public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception, IIncrementalBaseContext<T, R, M> context) {
 		logger.debug("finishedExecutingWithException");
 	}
 

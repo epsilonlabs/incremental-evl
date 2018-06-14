@@ -9,13 +9,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  ******************************************************************************/
-package org.eclipse.epsilon.evl.incremental.trace;
+package org.eclipse.epsilon.base.incremental.trace;
 
-import java.util.Queue;
 
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 
-public interface ISatisfiesTraceHasSatisfiedInvariants {
+public interface IPropertyTraceHasElementTrace {
 
     // PUBLIC API
     
@@ -24,28 +23,27 @@ public interface ISatisfiesTraceHasSatisfiedInvariants {
     /**
      * Get the value(s) for the reference
      */
-    
-    public Queue<IInvariantTrace> get();
+    public IModelElementTrace get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the
      * relation already existed. 
-     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IInvariantTrace)}).
+     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IModelElementTrace)}).
      * If the reference has an opposite, that relation is also created.
      *
-     * @see ExecutionHasAccesses#conflict(IInvariantTrace)
-     * @see ExecutionHasAccesses#related(IInvariantTrace)
+     * @see ExecutionHasAccesses#conflict(IModelElementTrace)
+     * @see ExecutionHasAccesses#related(IModelElementTrace)
      */
-    boolean create(IInvariantTrace target);
+    boolean create(IModelElementTrace target);
     
     /**
      * Destroy a reference to the target element. Returns true, if the reference existed
      * and was properly destroyed. If the reference has an opposite, that relation
      * is also destroyed.
      *
-     * @see ExecutionHasAccesses#related(IInvariantTrace)
+     * @see ExecutionHasAccesses#related(IModelElementTrace)
      */    
-    boolean destroy(IInvariantTrace target);
+    boolean destroy(IModelElementTrace target);
     
     /**
      * Determines if there is a conflict with a possible target. Conflicts can only arise for if
@@ -69,12 +67,12 @@ public interface ISatisfiesTraceHasSatisfiedInvariants {
      *      </ul>
      *  </li>
      */
-    boolean conflict(IInvariantTrace target);
+    boolean conflict(IModelElementTrace target);
     
     /**
      * Returns true if the target is already related via this reference.
      */
-    boolean related(IInvariantTrace target);
+    boolean related(IModelElementTrace target);
 
     // PRIVATE API
 
@@ -82,15 +80,15 @@ public interface ISatisfiesTraceHasSatisfiedInvariants {
      * Set a new value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#create(IInvariantTrace)
+     * @see ExecutionHasAccesses#create(IModelElementTrace)
      */
-    void set(IInvariantTrace target);
+    void set(IModelElementTrace target);
 
     /**
      * Remove a value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#destroy(IInvariantTrace)
+     * @see ExecutionHasAccesses#destroy(IModelElementTrace)
      */
-    void remove(IInvariantTrace target);
+    void remove(IModelElementTrace target);
 }

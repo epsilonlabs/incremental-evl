@@ -3,6 +3,7 @@ package org.eclipse.epsilon.base.incremental.execute;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 import org.eclipse.epsilon.common.module.IModule;
 
@@ -11,7 +12,7 @@ import org.eclipse.epsilon.common.module.IModule;
  * notified of changes in the model and execute specific elements/sections of the module that are related to the
  * objects that changed and their changes.
  * 
- * Implementations need to create an instance of an {@link IEolExecutionTraceManager} that will be used to manage
+ * Implementations need to create an instance of an {@link IExecutionTraceManager} that will be used to manage
  * the execution traces for the module.
  * 
  * An Incremental Module should not be executed completely all the time. Instead it should be executed completely once
@@ -21,8 +22,9 @@ import org.eclipse.epsilon.common.module.IModule;
  * 
  * @author Horacio Hoyos Rodriguez
  */
-public interface IIncrementalModule<R extends IModuleExecutionTraceRepository,
-		M extends IEolExecutionTraceManager<R>> extends IModule {
+public interface IIncrementalModule<M extends IModuleExecutionTrace, 
+							        R extends IModuleExecutionTraceRepository<M>,
+							        T extends IExecutionTraceManager<M, R>> extends IModule {
 
 	/**
 	 * Gets the incremental models that are used in this execution

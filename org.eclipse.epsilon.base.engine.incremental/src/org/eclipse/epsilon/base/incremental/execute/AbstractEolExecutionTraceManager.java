@@ -2,6 +2,7 @@ package org.eclipse.epsilon.base.incremental.execute;
 
 import java.time.LocalDate;
 
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 
 /**
@@ -10,8 +11,9 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepositor
  * @author Horacio Hoyos Rodriguez
  *
  */
-public abstract class AbstractEolExecutionTraceManager<T extends IModuleExecutionTraceRepository>
-		implements IEolExecutionTraceManager<T> {
+public abstract class AbstractEolExecutionTraceManager<T extends IModuleExecutionTrace,
+												       R extends IModuleExecutionTraceRepository<T>>
+		implements IExecutionTraceManager<T, R> {
 
 	/** A flag to signal parallel persistence */
 	protected boolean inParallel;

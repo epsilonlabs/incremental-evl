@@ -8,7 +8,7 @@ import org.easymock.EasyMock;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
 import org.easymock.Mock;
-import org.eclipse.epsilon.base.incremental.execute.IEolExecutionTraceManager;
+import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.compile.context.EolCompilationContext;
 import org.eclipse.epsilon.eol.dom.Expression;

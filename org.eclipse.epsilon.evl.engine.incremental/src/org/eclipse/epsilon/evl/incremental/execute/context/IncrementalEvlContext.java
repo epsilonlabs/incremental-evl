@@ -15,6 +15,8 @@ import org.eclipse.epsilon.base.incremental.execute.introspection.recording.Prop
 import org.eclipse.epsilon.evl.execute.context.EvlContext;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.introspection.recording.SatisfiesInvocationExecutionListener;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 
 /**
  * An EVL Context that keeps a reference to the traceManager and current EVL Execution Trace.
@@ -22,22 +24,25 @@ import org.eclipse.epsilon.evl.incremental.execute.introspection.recording.Satis
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class IncrementalEvlContext extends EvlContext 
-	implements IIncrementalEvlContext<IEvlExecutionTraceManager<?>> {
+public class IncrementalEvlContext<R extends IEvlModuleTraceRepository,
+								   M extends IEvlExecutionTraceManager<R>>
+		extends EvlContext
+		implements IIncrementalEvlContext<IEvlModuleTrace,R, M> {
 	
-	private IEvlExecutionTraceManager<?> traceManager;
+	private M traceManager;
 	
 	/** The execution access listeners */
-	private PropertyAccessExecutionListener propertyAccessListener = new PropertyAccessExecutionListener();
-	private AllInstancesInvocationExecutionListener allAccessListener = new AllInstancesInvocationExecutionListener();
-	private SatisfiesInvocationExecutionListener satisfiesListener = new SatisfiesInvocationExecutionListener();
+	private final PropertyAccessExecutionListener<IEvlModuleTrace, R, M> propertyAccessListener = new PropertyAccessExecutionListener<IEvlModuleTrace, R, M>();
+	private final AllInstancesInvocationExecutionListener<IEvlModuleTrace, R, M> allAccessListener = new AllInstancesInvocationExecutionListener<IEvlModuleTrace, R, M>();
+	private final SatisfiesInvocationExecutionListener<IEvlModuleTrace, R, M> satisfiesListener = new SatisfiesInvocationExecutionListener<IEvlModuleTrace, R, M>();
+	
 	
 	/**
 	 * Gets the trace manager.
 	 *
 	 * @return the trace manager
 	 */
-	public IEvlExecutionTraceManager<?> getTraceManager() {
+	public M getTraceManager() {
 		return traceManager;
 	}
 	
@@ -46,22 +51,22 @@ public class IncrementalEvlContext extends EvlContext
 	 *
 	 * @param traceManager the new unit of work
 	 */
-	public void setTraceManager(IEvlExecutionTraceManager<?> traceManager) {
+	public void setTraceManager(M traceManager) {
 		this.traceManager = traceManager;
 	}
 
 	@Override
-	public PropertyAccessExecutionListener getPropertyAccessExecutionListener() {
+	public PropertyAccessExecutionListener<IEvlModuleTrace, R, M> getPropertyAccessExecutionListener() {
 		return propertyAccessListener;
 	}
 
 	@Override
-	public AllInstancesInvocationExecutionListener getAllInstancesInvocationExecutionListener() {
+	public AllInstancesInvocationExecutionListener<IEvlModuleTrace, R, M> getAllInstancesInvocationExecutionListener() {
 		return allAccessListener;
 	}
 	
 	@Override
-	public SatisfiesInvocationExecutionListener getSatisfiesListener() {
+	public SatisfiesInvocationExecutionListener<IEvlModuleTrace, R, M> getSatisfiesListener() {
 		return satisfiesListener;
 	}
 	

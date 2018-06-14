@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-07.
+ * This file was automatically generated on: 2018-06-14.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -53,6 +53,10 @@ public class ModelTraceHasTypes extends Feature implements IModelTraceHasTypes {
         if (conflict(target)) {
             return false;
         }
+        target.modelTrace().set(source);
+        if (related(target)) {
+            return false;
+        }
         set(target);
         return true;
     }
@@ -62,6 +66,7 @@ public class ModelTraceHasTypes extends Feature implements IModelTraceHasTypes {
         if (!related(target)) {
             return false;
         }
+        target.modelTrace().remove(source);
         remove(target);
         return true;
     }
@@ -72,13 +77,14 @@ public class ModelTraceHasTypes extends Feature implements IModelTraceHasTypes {
         if (isUnique) {
             result |= get().contains(target);
         }
+        result |= target.modelTrace().get() != null;
         return result;
     }
     
     @Override
     public boolean related(IModelTypeTrace target) {
   
-        return get().contains(target) ;
+        return get().contains(target) && source.equals(target.modelTrace().get());
     }
     
     // PRIVATE API

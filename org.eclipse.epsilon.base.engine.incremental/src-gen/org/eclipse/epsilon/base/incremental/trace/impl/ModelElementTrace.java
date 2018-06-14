@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-07.
+ * This file was automatically generated on: 2018-06-14.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,9 +20,11 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTraceHasModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTraceHasProperties;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementTraceHasModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementTraceHasProperties;
 import org.eclipse.epsilon.base.incremental.trace.impl.PropertyTrace;
 
@@ -47,12 +49,18 @@ public class ModelElementTrace implements IModelElementTrace {
     private final IModelElementTraceHasProperties properties;
 
     /**
+     * The modelTrace.
+     */
+    private final IModelElementTraceHasModelTrace modelTrace;
+
+    /**
      * Instantiates a new ModelElementTrace. The ModelElementTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
     public ModelElementTrace(String uri, IModelTrace container) throws TraceModelDuplicateRelation {
         this.uri = uri;
         this.properties = new ModelElementTraceHasProperties(this);
+        this.modelTrace = new ModelElementTraceHasModelTrace(this);
 
         if (!container.elements().create(this)) {
             throw new TraceModelDuplicateRelation();
@@ -81,10 +89,17 @@ public class ModelElementTrace implements IModelElementTrace {
     }
 
     @Override
+    public IModelElementTraceHasModelTrace modelTrace() {
+        return modelTrace;
+    }
+
+    @Override
     public IPropertyTrace createPropertyTrace(String name) throws EolIncrementalExecutionException {
         IPropertyTrace propertyTrace = null;
         try {
             propertyTrace = new PropertyTrace(name, this);
+            
+            this.properties().create(propertyTrace);
         } catch (TraceModelDuplicateRelation e) {
             // Pass
         } finally {

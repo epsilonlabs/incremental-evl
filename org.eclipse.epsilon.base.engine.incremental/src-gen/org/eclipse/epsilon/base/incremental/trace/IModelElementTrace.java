@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-07.
+ * This file was automatically generated on: 2018-06-14.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,6 +12,7 @@
 package org.eclipse.epsilon.base.incremental.trace;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.trace.IModelTrace;    
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;    
 
 /**
@@ -43,6 +44,18 @@ public interface IModelElementTrace extends IIdElement {
      * @return the value of the '<em>properties</em>' reference.
      */
     IModelElementTraceHasProperties properties();
+                
+    /**
+     * Returns the value of the '<em><b>Model Trace</b></em>' reference.
+     * <!-- protected region modelTrace-getter-doc on begin -->
+     * <p>
+     * If the meaning of the '<em>Model Trace</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
+     * </p>
+     * <!-- protected region modelTrace-getter-doc end --> 
+     * @return the value of the '<em>Model Trace</em>' reference.
+     */
+    IModelElementTraceHasModelTrace modelTrace();
                 
  
     /**

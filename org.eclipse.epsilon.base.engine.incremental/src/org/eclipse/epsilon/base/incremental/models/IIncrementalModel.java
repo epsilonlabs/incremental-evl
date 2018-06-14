@@ -11,11 +11,11 @@
 package org.eclipse.epsilon.base.incremental.models;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotInstantiableModelElementValueException;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
 import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
-import org.eclipse.epsilon.base.incremental.trace.impl.MemoryModelTraceFactory;
 import org.eclipse.epsilon.eol.exceptions.models.EolNotAModelElementException;
 import org.eclipse.epsilon.eol.models.IModel;
 
@@ -23,18 +23,17 @@ import org.eclipse.epsilon.eol.models.IModel;
  * The Interface IIncrementalModel defines the API for models that support incremental execution, both on-line and 
  * off-line modes. 
  * 
- * FIXME This probably just should be added to the IModel interface
- * 
  * @author Horacio Hoyos
  */
 public interface IIncrementalModel extends IModel {
 	
 	/**
-	 * Get the model Id. Id's are required to properly identify traces.
+	 * Get the model uri. Models must have a uri to properly identify model types, elements and property
+	 * traces that belong to this model.
 	 *
 	 * @return the model id
 	 */
-	String getModelId();
+	String getModelUri();
 	
 	/**
 	 * Supports notifications.
@@ -67,7 +66,7 @@ public interface IIncrementalModel extends IModel {
 	 *
 	 * @return the modules
 	 */
-	Collection<IIncrementalModule> getModules();
+	<M extends IIncrementalModule<?, ?, ?>> Collection<M> getModules();
 	
 	/**
 	 * Return a String representation of the object. If the object belongs to the model, it will return a
@@ -87,5 +86,13 @@ public interface IIncrementalModel extends IModel {
 	 * @throws UnsupportedOperationException if the value can not be converted to an object.
 	 */
 	Object createFromString(String value) throws NotInstantiableModelElementValueException;
+	
+	/**
+	 * Returns the fully qualified names of every type to which the given object conforms.
+	 * @param instance The instances which types are retrieved
+	 * @return A collection of the names of the types
+	 * @throws IllegalArgumentException If the instance is not owned by the model
+	 */
+	Set<String> getAllTypeNamesOf(Object instance) throws IllegalArgumentException;
 	
 }

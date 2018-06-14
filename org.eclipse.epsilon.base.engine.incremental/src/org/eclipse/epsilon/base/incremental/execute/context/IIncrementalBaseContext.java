@@ -10,7 +10,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.execute.context;
 
-import org.eclipse.epsilon.base.incremental.execute.IEolExecutionTraceManager;
+import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
@@ -20,10 +20,11 @@ import org.eclipse.epsilon.eol.execute.context.IEolContext;
 /**
  * The Interface IIncrementalEolContext.
  *
- * @param <T> the type of ExecutionTraceManager (see {@link IEolExecutionTraceManager}
+ * @param <T> the type of ExecutionTraceManager (see {@link IExecutionTraceManager}
  */
-public interface IIncrementalEolContext<R extends IModuleExecutionTraceRepository, 
-		M extends IEolExecutionTraceManager<R>> extends IEolContext {
+public interface IIncrementalBaseContext<T extends IModuleExecutionTrace, 
+										 R extends IModuleExecutionTraceRepository<?>, 
+										 M extends IExecutionTraceManager<?, ?>> extends IEolContext {
 	
 	/**
 	 * Gets the trace manager.
@@ -44,13 +45,13 @@ public interface IIncrementalEolContext<R extends IModuleExecutionTraceRepositor
 	 *
 	 * @return the property access execution listener
 	 */
-	PropertyAccessExecutionListener getPropertyAccessExecutionListener();
+	PropertyAccessExecutionListener<T, R, M> getPropertyAccessExecutionListener();
 	
 	/**
 	 * Gets the all instances invocation execution listener.
 	 *
 	 * @return the all instances invocation execution listener
 	 */
-	AllInstancesInvocationExecutionListener getAllInstancesInvocationExecutionListener();
+	AllInstancesInvocationExecutionListener<T, R, M> getAllInstancesInvocationExecutionListener();
 
 }
