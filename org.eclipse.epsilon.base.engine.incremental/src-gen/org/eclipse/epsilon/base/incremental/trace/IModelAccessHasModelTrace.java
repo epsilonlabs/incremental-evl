@@ -12,11 +12,10 @@
 package org.eclipse.epsilon.base.incremental.trace;
 
 import java.util.Iterator;
-import java.util.Queue;
 
-import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 
-public interface IModelTraceHasTypes {
+public interface IModelAccessHasModelTrace {
 
     // PUBLIC API
     
@@ -25,28 +24,27 @@ public interface IModelTraceHasTypes {
     /**
      * Get the value(s) for the reference
      */
-    
-    public Iterator<IModelTypeTrace> get();
+    public IModelTrace get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the
      * relation already existed. 
-     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IModelTypeTrace)}).
+     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IModelTrace)}).
      * If the reference has an opposite, that relation is also created.
      *
-     * @see ExecutionHasAccesses#conflict(IModelTypeTrace)
-     * @see ExecutionHasAccesses#related(IModelTypeTrace)
+     * @see ExecutionHasAccesses#conflict(IModelTrace)
+     * @see ExecutionHasAccesses#related(IModelTrace)
      */
-    boolean create(IModelTypeTrace target);
+    boolean create(IModelTrace target);
     
     /**
      * Destroy a reference to the target element. Returns true, if the reference existed
      * and was properly destroyed. If the reference has an opposite, that relation
      * is also destroyed.
      *
-     * @see ExecutionHasAccesses#related(IModelTypeTrace)
+     * @see ExecutionHasAccesses#related(IModelTrace)
      */    
-    boolean destroy(IModelTypeTrace target);
+    boolean destroy(IModelTrace target);
     
     /**
      * Determines if there is a conflict with a possible target. Conflicts can only arise for if
@@ -70,12 +68,12 @@ public interface IModelTraceHasTypes {
      *      </ul>
      *  </li>
      */
-    boolean conflict(IModelTypeTrace target);
+    boolean conflict(IModelTrace target);
     
     /**
      * Returns true if the target is already related via this reference.
      */
-    boolean related(IModelTypeTrace target);
+    boolean related(IModelTrace target);
 
     // PRIVATE API
 
@@ -83,15 +81,15 @@ public interface IModelTraceHasTypes {
      * Set a new value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#create(IModelTypeTrace)
+     * @see ExecutionHasAccesses#create(IModelTrace)
      */
-    void set(IModelTypeTrace target);
+    void set(IModelTrace target);
 
     /**
      * Remove a value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#destroy(IModelTypeTrace)
+     * @see ExecutionHasAccesses#destroy(IModelTrace)
      */
-    void remove(IModelTypeTrace target);
+    void remove(IModelTrace target);
 }

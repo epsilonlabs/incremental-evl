@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,6 +13,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /** protected region ExecutionContextImports on begin **/
@@ -47,7 +48,7 @@ public class ExecutionContext implements IExecutionContext {
      * container and any attributes identified as indexes.
      */    
     public ExecutionContext(IContextModuleElementTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@5f768317 (name: contextVariables) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@77f5b225 (name: contextVariables) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.contextVariables = new ExecutionContextHasContextVariables(this);
 
         if (!container.executionContext().create(this)) {
@@ -82,15 +83,19 @@ public class ExecutionContext implements IExecutionContext {
     	    if (modelElementVariable != null) {
     	        return modelElementVariable;
     	    }
-            try {
-                modelElementVariable = this.contextVariables.get().stream()
-                    .filter(item -> item.getName() == name)
-                    .filter(item -> item.value().get().equals(value))
-                    .findFirst()
-                    .get();
-            } catch (NoSuchElementException ex) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelElementVariable was "
-                        + "duplicate but previous one was not found.");
+            Iterator<IModelElementVariable> it = this.contextVariables.get();
+            while (it.hasNext()) {
+            	IModelElementVariable item = it.next();
+                    //.filter(item -> item.getName() == name)
+                    //.filter(item -> item.value().get().equals(value))
+    			if (item.getName() == name &&
+    			    item.value().get().equals(value)) {
+    				modelElementVariable = item;
+    			}
+    		}
+    		if (modelElementVariable == null) {
+               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelElementVariable was "
+                		+ "duplicate but previous one was not found.");
             }
         }
         return modelElementVariable;

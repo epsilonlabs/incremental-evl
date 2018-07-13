@@ -14,31 +14,29 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import java.util.Queue;
-import org.eclipse.epsilon.base.incremental.trace.util.ConcurrentSetQueue;
+import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTraceHasTypes;
+import org.eclipse.epsilon.base.incremental.trace.IModelAccessHasModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of IModelTraceHasTypes reference. 
+ * Implementation of IModelAccessHasModelTrace reference. 
  */
-public class ModelTraceHasTypes extends Feature implements IModelTraceHasTypes {
+public class ModelAccessHasModelTrace extends Feature implements IModelAccessHasModelTrace {
     
     /** The source(s) of the reference */
-    protected IModelTrace source;
+    protected IModelAccess source;
     
     /** The target(s) of the reference */
-    protected Queue<IModelTypeTrace> target =  new ConcurrentSetQueue<IModelTypeTrace>();
+    protected IModelTrace target;
     
     /**
-     * Instantiates a new IModelTraceHasTypes.
+     * Instantiates a new IModelAccessHasModelTrace.
      *
      * @param source the source of the reference
      */
-    public ModelTraceHasTypes (IModelTrace source) {
+    public ModelAccessHasModelTrace (IModelAccess source) {
         super(true);
         this.source = source;
     }
@@ -46,19 +44,14 @@ public class ModelTraceHasTypes extends Feature implements IModelTraceHasTypes {
     // PUBLIC API
         
     @Override
-    
-    public Iterator<IModelTypeTrace> get() {
-    	return target.iterator();
+    public IModelTrace get() {
+        return target;
     }
     
 
     @Override
-    public boolean create(IModelTypeTrace target) {
+    public boolean create(IModelTrace target) {
         if (conflict(target)) {
-            return false;
-        }
-        target.modelTrace().set(source);
-        if (related(target)) {
             return false;
         }
         set(target);
@@ -66,44 +59,40 @@ public class ModelTraceHasTypes extends Feature implements IModelTraceHasTypes {
     }
 
     @Override
-    public boolean destroy(IModelTypeTrace target) {
+    public boolean destroy(IModelTrace target) {
         if (!related(target)) {
             return false;
         }
-        target.modelTrace().remove(source);
         remove(target);
         return true;
     }
     
     @Override
-    public boolean conflict(IModelTypeTrace target) {
+    public boolean conflict(IModelTrace target) {
         boolean result = false;
-        if (isUnique) {
-            result |= this.target.contains(target);
-        }
-        result |= target.modelTrace().get() != null;
+        result |= this.target != null;
         return result;
     }
     
     @Override
-    public boolean related(IModelTypeTrace target) {
+    public boolean related(IModelTrace target) {
     	if (target == null) {
 			return false;
 		}
-		return this.target.contains(target) && source.equals(target.modelTrace().get());
+		return target.equals(this.target);
 	}
         
     
     // PRIVATE API
     
     @Override
-    public void set(IModelTypeTrace target) {
-        this.target.add(target);
+    public void set(IModelTrace target) {
+        this.target = target;
     }
     
     @Override
-    public void remove(IModelTypeTrace target) {
-        this.target.remove(target);
+    public void remove(IModelTrace target) {
+        this.target = null;
     }
 
 }

@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.epsilon.base.incremental.execute;
 
+import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceRepositoryImpl;
+
 
 /**
  * The trace manager is responsible form provisioning the required repositories and for implementing
@@ -58,10 +59,17 @@ public interface IExecutionTraceManager<T extends IModuleExecutionTrace, R exten
 	boolean persistTraceInformation();
 	
 	/**
-	 * The repository of module executions. Each Epsilon language will return a specialised repository.
+	 * The repository of module executions. Each Epsilon language will return a specialised repository that
+	 * provides specialised ModuleExecution types.
 	 *
-	 * @return the exl module execution repository
+	 * @return the module execution repository
 	 */
 	R getExecutionTraceRepository();
+	
+	/**
+	 * The repository of models.
+	 * @return
+	 */
+	IModelTraceRepository getModelTraceRepository();
 
 }

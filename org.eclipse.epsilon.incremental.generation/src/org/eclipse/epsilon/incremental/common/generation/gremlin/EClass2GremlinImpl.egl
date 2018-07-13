@@ -19,7 +19,6 @@ package [%=qp%].trace.impl;
 
 import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%];
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 [%=out.startPreserve("/**", "**/", ec.name + "Imports", true)%]
@@ -322,37 +321,29 @@ public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] create[%=self.nam
 	    if ([%=instanceName%] != null) {
 	        return [%=instanceName%];
 	    }
-[%  if (ref.isMany()) {
-		var conds: Sequence;%]
-        Iterator<[%=self.getJavaInterfaceName(interPrefix, interSufix)%]> it = this.[%=ref.name%].get();
-        while (it.hasNext()) {
-        	[%=self.getJavaInterfaceName(interPrefix, interSufix)%] item = it.next();
+[%  if (ref.isMany()) {%]
+        try {
+            [%=instanceName%] = this.[%=ref.name%].get().stream()
 [%// Need to filter and cast for subclasses
-        if (subClass) {
-        	conds.add("t instanceof " +  self.getJavaInterfaceName(interPrefix, interSufix)); %]
-                //.filter(t -> t instanceof [%=self.getJavaInterfaceName(interPrefix, interSufix)%])
-                //.map([%=self.getJavaInterfaceName(interPrefix, interSufix)%].class::cast)
+        if (subClass) {%]
+                .filter(t -> t instanceof [%=self.getJavaInterfaceName(interPrefix, interSufix)%])
+                .map([%=self.getJavaInterfaceName(interPrefix, interSufix)%].class::cast)
 [%      }%]
 [%      for (param in self.getIndexAttributes()) {
-            if (isJavaPrimitiveType(param.getEAttributeType().name)) {
-            	conds.add("item.get" + param.name.firstToUpperCase() + "() == " + param.name);%]
-                //.filter(item -> item.get[%=param.name.firstToUpperCase()%]() == [%=param.name%])
-[%          } else {
-				conds.add("item.get" + param.name.firstToUpperCase() + ".equals(" + param.name + ")");%]
-                //.filter(item -> item.get[%=param.name.firstToUpperCase()%]().equals([%=param.name%]))
+            if (isJavaPrimitiveType(param.getEAttributeType().name)) {%]
+                .filter(item -> item.get[%=param.name.firstToUpperCase()%]() == [%=param.name%])
+[%          } else {%]
+                .filter(item -> item.get[%=param.name.firstToUpperCase()%]().equals([%=param.name%]))
 [%          }
         }%]
-[%      for (param in self.getRequiredFeatures()) {
-			conds.add("item." + param.name + "().get().equals(" + param.name + ")");%]
-                //.filter(item -> item.[%=param.name%]().get().equals([%=param.name%]))
+[%      for (param in self.getRequiredFeatures()) {%]
+                .filter(item -> item.[%=param.name%]().get().equals([%=param.name%]))
 [%      }%]
-			if ([%=conds.concat(" &&\n")%]) {
-				[%=instanceName%] = item;
-			}
-		}
-		if ([%=instanceName%] == null) {
-           	throw new EolIncrementalExecutionException("Error creating trace model element. Requested [%=self.name%] was "
-            		+ "duplicate but previous one was not found.");
+                .findFirst()
+                .get();
+        } catch (NoSuchElementException ex) {
+            throw new EolIncrementalExecutionException("Error creating trace model element. Requested [%=self.name%] was "
+                    + "duplicate but previous one was not found.");
         }
 [%  } else {%]
         [%=instanceName%] = [%if (subClass) {%]([%=self.name%]) [%}%]this.[%=ref.name%].get();

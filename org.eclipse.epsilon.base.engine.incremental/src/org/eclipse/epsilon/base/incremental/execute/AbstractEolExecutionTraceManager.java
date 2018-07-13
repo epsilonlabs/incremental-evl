@@ -2,6 +2,7 @@ package org.eclipse.epsilon.base.incremental.execute;
 
 import java.time.LocalDate;
 
+import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 
@@ -27,8 +28,14 @@ public abstract class AbstractEolExecutionTraceManager<T extends IModuleExecutio
 	/** Time of last flush */
 	protected LocalDate lastFlush;
 	
-	protected AbstractEolExecutionTraceManager() {
+	protected final R executionTraceRepository;
+	
+	protected final IModelTraceRepository modelTraceRepository;
+	
+	protected AbstractEolExecutionTraceManager(R executionTraceRepository, IModelTraceRepository modelTraceRepository) {
 		this.lastFlush = LocalDate.now();
+		this.executionTraceRepository = executionTraceRepository;
+		this.modelTraceRepository = modelTraceRepository;
 	}
 
 	@Override
@@ -45,5 +52,17 @@ public abstract class AbstractEolExecutionTraceManager<T extends IModuleExecutio
 	public void setFlushTimeout(float period) {
 		this.timeOut = period;
 	}
+	
+	@Override
+	public R getExecutionTraceRepository() {
+		return this.executionTraceRepository;
+	}
+	
+	@Override
+	public IModelTraceRepository getModelTraceRepository() {
+		// TODO Implement IExecutionTraceManager<IEvlModuleTrace,IEvlModuleTraceRepository>.getModelTraceRepository
+		throw new UnsupportedOperationException("Unimplemented Method    IExecutionTraceManager<IEvlModuleTrace,IEvlModuleTraceRepository>.getModelTraceRepository invoked.");
+	}
+	
 
 }

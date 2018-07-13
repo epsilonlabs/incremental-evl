@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,9 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import java.util.Iterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccessHasType;
@@ -45,6 +48,7 @@ public class AllInstancesAccessHasType extends Feature implements IAllInstancesA
         return target;
     }
     
+
     @Override
     public boolean create(IModelTypeTrace target) {
         if (conflict(target)) {
@@ -66,15 +70,18 @@ public class AllInstancesAccessHasType extends Feature implements IAllInstancesA
     @Override
     public boolean conflict(IModelTypeTrace target) {
         boolean result = false;
-        result |= get() != null;
+        result |= this.target != null;
         return result;
     }
     
     @Override
     public boolean related(IModelTypeTrace target) {
-  
-        return target.equals(this.target) ;
-    }
+    	if (target == null) {
+			return false;
+		}
+		return target.equals(this.target);
+	}
+        
     
     // PRIVATE API
     

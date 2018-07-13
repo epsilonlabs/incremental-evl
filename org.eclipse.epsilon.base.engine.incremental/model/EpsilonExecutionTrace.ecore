@@ -30,11 +30,19 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="models" upperBound="-1"
-        eType="#//ModelTrace" containment="true">
+        eType="#//ModelAccess" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="The different models involved in the execution"/>
       </eAnnotations>
     </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelAccess" eSuperTypes="#//IdElement">
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelAccess/modelName"/>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ModelAccess/modelTrace"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="modelName" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="modelTrace" lowerBound="1"
+        eType="#//ModelTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModuleElementTrace" abstract="true"
       eSuperTypes="#//IdElement">
@@ -125,11 +133,10 @@
         eType="#//PropertyTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelTrace" eSuperTypes="#//IdElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelTrace/name #//ModelTrace/uri"/>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelTrace/uri"/>
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A ModelTrace contains trace information for the elements and types in the model &#xA;that were accessed during execution."/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="uri" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="The uri of the model."/>

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,10 +11,13 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import java.util.Iterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import java.util.Queue;
 import org.eclipse.epsilon.base.incremental.trace.util.ConcurrentSetQueue;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceHasModels;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 
@@ -28,7 +31,7 @@ public class ModuleExecutionTraceHasModels extends Feature implements IModuleExe
     protected IModuleExecutionTrace source;
     
     /** The target(s) of the reference */
-    protected Queue<IModelTrace> target =  new ConcurrentSetQueue<IModelTrace>();
+    protected Queue<IModelAccess> target =  new ConcurrentSetQueue<IModelAccess>();
     
     /**
      * Instantiates a new IModuleExecutionTraceHasModels.
@@ -44,12 +47,13 @@ public class ModuleExecutionTraceHasModels extends Feature implements IModuleExe
         
     @Override
     
-    public Queue<IModelTrace> get() {
-        return target;
+    public Iterator<IModelAccess> get() {
+    	return target.iterator();
     }
     
+
     @Override
-    public boolean create(IModelTrace target) {
+    public boolean create(IModelAccess target) {
         if (conflict(target)) {
             return false;
         }
@@ -58,7 +62,7 @@ public class ModuleExecutionTraceHasModels extends Feature implements IModuleExe
     }
 
     @Override
-    public boolean destroy(IModelTrace target) {
+    public boolean destroy(IModelAccess target) {
         if (!related(target)) {
             return false;
         }
@@ -67,29 +71,32 @@ public class ModuleExecutionTraceHasModels extends Feature implements IModuleExe
     }
     
     @Override
-    public boolean conflict(IModelTrace target) {
+    public boolean conflict(IModelAccess target) {
         boolean result = false;
         if (isUnique) {
-            result |= get().contains(target);
+            result |= this.target.contains(target);
         }
         return result;
     }
     
     @Override
-    public boolean related(IModelTrace target) {
-  
-        return get().contains(target) ;
-    }
+    public boolean related(IModelAccess target) {
+    	if (target == null) {
+			return false;
+		}
+		return this.target.contains(target);
+	}
+        
     
     // PRIVATE API
     
     @Override
-    public void set(IModelTrace target) {
+    public void set(IModelAccess target) {
         this.target.add(target);
     }
     
     @Override
-    public void remove(IModelTrace target) {
+    public void remove(IModelAccess target) {
         this.target.remove(target);
     }
 

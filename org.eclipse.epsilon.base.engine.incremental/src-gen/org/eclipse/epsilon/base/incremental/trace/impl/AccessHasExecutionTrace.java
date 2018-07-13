@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,9 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import java.util.Iterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IAccessHasExecutionTrace;
@@ -45,6 +48,7 @@ public class AccessHasExecutionTrace extends Feature implements IAccessHasExecut
         return target;
     }
     
+
     @Override
     public boolean create(IModuleElementTrace target) {
         if (conflict(target)) {
@@ -71,16 +75,25 @@ public class AccessHasExecutionTrace extends Feature implements IAccessHasExecut
     @Override
     public boolean conflict(IModuleElementTrace target) {
         boolean result = false;
-        result |= get() != null;
-        result |= target.accesses().isUnique() && target.accesses().get().contains(source);
+        result |= this.target != null;
+		Iterable<IAccess> iterable = () -> target.accesses().get();
+		Stream<IAccess> targetStream = StreamSupport.stream(iterable.spliterator(), false);
+        result |= target.accesses().isUnique() &&
+        	targetStream.anyMatch(source::equals);
         return result;
     }
     
     @Override
     public boolean related(IModuleElementTrace target) {
-  
-        return target.equals(this.target) && target.accesses().get().contains(source);
-    }
+    	if (target == null) {
+			return false;
+		}
+        
+		Iterable<IAccess> iterable = () -> target.accesses().get();
+		Stream<IAccess> targetStream = StreamSupport.stream(iterable.spliterator(), false);
+		return target.equals(this.target) && targetStream.anyMatch(source::equals);
+	}
+        
     
     // PRIVATE API
     

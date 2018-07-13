@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,7 +18,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasModels;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
@@ -34,17 +33,11 @@ public class ModelTraceTest {
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-    /** Mock the container. */
-    @Mock
-    private IModuleExecutionTrace containerMock;
-    
     private ModelTrace classUnderTest;
 
     @Test
     public void testInit() throws Exception {
         
-        ModuleExecutionTraceHasModels containerReference = new ModuleExecutionTraceHasModels(containerMock);
-        when(containerMock.models()).thenReturn(containerReference);
         // protected region ModelTraceInit on begin
         // Default init parameters can be modified
         classUnderTest = new ModelTrace("name1", "uri1", containerMock);                    

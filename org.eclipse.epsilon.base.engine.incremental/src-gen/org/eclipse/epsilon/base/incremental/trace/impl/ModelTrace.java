@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,6 +13,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /** protected region ModelTraceImports on begin **/
@@ -24,7 +25,6 @@ import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceHasElements;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceHasTypes;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceHasElements;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceHasTypes;
@@ -39,11 +39,6 @@ public class ModelTrace implements IModelTrace {
 	 * The id.
 	 */
     private Object id;
-
-    /**
-	 * The name.
-	 */
-    private String name;
 
     /**
 	 * The uri.
@@ -64,15 +59,11 @@ public class ModelTrace implements IModelTrace {
      * Instantiates a new ModelTrace. The ModelTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ModelTrace(String name, String uri, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
-        this.name = name;
+    public ModelTrace(String uri) throws TraceModelDuplicateRelation {
         this.uri = uri;
         this.elements = new ModelTraceHasElements(this);
         this.types = new ModelTraceHasTypes(this);
 
-        if (!container.models().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
     }
     
     @Override
@@ -86,11 +77,6 @@ public class ModelTrace implements IModelTrace {
         this.id = value;
     }   
      
-    @Override
-    public String getName() {
-        return name;
-    }
-    
     @Override
     public String getUri() {
         return uri;
@@ -119,14 +105,17 @@ public class ModelTrace implements IModelTrace {
     	    if (modelElementTrace != null) {
     	        return modelElementTrace;
     	    }
-            try {
-                modelElementTrace = this.elements.get().stream()
-                    .filter(item -> item.getUri() == uri)
-                    .findFirst()
-                    .get();
-            } catch (NoSuchElementException ex) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelElementTrace was "
-                        + "duplicate but previous one was not found.");
+            Iterator<IModelElementTrace> it = this.elements.get();
+            while (it.hasNext()) {
+            	IModelElementTrace item = it.next();
+                    //.filter(item -> item.getUri() == uri)
+    			if (item.getUri() == uri) {
+    				modelElementTrace = item;
+    			}
+    		}
+    		if (modelElementTrace == null) {
+               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelElementTrace was "
+                		+ "duplicate but previous one was not found.");
             }
         }
         return modelElementTrace;
@@ -145,14 +134,17 @@ public class ModelTrace implements IModelTrace {
     	    if (modelTypeTrace != null) {
     	        return modelTypeTrace;
     	    }
-            try {
-                modelTypeTrace = this.types.get().stream()
-                    .filter(item -> item.getName() == name)
-                    .findFirst()
-                    .get();
-            } catch (NoSuchElementException ex) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelTypeTrace was "
-                        + "duplicate but previous one was not found.");
+            Iterator<IModelTypeTrace> it = this.types.get();
+            while (it.hasNext()) {
+            	IModelTypeTrace item = it.next();
+                    //.filter(item -> item.getName() == name)
+    			if (item.getName() == name) {
+    				modelTypeTrace = item;
+    			}
+    		}
+    		if (modelTypeTrace == null) {
+               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelTypeTrace was "
+                		+ "duplicate but previous one was not found.");
             }
         }
         return modelTypeTrace;
@@ -161,14 +153,6 @@ public class ModelTrace implements IModelTrace {
     @Override
     public boolean sameIdentityAs(final IModelTrace other) {
         if (other == null) {
-            return false;
-        }
-        String name = getName();
-        String otherName = other.getName();
-        if (name == null) {
-            if (otherName != null)
-                return false;
-        } else if (!name.equals(otherName)) {
             return false;
         }
         String uri = getUri();
@@ -200,7 +184,6 @@ public class ModelTrace implements IModelTrace {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((uri == null) ? 0 : uri.hashCode());
         return result;
     }

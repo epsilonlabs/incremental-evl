@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
+import java.util.Iterator;
 import java.util.Queue;
 
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
@@ -25,7 +26,7 @@ public interface IModuleExecutionTraceHasModuleElements {
      * Get the value(s) for the reference
      */
     
-    public Queue<IModuleElementTrace> get();
+    public Iterator<IModuleElementTrace> get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the

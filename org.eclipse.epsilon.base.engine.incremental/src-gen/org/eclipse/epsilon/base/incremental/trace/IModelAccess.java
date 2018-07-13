@@ -14,21 +14,21 @@ package org.eclipse.epsilon.base.incremental.trace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;    
 
 /**
- * A PropertyAccess denotes access to property of a model element.
+ * The ModelAccess Interface.
  */
-public interface IModelTypeTrace extends IIdElement {
+public interface IModelAccess extends IIdElement {
     
     /**
-     * Returns the value of the '{@link ModelTypeTrace#name <em>name</em>}' attribute.
-     * <!-- protected region name-getter-doc on begin -->
+     * Returns the value of the '{@link ModelAccess#modelName <em>modelName</em>}' attribute.
+     * <!-- protected region modelName-getter-doc on begin -->
      * <p>
-     * If the meaning of the '<em>Name</em>' attribute isn't clear,
-     * there really should be more of a description here...
+     * If the meaning of the '<em>Model Name</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
      * </p>
-     * <!-- protected region name-getter-doc end --> 
-     * @return the value of the '<em>name</em>' attribute.
+     * <!-- protected region modelName-getter-doc end --> 
+     * @return the value of the '<em>Model Name</em>' attribute.
      */
-    String getName();
+    String getModelName();
 
     /**
      * Returns the value of the '<em><b>Model Trace</b></em>' reference.
@@ -40,13 +40,13 @@ public interface IModelTypeTrace extends IIdElement {
      * <!-- protected region modelTrace-getter-doc end --> 
      * @return the value of the '<em>Model Trace</em>' reference.
      */
-    IModelTypeTraceHasModelTrace modelTrace();
+    IModelAccessHasModelTrace modelTrace();
                 
  
     /**
-     * ModelTypeTrace has same identity in the aggregate.
+     * ModelAccess has same identity in the aggregate.
      */
-    public boolean sameIdentityAs(final IModelTypeTrace other);
+    public boolean sameIdentityAs(final IModelAccess other);
     
 
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,18 +20,6 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
  * that were accessed during execution.
  */
 public interface IModelTrace extends IIdElement {
-    
-    /**
-     * Returns the value of the '{@link ModelTrace#name <em>name</em>}' attribute.
-     * <!-- protected region name-getter-doc on begin -->
-     * <p>
-     * If the meaning of the '<em>Name</em>' attribute isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- protected region name-getter-doc end --> 
-     * @return the value of the '<em>name</em>' attribute.
-     */
-    String getName();
     
     /**
      * Returns the value of the '{@link ModelTrace#uri <em>uri</em>}' attribute.

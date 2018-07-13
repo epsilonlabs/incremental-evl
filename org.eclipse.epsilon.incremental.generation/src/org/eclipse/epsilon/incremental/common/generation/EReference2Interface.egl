@@ -21,6 +21,7 @@ var erqp = qp.replace("." + er.getEContainingClass().getEPackage().name + ".", "
 [%=getHeader()%]
 package [%=qp%].trace;
 
+import java.util.Iterator;
 [%if (er.isMany()) {%]
 [%  if (er.isUnique() and er.isOrdered()) {%]
 import java.util.Queue;
@@ -44,9 +45,9 @@ public interface [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] {
      */
 [%if (er.isMany()) {
     if (er.isUnique() and not er.isOrdered()) {%]
-    public Set<[%=targetType%]> get();
+    public Iterator<[%=targetType%]> get();
 [%  } else {%]    
-    public Queue<[%=targetType%]> get();
+    public Iterator<[%=targetType%]> get();
 [%  }
 } else {%]
     public [%=targetType%] get();

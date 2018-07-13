@@ -6,17 +6,20 @@ import java.util.WeakHashMap;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
 import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.AssignmentStatement;
 import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
@@ -125,23 +128,27 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace,
 		logger.debug("result: {}", result);
 		
 		IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager().getExecutionTraceRepository();
+		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
 		String moduleUri = context.getModule().getUri().toString();
 		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository.getModuleExecutionTraceByIdentity(moduleUri);
 		if (moduleExecutionTrace == null) {
 			throw new EolIncrementalExecutionException("A moduleExecutionTrace was not found for the module under execution. "
 					+ "The module execution trace must be created at the begining of the execution of the module.");
 		}
-		IPropertyTrace propertyTrace = executionTraceRepository
-				.getPropertyTraceFor(moduleUri, model.getName(), model.getModelUri(),
-						model.getElementId(modelElement), propertyName);
+		IPropertyTrace propertyTrace = modelTraceRepository
+				.getPropertyTraceFor(model.getModelUri(), model.getElementId(modelElement), propertyName);
 		if (propertyTrace == null) {
-			IModelElementTrace elementTrace = context.getTraceManager().getExecutionTraceRepository()
-					.getModelElementTraceFor(moduleUri, model.getName(), model.getModelUri(), model.getElementId(modelElement));
+			IModelElementTrace elementTrace = modelTraceRepository
+					.getModelElementTraceFor(model.getModelUri(), model.getElementId(modelElement));
 			if (elementTrace == null) {
-				IModelTrace modelTrace = context.getTraceManager().getExecutionTraceRepository()
-						.getModelTraceByIdentity(null, model.getName(), ((IIncrementalModel)model).getModelUri());
-				if (modelTrace == null) {
-					modelTrace = moduleExecutionTrace.createModelTrace(model.getName(), model.getModelUri());
+				IModelTrace modelTrace = modelTraceRepository
+						.getModelTraceByIdentity(model.getModelUri());
+				try {
+					modelTrace = new ModelTrace(model.getModelUri());
+					modelTraceRepository.add(modelTrace);
+				} catch (TraceModelDuplicateRelation e) {
+					throw new EolIncrementalExecutionException(String.format("A modelTrace was not found for "
+							+ "the model wiht uri %s but there was an error craeting it.", model.getModelUri()));
 				}
 				elementTrace = modelTrace.createModelElementTrace(model.getElementId(modelElement));
 			}

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,9 +11,10 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
+import java.util.Iterator;
 import java.util.Queue;
 
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
 
 public interface IModuleExecutionTraceHasModels {
 
@@ -25,27 +26,27 @@ public interface IModuleExecutionTraceHasModels {
      * Get the value(s) for the reference
      */
     
-    public Queue<IModelTrace> get();
+    public Iterator<IModelAccess> get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the
      * relation already existed. 
-     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IModelTrace)}).
+     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IModelAccess)}).
      * If the reference has an opposite, that relation is also created.
      *
-     * @see ExecutionHasAccesses#conflict(IModelTrace)
-     * @see ExecutionHasAccesses#related(IModelTrace)
+     * @see ExecutionHasAccesses#conflict(IModelAccess)
+     * @see ExecutionHasAccesses#related(IModelAccess)
      */
-    boolean create(IModelTrace target);
+    boolean create(IModelAccess target);
     
     /**
      * Destroy a reference to the target element. Returns true, if the reference existed
      * and was properly destroyed. If the reference has an opposite, that relation
      * is also destroyed.
      *
-     * @see ExecutionHasAccesses#related(IModelTrace)
+     * @see ExecutionHasAccesses#related(IModelAccess)
      */    
-    boolean destroy(IModelTrace target);
+    boolean destroy(IModelAccess target);
     
     /**
      * Determines if there is a conflict with a possible target. Conflicts can only arise for if
@@ -69,12 +70,12 @@ public interface IModuleExecutionTraceHasModels {
      *      </ul>
      *  </li>
      */
-    boolean conflict(IModelTrace target);
+    boolean conflict(IModelAccess target);
     
     /**
      * Returns true if the target is already related via this reference.
      */
-    boolean related(IModelTrace target);
+    boolean related(IModelAccess target);
 
     // PRIVATE API
 
@@ -82,15 +83,15 @@ public interface IModuleExecutionTraceHasModels {
      * Set a new value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#create(IModelTrace)
+     * @see ExecutionHasAccesses#create(IModelAccess)
      */
-    void set(IModelTrace target);
+    void set(IModelAccess target);
 
     /**
      * Remove a value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#destroy(IModelTrace)
+     * @see ExecutionHasAccesses#destroy(IModelAccess)
      */
-    void remove(IModelTrace target);
+    void remove(IModelAccess target);
 }

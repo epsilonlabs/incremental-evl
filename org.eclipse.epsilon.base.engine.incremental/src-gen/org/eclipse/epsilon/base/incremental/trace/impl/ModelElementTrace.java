@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,6 +13,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /** protected region ModelElementTraceImports on begin **/
@@ -106,14 +107,17 @@ public class ModelElementTrace implements IModelElementTrace {
     	    if (propertyTrace != null) {
     	        return propertyTrace;
     	    }
-            try {
-                propertyTrace = this.properties.get().stream()
-                    .filter(item -> item.getName() == name)
-                    .findFirst()
-                    .get();
-            } catch (NoSuchElementException ex) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested PropertyTrace was "
-                        + "duplicate but previous one was not found.");
+            Iterator<IPropertyTrace> it = this.properties.get();
+            while (it.hasNext()) {
+            	IPropertyTrace item = it.next();
+                    //.filter(item -> item.getName() == name)
+    			if (item.getName() == name) {
+    				propertyTrace = item;
+    			}
+    		}
+    		if (propertyTrace == null) {
+               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested PropertyTrace was "
+                		+ "duplicate but previous one was not found.");
             }
         }
         return propertyTrace;

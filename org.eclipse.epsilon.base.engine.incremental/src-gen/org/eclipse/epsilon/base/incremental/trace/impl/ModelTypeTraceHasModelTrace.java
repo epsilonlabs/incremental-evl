@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,9 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import java.util.Iterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTraceHasModelTrace;
@@ -45,6 +48,7 @@ public class ModelTypeTraceHasModelTrace extends Feature implements IModelTypeTr
         return target;
     }
     
+
     @Override
     public boolean create(IModelTrace target) {
         if (conflict(target)) {
@@ -71,16 +75,25 @@ public class ModelTypeTraceHasModelTrace extends Feature implements IModelTypeTr
     @Override
     public boolean conflict(IModelTrace target) {
         boolean result = false;
-        result |= get() != null;
-        result |= target.types().isUnique() && target.types().get().contains(source);
+        result |= this.target != null;
+		Iterable<IModelTypeTrace> iterable = () -> target.types().get();
+		Stream<IModelTypeTrace> targetStream = StreamSupport.stream(iterable.spliterator(), false);
+        result |= target.types().isUnique() &&
+        	targetStream.anyMatch(source::equals);
         return result;
     }
     
     @Override
     public boolean related(IModelTrace target) {
-  
-        return target.equals(this.target) && target.types().get().contains(source);
-    }
+    	if (target == null) {
+			return false;
+		}
+        
+		Iterable<IModelTypeTrace> iterable = () -> target.types().get();
+		Stream<IModelTypeTrace> targetStream = StreamSupport.stream(iterable.spliterator(), false);
+		return target.equals(this.target) && targetStream.anyMatch(source::equals);
+	}
+        
     
     // PRIVATE API
     

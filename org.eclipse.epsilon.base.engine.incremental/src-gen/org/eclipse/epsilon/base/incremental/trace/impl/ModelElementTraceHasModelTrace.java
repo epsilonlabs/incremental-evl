@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,9 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import java.util.Iterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTraceHasModelTrace;
@@ -45,6 +48,7 @@ public class ModelElementTraceHasModelTrace extends Feature implements IModelEle
         return target;
     }
     
+
     @Override
     public boolean create(IModelTrace target) {
         if (conflict(target)) {
@@ -71,16 +75,25 @@ public class ModelElementTraceHasModelTrace extends Feature implements IModelEle
     @Override
     public boolean conflict(IModelTrace target) {
         boolean result = false;
-        result |= get() != null;
-        result |= target.elements().isUnique() && target.elements().get().contains(source);
+        result |= this.target != null;
+		Iterable<IModelElementTrace> iterable = () -> target.elements().get();
+		Stream<IModelElementTrace> targetStream = StreamSupport.stream(iterable.spliterator(), false);
+        result |= target.elements().isUnique() &&
+        	targetStream.anyMatch(source::equals);
         return result;
     }
     
     @Override
     public boolean related(IModelTrace target) {
-  
-        return target.equals(this.target) && target.elements().get().contains(source);
-    }
+    	if (target == null) {
+			return false;
+		}
+        
+		Iterable<IModelElementTrace> iterable = () -> target.elements().get();
+		Stream<IModelElementTrace> targetStream = StreamSupport.stream(iterable.spliterator(), false);
+		return target.equals(this.target) && targetStream.anyMatch(source::equals);
+	}
+        
     
     // PRIVATE API
     

@@ -8,15 +8,18 @@ import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.OperationCallExpression;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -126,7 +129,7 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 			logger.warn("Can not trace non-incremental models. Model {} is not an IIncrementalModel",  model);
 			throw new EolIncrementalExecutionException(modelName);
 		}
-		
+		IIncrementalModel incrementalModel = (IIncrementalModel) model; 
 		IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager().getExecutionTraceRepository();
 		String moduleUri = context.getModule().getUri().toString();
 		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository.getModuleExecutionTraceByIdentity(moduleUri);
@@ -134,13 +137,20 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 			throw new EolIncrementalExecutionException("A moduleExecutionTrace was not found for the module under execution. "
 					+ "The module execution trace must be created at the begining of the execution of the module.");
 		}
-		IModelTypeTrace typeTrace = context.getTraceManager().getExecutionTraceRepository()
-				.getTypeTraceFor(null, model.getName(), null, typeName);
+		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
+		IModelTypeTrace typeTrace = modelTraceRepository
+				.getTypeTraceFor(incrementalModel.getModelUri(), typeName);
 		if (typeTrace == null) {
-			IModelTrace modelTrace = context.getTraceManager().getExecutionTraceRepository()
-					.getModelTraceByIdentity(moduleUri, model.getName(), ((IIncrementalModel)model).getModelUri());
+			IModelTrace modelTrace = context.getTraceManager().getModelTraceRepository()
+					.getModelTraceByIdentity(moduleUri);
 			if (modelTrace == null) {
-				modelTrace = moduleExecutionTrace.createModelTrace(model.getName(), ((IIncrementalModel)model).getModelUri());
+				try {
+					modelTrace = new ModelTrace(incrementalModel.getModelUri());
+					modelTraceRepository.add(modelTrace);
+				} catch (TraceModelDuplicateRelation e) {
+					throw new EolIncrementalExecutionException(String.format("A modelTrace was not found for "
+							+ "the model wiht uri %s but there was an error craeting it.", incrementalModel.getModelUri()));
+				}
 			}
 			typeTrace = modelTrace.createModelTypeTrace(typeName);
 		}

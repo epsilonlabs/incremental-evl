@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,9 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import java.util.Iterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import java.util.Queue;
 import org.eclipse.epsilon.base.incremental.trace.util.ConcurrentSetQueue;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
@@ -44,10 +47,11 @@ public class ModelTraceHasElements extends Feature implements IModelTraceHasElem
         
     @Override
     
-    public Queue<IModelElementTrace> get() {
-        return target;
+    public Iterator<IModelElementTrace> get() {
+    	return target.iterator();
     }
     
+
     @Override
     public boolean create(IModelElementTrace target) {
         if (conflict(target)) {
@@ -75,7 +79,7 @@ public class ModelTraceHasElements extends Feature implements IModelTraceHasElem
     public boolean conflict(IModelElementTrace target) {
         boolean result = false;
         if (isUnique) {
-            result |= get().contains(target);
+            result |= this.target.contains(target);
         }
         result |= target.modelTrace().get() != null;
         return result;
@@ -83,9 +87,12 @@ public class ModelTraceHasElements extends Feature implements IModelTraceHasElem
     
     @Override
     public boolean related(IModelElementTrace target) {
-  
-        return get().contains(target) && source.equals(target.modelTrace().get());
-    }
+    	if (target == null) {
+			return false;
+		}
+		return this.target.contains(target) && source.equals(target.modelTrace().get());
+	}
+        
     
     // PRIVATE API
     

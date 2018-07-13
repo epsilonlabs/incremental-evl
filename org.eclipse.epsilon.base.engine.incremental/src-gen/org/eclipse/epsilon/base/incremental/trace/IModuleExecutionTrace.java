@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,7 @@ package org.eclipse.epsilon.base.incremental.trace;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;    
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;    
+import org.eclipse.epsilon.base.incremental.trace.IModelAccess;    
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;    
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;    
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;    
@@ -65,7 +66,7 @@ public interface IModuleExecutionTrace extends IIdElement {
     /** The PropertyAccess Factory. */
     IPropertyAccess createPropertyAccess(IModuleElementTrace executionTrace, IPropertyTrace property) throws EolIncrementalExecutionException;       
 
-    /** The ModelTrace Factory. */
-    IModelTrace createModelTrace(String name, String uri) throws EolIncrementalExecutionException;       
+    /** The ModelAccess Factory. */
+    IModelAccess createModelAccess(String modelName, IModelTrace modelTrace) throws EolIncrementalExecutionException;       
 
 }

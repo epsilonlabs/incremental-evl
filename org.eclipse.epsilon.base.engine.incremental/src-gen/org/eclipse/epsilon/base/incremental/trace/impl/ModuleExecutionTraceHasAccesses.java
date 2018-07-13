@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,9 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import java.util.Iterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,10 +47,11 @@ public class ModuleExecutionTraceHasAccesses extends Feature implements IModuleE
     // PUBLIC API
         
     @Override
-    public Set<IAccess> get() {
-        return target;
+    public Iterator<IAccess> get() {
+    	return target.iterator();
     }
     
+
     @Override
     public boolean create(IAccess target) {
         if (conflict(target)) {
@@ -70,16 +74,19 @@ public class ModuleExecutionTraceHasAccesses extends Feature implements IModuleE
     public boolean conflict(IAccess target) {
         boolean result = false;
         if (isUnique) {
-            result |= get().contains(target);
+            result |= this.target.contains(target);
         }
         return result;
     }
     
     @Override
     public boolean related(IAccess target) {
-  
-        return get().contains(target) ;
-    }
+    	if (target == null) {
+			return false;
+		}
+		return this.target.contains(target);
+	}
+        
     
     // PRIVATE API
     
