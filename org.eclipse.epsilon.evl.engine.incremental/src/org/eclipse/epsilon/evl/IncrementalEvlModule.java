@@ -268,8 +268,11 @@ public class IncrementalEvlModule
 		logger.info("On Change event for {} with property {}", object, propertyName);
 		String elementId = model.getElementId(object);
 		IEvlModuleTraceRepository repo = getContext().getTraceManager().getExecutionTraceRepository();
-		Set<IEvlModuleTrace> traces = repo.findPropertyAccessExecutionTraces(context.getModule().getUri().toString(),
-				elementId, propertyName);
+		Set<IEvlModuleTrace> traces = repo.findPropertyAccessExecutionTraces(
+				context.getModule().getUri().toString(),
+				model.getModelUri(),
+				elementId,
+				propertyName);
 		logger.debug("Found {} traces for the model-property pair", traces.size());
 		traces.addAll(repo.findAllInstancesExecutionTraces(context.getModule().getUri().toString(), model.getTypeNameOf(object)));
 		executeTraces(model, traces, object);

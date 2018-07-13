@@ -22,17 +22,23 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 
     IEvlModuleTrace getEvlModuleTraceByIdentity(String uri);
 
-/** protected region IEvlModuleTraceRepositry on begin **/
+    /** protected region IEvlModuleTraceRepositry on begin. **/
+    
 	/**
 	 * Find all execution traces for the given property and element. The returned execution traces will 
 	 * correspond to the execution of Contexts, Invariants, Guards, Checks and Messages that have at least
 	 * one property access for the given element and property.
-	 * @param moduleUri the uri of the module being executed
-	 * @param propertyName the property name
-	 * @param modelElementTrace the model element that contains the property
-	 * @throws EolIncrementalExecutionException 
+	 * 
+     * @param moduleSource 	the module source
+     * @param modelUri 		the model uri
+     * @param elementId 	the element id
+     * @param propertyName 	the property name
+     * @return the sets 	the traces
 	 */
-    Set<IEvlModuleTrace> findPropertyAccessExecutionTraces(String moduleUri, IModelElementTrace modelElementTrace, String propertyName);
+    Set<IEvlModuleTrace> findPropertyAccessExecutionTraces(String moduleSource,
+			String modelUri,
+			String elementId,
+			String propertyName);
 	
 	/**
 	 * Find all execution traces for the given type. The returned execution traces will correspond to the

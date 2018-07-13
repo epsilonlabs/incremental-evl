@@ -23,6 +23,7 @@ import java.util.ArrayList;
 /** protected region EvlModuleTraceRepositoryImplImports on begin **/
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -32,14 +33,15 @@ import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
+import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
+import org.eclipse.epsilon.base.incremental.trace.IModelAccessHasModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 /** protected region EvlModuleTraceRepositoryImplImports end **/
-
-
+import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,18 +100,56 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 	
 	
 	@Override
-	public Set<IEvlModuleTrace> findPropertyAccessExecutionTraces(String moduleSource,
-			IModelElementTrace modelElementTrace, String propertyName) {
+	public Set<IEvlModuleTrace> findPropertyAccessExecutionTraces(
+			String moduleSource,
+			String modelUri,
+			String elementId,
+			String propertyName) {
 		IEvlModuleTrace moduleTrace = getEvlModuleTraceByIdentity(moduleSource);
+		
+		IModelTrace modelTrace = null;
+		Iterator<IModelAccess> it = moduleTrace.models().get();
+		while (it.hasNext()) {
+			IModelAccess next = it.next();
+			IModelTrace mt = next.modelTrace().get();
+			if (mt.getUri().equals(modelUri)) {
+				modelTrace = mt;
+			}
+		}
+		if (modelTrace == null) {
+			// Model not involved in execution
+			return Collections.emptySet();
+		}
+		IModelElementTrace elementTrace = null;
+		Iterator<IModelElementTrace> eIt = modelTrace.elements().get();
+		while (eIt.hasNext()) {
+			IModelElementTrace next = eIt.next();
+			if (next.getUri().equals(elementId)) {
+				elementTrace = next;
+			}
+		}
+		if (elementTrace == null) {
+			// No info about element, there should be no trace associated to it
+			return Collections.emptySet();
+		}
+		IPropertyTrace next = null;
+		Iterator<IPropertyTrace> pIt = elementTrace.properties().get();
+		while (pIt.hasNext()) {
+			next = pIt.next();
+			if (next.getName().equals(propertyName)) {
+				break;
+			}
+		}
+		if (next == null) {
+			// Element does not have property by that name
+			return Collections.emptySet();
+		}
+		IPropertyTrace pt = next;
 		Iterable<IAccess> iterable = () -> moduleTrace.accesses().get();
 		Set<IEvlModuleTrace> result = StreamSupport.stream(iterable.spliterator(), false)
 				.filter(IPropertyAccess.class::isInstance)
 				.map(IPropertyAccess.class::cast)
-				.filter(pa -> {
-						Iterable<IAccess> it = () -> moduleTrace.accesses().get();
-						return pa.property().get().getName().equals(propertyName) && 
-								StreamSupport.stream(it.spliterator(), false).anyMatch(pa.property().get()::equals);
-				})
+				.filter(pa -> pa.property().get().equals(pt))
 				.map(pa -> pa.executionTrace().get())
 				.map(IEvlModuleTrace.class::cast)
 				.collect(Collectors.toSet());
