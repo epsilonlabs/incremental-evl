@@ -17,6 +17,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.impl.ContextModuleElementTraceHasExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementVariable;
@@ -44,10 +47,10 @@ public class ExecutionContextTest {
         ContextModuleElementTraceHasExecutionContext containerReference = new ContextModuleElementTraceHasExecutionContext(containerMock);
         when(containerMock.executionContext()).thenReturn(containerReference);
         // protected region ExecutionContextInit on begin
-        // Default init parameters can be modified
         classUnderTest = new ExecutionContext(containerMock);                    
         // protected region ExecutionContextInit end
         
+
         assertThat(containerReference.get(), is(classUnderTest));
         
         // protected region ExecutionContextAttributes on begin
@@ -60,20 +63,24 @@ public class ExecutionContextTest {
         ContextModuleElementTraceHasExecutionContext containerReference = new ContextModuleElementTraceHasExecutionContext(containerMock);
         when(containerMock.executionContext()).thenReturn(containerReference);
         // protected region ExecutionContextInit on begin
-        // Default init parameters can be modified
         classUnderTest = new ExecutionContext(containerMock);                    
         // protected region ExecutionContextInit end
         
         IModelElementTrace valueMock = mock(IModelElementTrace.class);
+        List<Object> list = new ArrayList<>();
         IModelElementVariable child1 = classUnderTest.createModelElementVariable("name1", valueMock);
-        assertThat(classUnderTest.contextVariables().get(), hasItem(child1));
+        classUnderTest.contextVariables().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child1));
+        list.clear();
         IModelElementVariable child2 = classUnderTest.createModelElementVariable("name2", valueMock);
-        assertThat(classUnderTest.contextVariables().get(), hasItem(child2));
-        assertThat(classUnderTest.contextVariables().get(), hasSize(2));
+        classUnderTest.contextVariables().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child2));
+        assertThat(list, hasSize(2));
+        list.clear();
         IModelElementVariable child3 = classUnderTest.createModelElementVariable("name1", valueMock);
-        assertThat(classUnderTest.contextVariables().get(), hasSize(2));
-        
-        assertThat(classUnderTest.contextVariables().get(), containsInAnyOrder(child1, child2));
+        classUnderTest.contextVariables().get().forEachRemaining(list::add);
+        assertThat(list, hasSize(2));
+        assertThat(list, containsInAnyOrder(child1, child2));
         assertThat(child3, is(child1));
 	}
     // protected region ExecutionContextOperations on begin

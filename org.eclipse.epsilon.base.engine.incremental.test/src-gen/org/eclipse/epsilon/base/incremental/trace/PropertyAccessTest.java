@@ -17,6 +17,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.epsilon.base.incremental.trace.impl.PropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasAccesses;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
@@ -53,11 +56,13 @@ public class PropertyAccessTest {
         IPropertyTrace _property = mock(IPropertyTrace.class);
                 
         // protected region PropertyAccessInit on begin
-        // Default init parameters can be modified
         classUnderTest = new PropertyAccess(_executionTrace, _property, containerMock);                    
         // protected region PropertyAccessInit end
         
-        assertThat(containerReference.get(), contains(classUnderTest));
+        
+        List<Object> list = new ArrayList<>();
+        containerReference.get().forEachRemaining(list::add);
+        assertThat(list, contains(classUnderTest));
         
         // protected region PropertyAccessAttributes on begin
         // TODO Add test code for parameters (to hard to generate correct code for any/all types).                    
@@ -77,7 +82,6 @@ public class PropertyAccessTest {
         IPropertyTrace _property = mock(IPropertyTrace.class);
                 
         // protected region PropertyAccessInit on begin
-        // Default init parameters can be modified
         classUnderTest = new PropertyAccess(_executionTrace, _property, containerMock);                    
         // protected region PropertyAccessInit end
         IModuleElementTrace ref = mock(IModuleElementTrace.class);
@@ -111,7 +115,6 @@ public class PropertyAccessTest {
         IPropertyTrace _property = mock(IPropertyTrace.class);
                 
         // protected region PropertyAccessInit on begin
-        // Default init parameters can be modified
         classUnderTest = new PropertyAccess(_executionTrace, _property, containerMock);                    
         // protected region PropertyAccessInit end
         IPropertyTrace ref = mock(IPropertyTrace.class);

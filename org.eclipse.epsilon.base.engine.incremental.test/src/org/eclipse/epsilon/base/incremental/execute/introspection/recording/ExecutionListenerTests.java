@@ -9,11 +9,14 @@ import static org.mockito.Mockito.*;
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
+import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.compile.context.EolCompilationContext;
 import org.eclipse.epsilon.eol.dom.Expression;
@@ -54,9 +57,15 @@ public class ExecutionListenerTests {
 		//private IEolExecutionTraceManager<TestModuleExecution> traceManagerMock;
 		
 		@Mock
-		private IEolContext contextMock;
+		private IIncrementalBaseContext<
+				IModuleExecutionTrace,
+				IModuleExecutionTraceRepository<IModuleExecutionTrace>,
+				IExecutionTraceManager<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>>>  contextMock;
 		
-		private AllInstancesInvocationExecutionListener listener;
+		private AllInstancesInvocationExecutionListener<
+				IModuleExecutionTrace,
+				IModuleExecutionTraceRepository<IModuleExecutionTrace>,
+				IExecutionTraceManager<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>>> listener;
 		
 		private OperationCallExpression ast;
 		
@@ -64,7 +73,7 @@ public class ExecutionListenerTests {
 		
 		@Before
 		public void setup() {
-			listener = new AllInstancesInvocationExecutionListener();
+			listener = new AllInstancesInvocationExecutionListener<>();
 			targetExpression = new NameExpression(typeName);
 			EolCompilationContext contextMock = new EolCompilationContext();
 			targetExpression.compile(contextMock);
@@ -128,8 +137,7 @@ public class ExecutionListenerTests {
 			IModuleElementTrace executionTraceMock = mock(IModuleElementTrace.class);
 			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
-			IIncrementalModel contextMock = mock(IEolContext.class);
-			IModel modelMock = mock(IIncrementalModel.class);
+			IIncrementalModel modelMock = mock(IIncrementalModel.class);
 			ModelRepository repositoryMock = mock(ModelRepository.class);
 			when(contextMock.getModelRepository()).thenReturn(repositoryMock);
 			when(repositoryMock.getModelByName("modelA")).thenReturn(modelMock);
@@ -204,16 +212,19 @@ public class ExecutionListenerTests {
 		
 		@Rule
 	    public MockitoRule mockitoRule = MockitoJUnit.rule();
-		
-		//@Mock
-		//private IEolExecutionTraceManager<TestModuleExecution> traceManagerMock;
 
 
 		@Mock
-		private IEolContext contextMock;
+		private IIncrementalBaseContext<
+				IModuleExecutionTrace,
+				IModuleExecutionTraceRepository<IModuleExecutionTrace>,
+				IExecutionTraceManager<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>>>  contextMock;
 		
 		
-		private PropertyAccessExecutionListener listener;
+		private PropertyAccessExecutionListener<
+				IModuleExecutionTrace,
+				IModuleExecutionTraceRepository<IModuleExecutionTrace>,
+				IExecutionTraceManager<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>>> listener;
 		
 		@Test
 		public void testRecordSingleExecution() throws Exception {
@@ -224,7 +235,7 @@ public class ExecutionListenerTests {
 			String propertyvalue = "somePValue";
 			
 			// Init the listener
-			listener = new PropertyAccessExecutionListener();
+			listener = new PropertyAccessExecutionListener<>();
 
 			// 1. Trigger listener by executing a TracedExecutableBlock
 			TracedExecutableBlock<IModuleElementTrace, Boolean> blockMock = new TracedExecutableBlock<IModuleElementTrace, Boolean>(Boolean.class);
@@ -256,7 +267,7 @@ public class ExecutionListenerTests {
 			String instance = "someObject";
 			
 			// Init the listener
-			listener = new PropertyAccessExecutionListener();
+			listener = new PropertyAccessExecutionListener<>();
 
 			// 1. Trigger listener by executing a TracedExecutableBlock
 			TracedExecutableBlock<IModuleElementTrace, Boolean> blockMock = new TracedExecutableBlock<IModuleElementTrace, Boolean>(Boolean.class);
@@ -286,7 +297,7 @@ public class ExecutionListenerTests {
 			String instance = "someObject";
 			
 			// Init the listener
-			listener = new PropertyAccessExecutionListener();
+			listener = new PropertyAccessExecutionListener<>();
 
 			// 1. Trigger listener by executing a TracedExecutableBlock
 			TracedExecutableBlock<IModuleElementTrace, Boolean> blockMock = new TracedExecutableBlock<IModuleElementTrace, Boolean>(Boolean.class);

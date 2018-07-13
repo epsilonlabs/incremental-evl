@@ -58,7 +58,7 @@ public class PropertyAccess implements IPropertyAccess {
      * container and any attributes identified as indexes.
      */    
     public PropertyAccess(IModuleElementTrace executionTrace, IPropertyTrace property, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@29af3060 (name: property) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@69ace948 (name: property) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.property = new PropertyAccessHasProperty(this);
         if (!this.property.create(property)) {
             throw new TraceModelDuplicateRelation();

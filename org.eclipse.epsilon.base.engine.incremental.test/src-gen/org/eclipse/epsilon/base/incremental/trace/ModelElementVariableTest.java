@@ -17,6 +17,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementVariable;
 import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionContextHasContextVariables;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
@@ -46,11 +49,13 @@ public class ModelElementVariableTest {
         IModelElementTrace _value = mock(IModelElementTrace.class);
                 
         // protected region ModelElementVariableInit on begin
-        // Default init parameters can be modified
         classUnderTest = new ModelElementVariable("name1", _value, containerMock);                    
         // protected region ModelElementVariableInit end
         
-        assertThat(containerReference.get(), contains(classUnderTest));
+        
+        List<Object> list = new ArrayList<>();
+        containerReference.get().forEachRemaining(list::add);
+        assertThat(list, contains(classUnderTest));
         
         // protected region ModelElementVariableAttributes on begin
         // TODO Add test code for parameters (to hard to generate correct code for any/all types).                    
@@ -65,7 +70,6 @@ public class ModelElementVariableTest {
         IModelElementTrace _value = mock(IModelElementTrace.class);
                 
         // protected region ModelElementVariableInit on begin
-        // Default init parameters can be modified
         classUnderTest = new ModelElementVariable("name1", _value, containerMock);                    
         // protected region ModelElementVariableInit end
         IModelElementTrace ref = mock(IModelElementTrace.class);

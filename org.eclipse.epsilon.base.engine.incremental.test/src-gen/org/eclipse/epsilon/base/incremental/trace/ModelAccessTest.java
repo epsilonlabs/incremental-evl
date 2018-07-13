@@ -17,6 +17,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelAccess;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasModels;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
@@ -46,20 +49,28 @@ public class ModelAccessTest {
         IModelTrace _modelTrace = mock(IModelTrace.class);
                 
         // protected region ModelAccessInit on begin
-        // Default init parameters can be modified
-        classUnderTest = new ModelAccess("modelName1", _modelTrace);                    
+        classUnderTest = new ModelAccess("modelName1", _modelTrace, containerMock);                    
         // protected region ModelAccessInit end
         
+        
+        List<Object> list = new ArrayList<>();
+        containerReference.get().forEachRemaining(list::add);
+        assertThat(list, contains(classUnderTest));
+        
+        // protected region ModelAccessAttributes on begin
+        // TODO Add test code for parameters (to hard to generate correct code for any/all types).                    
+        // protected region ModelAccessAttributes end
     }
     
     
     @Test
     public void testModelTraceReference() throws Exception {
+        ModuleExecutionTraceHasModels containerReference = new ModuleExecutionTraceHasModels(containerMock);
+        when(containerMock.models()).thenReturn(containerReference);
         IModelTrace _modelTrace = mock(IModelTrace.class);
                 
         // protected region ModelAccessInit on begin
-        // Default init parameters can be modified
-        classUnderTest = new ModelAccess("modelName1", _modelTrace);                    
+        classUnderTest = new ModelAccess("modelName1", _modelTrace, containerMock);                    
         // protected region ModelAccessInit end
         IModelTrace ref = mock(IModelTrace.class);
         

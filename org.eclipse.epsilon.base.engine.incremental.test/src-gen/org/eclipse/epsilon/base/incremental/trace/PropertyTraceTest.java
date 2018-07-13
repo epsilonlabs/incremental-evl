@@ -17,6 +17,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.epsilon.base.incremental.trace.impl.PropertyTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementTraceHasProperties;
 import org.junit.Rule;
@@ -42,11 +45,13 @@ public class PropertyTraceTest {
         ModelElementTraceHasProperties containerReference = new ModelElementTraceHasProperties(containerMock);
         when(containerMock.properties()).thenReturn(containerReference);
         // protected region PropertyTraceInit on begin
-        // Default init parameters can be modified
         classUnderTest = new PropertyTrace("name1", containerMock);                    
         // protected region PropertyTraceInit end
         
-        assertThat(containerReference.get(), contains(classUnderTest));
+        
+        List<Object> list = new ArrayList<>();
+        containerReference.get().forEachRemaining(list::add);
+        assertThat(list, contains(classUnderTest));
         
         // protected region PropertyTraceAttributes on begin
         // TODO Add test code for parameters (to hard to generate correct code for any/all types).                    

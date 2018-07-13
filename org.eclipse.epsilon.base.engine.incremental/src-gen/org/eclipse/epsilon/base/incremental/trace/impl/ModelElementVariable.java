@@ -51,7 +51,7 @@ public class ModelElementVariable implements IModelElementVariable {
      */    
     public ModelElementVariable(String name, IModelElementTrace value, IExecutionContext container) throws TraceModelDuplicateRelation {
         this.name = name;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@6aae5d21 (name: value) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@2b4a2f3f (name: value) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.value = new ModelElementVariableHasValue(this);
         if (!this.value.create(value)) {
             throw new TraceModelDuplicateRelation();

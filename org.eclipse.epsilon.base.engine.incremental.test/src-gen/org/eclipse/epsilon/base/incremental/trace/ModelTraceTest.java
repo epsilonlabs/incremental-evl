@@ -17,6 +17,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementTrace;
@@ -39,55 +42,53 @@ public class ModelTraceTest {
     public void testInit() throws Exception {
         
         // protected region ModelTraceInit on begin
-        // Default init parameters can be modified
-        classUnderTest = new ModelTrace("name1", "uri1", containerMock);                    
+        classUnderTest = new ModelTrace("uri1");                    
         // protected region ModelTraceInit end
         
-        assertThat(containerReference.get(), contains(classUnderTest));
-        
-        // protected region ModelTraceAttributes on begin
-        // TODO Add test code for parameters (to hard to generate correct code for any/all types).                    
-        // protected region ModelTraceAttributes end
     }
     
     @Test
     public void testElementsFactory() throws Exception {
-        ModuleExecutionTraceHasModels containerReference = new ModuleExecutionTraceHasModels(containerMock);
-        when(containerMock.models()).thenReturn(containerReference);
         // protected region ModelTraceInit on begin
-        // Default init parameters can be modified
-        classUnderTest = new ModelTrace("name1", "uri1", containerMock);                    
+        classUnderTest = new ModelTrace("uri1");                    
         // protected region ModelTraceInit end
         
+        List<Object> list = new ArrayList<>();
         IModelElementTrace child1 = classUnderTest.createModelElementTrace("url://path/in/model/to/uri/1");
-        assertThat(classUnderTest.elements().get(), hasItem(child1));
+        classUnderTest.elements().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child1));
+        list.clear();
         IModelElementTrace child2 = classUnderTest.createModelElementTrace("url://path/in/model/to/uri/2");
-        assertThat(classUnderTest.elements().get(), hasItem(child2));
-        assertThat(classUnderTest.elements().get(), hasSize(2));
+        classUnderTest.elements().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child2));
+        assertThat(list, hasSize(2));
+        list.clear();
         IModelElementTrace child3 = classUnderTest.createModelElementTrace("url://path/in/model/to/uri/1");
-        assertThat(classUnderTest.elements().get(), hasSize(2));
-        
-        assertThat(classUnderTest.elements().get(), contains(child1, child2));
+        classUnderTest.elements().get().forEachRemaining(list::add);
+        assertThat(list, hasSize(2));
+        assertThat(list, contains(child1, child2));
         assertThat(child3, is(child1));
 	}
     @Test
     public void testTypesFactory() throws Exception {
-        ModuleExecutionTraceHasModels containerReference = new ModuleExecutionTraceHasModels(containerMock);
-        when(containerMock.models()).thenReturn(containerReference);
         // protected region ModelTraceInit on begin
-        // Default init parameters can be modified
-        classUnderTest = new ModelTrace("name1", "uri1", containerMock);                    
+        classUnderTest = new ModelTrace("uri1");                    
         // protected region ModelTraceInit end
         
+        List<Object> list = new ArrayList<>();
         IModelTypeTrace child1 = classUnderTest.createModelTypeTrace("name1");
-        assertThat(classUnderTest.types().get(), hasItem(child1));
+        classUnderTest.types().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child1));
+        list.clear();
         IModelTypeTrace child2 = classUnderTest.createModelTypeTrace("name2");
-        assertThat(classUnderTest.types().get(), hasItem(child2));
-        assertThat(classUnderTest.types().get(), hasSize(2));
+        classUnderTest.types().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child2));
+        assertThat(list, hasSize(2));
+        list.clear();
         IModelTypeTrace child3 = classUnderTest.createModelTypeTrace("name1");
-        assertThat(classUnderTest.types().get(), hasSize(2));
-        
-        assertThat(classUnderTest.types().get(), contains(child1, child2));
+        classUnderTest.types().get().forEachRemaining(list::add);
+        assertThat(list, hasSize(2));
+        assertThat(list, contains(child1, child2));
         assertThat(child3, is(child1));
 	}
     // protected region ModelTraceOperations on begin

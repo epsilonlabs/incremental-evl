@@ -51,7 +51,7 @@ public class ModelAccess implements IModelAccess {
      */    
     public ModelAccess(String modelName, IModelTrace modelTrace, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
         this.modelName = modelName;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@79b35ba (name: modelTrace) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@73dbd33 (name: modelTrace) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.modelTrace = new ModelAccessHasModelTrace(this);
         if (!this.modelTrace.create(modelTrace)) {
             throw new TraceModelDuplicateRelation();

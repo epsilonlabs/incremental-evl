@@ -48,7 +48,7 @@ public class ExecutionContext implements IExecutionContext {
      * container and any attributes identified as indexes.
      */    
     public ExecutionContext(IContextModuleElementTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@77f5b225 (name: contextVariables) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@428a6b8d (name: contextVariables) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.contextVariables = new ExecutionContextHasContextVariables(this);
 
         if (!container.executionContext().create(this)) {

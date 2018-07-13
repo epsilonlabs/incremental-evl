@@ -53,7 +53,7 @@ public class ElementAccess implements IElementAccess {
      * container and any attributes identified as indexes.
      */    
     public ElementAccess(IModuleElementTrace executionTrace, IModelElementTrace element, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@61f87086 (name: element) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@49aa744f (name: element) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.element = new ElementAccessHasElement(this);
         if (!this.element.create(element)) {
             throw new TraceModelDuplicateRelation();

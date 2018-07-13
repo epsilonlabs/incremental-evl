@@ -37,6 +37,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import [%=qp%].trace.impl.[%=ec.name%];
 [%  if (containerRef.isDefined() or containmentRef.isDefined()) {%]
 import [%=qp%].trace.impl.[%=contReferenceClass%];
@@ -76,8 +79,12 @@ public class [%=ec.getJavaClassName(classPrefix, classSufix)%]Test {
         
 [%if (containerRef.isDefined() or containmentRef.isDefined()) {
         if (containment_many){%]
-        assertThat(containerReference.get(), contains(classUnderTest));
+        
+        List<Object> list = new ArrayList<>();
+        containerReference.get().forEachRemaining(list::add);
+        assertThat(list, contains(classUnderTest));
 [%} else {%]
+
         assertThat(containerReference.get(), is(classUnderTest));
 [%}%]        
         [%=out.startPreserve(ec.name + "Attributes", true)%]
@@ -107,8 +114,11 @@ for (er in ec.getEAllReferences().excluding(containerRef).select(er | er.isConta
 	else {
 	    params = params.concat(", ");
 	}%]
+        List<Object> list = new ArrayList<>();
         [%=erClass.getJavaInterfaceName(interPrefix, interSufix)%] child1 = classUnderTest.create[%=erClass.name%]([%=params%]);
-        assertThat(classUnderTest.[%=er.name%]().get(), hasItem(child1));
+        classUnderTest.[%=er.name%]().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child1));
+        list.clear();
 [%
 	if (er.isMany) {
 		var params2 = erClass.getIndexAttributes().collect(a | a.getInitValue(2));
@@ -120,15 +130,18 @@ for (er in ec.getEAllReferences().excluding(containerRef).select(er | er.isConta
 		    params2 = params2.concat(", ");
 		}%]
         [%=erClass.getJavaInterfaceName(interPrefix, interSufix)%] child2 = classUnderTest.create[%=erClass.name%]([%=params2%]);
-        assertThat(classUnderTest.[%=er.name%]().get(), hasItem(child2));
-        assertThat(classUnderTest.[%=er.name%]().get(), hasSize(2));
+        classUnderTest.[%=er.name%]().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child2));
+        assertThat(list, hasSize(2));
+        list.clear();
 	[%    // Test that duplicates are not allowed
         if (er.isUnique) {%]
         [%=erClass.getJavaInterfaceName(interPrefix, interSufix)%] child3 = classUnderTest.create[%=erClass.name%]([%=params%]);
-        assertThat(classUnderTest.[%=er.name%]().get(), hasSize(2));
+        classUnderTest.[%=er.name%]().get().forEachRemaining(list::add);
+        assertThat(list, hasSize(2));
 [%      var check = "containsInAnyOrder";
-        if (er.isOrdered) { check = "contains"; }%]        
-        assertThat(classUnderTest.[%=er.name%]().get(), [%=check%](child1, child2));
+        if (er.isOrdered) { check = "contains"; }%]
+        assertThat(list, [%=check%](child1, child2));
         assertThat(child3, is(child1));
 	}
 [%      }
@@ -205,7 +218,6 @@ when(_[%=rf.name%].[%=rf.getEOpposite().name%]()).thenReturn(_[%=oppVar%]);
         params = params.concat(", ");
     }%]
 [%=out.startPreserve(self.name + "Init", true)%]
-// Default init parameters can be modified
 classUnderTest = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=params%]);                    
 [%=out.stopPreserve()%]
 [%}

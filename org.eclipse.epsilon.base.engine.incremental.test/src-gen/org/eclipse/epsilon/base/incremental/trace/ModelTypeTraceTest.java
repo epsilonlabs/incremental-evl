@@ -17,6 +17,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceHasTypes;
 import org.junit.Rule;
@@ -42,11 +45,13 @@ public class ModelTypeTraceTest {
         ModelTraceHasTypes containerReference = new ModelTraceHasTypes(containerMock);
         when(containerMock.types()).thenReturn(containerReference);
         // protected region ModelTypeTraceInit on begin
-        // Default init parameters can be modified
         classUnderTest = new ModelTypeTrace("name1", containerMock);                    
         // protected region ModelTypeTraceInit end
         
-        assertThat(containerReference.get(), contains(classUnderTest));
+        
+        List<Object> list = new ArrayList<>();
+        containerReference.get().forEachRemaining(list::add);
+        assertThat(list, contains(classUnderTest));
         
         // protected region ModelTypeTraceAttributes on begin
         // TODO Add test code for parameters (to hard to generate correct code for any/all types).                    
