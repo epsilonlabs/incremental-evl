@@ -3,7 +3,7 @@ package org.eclipse.epsilon.emc.csv.incremental;
 
 import java.util.Map;
 
-import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
+import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
 import org.eclipse.epsilon.emc.csv.CsvPropertySetter;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 
@@ -27,7 +27,7 @@ public class CsvPropertySetterIncremental extends CsvPropertySetter {
 		super.invoke(value);
 		if (oldHash != currentObject.hashCode()) {
 			if (model.isDelivering()) {
-				for (IModuleIncremental m : model.getModules()) {
+				for (IIncrementalModule m : model.getModules()) {
 					m.onChange(model, currentObject, property);
 				}
 			}

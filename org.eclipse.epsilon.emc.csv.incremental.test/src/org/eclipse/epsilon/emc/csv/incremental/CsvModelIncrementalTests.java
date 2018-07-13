@@ -20,7 +20,7 @@ import java.util.concurrent.SynchronousQueue;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
+import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.csv.CsvModel;
@@ -160,7 +160,7 @@ public class CsvModelIncrementalTests {
 	public void testChangesFromFile() throws Exception {
 		
 		BlockingQueue<EventResult> drop = new SynchronousQueue<EventResult> ();
-		IModuleIncremental moduleMock = new LightModule(drop);
+		IIncrementalModule moduleMock = new LightModule(drop);
 		model.getModules().add(moduleMock );
 		model.setDeliver(true);
 		ExecutorService executor = Executors.newSingleThreadExecutor();

@@ -12,7 +12,6 @@
 package org.eclipse.epsilon.evl;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
@@ -21,6 +20,8 @@ import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceRepositoryImpl;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
@@ -28,6 +29,7 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelNotFoundException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.models.IModel;
+import org.eclipse.epsilon.eol.models.ModelRepository;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.dom.Fix;
@@ -36,6 +38,7 @@ import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraintContext;
 import org.eclipse.epsilon.evl.incremental.dom.TracedGuardBlock;
+import org.eclipse.epsilon.evl.incremental.execute.BasicEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlModuleIncremental;
 import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
@@ -49,6 +52,7 @@ import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTrace;
+import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTraceRepositoryImpl;
 import org.eclipse.epsilon.evl.parse.EvlParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,14 +97,19 @@ public class IncrementalEvlModule
 	 */
 	Set<IIncrementalModel> targets;
 	
-	//protected final IEvlModuleTrace evlModuleTrace;
 
 	/** The context. */
 	protected IncrementalEvlContext<IEvlModuleTraceRepository, IEvlExecutionTraceManager<IEvlModuleTraceRepository>> context;
 	
 	
-	public IncrementalEvlModule(IncrementalEvlContext<IEvlModuleTraceRepository, IEvlExecutionTraceManager<IEvlModuleTraceRepository>> context) {
+	public IncrementalEvlModule() {
 		super();
+		// By default we use the BasicEvlExecutionTraceManager, which also uses the default EvlModuleTraceRepository (in memory)
+		IEvlModuleTraceRepository repository = new EvlModuleTraceRepositoryImpl();
+		IModelTraceRepository modelRepository = new ModelTraceRepositoryImpl();
+		IEvlExecutionTraceManager<IEvlModuleTraceRepository> etManager = new BasicEvlExecutionTraceManager(repository, modelRepository);
+		
+		//IncrementalEvlContext<IEvlModuleTraceRepository, IEvlExecutionTraceManager<IEvlModuleTraceRepository>> context
 		this.context = context;
 	}
 	
@@ -167,6 +176,9 @@ public class IncrementalEvlModule
 		evlModuleTrace = etManager.getExecutionTraceRepository().getEvlModuleTraceByIdentity(evlScripPath);
 		if (evlModuleTrace == null) {
 			try {
+				// FIXME This needs to be a factory method in the etManager so we can provide alternative
+				// implementations. 
+				// etManager.craeteEvlModuleTrace() ...
 				evlModuleTrace = new EvlModuleTrace(evlScripPath);
 			} catch (TraceModelDuplicateRelation e) {
 				throw new EolRuntimeException(e.getMessage());
@@ -257,7 +269,7 @@ public class IncrementalEvlModule
 		String elementId = model.getElementId(object);
 		IEvlModuleTraceRepository repo = getContext().getTraceManager().getExecutionTraceRepository();
 		Set<IEvlModuleTrace> traces = repo.findPropertyAccessExecutionTraces(context.getModule().getUri().toString(),
-				model.getName(), model.getModelUri(), elementId, propertyName);
+				elementId, propertyName);
 		logger.debug("Found {} traces for the model-property pair", traces.size());
 		traces.addAll(repo.findAllInstancesExecutionTraces(context.getModule().getUri().toString(), model.getTypeNameOf(object)));
 		executeTraces(model, traces, object);
@@ -301,8 +313,9 @@ public class IncrementalEvlModule
 		String elementId = model.getElementId(object);
 		IEvlModuleTraceRepository repo = getContext().getTraceManager().getExecutionTraceRepository();
 		// Re-execute invariants in which the deleted element is referenced but is not the "self" 
-		Set<IEvlModuleTrace> traces = repo.findIndirectExecutionTraces(context.getModule().getUri().toString(), elementId, object, model);
-		IModelTrace modelTrace = repo.getModelTraceByIdentity(context.getModule().getUri().toString(), model.getName(), model.getModelUri());
+		String moduleSource = context.getModule().getUri().toString();
+		Set<IEvlModuleTrace> traces = repo.findIndirectExecutionTraces(moduleSource, elementId, object, model);
+		IModelTrace modelTrace = repo.getModelTraceByIdentity(moduleSource, model.getName(), model.getModelUri());
 		traces.stream()
 				.filter(IContextTrace.class::isInstance)
 				.map(IContextTrace.class::cast)
@@ -317,7 +330,7 @@ public class IncrementalEvlModule
 						logger.info("Error executing InvariantTrace trace", e);
 					}
 				});
-		repo.removeTraceInformation(elementId);
+		repo.removeTraceInformation(moduleSource, model, elementId);
 		getContext().getConstraintTrace().clear();
 	}
 	

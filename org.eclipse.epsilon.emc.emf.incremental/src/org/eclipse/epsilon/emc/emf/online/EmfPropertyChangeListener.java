@@ -17,7 +17,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentAdapter;
-import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
+import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +39,12 @@ public class EmfPropertyChangeListener extends EContentAdapter {
 	
 	private IIncrementalModel model;
 	
-	private IModuleIncremental module;
+	private IIncrementalModule module;
 	
 	private final Set<String> elementsOfInterest;
 	
 	
-	public EmfPropertyChangeListener(IIncrementalModel model, IModuleIncremental module,
+	public EmfPropertyChangeListener(IIncrementalModel model, IIncrementalModule module,
 			Set<String> elementIds) {
 		this.model = model;
 		this.module = module;

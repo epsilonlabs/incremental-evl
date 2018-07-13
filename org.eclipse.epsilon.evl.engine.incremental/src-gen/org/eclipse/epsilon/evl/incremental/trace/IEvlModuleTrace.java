@@ -14,6 +14,7 @@ package org.eclipse.epsilon.evl.incremental.trace;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;    
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;    
+import org.eclipse.epsilon.base.incremental.trace.IModelAccess;    
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;    
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;    
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;    
@@ -47,7 +48,7 @@ public interface IEvlModuleTrace extends IModuleExecutionTrace {
     /** The PropertyAccess Factory. */
     IPropertyAccess createPropertyAccess(IModuleElementTrace executionTrace, IPropertyTrace property) throws EolIncrementalExecutionException;       
 
-    /** The ModelTrace Factory. */
-    IModelTrace createModelTrace(String name, String uri) throws EolIncrementalExecutionException;       
+    /** The ModelAccess Factory. */
+    IModelAccess createModelAccess(String modelName, IModelTrace modelTrace) throws EolIncrementalExecutionException;       
 
 }

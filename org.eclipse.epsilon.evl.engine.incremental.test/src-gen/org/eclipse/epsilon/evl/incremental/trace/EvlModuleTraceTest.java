@@ -20,8 +20,8 @@ import static org.mockito.Mockito.*;
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IAccess;
-import org.eclipse.epsilon.evl.incremental.trace.IModelTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.ModelTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IModelAccess;
+import org.eclipse.epsilon.evl.incremental.trace.impl.ModelAccess;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -89,12 +89,13 @@ public class EvlModuleTraceTest {
         classUnderTest = new EvlModuleTrace("source1");                    
         // protected region EvlModuleTraceInit end
         
-        IModelTrace child1 = classUnderTest.createModelTrace("name1", "uri1");
+        IModelTrace modelTraceMock = mock(IModelTrace.class);
+        IModelAccess child1 = classUnderTest.createModelAccess("modelName1", modelTraceMock);
         assertThat(classUnderTest.models().get(), hasItem(child1));
-        IModelTrace child2 = classUnderTest.createModelTrace("name2", "uri2");
+        IModelAccess child2 = classUnderTest.createModelAccess("modelName2", modelTraceMock);
         assertThat(classUnderTest.models().get(), hasItem(child2));
         assertThat(classUnderTest.models().get(), hasSize(2));
-        IModelTrace child3 = classUnderTest.createModelTrace("name1", "uri1");
+        IModelAccess child3 = classUnderTest.createModelAccess("modelName1", modelTraceMock);
         assertThat(classUnderTest.models().get(), hasSize(2));
         
         assertThat(classUnderTest.models().get(), contains(child1, child2));

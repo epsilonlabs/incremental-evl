@@ -19,7 +19,7 @@ import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotInstantiableModelElementValueException;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
-import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
+import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.impl.MemoryModelTraceFactory;
 import org.eclipse.epsilon.emc.emf.EmfModel;
@@ -29,7 +29,7 @@ public class IncrementalEmfModel extends EmfModel implements IIncrementalModel {
 	
 	private final MemoryModelTraceFactory modelTraceFactory;
 	private boolean deliver;
-	private ArrayList<IModuleIncremental> modules;
+	private ArrayList<IIncrementalModule> modules;
 	
 	public IncrementalEmfModel() throws EolModelLoadingException {
 		super();
@@ -60,7 +60,7 @@ public class IncrementalEmfModel extends EmfModel implements IIncrementalModel {
 	}
 
 	@Override
-	public String getModelId() {
+	public String getModelUri() {
 		return getResource().getURI().toString();
 	}
 
@@ -73,7 +73,7 @@ public class IncrementalEmfModel extends EmfModel implements IIncrementalModel {
 	public void setDeliver(boolean deliver) {
 		if (deliver != this.deliver) {
 			if (deliver) {
-				for (IModuleIncremental module : getModules()) {
+				for (IIncrementalModule module : getModules()) {
 					Set<String> elementIds = getModelTraceFactory().getAllModelElementIds();
 					EmfPropertyChangeListener emfPCL = new EmfPropertyChangeListener(this, module, elementIds);
 					getResource().eAdapters().add(emfPCL);
@@ -92,7 +92,7 @@ public class IncrementalEmfModel extends EmfModel implements IIncrementalModel {
 	}
 
 	@Override
-	public Collection<IModuleIncremental> getModules() {
+	public Collection<IIncrementalModule> getModules() {
 		if (modules == null) {
 			modules = new ArrayList<>();
 		}
@@ -104,7 +104,7 @@ public class IncrementalEmfModel extends EmfModel implements IIncrementalModel {
 	 * of the load method? 
 	 * @param module
 	 */
-	public void reexecuteTraces(IModuleIncremental module) {
+	public void reexecuteTraces(IIncrementalModule module) {
 		
 	}
 	

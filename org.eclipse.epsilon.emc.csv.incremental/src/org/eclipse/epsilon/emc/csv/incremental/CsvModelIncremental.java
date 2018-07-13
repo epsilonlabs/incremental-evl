@@ -32,7 +32,7 @@ import java.util.concurrent.Future;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotInstantiableModelElementValueException;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
-import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
+import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.impl.MemoryModelTraceFactory;
 import org.eclipse.epsilon.emc.csv.CsvModel;
@@ -189,7 +189,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 								logger.info("Change detected");
 								if (model.isDelivering()) {
 									logger.info("Notifying listening modules");
-									for (IModuleIncremental m : model.getModules()) {
+									for (IIncrementalModule m : model.getModules()) {
 										m.onChange(model, newRow, k);
 									}
 								}
@@ -204,7 +204,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 							logger.info("Change detected");
 							if (model.isDelivering()) {
 								logger.info("Notifying listening modules");
-								for (IModuleIncremental m : model.getModules()) {
+								for (IIncrementalModule m : model.getModules()) {
 									m.onChange(model, newRow, CsvModel.HEADERLESS_FIELD_NAME);
 								}
 							}
@@ -217,7 +217,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 					// The old row is not in the new rows, signal a deletion
 					if (model.isDelivering()) {
 						logger.info("Notifying listening modules");
-						for (IModuleIncremental m : model.getModules()) {
+						for (IIncrementalModule m : model.getModules()) {
 							m.onDelete(model, oldRow);
 						}
 					}
@@ -227,7 +227,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 					// The new row is not in the old rows, signal an instantiation
 					if (model.isDelivering()) {
 						logger.info("Notifying listening modules");
-						for (IModuleIncremental m : model.getModules()) {
+						for (IIncrementalModule m : model.getModules()) {
 							m.onCreate(model, newRow);
 						}
 					}
@@ -240,7 +240,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 				// Signal instantiation
 				if (model.isDelivering()) {
 					logger.info("Notifying listening modules");
-					for (IModuleIncremental m : model.getModules()) {
+					for (IIncrementalModule m : model.getModules()) {
 						m.onCreate(model, newRow);
 					}
 				}
@@ -251,7 +251,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 				// The old row is not in the new rows, signal a deletion
 				if (model.isDelivering()) {
 					logger.info("Notifying listening modules");
-					for (IModuleIncremental m : model.getModules()) {
+					for (IIncrementalModule m : model.getModules()) {
 						m.onDelete(model, oldRow);
 					}
 				}
@@ -287,7 +287,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 	}
 
 	private boolean deliver;
-	private Collection<IModuleIncremental> modules = new HashSet<IModuleIncremental>();
+	private Collection<IIncrementalModule> modules = new HashSet<IIncrementalModule>();
 
 	private CsvFileWatcher watcher;
 
@@ -314,7 +314,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 	}
 
 	@Override
-	public String getModelId() {
+	public String getModelUri() {
 		return file;
 	}
 
@@ -363,7 +363,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 	}
 
 	@Override
-	public Collection<IModuleIncremental> getModules() {
+	public Collection<IIncrementalModule> getModules() {
 		return modules;
 	}
 

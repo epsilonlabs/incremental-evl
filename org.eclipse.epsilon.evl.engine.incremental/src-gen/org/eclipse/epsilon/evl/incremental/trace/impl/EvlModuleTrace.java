@@ -22,6 +22,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionEx
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
+import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
@@ -33,7 +34,7 @@ import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.AllInstancesAccess;
 import org.eclipse.epsilon.base.incremental.trace.impl.ElementAccess;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModelAccess;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasAccesses;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasModels;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasModuleElements;
@@ -227,28 +228,28 @@ public class EvlModuleTrace implements IEvlModuleTrace {
 
                   
     @Override
-    public IModelTrace createModelTrace(String name, String uri) throws EolIncrementalExecutionException {
-        IModelTrace modelTrace = null;
+    public IModelAccess createModelAccess(String modelName, IModelTrace modelTrace) throws EolIncrementalExecutionException {
+        IModelAccess modelAccess = null;
         try {
-            modelTrace = new ModelTrace(name, uri, this);
+            modelAccess = new ModelAccess(modelName, modelTrace, this);
         } catch (TraceModelDuplicateRelation e) {
             // Pass
         } finally {
-    	    if (modelTrace != null) {
-    	        return modelTrace;
+    	    if (modelAccess != null) {
+    	        return modelAccess;
     	    }
             try {
-                modelTrace = this.models.get().stream()
-                    .filter(item -> item.getName() == name)
-                    .filter(item -> item.getUri() == uri)
+                modelAccess = this.models.get().stream()
+                    .filter(item -> item.getModelName() == modelName)
+                    .filter(item -> item.modelTrace().get().equals(modelTrace))
                     .findFirst()
                     .get();
             } catch (NoSuchElementException ex) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelTrace was "
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelAccess was "
                         + "duplicate but previous one was not found.");
             }
         }
-        return modelTrace;
+        return modelAccess;
     }      
                   
     @Override

@@ -11,10 +11,12 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
+
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 /** protected region IEvlModuleTraceRepositoryImports on begin **/
 import java.util.Set;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 /** protected region IEvlModuleTraceRepositoryImports end **/
 
 public interface IEvlModuleTraceRepository extends IModuleExecutionTraceRepository<IEvlModuleTrace> {
@@ -22,34 +24,27 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
     IEvlModuleTrace getEvlModuleTraceByIdentity(String uri);
 
 /** protected region IEvlModuleTraceRepositry on begin **/
-    // Specialised search methods
-    //IContextTrace getContextTraceFor(String typeName, int index, IEvlModuleTrace moduleTrace);
-	
-	//IContextTrace getContextTraceFor(String moduleSource, String typeName, int index);
-	
 	/**
 	 * Find all execution traces for the given property and element. The returned execution traces will 
 	 * correspond to the execution of Contexts, Invariants, Guards, Checks and Messages that have at least
 	 * one property access for the given element and property.
-	 * @param moduleSource TODO
-	 * @param modelUri TODO
-	 * @param modelName TODO
+	 * @param moduleUri the uri of the module being executed
 	 * @param propertyName the property name
-	 * @param objectId the model object's id
+	 * @param modelElementTrace the model element that contains the property
 	 * @throws EolIncrementalExecutionException 
 	 */
-    Set<IEvlModuleTrace> findPropertyAccessExecutionTraces(String moduleSource, String modelUri, String modelName, String elementId, String propertyName);
+    Set<IEvlModuleTrace> findPropertyAccessExecutionTraces(String moduleUri, IModelElementTrace modelElementTrace, String propertyName);
 	
 	/**
 	 * Find all execution traces for the given type. The returned execution traces will correspond to the
 	 * execution of Contexts, Invariants, Guards, Checks and Messages that have at least one all instances
 	 * access for the given type.
-	 * @param moduleSource TODO
+	 * @param moduleUri the uri of the module being executed
 	 * @param typeName the name of the type 
 	 * 
 	 * @return
 	 */
-    Set<IEvlModuleTrace> findAllInstancesExecutionTraces(String moduleSource, String typeName);
+    Set<IEvlModuleTrace> findAllInstancesExecutionTraces(String moduleUri, String typeName);
 	
 	/**
 	 * Find all execution traces that correspond to Invariant executions in which the given invariant trace
@@ -69,12 +64,13 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 	
 	/**
 	 * Gets the execution traces related to this element via any type of access.
-	 * @param moduleSource the uri of the module being executed
-	 * @param modelElementUri the model object uri
+	 * 
+	 * @param moduleUri the uri of the module being executed
+	 * @param modelElementTrace the model object uri
 	 *
 	 * @return the element trace
 	 */
-	Set<IEvlModuleTrace> findIndirectExecutionTraces(String moduleSource, String modelElementUri,
+	Set<IEvlModuleTrace> findIndirectExecutionTraces(String moduleUri, IModelElementTrace modelElementTrace,
 			Object modelElement, IIncrementalModel model);
 
 
@@ -85,11 +81,12 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 	 * PropertyAccess that refer to this element and it properties. Removal of the Access information should
 	 * remove the associated ExecutionTrace (ModuleElementTrace) if it does not has any additional access
 	 * information.
-	 * 
-	 * @param objectId the uri of the object for which the trace information should be deleted.
-	 * @throws EolIncrementalExecutionException
+	 *
+	 * @param moduleUri the uri of the module being executed
+	 * @param model the model
+	 * @param modelElementTrace the model element trace
 	 */
-	void removeTraceInformation(String moduleSource, IIncrementalModel model, String modelElementUri);
+	void removeTraceInformation(String moduleUri, IIncrementalModel model, IModelElementTrace modelElementTrace);
 /** protected region IEvlModuleTraceRepositry end **/
 
 }

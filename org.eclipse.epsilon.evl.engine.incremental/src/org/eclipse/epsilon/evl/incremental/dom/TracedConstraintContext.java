@@ -8,6 +8,8 @@ import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
 import org.eclipse.epsilon.common.module.IModule;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -115,7 +117,7 @@ public class TracedConstraintContext extends ConstraintContext
 		}
 		String moduleUri = context.getModule().getUri().toString();
 		IEvlModuleTrace moduleExecutionTrace = getModuleExecutionTrace(context, moduleUri);
-		IModelElementTrace elementTrace = getOrCreateModelElementTrace(modelElement, context, model, moduleUri,
+		IModelElementTrace elementTrace = getOrCreateModelElementTrace(modelElement, context, model,
 				moduleExecutionTrace);
 		createContextExecutionTrace(moduleExecutionTrace, elementTrace);
 		IElementAccess access = moduleExecutionTrace.createElementAccess(currentTrace, elementTrace);
@@ -188,15 +190,23 @@ public class TracedConstraintContext extends ConstraintContext
 	 */
 	private IModelElementTrace getOrCreateModelElementTrace(Object modelElement,
 			IncrementalEvlContext<IEvlModuleTraceRepository, IEvlExecutionTraceManager<IEvlModuleTraceRepository>> context,
-			final IIncrementalModel model, String moduleUri, IEvlModuleTrace moduleExecutionTrace)
+			final IIncrementalModel model, IEvlModuleTrace moduleExecutionTrace)
 			throws EolIncrementalExecutionException {
-		IModelElementTrace elementTrace = context.getTraceManager().getExecutionTraceRepository()
-				.getModelElementTraceFor(moduleUri, model.getName(), model.getModelUri(), model.getElementId(modelElement));
+		
+		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
+		IModelElementTrace elementTrace = modelTraceRepository
+				.getModelElementTraceFor(model.getModelUri(), model.getElementId(modelElement));
 		if (elementTrace == null) {
-			IModelTrace modelTrace = context.getTraceManager().getExecutionTraceRepository()
-					.getModelTraceByIdentity(null, model.getName(), ((IIncrementalModel)model).getModelUri());
+			IModelTrace modelTrace = modelTraceRepository
+					.getModelTraceByIdentity(model.getModelUri());
 			if (modelTrace == null) {
-				modelTrace = moduleExecutionTrace.createModelTrace(model.getName(), model.getModelUri());
+				try {
+					modelTrace = new ModelTrace(model.getModelUri());
+					modelTraceRepository.add(modelTrace);
+				} catch (TraceModelDuplicateRelation e) {
+					throw new EolIncrementalExecutionException(String.format("A modelTrace was not found for "
+							+ "the model wiht uri %s but there was an error craeting it.", model.getModelUri()));
+				}
 			}
 			elementTrace = modelTrace.createModelElementTrace(model.getElementId(modelElement));
 		}
