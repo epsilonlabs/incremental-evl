@@ -20,13 +20,8 @@ import java.util.NoSuchElementException;
 /** protected region AllInstancesAccessImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.base.incremental.trace.IAccessHasExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccessHasType;
-import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.AccessHasExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.AllInstancesAccessHasType;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
 /**
  * Implementation of IAllInstancesAccess. 
@@ -59,7 +54,7 @@ public class AllInstancesAccess implements IAllInstancesAccess {
      */    
     public AllInstancesAccess(boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
         this.ofKind = ofKind;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@6b5650bc (name: type) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@2a192839 (name: type) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.type = new AllInstancesAccessHasType(this);
         if (!this.type.create(type)) {
             throw new TraceModelDuplicateRelation();

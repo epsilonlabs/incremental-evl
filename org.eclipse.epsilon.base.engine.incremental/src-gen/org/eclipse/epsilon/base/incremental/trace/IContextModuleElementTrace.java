@@ -12,8 +12,8 @@
 package org.eclipse.epsilon.base.incremental.trace;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.trace.IAccess;    
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;    
+import org.eclipse.epsilon.base.incremental.trace.*;    
+import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
 /**
  * A module element that is executed in a context (e.g. contex operation, Etl rule, 

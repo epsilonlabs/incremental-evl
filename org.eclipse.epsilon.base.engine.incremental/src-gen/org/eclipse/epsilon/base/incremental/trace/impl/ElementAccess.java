@@ -20,13 +20,8 @@ import java.util.NoSuchElementException;
 /** protected region ElementAccessImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.base.incremental.trace.IAccessHasExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.IElementAccessHasElement;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.AccessHasExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ElementAccessHasElement;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
 /**
  * Implementation of IElementAccess. 
@@ -53,7 +48,7 @@ public class ElementAccess implements IElementAccess {
      * container and any attributes identified as indexes.
      */    
     public ElementAccess(IModuleElementTrace executionTrace, IModelElementTrace element, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@49aa744f (name: element) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@942ccdc (name: element) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.element = new ElementAccessHasElement(this);
         if (!this.element.create(element)) {
             throw new TraceModelDuplicateRelation();

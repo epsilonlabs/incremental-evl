@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,21 +13,17 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /** protected region GuardTraceImports on begin **/
 /** protected region GuardTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.base.incremental.trace.IAccess;
-import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IInContextModuleElementTraceHasParentTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.impl.InContextModuleElementTraceHasParentTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.evl.incremental.trace.IGuardTraceHasLimits;
-import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.GuardTraceHasLimits;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
+import org.eclipse.epsilon.evl.incremental.trace.*;
+import org.eclipse.epsilon.evl.incremental.trace.impl.*;
 
 /**
  * Implementation of IGuardTrace. 
@@ -60,7 +56,7 @@ public class GuardTrace implements IGuardTrace {
      * container and any attributes identified as indexes.
      */    
     public GuardTrace(IGuardedElementTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@3b892072 (name: limits) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@5569ad90 (name: limits) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.limits = new GuardTraceHasLimits(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
 

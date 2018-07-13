@@ -20,9 +20,8 @@ import java.util.NoSuchElementException;
 /** protected region ModelTypeTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTypeTraceHasModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelTypeTraceHasModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
 /**
  * Implementation of IModelTypeTrace. 

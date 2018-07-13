@@ -21,14 +21,8 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTraceHasElements;
-import org.eclipse.epsilon.base.incremental.trace.IModelTraceHasTypes;
-import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceHasElements;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceHasTypes;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelTypeTrace;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
 /**
  * Implementation of IModelTrace. 
@@ -107,8 +101,8 @@ public class ModelTrace implements IModelTrace {
     	    }
             Iterator<IModelElementTrace> it = this.elements.get();
             while (it.hasNext()) {
-            	IModelElementTrace item = it.next();
-                    //.filter(item -> item.getUri() == uri)
+            	IModelElementTrace item;
+                item = (IModelElementTrace) it.next();
     			if (item.getUri() == uri) {
     				modelElementTrace = item;
     			}
@@ -136,8 +130,8 @@ public class ModelTrace implements IModelTrace {
     	    }
             Iterator<IModelTypeTrace> it = this.types.get();
             while (it.hasNext()) {
-            	IModelTypeTrace item = it.next();
-                    //.filter(item -> item.getName() == name)
+            	IModelTypeTrace item;
+                item = (IModelTypeTrace) it.next();
     			if (item.getName() == name) {
     				modelTypeTrace = item;
     			}

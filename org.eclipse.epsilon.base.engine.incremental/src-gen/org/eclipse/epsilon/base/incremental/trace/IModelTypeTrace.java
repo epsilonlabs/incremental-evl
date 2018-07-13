@@ -11,7 +11,8 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;    
+import org.eclipse.epsilon.base.incremental.trace.*;    
+import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
 /**
  * A PropertyAccess denotes access to property of a model element.

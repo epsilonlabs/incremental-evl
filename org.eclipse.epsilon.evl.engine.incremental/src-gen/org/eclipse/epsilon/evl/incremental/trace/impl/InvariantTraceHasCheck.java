@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,9 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import java.util.Iterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasCheck;
@@ -45,6 +48,7 @@ public class InvariantTraceHasCheck extends Feature implements IInvariantTraceHa
         return target;
     }
     
+
     @Override
     public boolean create(ICheckTrace target) {
         if (conflict(target)) {
@@ -71,16 +75,19 @@ public class InvariantTraceHasCheck extends Feature implements IInvariantTraceHa
     @Override
     public boolean conflict(ICheckTrace target) {
         boolean result = false;
-        result |= get() != null;
+        result |= this.target != null;
         result |= target.invariant().get() != null;
         return result;
     }
     
     @Override
     public boolean related(ICheckTrace target) {
-  
-        return target.equals(this.target) && source.equals(target.invariant().get());
-    }
+    	if (target == null) {
+			return false;
+		}
+		return target.equals(this.target) && source.equals(target.invariant().get());
+	}
+        
     
     // PRIVATE API
     

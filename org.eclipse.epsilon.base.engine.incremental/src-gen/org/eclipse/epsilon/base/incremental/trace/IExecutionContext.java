@@ -12,8 +12,8 @@
 package org.eclipse.epsilon.base.incremental.trace;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;    
-import org.eclipse.epsilon.base.incremental.trace.IModelElementVariable;    
+import org.eclipse.epsilon.base.incremental.trace.*;    
+import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
 /**
  * The ExecutionContext Interface.

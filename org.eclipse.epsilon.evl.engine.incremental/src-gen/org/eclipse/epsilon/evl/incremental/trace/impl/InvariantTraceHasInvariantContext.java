@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,9 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import java.util.Iterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasInvariantContext;
@@ -45,6 +48,7 @@ public class InvariantTraceHasInvariantContext extends Feature implements IInvar
         return target;
     }
     
+
     @Override
     public boolean create(IContextTrace target) {
         if (conflict(target)) {
@@ -71,16 +75,25 @@ public class InvariantTraceHasInvariantContext extends Feature implements IInvar
     @Override
     public boolean conflict(IContextTrace target) {
         boolean result = false;
-        result |= get() != null;
-        result |= target.constraints().isUnique() && target.constraints().get().contains(source);
+        result |= this.target != null;
+		Iterable<IInvariantTrace> iterable = () -> target.constraints().get();
+		Stream<IInvariantTrace> targetStream = StreamSupport.stream(iterable.spliterator(), false);
+        result |= target.constraints().isUnique() &&
+        	targetStream.anyMatch(source::equals);
         return result;
     }
     
     @Override
     public boolean related(IContextTrace target) {
-  
-        return target.equals(this.target) && target.constraints().get().contains(source);
-    }
+    	if (target == null) {
+			return false;
+		}
+        
+		Iterable<IInvariantTrace> iterable = () -> target.constraints().get();
+		Stream<IInvariantTrace> targetStream = StreamSupport.stream(iterable.spliterator(), false);
+		return target.equals(this.target) && targetStream.anyMatch(source::equals);
+	}
+        
     
     // PRIVATE API
     

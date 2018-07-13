@@ -21,13 +21,8 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTraceHasModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTraceHasProperties;
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementTraceHasModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementTraceHasProperties;
-import org.eclipse.epsilon.base.incremental.trace.impl.PropertyTrace;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
 /**
  * Implementation of IModelElementTrace. 
@@ -109,8 +104,8 @@ public class ModelElementTrace implements IModelElementTrace {
     	    }
             Iterator<IPropertyTrace> it = this.properties.get();
             while (it.hasNext()) {
-            	IPropertyTrace item = it.next();
-                    //.filter(item -> item.getName() == name)
+            	IPropertyTrace item;
+                item = (IPropertyTrace) it.next();
     			if (item.getName() == name) {
     				propertyTrace = item;
     			}

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,23 +13,17 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /** protected region SatisfiesTraceImports on begin **/
 /** protected region SatisfiesTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.base.incremental.trace.IAccess;
-import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IInContextModuleElementTraceHasParentTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.impl.InContextModuleElementTraceHasParentTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
-import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasInvariant;
-import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasSatisfiedInvariants;
-import org.eclipse.epsilon.evl.incremental.trace.impl.SatisfiesTraceHasInvariant;
-import org.eclipse.epsilon.evl.incremental.trace.impl.SatisfiesTraceHasSatisfiedInvariants;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
+import org.eclipse.epsilon.evl.incremental.trace.*;
+import org.eclipse.epsilon.evl.incremental.trace.impl.*;
 
 /**
  * Implementation of ISatisfiesTrace. 
@@ -67,7 +61,7 @@ public class SatisfiesTrace implements ISatisfiesTrace {
      * container and any attributes identified as indexes.
      */    
     public SatisfiesTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@2e1e5419 (name: invariant) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@4502231e (name: invariant) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.invariant = new SatisfiesTraceHasInvariant(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
         this.satisfiedInvariants = new SatisfiesTraceHasSatisfiedInvariants(this);

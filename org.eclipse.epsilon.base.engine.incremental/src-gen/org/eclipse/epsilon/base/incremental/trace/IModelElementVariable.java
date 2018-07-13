@@ -11,7 +11,8 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;    
+import org.eclipse.epsilon.base.incremental.trace.*;    
+import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
 /**
  * A ModelElementVariable pairs a variable name to the model element assigned to 

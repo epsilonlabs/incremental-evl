@@ -11,11 +11,9 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
-
 
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
@@ -25,6 +23,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 /** protected region ModelTraceRepositoryImplImports end **/
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

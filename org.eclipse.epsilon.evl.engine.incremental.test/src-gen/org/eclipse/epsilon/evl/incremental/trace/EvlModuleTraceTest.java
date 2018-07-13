@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,6 +16,9 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IModuleElementTrace;
@@ -90,15 +93,20 @@ public class EvlModuleTraceTest {
         // protected region EvlModuleTraceInit end
         
         IModelTrace modelTraceMock = mock(IModelTrace.class);
+        List<Object> list = new ArrayList<>();
         IModelAccess child1 = classUnderTest.createModelAccess("modelName1", modelTraceMock);
-        assertThat(classUnderTest.models().get(), hasItem(child1));
+        classUnderTest.models().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child1));
+        list.clear();
         IModelAccess child2 = classUnderTest.createModelAccess("modelName2", modelTraceMock);
-        assertThat(classUnderTest.models().get(), hasItem(child2));
-        assertThat(classUnderTest.models().get(), hasSize(2));
+        classUnderTest.models().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child2));
+        assertThat(list, hasSize(2));
+        list.clear();
         IModelAccess child3 = classUnderTest.createModelAccess("modelName1", modelTraceMock);
-        assertThat(classUnderTest.models().get(), hasSize(2));
-        
-        assertThat(classUnderTest.models().get(), contains(child1, child2));
+        classUnderTest.models().get().forEachRemaining(list::add);
+        assertThat(list, hasSize(2));
+        assertThat(list, contains(child1, child2));
         assertThat(child3, is(child1));
 	}
     // protected region EvlModuleTraceOperations on begin

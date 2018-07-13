@@ -20,10 +20,8 @@ import java.util.NoSuchElementException;
 /** protected region ModelElementVariableImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementVariableHasValue;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementVariableHasValue;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
 /**
  * Implementation of IModelElementVariable. 
@@ -51,7 +49,7 @@ public class ModelElementVariable implements IModelElementVariable {
      */    
     public ModelElementVariable(String name, IModelElementTrace value, IExecutionContext container) throws TraceModelDuplicateRelation {
         this.name = name;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@2b4a2f3f (name: value) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@56c8968e (name: value) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.value = new ModelElementVariableHasValue(this);
         if (!this.value.create(value)) {
             throw new TraceModelDuplicateRelation();

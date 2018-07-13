@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,6 +13,7 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /** protected region InvariantTraceImports on begin **/
@@ -20,33 +21,10 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.base.incremental.trace.IAccess;
-import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IInContextModuleElementTraceHasParentTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.impl.InContextModuleElementTraceHasParentTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTraceHasGuard;
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasCheck;
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasInvariantContext;
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasMessage;
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasSatisfies;
-import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
-import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.CheckTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.GuardTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.GuardedElementTraceHasGuard;
-import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTraceHasCheck;
-import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTraceHasInvariantContext;
-import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTraceHasMessage;
-import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTraceHasSatisfies;
-import org.eclipse.epsilon.evl.incremental.trace.impl.MessageTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.SatisfiesTrace;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
+import org.eclipse.epsilon.evl.incremental.trace.*;
+import org.eclipse.epsilon.evl.incremental.trace.impl.*;
 
 /**
  * Implementation of IInvariantTrace. 
@@ -105,7 +83,7 @@ public class InvariantTrace implements IInvariantTrace {
      */    
     public InvariantTrace(String name, IContextTrace container) throws TraceModelDuplicateRelation {
         this.name = name;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@75c689ff (name: invariantContext) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@3e8f4ff5 (name: invariantContext) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.invariantContext = new InvariantTraceHasInvariantContext(this);
         this.guard = new GuardedElementTraceHasGuard(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);

@@ -12,8 +12,8 @@
 package org.eclipse.epsilon.base.incremental.trace;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;    
-import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;    
+import org.eclipse.epsilon.base.incremental.trace.*;    
+import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
 /**
  * A ModelTrace contains trace information for the elements and types in the model 

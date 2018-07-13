@@ -20,13 +20,8 @@ import java.util.NoSuchElementException;
 /** protected region PropertyAccessImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.base.incremental.trace.IAccessHasExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.IPropertyAccessHasProperty;
-import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.AccessHasExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.PropertyAccessHasProperty;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
 /**
  * Implementation of IPropertyAccess. 
@@ -58,7 +53,7 @@ public class PropertyAccess implements IPropertyAccess {
      * container and any attributes identified as indexes.
      */    
     public PropertyAccess(IModuleElementTrace executionTrace, IPropertyTrace property, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@69ace948 (name: property) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@55ce4537 (name: property) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.property = new PropertyAccessHasProperty(this);
         if (!this.property.create(property)) {
             throw new TraceModelDuplicateRelation();

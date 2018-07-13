@@ -45,7 +45,15 @@ operation EClass getRequiredImports(basePackage:String, interPrefix:String, inte
 operation EClass getRequiredImports(basePackage:String, interPrefix:String, interSufix:String,
                                     classPrefix:String, classSufix:String, isImpl:Boolean,
                                     flatten:Boolean) : Sequence {
+                                    
+                                    
     var imports : Set;
+    imports.add("org.eclipse.epsilon.base.incremental.trace.*");
+    imports.add("org.eclipse.epsilon.base.incremental.trace.impl.*");
+    imports.add("org.eclipse.epsilon." + ec.getEPackage().name + ".incremental.trace.*");
+    imports.add("org.eclipse.epsilon." + ec.getEPackage().name + ".incremental.trace.impl.*");
+    
+    /*
     var eas;
     var ers;
     //if (not flatten) {
@@ -146,6 +154,7 @@ operation EClass getRequiredImports(basePackage:String, interPrefix:String, inte
             imports.add("org.eclipse.epsilon." + ec.getEPackage().name + ".incremental.trace." + ec.getJavaInterfaceName(interPrefix, interSufix));
         }
     }
+    */
     return imports.sortBy(im | im);
 }
 

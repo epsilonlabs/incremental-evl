@@ -11,8 +11,8 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;    
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;    
+import org.eclipse.epsilon.base.incremental.trace.*;    
+import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
 /**
  * An ElementAccess denotes access to a model element as a whole. This usually

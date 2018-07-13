@@ -12,15 +12,8 @@
 package org.eclipse.epsilon.base.incremental.trace;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;    
-import org.eclipse.epsilon.base.incremental.trace.IElementAccess;    
-import org.eclipse.epsilon.base.incremental.trace.IModelAccess;    
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;    
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;    
-import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;    
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;    
-import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;    
-import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;    
+import org.eclipse.epsilon.base.incremental.trace.*;    
+import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
 /**
  * A ModuleExecutionTrace represents the trace of the execution of a particular Epsilon module

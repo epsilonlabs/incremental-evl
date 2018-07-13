@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,9 +12,10 @@
 package org.eclipse.epsilon.evl.incremental.trace;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.trace.IIdElement;    
-import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;    
-import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;    
+import org.eclipse.epsilon.base.incremental.trace.*;    
+import org.eclipse.epsilon.base.incremental.trace.impl.*;    
+import org.eclipse.epsilon.evl.incremental.trace.*;    
+import org.eclipse.epsilon.evl.incremental.trace.impl.*;    
 
 /**
  * The GuardedElementTrace Interface.

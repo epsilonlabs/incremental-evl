@@ -324,27 +324,30 @@ public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] create[%=self.nam
 	    }
 [%  if (ref.isMany()) {
 		var conds: Sequence;%]
-        Iterator<[%=self.getJavaInterfaceName(interPrefix, interSufix)%]> it = this.[%=ref.name%].get();
+        Iterator<[%=ref.getEType().getJavaInterfaceName(interPrefix, interSufix)%]> it = this.[%=ref.name%].get();
         while (it.hasNext()) {
-        	[%=self.getJavaInterfaceName(interPrefix, interSufix)%] item = it.next();
+        	[%=self.getJavaInterfaceName(interPrefix, interSufix)%] item;
 [%// Need to filter and cast for subclasses
-        if (subClass) {
-        	conds.add("t instanceof " +  self.getJavaInterfaceName(interPrefix, interSufix)); %]
-                //.filter(t -> t instanceof [%=self.getJavaInterfaceName(interPrefix, interSufix)%])
-                //.map([%=self.getJavaInterfaceName(interPrefix, interSufix)%].class::cast)
+        if (subClass) {%]
+            [%=ref.getEType().getJavaInterfaceName(interPrefix, interSufix)%] t = it.next();
+            if (t instanceof [%=self.getJavaInterfaceName(interPrefix, interSufix)%]) {
+                item = ([%=self.getJavaInterfaceName(interPrefix, interSufix)%]) t;
+            }
+            else {
+                continue;
+            }
+[%      } else {%]
+            item = ([%=self.getJavaInterfaceName(interPrefix, interSufix)%]) it.next();
 [%      }%]
 [%      for (param in self.getIndexAttributes()) {
             if (isJavaPrimitiveType(param.getEAttributeType().name)) {
             	conds.add("item.get" + param.name.firstToUpperCase() + "() == " + param.name);%]
-                //.filter(item -> item.get[%=param.name.firstToUpperCase()%]() == [%=param.name%])
 [%          } else {
 				conds.add("item.get" + param.name.firstToUpperCase() + ".equals(" + param.name + ")");%]
-                //.filter(item -> item.get[%=param.name.firstToUpperCase()%]().equals([%=param.name%]))
 [%          }
         }%]
 [%      for (param in self.getRequiredFeatures()) {
 			conds.add("item." + param.name + "().get().equals(" + param.name + ")");%]
-                //.filter(item -> item.[%=param.name%]().get().equals([%=param.name%]))
 [%      }%]
 			if ([%=conds.concat(" &&\n")%]) {
 				[%=instanceName%] = item;

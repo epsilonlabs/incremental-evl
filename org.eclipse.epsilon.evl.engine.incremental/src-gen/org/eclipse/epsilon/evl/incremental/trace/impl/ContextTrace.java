@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-06-14.
+ * This file was automatically generated on: 2018-07-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,6 +13,7 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /** protected region ContextTraceImports on begin **/
@@ -20,24 +21,10 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.base.incremental.trace.IAccess;
-import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTraceHasExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ContextModuleElementTraceHasExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IContextTraceHasConstraints;
-import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTraceHasGuard;
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.ContextTraceHasConstraints;
-import org.eclipse.epsilon.evl.incremental.trace.impl.GuardTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.GuardedElementTraceHasGuard;
-import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTrace;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
+import org.eclipse.epsilon.evl.incremental.trace.*;
+import org.eclipse.epsilon.evl.incremental.trace.impl.*;
 
 /**
  * Implementation of IContextTrace. 
@@ -90,7 +77,7 @@ public class ContextTrace implements IContextTrace {
     public ContextTrace(String kind, int index, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
         this.kind = kind;
         this.index = index;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@50bb5d56 (name: executionContext) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@7746d437 (name: executionContext) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.executionContext = new ContextModuleElementTraceHasExecutionContext(this);
         this.guard = new GuardedElementTraceHasGuard(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
@@ -197,14 +184,17 @@ public class ContextTrace implements IContextTrace {
     	    if (invariantTrace != null) {
     	        return invariantTrace;
     	    }
-            try {
-                invariantTrace = this.constraints.get().stream()
-                    .filter(item -> item.getName() == name)
-                    .findFirst()
-                    .get();
-            } catch (NoSuchElementException ex) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested InvariantTrace was "
-                        + "duplicate but previous one was not found.");
+            Iterator<IInvariantTrace> it = this.constraints.get();
+            while (it.hasNext()) {
+            	IInvariantTrace item;
+                item = (IInvariantTrace) it.next();
+    			if (item.getName() == name) {
+    				invariantTrace = item;
+    			}
+    		}
+    		if (invariantTrace == null) {
+               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested InvariantTrace was "
+                		+ "duplicate but previous one was not found.");
             }
         }
         return invariantTrace;

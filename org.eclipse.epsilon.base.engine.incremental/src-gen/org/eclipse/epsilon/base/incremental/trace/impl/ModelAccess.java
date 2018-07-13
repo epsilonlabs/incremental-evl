@@ -20,10 +20,8 @@ import java.util.NoSuchElementException;
 /** protected region ModelAccessImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.base.incremental.trace.IModelAccessHasModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelAccessHasModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
 /**
  * Implementation of IModelAccess. 
@@ -51,7 +49,7 @@ public class ModelAccess implements IModelAccess {
      */    
     public ModelAccess(String modelName, IModelTrace modelTrace, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
         this.modelName = modelName;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@73dbd33 (name: modelTrace) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@c21e26d (name: modelTrace) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.modelTrace = new ModelAccessHasModelTrace(this);
         if (!this.modelTrace.create(modelTrace)) {
             throw new TraceModelDuplicateRelation();

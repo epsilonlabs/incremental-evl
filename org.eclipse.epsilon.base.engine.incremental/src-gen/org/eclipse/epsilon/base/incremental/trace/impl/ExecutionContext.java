@@ -21,12 +21,8 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContextHasContextVariables;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementVariable;
-import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionContextHasContextVariables;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementVariable;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
 /**
  * Implementation of IExecutionContext. 
@@ -48,7 +44,7 @@ public class ExecutionContext implements IExecutionContext {
      * container and any attributes identified as indexes.
      */    
     public ExecutionContext(IContextModuleElementTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@428a6b8d (name: contextVariables) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
+        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@60f5685 (name: contextVariables) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.contextVariables = new ExecutionContextHasContextVariables(this);
 
         if (!container.executionContext().create(this)) {
@@ -85,9 +81,8 @@ public class ExecutionContext implements IExecutionContext {
     	    }
             Iterator<IModelElementVariable> it = this.contextVariables.get();
             while (it.hasNext()) {
-            	IModelElementVariable item = it.next();
-                    //.filter(item -> item.getName() == name)
-                    //.filter(item -> item.value().get().equals(value))
+            	IModelElementVariable item;
+                item = (IModelElementVariable) it.next();
     			if (item.getName() == name &&
     			    item.value().get().equals(value)) {
     				modelElementVariable = item;

@@ -20,9 +20,8 @@ import java.util.NoSuchElementException;
 /** protected region PropertyTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IPropertyTraceHasElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.PropertyTraceHasElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
 /**
  * Implementation of IPropertyTrace. 

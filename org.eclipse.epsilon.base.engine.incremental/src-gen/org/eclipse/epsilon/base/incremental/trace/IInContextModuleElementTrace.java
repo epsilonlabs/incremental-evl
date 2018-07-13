@@ -11,8 +11,8 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
-import org.eclipse.epsilon.base.incremental.trace.IAccess;    
-import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;    
+import org.eclipse.epsilon.base.incremental.trace.*;    
+import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
 /**
  * A module element that is not executed in a context, but that is nested in one that

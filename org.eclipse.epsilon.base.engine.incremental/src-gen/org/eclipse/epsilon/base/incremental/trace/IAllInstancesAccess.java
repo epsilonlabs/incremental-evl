@@ -11,8 +11,8 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
-import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;    
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;    
+import org.eclipse.epsilon.base.incremental.trace.*;    
+import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
 /**
  * An AllInstancesAccess denotes access to all elemens of a given type/kind. This 
