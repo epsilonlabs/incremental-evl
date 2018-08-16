@@ -1,0 +1,53 @@
+[%
+/*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Horacio Hoyos Rodriguez - initial API and implementation
+ ******************************************************************************/
+/**
+ * A template to generate an implementation of an EClass that can be used as a DTO.
+ */
+import "../Ecore2JavaTemplates.egl";
+%]
+[%=getHeader()%]
+package [%=qp%].util;
+
+import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.structure.Element;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+[%if(baseLanguage.length() > 0) {%]
+import org.eclipse.epsilon.[%=baseLanguage%].incremental.trace.impl.*;
+[%}%]
+import org.eclipse.epsilon.[%=ep.getName()%].incremental.trace.impl.*;
+
+/**
+ * A Factory to wrap Vertices around concrete classes based on the Vertex label.
+ * It is useful for instantiating domain elements back from Gremlin elements
+ * 
+ * @author Horacio Hoyos
+ *
+ */
+public class TraceFactory {
+
+    public static Object createModuleElementTrace(Element delegate, Graph graph) {
+        String label = delegate.label();
+        switch (label) {
+[%
+for (ec in ecore!EClass.all().select(ec | ec.isTypeOf(ecore!EClass)
+                and not ec.isInterface()
+                and not ec.isAbstract())) {%]  
+        case "[%=ec.name%]":
+            [%=ec.name%]Gremlin [%=ec.name.firstToLowerCase()%] = new [%=ec.name%]Gremlin();
+            [%=ec.name.firstToLowerCase()%].delegate((Vertex) delegate);
+            [%=ec.name.firstToLowerCase()%].graph(graph);
+            return [%=ec.name.firstToLowerCase()%];
+[%}%]        
+        }
+        return null;
+    }
+}

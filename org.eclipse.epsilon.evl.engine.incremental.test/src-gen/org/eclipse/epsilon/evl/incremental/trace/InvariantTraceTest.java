@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-07-13.
+ * This file was automatically generated on: 2018-08-16.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,24 +18,16 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.ContextTraceHasConstraints;
-import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.GuardTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.GuardTraceHasLimits;
-import org.eclipse.epsilon.evl.incremental.trace.IAccess;
-import org.eclipse.epsilon.evl.incremental.trace.IContextModuleElementTrace;
-import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.CheckTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.CheckTraceHasInvariant;
-import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.MessageTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.MessageTraceHasInvariant;
-import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.SatisfiesTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.SatisfiesTraceHasInvariant;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
+import org.eclipse.epsilon.evl.incremental.trace.*;
+import org.eclipse.epsilon.evl.incremental.trace.impl.*;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -59,11 +51,13 @@ public class InvariantTraceTest {
         ContextTraceHasConstraints containerReference = new ContextTraceHasConstraints(containerMock);
         when(containerMock.constraints()).thenReturn(containerReference);
         // protected region InvariantTraceInit on begin
-        // Default init parameters can be modified
         classUnderTest = new InvariantTrace("name1", containerMock);                    
         // protected region InvariantTraceInit end
         
-        assertThat(containerReference.get(), contains(classUnderTest));
+        
+        List<Object> list = new ArrayList<>();
+        containerReference.get().forEachRemaining(list::add);
+        assertThat(list, contains(classUnderTest));
         
         // protected region InvariantTraceAttributes on begin
         // TODO Add test code for parameters (to hard to generate correct code for any/all types).                    
@@ -75,52 +69,59 @@ public class InvariantTraceTest {
         ContextTraceHasConstraints containerReference = new ContextTraceHasConstraints(containerMock);
         when(containerMock.constraints()).thenReturn(containerReference);
         // protected region InvariantTraceInit on begin
-        // Default init parameters can be modified
         classUnderTest = new InvariantTrace("name1", containerMock);                    
         // protected region InvariantTraceInit end
         
+        List<Object> list = new ArrayList<>();
         IGuardTrace child1 = classUnderTest.createGuardTrace();
-        assertThat(classUnderTest.guard().get(), hasItem(child1));
+        classUnderTest.guard().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child1));
+        list.clear();
     @Test
     public void testCheckFactory() throws Exception {
         ContextTraceHasConstraints containerReference = new ContextTraceHasConstraints(containerMock);
         when(containerMock.constraints()).thenReturn(containerReference);
         // protected region InvariantTraceInit on begin
-        // Default init parameters can be modified
         classUnderTest = new InvariantTrace("name1", containerMock);                    
         // protected region InvariantTraceInit end
         
+        List<Object> list = new ArrayList<>();
         ICheckTrace child1 = classUnderTest.createCheckTrace();
-        assertThat(classUnderTest.check().get(), hasItem(child1));
+        classUnderTest.check().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child1));
+        list.clear();
     @Test
     public void testMessageFactory() throws Exception {
         ContextTraceHasConstraints containerReference = new ContextTraceHasConstraints(containerMock);
         when(containerMock.constraints()).thenReturn(containerReference);
         // protected region InvariantTraceInit on begin
-        // Default init parameters can be modified
         classUnderTest = new InvariantTrace("name1", containerMock);                    
         // protected region InvariantTraceInit end
         
+        List<Object> list = new ArrayList<>();
         IMessageTrace child1 = classUnderTest.createMessageTrace();
-        assertThat(classUnderTest.message().get(), hasItem(child1));
+        classUnderTest.message().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child1));
+        list.clear();
     @Test
     public void testSatisfiesFactory() throws Exception {
         ContextTraceHasConstraints containerReference = new ContextTraceHasConstraints(containerMock);
         when(containerMock.constraints()).thenReturn(containerReference);
         // protected region InvariantTraceInit on begin
-        // Default init parameters can be modified
         classUnderTest = new InvariantTrace("name1", containerMock);                    
         // protected region InvariantTraceInit end
         
+        List<Object> list = new ArrayList<>();
         ISatisfiesTrace child1 = classUnderTest.createSatisfiesTrace();
-        assertThat(classUnderTest.satisfies().get(), hasItem(child1));
+        classUnderTest.satisfies().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child1));
+        list.clear();
     
     @Test
     public void testAccessesReference() throws Exception {
         ContextTraceHasConstraints containerReference = new ContextTraceHasConstraints(containerMock);
         when(containerMock.constraints()).thenReturn(containerReference);
         // protected region InvariantTraceInit on begin
-        // Default init parameters can be modified
         classUnderTest = new InvariantTrace("name1", containerMock);                    
         // protected region InvariantTraceInit end
         // TODO Implement multivalue ref test
@@ -133,22 +134,9 @@ public class InvariantTraceTest {
         ContextTraceHasConstraints containerReference = new ContextTraceHasConstraints(containerMock);
         when(containerMock.constraints()).thenReturn(containerReference);
         // protected region InvariantTraceInit on begin
-        // Default init parameters can be modified
         classUnderTest = new InvariantTrace("name1", containerMock);                    
         // protected region InvariantTraceInit end
-        IContextModuleElementTrace ref = mock(IContextModuleElementTrace.class);
-        
-        boolean result = classUnderTest.parentTrace().create(ref);
-        assertFalse("A new reference can not be created before destroy", result);
-        assertThat(classUnderTest.parentTrace().get(), is(_parentTrace));
-        result = classUnderTest.parentTrace().destroy(ref);
-        assertFalse("Can't destroy unexisting reference", result);
-        result = classUnderTest.parentTrace().destroy(_parentTrace);
-        assertTrue("Exising references can be destroyed", result);
-        assertThat(classUnderTest.parentTrace().get(), is(nullValue()));
-        result = classUnderTest.parentTrace().create(ref);
-        assertTrue("New references can be craeted if was null", result);
-        assertThat(classUnderTest.parentTrace().get(), is(ref));
+        // TODO Implement multivalue ref test
     
     }
     

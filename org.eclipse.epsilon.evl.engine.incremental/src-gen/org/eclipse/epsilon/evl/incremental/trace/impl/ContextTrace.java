@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-07-13.
+ * This file was automatically generated on: 2018-08-16.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -77,7 +77,6 @@ public class ContextTrace implements IContextTrace {
     public ContextTrace(String kind, int index, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
         this.kind = kind;
         this.index = index;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@7746d437 (name: executionContext) (ordered: true, unique: true, lowerBound: 0, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.executionContext = new ContextModuleElementTraceHasExecutionContext(this);
         this.guard = new GuardedElementTraceHasGuard(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
@@ -188,8 +187,9 @@ public class ContextTrace implements IContextTrace {
             while (it.hasNext()) {
             	IInvariantTrace item;
                 item = (IInvariantTrace) it.next();
-    			if (item.getName() == name) {
+    			if (item.getName().equals(name)) {
     				invariantTrace = item;
+    				break;
     			}
     		}
     		if (invariantTrace == null) {

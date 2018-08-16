@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-07-13.
+ * This file was automatically generated on: 2018-08-16.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -54,12 +54,11 @@ public class AllInstancesAccess implements IAllInstancesAccess {
      */    
     public AllInstancesAccess(boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
         this.ofKind = ofKind;
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@2a192839 (name: type) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.type = new AllInstancesAccessHasType(this);
+        this.executionTrace = new AccessHasExecutionTrace(this);
         if (!this.type.create(type)) {
             throw new TraceModelDuplicateRelation();
         }
-        this.executionTrace = new AccessHasExecutionTrace(this);
         if (!this.executionTrace.create(executionTrace)) {
             throw new TraceModelDuplicateRelation();
         }
@@ -129,6 +128,13 @@ public class AllInstancesAccess implements IAllInstancesAccess {
         if (!type.get().equals(other.type.get())) {
             return false;
         }
+        if (executionTrace.get() == null) {
+            if (other.executionTrace.get() != null)
+                return false;
+        }
+        if (!executionTrace.get().equals(other.executionTrace.get())) {
+            return false;
+        }
         return true; 
   }
 
@@ -139,6 +145,7 @@ public class AllInstancesAccess implements IAllInstancesAccess {
         Boolean ofKind = Boolean.valueOf(getOfKind());
         result = prime * result + ((ofKind == null) ? 0 : ofKind.hashCode());
         result = prime * result + ((type.get() == null) ? 0 : type.get().hashCode());
+        result = prime * result + ((executionTrace.get() == null) ? 0 : executionTrace.get().hashCode());
         return result;
     }
 }

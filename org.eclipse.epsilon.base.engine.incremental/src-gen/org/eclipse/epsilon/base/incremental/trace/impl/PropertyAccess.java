@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-07-13.
+ * This file was automatically generated on: 2018-08-16.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -53,12 +53,11 @@ public class PropertyAccess implements IPropertyAccess {
      * container and any attributes identified as indexes.
      */    
     public PropertyAccess(IModuleElementTrace executionTrace, IPropertyTrace property, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@55ce4537 (name: property) (ordered: true, unique: true, lowerBound: 1, upperBound: 1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: false, resolveProxies: true)
         this.property = new PropertyAccessHasProperty(this);
+        this.executionTrace = new AccessHasExecutionTrace(this);
         if (!this.property.create(property)) {
             throw new TraceModelDuplicateRelation();
         }
-        this.executionTrace = new AccessHasExecutionTrace(this);
         if (!this.executionTrace.create(executionTrace)) {
             throw new TraceModelDuplicateRelation();
         }
@@ -126,6 +125,13 @@ public class PropertyAccess implements IPropertyAccess {
         if (!property.get().equals(other.property.get())) {
             return false;
         }
+        if (executionTrace.get() == null) {
+            if (other.executionTrace.get() != null)
+                return false;
+        }
+        if (!executionTrace.get().equals(other.executionTrace.get())) {
+            return false;
+        }
         return true; 
   }
 
@@ -134,6 +140,7 @@ public class PropertyAccess implements IPropertyAccess {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((property.get() == null) ? 0 : property.get().hashCode());
+        result = prime * result + ((executionTrace.get() == null) ? 0 : executionTrace.get().hashCode());
         return result;
     }
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-07-13.
+ * This file was automatically generated on: 2018-08-16.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -121,9 +121,10 @@ public class EvlModuleTrace implements IEvlModuleTrace {
                 else {
                     continue;
                 }
-    			if (item.getKind() == kind &&
+    			if (item.getKind().equals(kind) &&
     			    item.getIndex() == index) {
     				contextTrace = item;
+    				break;
     			}
     		}
     		if (contextTrace == null) {
@@ -159,6 +160,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     			if (item.executionTrace().get().equals(executionTrace) &&
     			    item.element().get().equals(element)) {
     				elementAccess = item;
+    				break;
     			}
     		}
     		if (elementAccess == null) {
@@ -194,6 +196,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     			    item.executionTrace().get().equals(executionTrace) &&
     			    item.type().get().equals(type)) {
     				allInstancesAccess = item;
+    				break;
     			}
     		}
     		if (allInstancesAccess == null) {
@@ -228,6 +231,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     			if (item.executionTrace().get().equals(executionTrace) &&
     			    item.property().get().equals(property)) {
     				propertyAccess = item;
+    				break;
     			}
     		}
     		if (propertyAccess == null) {
@@ -254,9 +258,10 @@ public class EvlModuleTrace implements IEvlModuleTrace {
             while (it.hasNext()) {
             	IModelAccess item;
                 item = (IModelAccess) it.next();
-    			if (item.getModelName() == modelName &&
+    			if (item.getModelName().equals(modelName) &&
     			    item.modelTrace().get().equals(modelTrace)) {
     				modelAccess = item;
+    				break;
     			}
     		}
     		if (modelAccess == null) {

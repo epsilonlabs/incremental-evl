@@ -30,31 +30,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An {@link IExecutionListener} that monitors execution of operations that retrieve all elements of a type/kind.
+ * An {@link IExecutionListener} that monitors execution of operations that
+ * retrieve all elements of a type/kind.
  * 
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionTrace,
-													 R extends IModuleExecutionTraceRepository<?>, 
-													 M extends IExecutionTraceManager<?,?>>
-			implements IExecutionListener<IIncrementalBaseContext<T, R, M>> {
-	
+public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<?>, M extends IExecutionTraceManager<?, ?, ?>>
+		implements IExecutionListener<IIncrementalBaseContext<T, R, M>> {
+
 	private static final Logger logger = LoggerFactory.getLogger(AllInstancesInvocationExecutionListener.class);
-	
+
 	/** The name of the operations of interest */
-	public static final String[] SET_VALUES = new String[] { "all",
-															 "allInstances",
-															 "allOfKind",
-															 "allOfType"
-															 };
-	
+	public static final String[] SET_VALUES = new String[] { "all", "allInstances", "allOfKind", "allOfType" };
+
 	/** Static set for quick search */
 	public static final Set<String> OPERATION_NAMES = new HashSet<>(Arrays.asList(SET_VALUES));
-	
+
 	/** Keep track of ModuleElements executing */
 	private final Deque<TracedModuleElement<?>> moduleElementStack = new ArrayDeque<>();
-	
 
 	public AllInstancesInvocationExecutionListener() {
 		super();
@@ -79,7 +73,7 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 			moduleElementStack.pollFirst();
 		}
 		if (ast instanceof OperationCallExpression) {
-			OperationCallExpression oce = (OperationCallExpression)ast;
+			OperationCallExpression oce = (OperationCallExpression) ast;
 			String operationName = oce.getOperationName();
 			if (OPERATION_NAMES.contains(operationName)) {
 				// We assume the targetExpression resolved in a type
@@ -89,32 +83,35 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 					record(currentAst.getCurrentTrace(), ofKind, typeName, context);
 				} catch (EolIncrementalExecutionException e) {
 					logger.warn("Unable to create traces for the execution of {}", ast, e);
-				}				
+				} catch (EolRuntimeException e) {
+					logger.warn("Unable to create traces for the execution of {}", ast, e);
+				}
 			}
 		}
 	}
-	
+
 	@Override
-	public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception, IIncrementalBaseContext<T, R, M> context) {
+	public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception,
+			IIncrementalBaseContext<T, R, M> context) {
 		logger.debug("finishedExecutingWithException");
 	}
-	
+
 	public boolean done() {
 		return moduleElementStack.isEmpty();
 	}
 
-	private void record(IModuleElementTrace executionTrace, boolean ofKind, String modelAndMetaClass, IIncrementalBaseContext<T, R, M> context)
-			throws EolIncrementalExecutionException {
-		
+	// TODO Split this method so we can test it
+	private void record(IModuleElementTrace executionTrace, boolean ofKind, String modelAndMetaClass,
+			IIncrementalBaseContext<T, R, M> context) throws EolIncrementalExecutionException, EolRuntimeException {
+
 		logger.info("Recording AllInstancesAccess. Type: {}, ofKind: {}", modelAndMetaClass, ofKind);
 		String modelName;
 		String typeName;
-		if (modelAndMetaClass.indexOf("!") > -1){
+		if (modelAndMetaClass.indexOf("!") > -1) {
 			String[] parts = modelAndMetaClass.split("!");
 			modelName = parts[0];
 			typeName = parts[1];
-		}
-		else {
+		} else {
 			modelName = "";
 			typeName = modelAndMetaClass;
 		}
@@ -122,24 +119,26 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 		try {
 			model = context.getModelRepository().getModelByName(modelName);
 		} catch (EolModelNotFoundException e) {
-			logger.error("Could not find model for type: {}",  modelAndMetaClass);
+			logger.error("Could not find model for type: {}", modelAndMetaClass);
 			throw new EolIncrementalExecutionException("Could not find model for type: " + modelAndMetaClass, e);
 		}
 		if (!(model instanceof IIncrementalModel)) {
-			logger.warn("Can not trace non-incremental models. Model {} is not an IIncrementalModel",  model);
+			logger.warn("Can not trace non-incremental models. Model {} is not an IIncrementalModel", model);
 			throw new EolIncrementalExecutionException(modelName);
 		}
-		IIncrementalModel incrementalModel = (IIncrementalModel) model; 
-		IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager().getExecutionTraceRepository();
+		IIncrementalModel incrementalModel = (IIncrementalModel) model;
+		IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager()
+				.getExecutionTraceRepository();
 		String moduleUri = context.getModule().getUri().toString();
-		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository.getModuleExecutionTraceByIdentity(moduleUri);
+		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository
+				.getModuleExecutionTraceByIdentity(moduleUri);
 		if (moduleExecutionTrace == null) {
-			throw new EolIncrementalExecutionException("A moduleExecutionTrace was not found for the module under execution. "
-					+ "The module execution trace must be created at the begining of the execution of the module.");
+			throw new EolIncrementalExecutionException(
+					"A moduleExecutionTrace was not found for the module under execution. "
+							+ "The module execution trace must be created at the begining of the execution of the module.");
 		}
 		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
-		IModelTypeTrace typeTrace = modelTraceRepository
-				.getTypeTraceFor(incrementalModel.getModelUri(), typeName);
+		IModelTypeTrace typeTrace = modelTraceRepository.getTypeTraceFor(incrementalModel.getModelUri(), typeName);
 		if (typeTrace == null) {
 			IModelTrace modelTrace = context.getTraceManager().getModelTraceRepository()
 					.getModelTraceByIdentity(moduleUri);
@@ -148,13 +147,15 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 					modelTrace = new ModelTrace(incrementalModel.getModelUri());
 					modelTraceRepository.add(modelTrace);
 				} catch (TraceModelDuplicateRelation e) {
-					throw new EolIncrementalExecutionException(String.format("A modelTrace was not found for "
-							+ "the model wiht uri %s but there was an error craeting it.", incrementalModel.getModelUri()));
+					throw new EolIncrementalExecutionException(String.format(
+							"A modelTrace was not found for "
+									+ "the model wiht uri %s but there was an error craeting it.",
+							incrementalModel.getModelUri()));
 				}
 			}
 			typeTrace = modelTrace.createModelTypeTrace(typeName);
 		}
-		IAllInstancesAccess allIns = moduleExecutionTrace.createAllInstancesAccess(ofKind, executionTrace, typeTrace );
+		IAllInstancesAccess allIns = moduleExecutionTrace.createAllInstancesAccess(ofKind, executionTrace, typeTrace);
 		executionTrace.accesses().create(allIns);
 	}
 

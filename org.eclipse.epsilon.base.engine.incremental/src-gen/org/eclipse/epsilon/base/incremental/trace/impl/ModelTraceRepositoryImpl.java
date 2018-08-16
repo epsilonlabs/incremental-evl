@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-07-13.
+ * This file was automatically generated on: 2018-08-16.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -31,8 +31,8 @@ import org.slf4j.LoggerFactory;
 public class ModelTraceRepositoryImpl implements IModelTraceRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelTraceRepositoryImpl.class);
-    
-    private final Set<IModelTrace> extent;
+ 
+    protected final Set<IModelTrace> extent;    
     
     public ModelTraceRepositoryImpl() {
         this.extent = new LinkedHashSet<>();
@@ -56,7 +56,7 @@ public class ModelTraceRepositoryImpl implements IModelTraceRepository {
         logger.debug("Get ModelTrace with id:{}", id);
         IModelTrace  result = null;
         try {
-            result = extent.stream()
+            result = (IModelTrace)extent.stream()
                     .filter(item -> item.getId().equals(id))
                     .findFirst()
                     .get();
@@ -67,14 +67,11 @@ public class ModelTraceRepositoryImpl implements IModelTraceRepository {
     }
     
     /** protected region IModelTraceRepositry on begin **/
-    @Override
+	@Override
 	public IModelTrace getModelTraceByIdentity(String modelUri) {
-		return extent.stream()
-				.filter(mt -> mt.getUri() == modelUri)
-				.findFirst()
-				.orElse(null);
+		return extent.stream().filter(mt -> mt.getUri() == modelUri).findFirst().orElse(null);
 	}
-	
+
 	@Override
 	public IModelTypeTrace getTypeTraceFor(String modelUri, String typeName) {
 		IModelTrace modelTrace = getModelTraceByIdentity(modelUri);
@@ -113,7 +110,7 @@ public class ModelTraceRepositoryImpl implements IModelTraceRepository {
 		}
 		return null;
 	}
-	
-    /** protected region IModelTraceRepositry end **/
+
+	/** protected region IModelTraceRepositry end **/
 
 }

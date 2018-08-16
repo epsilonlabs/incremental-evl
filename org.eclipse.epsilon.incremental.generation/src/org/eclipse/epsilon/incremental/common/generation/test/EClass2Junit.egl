@@ -38,21 +38,18 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import [%=qp%].trace.impl.[%=ec.name%];
 [%  if (containerRef.isDefined() or containmentRef.isDefined()) {%]
 import [%=qp%].trace.impl.[%=contReferenceClass%];
 [%}
-for (er in ec.getEAllReferences().excluding(containerRef)) {%]
-import [%=qp%].trace.[%=er.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix)%];
-[%  if (not er.getEReferenceType().isAbstract) {%]
-import [%=qp%].trace.impl.[%=er.getEReferenceType().getJavaClassName(classPrefix, classSufix)%];
+
+for (imp in ec.getRequiredImports(qp+".trace", interPrefix, interSufix, classPrefix, classSufix, true, true)) {%]
+import [%=imp%];
 [%}%]
-[%  if (not er.isMany() and er.getEOpposite().isDefined()) {%]
-import [%=qp%].trace.impl.[%=er.getEOpposite().getRelationJavaClassName(classPrefix, classSufix)%];
-[%  }
-}%]
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -147,7 +144,7 @@ for (er in ec.getEAllReferences().excluding(containerRef).select(er | er.isConta
 [%      }
     }%]
 [%}
-for (er in ec.getEAllReferences().excluding(containerRef).select(er | not er.isContainment)) {
+for (er in ec.getEAllReferences().excluding(containerRef).select(er | not er.isContainment and not er.derived)) {
     var erClass = er.getEReferenceType();%]
     
     @Test
@@ -162,6 +159,7 @@ for (er in ec.getEAllReferences().excluding(containerRef).select(er | not er.isC
             var oppClass = opp.getRelationJavaInterfaceName(interPrefix, interSufix);
             var oppVar = opp.getEContainingClass().name.firstToLowerCase();%]
         [%=oppClass%] _[%=oppVar%]2 = mock([%=oppClass%].class);
+        when(_[%=oppVar%]2 .get()).thenReturn(new HashSet<[%=opp.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix)%]>().iterator());
         when(ref.[%=er.getEOpposite().name%]()).thenReturn(_[%=oppVar%]2);
 [%      }%]        
         boolean result = classUnderTest.[%=er.name%]().create(ref);

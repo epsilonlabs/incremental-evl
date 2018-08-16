@@ -230,7 +230,7 @@ operation isJavaPrimitiveType(ecorePrimitive : String) : Boolean {
 
 @cached
 operation getEcorePrimitives() {
-    return Sequence {"EJavaObject", "AnyURI", "Byte", "Short", "Int", "Long", "Float", "Double", "Character", "Boolean", "String"};
+    return Sequence {"EJavaObject", "AnyURI", "Byte", "Short", "Int", "Long", "Float", "Double", "Character", "Boolean"};
 }
 
 /**
@@ -323,12 +323,13 @@ operation EClass getIndexAttributes() : Sequence {
 }
 
 /**
- * Return all the EReferences that make up the EClass equivalency (defined by
- * https://eclipse.org/epsilon/incremental/equivalency annotations)
+ * Return the EReferences that make up the EClass equivalency (defined by
+ * https://eclipse.org/epsilon/incremental/equivalency annotations). The
+ * EClass's hierarchy is traversed too. 
  */
 @cached
-operation EClass getEqualsReferences() : Sequence {
-    var result : Sequence();
+operation EClass getEqualsReferences() : Set {
+    var result : Set();
     var annots = self.getAnnotations("https://eclipse.org/epsilon/incremental/equivalency");
     for (annot in annots) {
         result.addAll(annot.getReferences());

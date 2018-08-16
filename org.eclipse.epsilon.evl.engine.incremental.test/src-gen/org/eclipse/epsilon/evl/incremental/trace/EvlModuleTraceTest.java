@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-07-13.
+ * This file was automatically generated on: 2018-08-16.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,13 +18,15 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IModuleElementTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IAccess;
-import org.eclipse.epsilon.evl.incremental.trace.IModelAccess;
-import org.eclipse.epsilon.evl.incremental.trace.impl.ModelAccess;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
+import org.eclipse.epsilon.evl.incremental.trace.*;
+import org.eclipse.epsilon.evl.incremental.trace.impl.*;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -42,8 +44,7 @@ public class EvlModuleTraceTest {
     public void testInit() throws Exception {
         
         // protected region EvlModuleTraceInit on begin
-        // Default init parameters can be modified
-        classUnderTest = new EvlModuleTrace("source1");                    
+        classUnderTest = new EvlModuleTrace("uri1");                    
         // protected region EvlModuleTraceInit end
         
     }
@@ -51,45 +52,52 @@ public class EvlModuleTraceTest {
     @Test
     public void testModuleElementsFactory() throws Exception {
         // protected region EvlModuleTraceInit on begin
-        // Default init parameters can be modified
-        classUnderTest = new EvlModuleTrace("source1");                    
+        classUnderTest = new EvlModuleTrace("uri1");                    
         // protected region EvlModuleTraceInit end
         
+        List<Object> list = new ArrayList<>();
         IModuleElementTrace child1 = classUnderTest.createModuleElementTrace();
-        assertThat(classUnderTest.moduleElements().get(), hasItem(child1));
+        classUnderTest.moduleElements().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child1));
+        list.clear();
         IModuleElementTrace child2 = classUnderTest.createModuleElementTrace();
-        assertThat(classUnderTest.moduleElements().get(), hasItem(child2));
-        assertThat(classUnderTest.moduleElements().get(), hasSize(2));
+        classUnderTest.moduleElements().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child2));
+        assertThat(list, hasSize(2));
+        list.clear();
         IModuleElementTrace child3 = classUnderTest.createModuleElementTrace();
-        assertThat(classUnderTest.moduleElements().get(), hasSize(2));
-        
-        assertThat(classUnderTest.moduleElements().get(), contains(child1, child2));
+        classUnderTest.moduleElements().get().forEachRemaining(list::add);
+        assertThat(list, hasSize(2));
+        assertThat(list, contains(child1, child2));
         assertThat(child3, is(child1));
 	}
     @Test
     public void testAccessesFactory() throws Exception {
         // protected region EvlModuleTraceInit on begin
-        // Default init parameters can be modified
-        classUnderTest = new EvlModuleTrace("source1");                    
+        classUnderTest = new EvlModuleTrace("uri1");                    
         // protected region EvlModuleTraceInit end
         
         IModuleElementTrace executionTraceMock = mock(IModuleElementTrace.class);
+        List<Object> list = new ArrayList<>();
         IAccess child1 = classUnderTest.createAccess(executionTraceMock);
-        assertThat(classUnderTest.accesses().get(), hasItem(child1));
+        classUnderTest.accesses().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child1));
+        list.clear();
         IAccess child2 = classUnderTest.createAccess(executionTraceMock);
-        assertThat(classUnderTest.accesses().get(), hasItem(child2));
-        assertThat(classUnderTest.accesses().get(), hasSize(2));
+        classUnderTest.accesses().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child2));
+        assertThat(list, hasSize(2));
+        list.clear();
         IAccess child3 = classUnderTest.createAccess(executionTraceMock);
-        assertThat(classUnderTest.accesses().get(), hasSize(2));
-        
-        assertThat(classUnderTest.accesses().get(), containsInAnyOrder(child1, child2));
+        classUnderTest.accesses().get().forEachRemaining(list::add);
+        assertThat(list, hasSize(2));
+        assertThat(list, containsInAnyOrder(child1, child2));
         assertThat(child3, is(child1));
 	}
     @Test
     public void testModelsFactory() throws Exception {
         // protected region EvlModuleTraceInit on begin
-        // Default init parameters can be modified
-        classUnderTest = new EvlModuleTrace("source1");                    
+        classUnderTest = new EvlModuleTrace("uri1");                    
         // protected region EvlModuleTraceInit end
         
         IModelTrace modelTraceMock = mock(IModelTrace.class);

@@ -11,12 +11,14 @@
  *******************************************************************************/
 package org.eclipse.epsilon.evl;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.StreamSupport;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
@@ -38,6 +40,8 @@ import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.dom.Fix;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
+import org.eclipse.epsilon.evl.incremental.EvlTraceFacotry;
+import org.eclipse.epsilon.evl.incremental.IEvlTraceFactory;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraintContext;
 import org.eclipse.epsilon.evl.incremental.dom.TracedGuardBlock;
@@ -60,11 +64,15 @@ import org.eclipse.epsilon.evl.parse.EvlParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+
 /**
  * AnIncrementalEvlModule.
  */
 public class IncrementalEvlModule extends EvlModule implements
-		IEvlModuleIncremental<IEvlModuleTraceRepository, IEvlExecutionTraceManager<IEvlModuleTraceRepository>> {
+		IEvlModuleIncremental<IEvlModuleTraceRepository, IEvlTraceFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory>> {
 
 	private static final Logger logger = LoggerFactory.getLogger(IncrementalEvlModule.class);
 
@@ -85,44 +93,30 @@ public class IncrementalEvlModule extends EvlModule implements
 	private boolean live = false;
 
 	/**
-	 * The trace manager associated to this module. The manager should be injected
-	 * via {@link #setExecutionTraceManager(IEvlExecutionTraceManager)} after
-	 * creation of the module (i.e. launch configuration execution). This allows for
-	 * different implementations of execution trace managers to be used for
-	 * execution.
-	 */
-	// FIXME Get from the TracedEvlContext
-	// private IEvlExecutionTraceManager<IEvlModuleExecution> etManager = null;
-
-	/**
-	 * The set of models which the module receives notification.
+	 * The set of models from which the module receives notification.
 	 */
 	Set<IIncrementalModel> targets;
 
 	/** The context. */
-	protected IncrementalEvlContext<IEvlModuleTraceRepository, IEvlExecutionTraceManager<IEvlModuleTraceRepository>> context;
+	protected IncrementalEvlContext<IEvlModuleTraceRepository, IEvlTraceFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory>> context;
 
 	public IncrementalEvlModule() {
 		super();
-		// By default we use the BasicEvlExecutionTraceManager, which also uses the
-		// default EvlModuleTraceRepository (in memory)
-		// FIXME This should be added by injection or by setters afterwards. They can
-		// not be added to the constructor
-		// because DT launch execution requires an empty constructor.
-		IEvlModuleTraceRepository repository = new EvlModuleTraceRepositoryImpl();
-		IModelTraceRepository modelRepository = new ModelTraceRepositoryImpl();
-		IEvlExecutionTraceManager<IEvlModuleTraceRepository> etManager = new BasicEvlExecutionTraceManager(repository,
-				modelRepository);
-
-		// IncrementalEvlContext<IEvlModuleTraceRepository,
-		// IEvlExecutionTraceManager<IEvlModuleTraceRepository>> context
 		this.context = new IncrementalEvlContext<>();
+
+	}
+
+	// new EvlIncrementalGuiceModule()
+	public void injectTraceManager(Module incrementalGuiceModule) {
+		Injector injector = Guice.createInjector(incrementalGuiceModule);
+		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory> etManager = injector
+				.getInstance(BasicEvlExecutionTraceManager.class);
 		this.context.setTraceManager(etManager);
 	}
 
 	@Override
 	public ModuleElement adapt(AST cst, ModuleElement parentAst) {
-		logger.debug("Adapting {} from {}", cst, parentAst.getUri());
+		logger.debug("Adapting {} from {}", cst, parentAst);
 		switch (cst.getType()) {
 		case EvlParser.MESSAGE:
 			return createMessageBlock();
@@ -170,26 +164,40 @@ public class IncrementalEvlModule extends EvlModule implements
 		prepareContext(getContext());
 		getContext().setOperationFactory(new EvlOperationFactory());
 		getContext().getFrameStack().put(Variable.createReadOnlyVariable("thisModule", this));
-		String evlScripPath = "String";
+
+		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory> etManager = context.getTraceManager();
+		IEvlTraceFactory factory = etManager.getTraceFactory();
+
+		// Create ModelTraces for all the models
+		for (IModel m : context.getModelRepository().getModels()) {
+			if (m instanceof IIncrementalModel) {
+				try {
+					IModelTrace mt = factory.createModelTrace(((IIncrementalModel) m).getModelUri());
+					etManager.getModelTraceRepository().add(mt);
+				} catch (TraceModelDuplicateRelation e) {
+					throw new EolRuntimeException(e.getMessage());
+				}
+			} else {
+				throw new EolRuntimeException(String.format(
+						"Models used in incremental execution must implement the IIncrementalModel interface. Model %s does not.",
+						m));
+			}
+		}
+		String evlScripPath = "String"; // If the module is invoked with a string rather than a file
 		if (this.sourceUri != null) {
 			evlScripPath = this.sourceUri.toString();
 		}
-		IEvlExecutionTraceManager<IEvlModuleTraceRepository> etManager = context.getTraceManager();
-
 		IEvlModuleTrace evlModuleTrace;
 		logger.info("Getting the EvlModuleTrace.");
 		evlModuleTrace = etManager.getExecutionTraceRepository().getEvlModuleTraceByIdentity(evlScripPath);
 		if (evlModuleTrace == null) {
 			try {
-				// FIXME This needs to be a factory method in the etManager so we can provide
-				// alternative
-				// implementations.
-				// etManager.craeteEvlModuleTrace() ...
-				evlModuleTrace = new EvlModuleTrace(evlScripPath);
+				// evlModuleTrace = new EvlModuleTrace(evlScripPath);
+				evlModuleTrace = factory.createModuleTrace(evlScripPath);
+				etManager.getExecutionTraceRepository().add(evlModuleTrace);
 			} catch (TraceModelDuplicateRelation e) {
 				throw new EolRuntimeException(e.getMessage());
 			}
-			etManager.getExecutionTraceRepository().add(evlModuleTrace);
 		}
 		logger.info("Adding execution listeners");
 		context.getExecutorFactory().addExecutionListener(context.getAllInstancesInvocationExecutionListener());
@@ -228,7 +236,7 @@ public class IncrementalEvlModule extends EvlModule implements
 	}
 
 	@Override
-	public IncrementalEvlContext<IEvlModuleTraceRepository, IEvlExecutionTraceManager<IEvlModuleTraceRepository>> getContext() {
+	public IncrementalEvlContext<IEvlModuleTraceRepository, IEvlTraceFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory>> getContext() {
 		return context;
 	}
 
@@ -269,7 +277,7 @@ public class IncrementalEvlModule extends EvlModule implements
 	}
 
 	@Override
-	public void onChange(IIncrementalModel model, Object object, String propertyName) {
+	public void onChange(IIncrementalModel model, Object object, String propertyName) throws EolRuntimeException {
 
 		logger.info("On Change event for {} with property {}", object, propertyName);
 		String elementId = model.getElementId(object);
@@ -283,10 +291,10 @@ public class IncrementalEvlModule extends EvlModule implements
 	}
 
 	@Override
-	public void onCreate(IIncrementalModel model, Object newElement) {
+	public void onCreate(IIncrementalModel model, Object newElement) throws EolRuntimeException {
 
 		logger.info("On Craete event for {}", newElement);
-		IEvlExecutionTraceManager<IEvlModuleTraceRepository> etManager = context.getTraceManager();
+		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory> etManager = context.getTraceManager();
 		// Do we need to execute the pre blocks to restore context?
 		// logger.info("Executing pre{}");
 		// execute(getPre(), context);
@@ -315,7 +323,7 @@ public class IncrementalEvlModule extends EvlModule implements
 	}
 
 	@Override
-	public void onDelete(IIncrementalModel model, Object modelElememt) {
+	public void onDelete(IIncrementalModel model, Object modelElememt) throws EolRuntimeException {
 
 		logger.info("On Delete event for {}", modelElememt);
 		String elementUri = model.getElementId(modelElememt);
@@ -636,14 +644,6 @@ public class IncrementalEvlModule extends EvlModule implements
 		}
 		Object self = selfModel.getElementById(selfTrace.getUri());
 		return self;
-	}
-
-	@Override
-	public void setExecutionTraceManager(IEvlModuleTrace manager) {
-		// TODO Implement
-		// IIncrementalModule<IEvlModuleTrace,R,T>.setExecutionTraceManager
-		throw new UnsupportedOperationException(
-				"Unimplemented Method    IIncrementalModule<IEvlModuleTrace,R,T>.setExecutionTraceManager invoked.");
 	}
 
 }

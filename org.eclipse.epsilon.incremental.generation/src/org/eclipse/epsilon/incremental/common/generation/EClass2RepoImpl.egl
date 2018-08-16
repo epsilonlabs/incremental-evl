@@ -25,9 +25,11 @@ var superClass = ec.getESuperTypes().first();
 var extends = null;
 var name = ec.getJavaClassName(classPrefix, classSufix) + "RepositoryImpl";
 var implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository";
+var extendGeneric = ec.getJavaInterfaceName(interPrefix, interSufix);
 if (ec.isAbstract) {
     name = name + "<E extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
     implements = implements + "<E>";
+    extendGeneric = "E";
 }
 if (not superClass.isInterface) {
     extends = superClass.name + "RepositoryImpl<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";    
@@ -47,21 +49,27 @@ import org.slf4j.LoggerFactory;
 public [%if(ec.isAbstract){%]abstract [%}%]class [%=name%][%if(extends.isDefined()){%] extends [%=extends%][%}%] implements [%=implements%] {
 
     private static final Logger logger = LoggerFactory.getLogger([%=ec.getJavaClassName(classPrefix, classSufix)%]RepositoryImpl.class);
-    
-    private final Set<[%=ec.getJavaInterfaceName(interPrefix, interSufix)%]> extent;
+ 
+[%if(not extends.isDefined()){%]
+    protected final Set<[%=extendGeneric%]> extent;    
+[%}%]
     
     public [%=ec.getJavaClassName(classPrefix, classSufix)%]RepositoryImpl() {
+[%if(extends.isDefined()){%]
+        super();
+[%} else {%]
         this.extent = new LinkedHashSet<>();
+[%}%]
     }
     
     @Override
-    public boolean add([%=ec.getJavaInterfaceName(interPrefix, interSufix)%] item) {
+    public boolean add([%=extendGeneric%] item) {
         logger.info("Adding {} to repository", item);
         return extent.add(item);
     }
 
     @Override
-    public boolean remove([%=ec.getJavaInterfaceName(interPrefix, interSufix)%] item) {
+    public boolean remove([%=extendGeneric%] item) {
         logger.info("Removing {} from repository", item);
         return extent.remove(item);
     }
@@ -72,7 +80,7 @@ public [%if(ec.isAbstract){%]abstract [%}%]class [%=name%][%if(extends.isDefined
         logger.debug("Get [%=ec.name%] with id:{}", id);
         [%=ec.getJavaInterfaceName(interPrefix, interSufix)%]  result = null;
         try {
-            result = extent.stream()
+            result = ([%=ec.getJavaInterfaceName(interPrefix, interSufix)%])extent.stream()
                     .filter(item -> item.getId().equals(id))
                     .findFirst()
                     .get();

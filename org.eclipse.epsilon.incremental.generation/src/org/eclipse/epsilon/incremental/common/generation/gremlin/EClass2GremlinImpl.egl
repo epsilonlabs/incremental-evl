@@ -12,12 +12,16 @@
 /**
  * A template to generate an implementation of an EClass that can be used as a DTO.
  */
-import "Ecore2JavaTemplates.egl";
+import "../Ecore2JavaTemplates.egl";
  %]
 [%=getHeader()%]
 package [%=qp%].trace.impl;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.*;
 import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%];
+import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
@@ -37,18 +41,17 @@ import [%=imp%];
 /**
  * Implementation of [%=ec.getJavaInterfaceName(interPrefix, interSufix)%]. 
  */
-public class [%=ec.getJavaClassName(classPrefix, classSufix)%] implements [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] {
+public class [%=ec.getJavaClassName(classPrefix, classSufix)%] implements [%=ec.getJavaInterfaceName(interPrefix, interSufix)%], GremlinWrapper<Vertex> {
+    
+    /** A reference to the graph to use in factory methods and iterations */
+    private Graph graph;
 
-[%  // Craete a field for each attribute
-for (ea in ec.getEAllAttributes().select(ea | not ea.derived)) {
-    var multi = "List";
-    if (ea.isOrdered()) { multi = "Set"; }%]
-    /**
-	 * The [%=ea.name%].
-	 */
-    private [%=ea.getGetterReturnType(multi)%] [%=ea.name%];
-
-[%}%]
+    /** The graph traversal source for all navigations */
+    private GraphTraversalSource g;
+    
+    /** The delegate Vertex */
+    private Vertex delegate;
+    
 [%  // Craete a field for each reference
 for (er in ec.getEAllReferences().select(er | not er.isDerived())) {%]
     /**
@@ -59,19 +62,30 @@ for (er in ec.getEAllReferences().select(er | not er.isDerived())) {%]
      * The [%=er.name%].
     [%}%]
      */
-    private final [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] [%=er.name%];
+    private [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] [%=er.name%];
 
-[%}%]
+[%}
+%]
+    /**
+     * Empty constructor for deserialization.
+     */    
+    public [%=ec.getJavaClassName(classPrefix, classSufix)%]() {
+    }
+    
     /**
      * Instantiates a new [%=ec.getJavaClassName(classPrefix, classSufix)%]. The [%=ec.getJavaClassName(classPrefix, classSufix)%] is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
     public [%=ec.getJavaClassName(classPrefix, classSufix)%]([%=ec.getConstructorParameters(true, interPrefix, interSufix)%]) throws TraceModelDuplicateRelation {
+        this.delegate = vertex;
+        this.g = new GraphTraversalSource(graph);
+        this.graph = graph;
+        g.V(delegate)
 [%for (index in ec.getIndexAttributes()) {%]
-        this.[%=index.name%] = [%=index.name%];
+            .property("[%=index.name%]", [%=index.name%])
 [%}%]
+            .iterate();
 [% for (er in ec.getEqualsReferences()) {%]
-        // From Equals [%=er%]
         this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this);
 [%  if ((er <> ec.getContainerReference().at(0)) and er.isRequired() and not er.isMany()) {%]
         if (!this.[%=er.name%].create([%=er.name%])) {
@@ -117,13 +131,13 @@ if (container.isDefined()) {
     }%]
     @Override
     public [%=ea.makeGetterSignature(multi)%] {
-        return [%=ea.name%];
+        return ([%=ea.getGetterReturnType(multi)%]) g.V(delegate).values("[%=ea.name%]").next();
     }
     
 [%  if (not ea.isMany() and not ec.getIndexAttributes().includes(ea)) {%]    
     @Override
     public [%=ea.makeSetterSignature(multi)%] {
-        this.[%=ea.name%] = value;
+        g.V(delegate).property("[%=ea.name%]", value).iterate();
     }   
      
 [%  }
@@ -153,6 +167,9 @@ if (container.isDefined()) {
 [%for (er in ec.getEAllReferences().select(ea | not ea.derived)) {%]
     @Override
     public [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] [%=er.name%]() {
+        if ([%=er.name%] == null) {
+            this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this);
+        }
         return [%=er.name%];
     }
 
@@ -278,9 +295,11 @@ for (er in ec.getEqualsReferences()) {
     var typeName = primitives.get(index.getEAttributeType().getJavaClassName());
     if (typeName.isDefined()) {%]
         [%=typeName%] [%=index.name%] = [%=typeName%].valueOf(get[%=index.name.firstToUpperCase()%]());
-[%  }%]
         result = prime * result + (([%=index.name%] == null) ? 0 : [%=index.name%].hashCode());
-[%}%]
+[%  } else {%]
+        result = prime * result + ((get[%=index.name.firstToUpperCase()%]() == null) ? 0 : get[%=index.name.firstToUpperCase()%]().hashCode());
+[%  }
+}%]
 [%for (er in ec.getEqualsReferences()) {
     var access = er.name;
     if(er.isTypeOf(EReference)){
@@ -294,6 +313,27 @@ for (er in ec.getEqualsReferences()) {
 }%]
         return result;
     }
+    
+    @Override
+    public Vertex delegate() {
+        return delegate;
+    }
+
+    @Override
+    public void delegate(Vertex delegate) {
+        this.delegate = delegate;
+    }
+    
+    @Override
+    public Graph graph() {
+        return graph;    
+    }
+
+    @Override
+    public void graph(Graph graph) {
+        this.g = new GraphTraversalSource(graph);
+        this.graph = graph;
+    }
 }
 [%
 @template
@@ -306,13 +346,17 @@ operation EClass factoryMethod(ref : EReference, subClass : Boolean, interPrefix
     var containment = self.getContainerReference().at(0);
     if (container.isDefined()) {
         vars.add("this");
-    }%]
+    }
+    vars.add("v");
+    vars.add("graph");
+    var retType = self.getJavaInterfaceName(interPrefix, interSufix);%]
 @Override
-public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] create[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException {
-    [%=self.getJavaInterfaceName(interPrefix, interSufix)%] [%=instanceName%] = null;
+public [%=retType%] create[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException {
+    [%=self.getJavaClassName(classPrefix, classSufix)%] [%=instanceName%] = null;
     try {
+        Vertex v = g.addV("[%=self.name%]").next();
         [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=vars.concat(", ")%]);
-[% if (containment.isDefined()) {%]        
+[% if (containment.isDefined()) {%]
         this.[%=container.name%]().create([%=instanceName%]);
 [%  }%]
     } catch (TraceModelDuplicateRelation e) {
@@ -322,31 +366,26 @@ public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] create[%=self.nam
 	        return [%=instanceName%];
 	    }
 [%  if (ref.isMany()) {%]
-        try {
-            [%=instanceName%] = this.[%=ref.name%].get().stream()
-[%// Need to filter and cast for subclasses
-        if (subClass) {%]
-                .filter(t -> t instanceof [%=self.getJavaInterfaceName(interPrefix, interSufix)%])
-                .map([%=self.getJavaInterfaceName(interPrefix, interSufix)%].class::cast)
-[%      }%]
-[%      for (param in self.getIndexAttributes()) {
-            if (isJavaPrimitiveType(param.getEAttributeType().name)) {%]
-                .filter(item -> item.get[%=param.name.firstToUpperCase()%]() == [%=param.name%])
-[%          } else {%]
-                .filter(item -> item.get[%=param.name.firstToUpperCase()%]().equals([%=param.name%]))
-[%          }
-        }%]
-[%      for (param in self.getRequiredFeatures()) {%]
-                .filter(item -> item.[%=param.name%]().get().equals([%=param.name%]))
-[%      }%]
-                .findFirst()
-                .get();
-        } catch (NoSuchElementException ex) {
+        GraphTraversal<Vertex, Vertex> gt = (([%=ref.getRelationJavaClassName(classPrefix, classSufix)%]) this.[%=ref.name%]).getRaw()
+            .hasLabel("[%=self.name%]")
+[%      for (param in self.getIndexAttributes()) {%]
+            .has("[%=param.name%]", [%=param.name%])
+            [%}
+        for (param in self.getRequiredFeatures()) {%]
+            .as("v")
+            .to(Direction.OUT, "value").hasId([%=param.name%].getId())
+            .select("v")
+            [%}%]
+            ;
+        if (!gt.hasNext()) {
             throw new EolIncrementalExecutionException("Error creating trace model element. Requested [%=self.name%] was "
                     + "duplicate but previous one was not found.");
         }
+        [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]();
+        [%=instanceName%].delegate(gt.next());
+        [%=instanceName%].graph(graph);
 [%  } else {%]
-        [%=instanceName%] = [%if (subClass) {%]([%=self.name%]) [%}%]this.[%=ref.name%].get();
+        [%=instanceName%] = ([%=self.getJavaClassName(classPrefix, classSufix)%]) this.[%=ref.name%].get();
         if ([%=instanceName%]  == null) {
             throw new EolIncrementalExecutionException("Error creating trace model element. Requested [%=self.name%] was "
                     + "duplicate but previous one was not found.");
@@ -356,4 +395,34 @@ public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] create[%=self.nam
     return [%=self.name.firstToLowerCase()%];
 }      
 [%}
+/**
+ * Get the required parameters for initialization of objects of this EClass. The required parameters
+ * are the attributes that are indices, an instance of the container (if conatined),  ant ant 
+ * required references (mult = [1..1]). The containment must be reachable via opposite.
+ */
+@template
+operation EClass getConstructorParameters(signature : Boolean, interPrefix:String, interSufix:String) {
+    // Index attributes
+    var results : Sequence = new Sequence();
+    results.addAll(self.getEAttributeParameters());
+    // Requried references
+    results.addAll(self.getRequiredFeatureParameters(interPrefix, interSufix));
+    // Container
+    var container = self.getContainerReference().at(0);
+    var containerType = self.getContainerReference().at(1);
+    if (container.isDefined() and not self.getRequiredFeatures().includes(container)) {
+        results.add(containerType.getJavaInterfaceName(interPrefix, interSufix) + " container");
+    }
+    else if (containerType.isDefined()) {
+        results.add(containerType.getJavaInterfaceName(interPrefix, interSufix) + " container");
+    }
+    results.add("Vertex vertex");
+    results.add("Graph graph");
+    if (signature) {
+%][%=results.concat(", ")%]
+[%  } else {
+%][%=results.concat(",\n")%]
+[%  }
+}
+
 %]

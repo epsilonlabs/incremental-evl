@@ -1,14 +1,14 @@
-/*******************************************************************************
-* This file was automatically generated on: 2018-07-13.
-* Only modify protected regions indicated by "/** **&#47;"
-*
-* Copyright (c) 2017 The University of York.
-* All rights reserved. This program and the accompanying materials
-* are made available under the terms of the Eclipse Public License v1.0
-* which accompanies this distribution, and is available at
-* http://www.eclipse.org/legal/epl-v10.html
-* 
-******************************************************************************/
+ /*******************************************************************************
+ * This file was automatically generated on: 2018-08-16.
+ * Only modify protected regions indicated by "/** **&#47;"
+ *
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import java.util.LinkedHashSet;
@@ -18,9 +18,8 @@ import java.util.Set;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceRepositoryImpl;
-
-import java.util.ArrayList;
 /** protected region EvlModuleTraceRepositoryImplImports on begin **/
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -38,52 +37,55 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
-/** protected region EvlModuleTraceRepositoryImplImports end **/
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
+/** protected region EvlModuleTraceRepositoryImplImports end **/
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepositoryImpl<IEvlModuleTrace>
-		implements IEvlModuleTraceRepository {
+public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepositoryImpl<IEvlModuleTrace> implements IEvlModuleTraceRepository {
 
-	private static final Logger logger = LoggerFactory.getLogger(EvlModuleTraceRepositoryImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(EvlModuleTraceRepositoryImpl.class);
+ 
+    
+    public EvlModuleTraceRepositoryImpl() {
+        super();
+    }
+    
+    @Override
+    public boolean add(IEvlModuleTrace item) {
+        logger.info("Adding {} to repository", item);
+        return extent.add(item);
+    }
 
-	private final Set<IEvlModuleTrace> extent;
-
-	public EvlModuleTraceRepositoryImpl() {
-		this.extent = new LinkedHashSet<>();
-	}
-
-	@Override
-	public boolean add(IEvlModuleTrace item) {
-		logger.info("Adding {} to repository", item);
-		return extent.add(item);
-	}
-
-	@Override
-	public boolean remove(IEvlModuleTrace item) {
-		logger.info("Removing {} from repository", item);
-		return extent.remove(item);
-	}
-
-	@Override
-	public IEvlModuleTrace get(Object id) {
-
-		logger.debug("Get EvlModuleTrace with id:{}", id);
-		IEvlModuleTrace result = null;
-		try {
-			result = extent.stream().filter(item -> item.getId().equals(id)).findFirst().get();
-		} catch (NoSuchElementException e) {
-			// No info about the ModelTrace
-		}
-		return result;
-	}
-
-	/** protected region IEvlModuleTraceRepositry on begin **/
+    @Override
+    public boolean remove(IEvlModuleTrace item) {
+        logger.info("Removing {} from repository", item);
+        return extent.remove(item);
+    }
+    
+    @Override
+    public IEvlModuleTrace get(Object id) {
+        
+        logger.debug("Get EvlModuleTrace with id:{}", id);
+        IEvlModuleTrace  result = null;
+        try {
+            result = (IEvlModuleTrace)extent.stream()
+                    .filter(item -> item.getId().equals(id))
+                    .findFirst()
+                    .get();
+        } catch (NoSuchElementException  e) {
+            // No info about the ModelTrace
+        }
+        return result;
+    }
+    
+    /** protected region IEvlModuleTraceRepositry on begin **/
 	// Specialised search methods
 	@Override
 	public IEvlModuleTrace getEvlModuleTraceByIdentity(String source) {
-		return extent.stream().filter(mt -> mt.getUri() == source).findFirst().orElse(null);
+		return (IEvlModuleTrace) extent.stream().filter(mt -> mt.getUri() == source).findFirst().orElse(null);
 	}
 
 	@Override
@@ -147,7 +149,9 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 
 	@Override
 	public Set<IEvlModuleTrace> getAllExecutionTraces() {
-		return Collections.unmodifiableSet(extent);
+		HashSet<IEvlModuleTrace> retVal = new HashSet<IEvlModuleTrace>(extent.size());
+		extent.forEach(e -> retVal.add((IEvlModuleTrace) e));
+		return Collections.unmodifiableSet(retVal);
 	}
 
 	@Override

@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
-import org.eclipse.epsilon.base.incremental.trace.IModuleTrace;
 import org.eclipse.epsilon.common.module.IModule;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.module.ModuleMarker;
@@ -15,15 +14,13 @@ import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.common.parse.Region;
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
 
-
-
 public abstract class AbstractModule implements IIncrementalModule {
 
-	@Override
-	public IModuleTrace getModuleTrace() {
-		// TODO Implement AbstractModule.getModuleTrace
-		throw new UnsupportedOperationException("Unimplemented Method    AbstractModule.getModuleTrace invoked.");
-	}
+//	@Override
+//	public IModuleTrace getModuleTrace() {
+//		// TODO Implement AbstractModule.getModuleTrace
+//		throw new UnsupportedOperationException("Unimplemented Method    AbstractModule.getModuleTrace invoked.");
+//	}
 
 	@Override
 	public Set<IIncrementalModel> getTargets() {
@@ -36,7 +33,7 @@ public abstract class AbstractModule implements IIncrementalModule {
 		// TODO Implement AbstractModule.listenToModelChanges
 		throw new UnsupportedOperationException("Unimplemented Method    AbstractModule.listenToModelChanges invoked.");
 	}
-	
+
 	@Override
 	public boolean parse(File file) throws Exception {
 		// TODO Implement IModule.parse

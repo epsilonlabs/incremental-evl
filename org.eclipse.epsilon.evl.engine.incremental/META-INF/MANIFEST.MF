@@ -9,7 +9,9 @@ Require-Bundle: org.eclipse.epsilon.common,
  org.eclipse.epsilon.eol.engine,
  org.eclipse.epsilon.base.engine.incremental,
  org.eclipse.epsilon.evl.engine,
- org.slf4j.api;bundle-version="1.7.2"
+ org.slf4j.api;bundle-version="1.7.2",
+ com.google.inject;bundle-version="3.0.0",
+ javax.inject;bundle-version="1.0.0"
 Export-Package: org.eclipse.epsilon.evl,
  org.eclipse.epsilon.evl.incremental.dom,
  org.eclipse.epsilon.evl.incremental.execute,

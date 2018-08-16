@@ -99,6 +99,7 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="An Access is the super class of all possible types of accesses that can ocurr during&#xA;execution."/>
     </eAnnotations>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//Access/executionTrace"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="executionTrace" lowerBound="1"
         eType="#//ModuleElementTrace" eOpposite="#//ModuleElementTrace/accesses"/>
   </eClassifiers>

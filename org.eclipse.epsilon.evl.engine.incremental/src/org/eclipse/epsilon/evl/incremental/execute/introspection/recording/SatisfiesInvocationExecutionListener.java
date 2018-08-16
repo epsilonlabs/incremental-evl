@@ -31,49 +31,46 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An An {@link IExecutionListener}  that listens to OperationCallExpressions that match the "Satisfies" name.
- * To avoid re-executing dynamic parameters, the listeners activates in the {@link #aboutToExecute(ModuleElement, IEolContext)}
- * to keep track of the execution results of the parameter expressions. After all parameters have been processes, the
- * listener waits for the operation to finish executing.
- *  
+ * An An {@link IExecutionListener} that listens to OperationCallExpressions
+ * that match the "Satisfies" name. To avoid re-executing dynamic parameters,
+ * the listeners activates in the
+ * {@link #aboutToExecute(ModuleElement, IEolContext)} to keep track of the
+ * execution results of the parameter expressions. After all parameters have
+ * been processes, the listener waits for the operation to finish executing.
+ * 
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class SatisfiesInvocationExecutionListener <T extends IModuleExecutionTrace,
-												   R extends IModuleExecutionTraceRepository<?>, 
-												   M extends IExecutionTraceManager<?,?>>
+public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<?>, M extends IExecutionTraceManager<?, ?, ?>>
 		implements IExecutionListener<IIncrementalBaseContext<T, R, M>> {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(SatisfiesInvocationExecutionListener.class);
-	
-	
+
 	public static final String[] SET_VALUES = new String[] { EvlOperationFactory.SATISFIES_OPERATION,
-															 EvlOperationFactory.SATISFIES_ONE_OPERATION,
-															 EvlOperationFactory.SATISFIES_ALL_OPERATION,
-															};
+			EvlOperationFactory.SATISFIES_ONE_OPERATION, EvlOperationFactory.SATISFIES_ALL_OPERATION, };
 	public static final Set<String> OPERATION_NAMES = new HashSet<>(Arrays.asList(SET_VALUES));
-	
+
 	/** Keep track of ModuleElements executing */
 	private final Deque<TracedModuleElement<IInvariantTrace>> moduleElementStack = new ArrayDeque<>();
-	
+
 	/** The invariant we are currently in */
-	//private final IInvariantTrace invariant;
-	
+	// private final IInvariantTrace invariant;
+
 	/** Flag to indicate that it is waiting for parameter execution */
 	private boolean listening;
-	
+
 	/** The ASTs of the invocation parameters */
 	private Queue<Expression> parameters = new ArrayDeque<>();
-	
-	/** The result of executing the invocation parameters, i.e. the final values of the parameters of the satisfies
-	 * invocation
+
+	/**
+	 * The result of executing the invocation parameters, i.e. the final values of
+	 * the parameters of the satisfies invocation
 	 */
 	private Collection<String> parameterValues = new ArrayList<String>();
-	
+
 	/** The initial satisfies operation */
 	private OperationCallExpression waitingFor;
-	
-	
+
 	public SatisfiesInvocationExecutionListener() {
 		super();
 	}
@@ -84,9 +81,9 @@ public class SatisfiesInvocationExecutionListener <T extends IModuleExecutionTra
 		if (ast instanceof TracedModuleElement) {
 			moduleElementStack.addLast((TracedModuleElement<IInvariantTrace>) ast);
 		}
-		if (!moduleElementStack.isEmpty()) {	
+		if (!moduleElementStack.isEmpty()) {
 			if (ast instanceof OperationCallExpression) {
-				OperationCallExpression oce = (OperationCallExpression)ast;
+				OperationCallExpression oce = (OperationCallExpression) ast;
 				String operationName = oce.getOperationName();
 				if (OPERATION_NAMES.contains(operationName)) {
 					listening = true;
@@ -107,19 +104,17 @@ public class SatisfiesInvocationExecutionListener <T extends IModuleExecutionTra
 			if (ast.equals(parameters.peek())) {
 				parameterValues.add((String) result);
 				parameters.poll();
-				listening = !parameters.isEmpty(); 
+				listening = !parameters.isEmpty();
 			}
-		}
-		else {
+		} else {
 			TracedModuleElement<IInvariantTrace> currentInvariant = moduleElementStack.peekFirst();
 			if (ast.equals(waitingFor)) {
 				boolean all = EvlOperationFactory.SATISFIES_ALL_OPERATION.equals(waitingFor.getOperationName());
-				record(all, parameterValues, (IInvariantTrace)currentInvariant.getCurrentTrace());
+				record(all, parameterValues, (IInvariantTrace) currentInvariant.getCurrentTrace());
 				parameters.clear();
 				listening = false;
 				waitingFor = null;
-			}
-			else {
+			} else {
 				if (ast instanceof TracedConstraint) {
 					TracedConstraint block = (TracedConstraint) ast;
 					if (currentInvariant.equals(block)) {
@@ -132,24 +127,24 @@ public class SatisfiesInvocationExecutionListener <T extends IModuleExecutionTra
 				waitingFor = null;
 			}
 		}
-		
+
 	}
-	
+
 	public boolean done() {
 		return moduleElementStack.isEmpty();
 	}
 
 	private void record(boolean all, Collection<String> parameterValues, IInvariantTrace invariantTrace) {
-		logger.info("Creating SatisfiesTrace. invariant: {}, satisfied: {}, all: {}",
-				invariantTrace.getName(), parameterValues, all);
-		
+		logger.info("Creating SatisfiesTrace. invariant: {}, satisfied: {}, all: {}", invariantTrace.getName(),
+				parameterValues, all);
+
 		// Each parameter should be an Invariant name
 		IContextTrace contextTrace = invariantTrace.invariantContext().get();
 		Set<IInvariantTrace> invariants = new HashSet<>();
 		for (Object p : parameterValues) {
 			assert p instanceof String;
 			String invariantName = (String) p;
-			IInvariantTrace  targetInvariant = ContextTraceUtil.getInvariantIn(contextTrace, invariantName);
+			IInvariantTrace targetInvariant = ContextTraceUtil.getInvariantIn(contextTrace, invariantName);
 			if (targetInvariant == null) {
 				try {
 					targetInvariant = contextTrace.createInvariantTrace((String) p);
@@ -165,8 +160,7 @@ public class SatisfiesInvocationExecutionListener <T extends IModuleExecutionTra
 			result = invariantTrace.createSatisfiesTrace();
 		} catch (EolIncrementalExecutionException e) {
 			throw new IllegalStateException(e);
-		} 
-		finally {	
+		} finally {
 			for (IInvariantTrace i : invariants) {
 				result.satisfiedInvariants().create(i);
 			}
@@ -175,7 +169,8 @@ public class SatisfiesInvocationExecutionListener <T extends IModuleExecutionTra
 	}
 
 	@Override
-	public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception, IIncrementalBaseContext<T, R, M> context) {
+	public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception,
+			IIncrementalBaseContext<T, R, M> context) {
 		logger.debug("finishedExecutingWithException");
 	}
 

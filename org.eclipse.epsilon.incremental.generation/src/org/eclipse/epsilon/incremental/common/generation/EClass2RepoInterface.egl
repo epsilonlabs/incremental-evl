@@ -14,6 +14,8 @@ import "Ecore2JavaTemplates.egl";
 [%=getHeader()%]
 package [%=qp%].trace;
 
+import java.util.Set;
+
 [%var superClass = "";
 var name = "";
 if (ec.getESuperTypes().isEmpty) {
@@ -46,6 +48,7 @@ import [%=erqp%].[%="I" + superClass.name + "Repository"%];
 [%=out.stopPreserve()%]
 
 public interface [%=name%] extends [%=superClass%] {
+
 [%
 var ids = ec.getIndexAttributes();
 if (not ids.isEmpty()) {%]

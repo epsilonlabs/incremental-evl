@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-07-13.
+ * This file was automatically generated on: 2018-08-16.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -44,7 +44,6 @@ public class ExecutionContext implements IExecutionContext {
      * container and any attributes identified as indexes.
      */    
     public ExecutionContext(IContextModuleElementTrace container) throws TraceModelDuplicateRelation {
-        // From Equals org.eclipse.emf.ecore.impl.EReferenceImpl@60f5685 (name: contextVariables) (ordered: false, unique: true, lowerBound: 0, upperBound: -1) (changeable: true, volatile: false, transient: false, defaultValueLiteral: null, unsettable: false, derived: false) (containment: true, resolveProxies: true)
         this.contextVariables = new ExecutionContextHasContextVariables(this);
 
         if (!container.executionContext().create(this)) {
@@ -83,9 +82,10 @@ public class ExecutionContext implements IExecutionContext {
             while (it.hasNext()) {
             	IModelElementVariable item;
                 item = (IModelElementVariable) it.next();
-    			if (item.getName() == name &&
+    			if (item.getName().equals(name) &&
     			    item.value().get().equals(value)) {
     				modelElementVariable = item;
+    				break;
     			}
     		}
     		if (modelElementVariable == null) {

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-07-13.
+ * This file was automatically generated on: 2018-08-16.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,14 +18,16 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.evl.incremental.trace.impl.SatisfiesTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTraceHasSatisfies;
-import org.eclipse.epsilon.evl.incremental.trace.IAccess;
-import org.eclipse.epsilon.evl.incremental.trace.IContextModuleElementTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTrace;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
+import org.eclipse.epsilon.evl.incremental.trace.*;
+import org.eclipse.epsilon.evl.incremental.trace.impl.*;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -49,10 +51,10 @@ public class SatisfiesTraceTest {
         InvariantTraceHasSatisfies containerReference = new InvariantTraceHasSatisfies(containerMock);
         when(containerMock.satisfies()).thenReturn(containerReference);
         // protected region SatisfiesTraceInit on begin
-        // Default init parameters can be modified
         classUnderTest = new SatisfiesTrace(containerMock);                    
         // protected region SatisfiesTraceInit end
         
+
         assertThat(containerReference.get(), is(classUnderTest));
         
         // protected region SatisfiesTraceAttributes on begin
@@ -66,7 +68,6 @@ public class SatisfiesTraceTest {
         InvariantTraceHasSatisfies containerReference = new InvariantTraceHasSatisfies(containerMock);
         when(containerMock.satisfies()).thenReturn(containerReference);
         // protected region SatisfiesTraceInit on begin
-        // Default init parameters can be modified
         classUnderTest = new SatisfiesTrace(containerMock);                    
         // protected region SatisfiesTraceInit end
         // TODO Implement multivalue ref test
@@ -79,7 +80,6 @@ public class SatisfiesTraceTest {
         InvariantTraceHasSatisfies containerReference = new InvariantTraceHasSatisfies(containerMock);
         when(containerMock.satisfies()).thenReturn(containerReference);
         // protected region SatisfiesTraceInit on begin
-        // Default init parameters can be modified
         classUnderTest = new SatisfiesTrace(containerMock);                    
         // protected region SatisfiesTraceInit end
         IContextModuleElementTrace ref = mock(IContextModuleElementTrace.class);
@@ -104,7 +104,6 @@ public class SatisfiesTraceTest {
         InvariantTraceHasSatisfies containerReference = new InvariantTraceHasSatisfies(containerMock);
         when(containerMock.satisfies()).thenReturn(containerReference);
         // protected region SatisfiesTraceInit on begin
-        // Default init parameters can be modified
         classUnderTest = new SatisfiesTrace(containerMock);                    
         // protected region SatisfiesTraceInit end
         // TODO Implement multivalue ref test

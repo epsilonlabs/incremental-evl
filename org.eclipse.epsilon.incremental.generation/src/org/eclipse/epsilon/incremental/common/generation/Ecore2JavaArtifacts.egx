@@ -47,24 +47,6 @@ pre {
         "short" = "Short",
         "void" = "Void"};
 }
-/*
-rule EPackage2Model
-  transform p : EPackage {
-  
-  parameters {
-    var params : new Map;
-    params.put("today", now.toString());
-    params.put("year", now.getYear().toString()); 
-    params.put("qp", qp);
-    params.put("baseLanguage", bl);
-    return params;
-  }
-  
-  guard: p.name == targetLanguage
-  template : "Ecore2AbstractTraceModel.egl"
-  target : project + folder + "/models/Abstract" + p.name.firstToUpperCase() + "TraceModel.java"
-}
-*/
 
 rule EClass2Interface
   transform ec : EClass {
@@ -161,7 +143,8 @@ rule EClass2Repository
       return params;
     }
     guard    : (ec.getEPackage().name == targetLanguage) and
-                not EReference.all().exists(ref | ref.isContainment() and (ec.getEAllSuperTypes().including(ec).includes(ref.getEReferenceType())))
+                not EReference.all().exists(ref | ref.isContainment() and
+                (ec.getEAllSuperTypes().including(ec).includes(ref.getEReferenceType())))
                 
     template : "EClass2RepoInterface.egl"
     target   : project + folder + "/trace/" + interPrefix + ec.name + interSufix + "Repository.java"
@@ -184,7 +167,8 @@ rule EClass2RepositoryImpl
     }
     guard    : (ec.getEPackage().name == targetLanguage) and
                 not ec.isInterface and
-                not EReference.all().exists(ref | ref.isContainment() and (ec.getEAllSuperTypes().including(ec).includes(ref.getEReferenceType())))
+                not EReference.all().exists(ref | ref.isContainment() and
+                (ec.getEAllSuperTypes().including(ec).includes(ref.getEReferenceType())))
     template : "EClass2RepoImpl.egl"
     target   : project + folder + "/trace/impl/" + classPrefix+ ec.name + classSufix + "RepositoryImpl.java"
   }
@@ -231,23 +215,7 @@ rule EPackage2Tests
   target : project + ".test" + folder + "/trace/" + ep.name.firstToUpperCase() + "Tests.java"
   
 }
-/*
-rule EClass2GremlinImpl
-  transform ec : EClass {
-  
-    parameters {
-      var params : new Map;
-      params.put("today", now.toString());
-      params.put("year", now.getYear().toString()); 
-      params.put("qp", "org.eclipse.epsilon.evl.incremental.trace");
-      return params;
-    }
-    guard : not ec.isInterface() and not ec.isAbstract() and (ec.getEPackage().name == "evl")
-    template : "Eclass2EvlGremlinImpl.egl"
-    target : "../../../../../../../../../org.eclipse.epsilon.evl.engine.incremental.tinkerpop" +
-             "/src-gen/org/eclipse/epsilon/evl/incremental/trace/tinkerpop/Abstract" + ec.name + "Impl.java"
-  }
-*/
+
 post {
  "GenDone".println();
 }

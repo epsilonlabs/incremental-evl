@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-07-13.
+ * This file was automatically generated on: 2018-08-16.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,11 +11,14 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
+import java.util.Set;
+
 import org.eclipse.epsilon.base.incremental.trace.IIdElementRepository;
 /** protected region IGuardedElementTraceRepositoryImports on begin **/
 /** protected region IGuardedElementTraceRepositoryImports end **/
 
 public interface IGuardedElementTraceRepository<E extends IGuardedElementTrace> extends IIdElementRepository<E> {
+
 
 /** protected region IGuardedElementTraceRepositry on begin **/
     // Specialised search methods

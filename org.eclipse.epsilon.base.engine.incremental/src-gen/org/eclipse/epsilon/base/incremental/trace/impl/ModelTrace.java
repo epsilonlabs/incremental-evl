@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-07-13.
+ * This file was automatically generated on: 2018-08-16.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -105,6 +105,7 @@ public class ModelTrace implements IModelTrace {
                 item = (IModelElementTrace) it.next();
     			if (item.getUri() == uri) {
     				modelElementTrace = item;
+    				break;
     			}
     		}
     		if (modelElementTrace == null) {
@@ -132,8 +133,9 @@ public class ModelTrace implements IModelTrace {
             while (it.hasNext()) {
             	IModelTypeTrace item;
                 item = (IModelTypeTrace) it.next();
-    			if (item.getName() == name) {
+    			if (item.getName().equals(name)) {
     				modelTypeTrace = item;
+    				break;
     			}
     		}
     		if (modelTypeTrace == null) {

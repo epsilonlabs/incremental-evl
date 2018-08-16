@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-07-13.
+ * This file was automatically generated on: 2018-08-16.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -27,28 +27,28 @@ import org.slf4j.LoggerFactory;
 public abstract class ModuleExecutionTraceRepositoryImpl<E extends IModuleExecutionTrace> implements IModuleExecutionTraceRepository<E> {
 
     private static final Logger logger = LoggerFactory.getLogger(ModuleExecutionTraceRepositoryImpl.class);
-    
-    private final Set<IModuleExecutionTrace> extent;
+ 
+    protected final Set<E> extent;    
     
     public ModuleExecutionTraceRepositoryImpl() {
         this.extent = new LinkedHashSet<>();
     }
     
     @Override
-    public boolean add(IModuleExecutionTrace item) {
+    public boolean add(E item) {
         logger.info("Adding {} to repository", item);
         return extent.add(item);
     }
 
     @Override
-    public boolean remove(IModuleExecutionTrace item) {
+    public boolean remove(E item) {
         logger.info("Removing {} from repository", item);
         return extent.remove(item);
     }
     
     /** protected region IModuleExecutionTraceRepositry on begin **/
-    // Specialised search methods
+	// Specialised search methods
 
-    /** protected region IModuleExecutionTraceRepositry end **/
+	/** protected region IModuleExecutionTraceRepositry end **/
 
 }

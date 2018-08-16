@@ -72,8 +72,9 @@ for (er in ec.getEAllReferences().select(er | not er.isDerived())) {%]
         this.[%=index.name%] = [%=index.name%];
 [%}%]
 [% for (er in ec.getEqualsReferences()) {%]
-        // From Equals [%=er%]
         this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this);
+[%}%]
+[% for (er in ec.getEqualsReferences()) {%]
 [%  if ((er <> ec.getContainerReference().at(0)) and er.isRequired() and not er.isMany()) {%]
         if (!this.[%=er.name%].create([%=er.name%])) {
             throw new TraceModelDuplicateRelation();
@@ -343,7 +344,7 @@ public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] create[%=self.nam
             if (isJavaPrimitiveType(param.getEAttributeType().name)) {
             	conds.add("item.get" + param.name.firstToUpperCase() + "() == " + param.name);%]
 [%          } else {
-				conds.add("item.get" + param.name.firstToUpperCase() + ".equals(" + param.name + ")");%]
+				conds.add("item.get" + param.name.firstToUpperCase() + "().equals(" + param.name + ")");%]
 [%          }
         }%]
 [%      for (param in self.getRequiredFeatures()) {
@@ -351,6 +352,7 @@ public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] create[%=self.nam
 [%      }%]
 			if ([%=conds.concat(" &&\n")%]) {
 				[%=instanceName%] = item;
+				break;
 			}
 		}
 		if ([%=instanceName%] == null) {

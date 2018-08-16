@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-07-13.
+ * This file was automatically generated on: 2018-08-16.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -75,7 +75,8 @@ public interface IAllInstancesAccessHasType {
      */
     boolean related(IModelTypeTrace target);
 
-    // PRIVATE API
+    // RESTRICTED API: This methods should only be called from create/destroy operations in the
+    // implementing class or its opposite relation class. 
 
     /**
      * Set a new value for the reference. This method should be only accessed by classes in the

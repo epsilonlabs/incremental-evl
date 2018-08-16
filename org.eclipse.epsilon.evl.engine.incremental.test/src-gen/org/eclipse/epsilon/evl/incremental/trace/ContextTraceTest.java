@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-07-13.
+ * This file was automatically generated on: 2018-08-16.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,18 +18,16 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.evl.incremental.trace.impl.ContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.ModuleExecutionTraceHasModuleElements;
-import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.GuardTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.GuardTraceHasLimits;
-import org.eclipse.epsilon.evl.incremental.trace.IAccess;
-import org.eclipse.epsilon.evl.incremental.trace.IExecutionContext;
-import org.eclipse.epsilon.evl.incremental.trace.impl.ExecutionContext;
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTrace;
+import org.eclipse.epsilon.base.incremental.trace.*;
+import org.eclipse.epsilon.base.incremental.trace.impl.*;
+import org.eclipse.epsilon.evl.incremental.trace.*;
+import org.eclipse.epsilon.evl.incremental.trace.impl.*;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -53,11 +51,13 @@ public class ContextTraceTest {
         ModuleExecutionTraceHasModuleElements containerReference = new ModuleExecutionTraceHasModuleElements(containerMock);
         when(containerMock.moduleElements()).thenReturn(containerReference);
         // protected region ContextTraceInit on begin
-        // Default init parameters can be modified
-        classUnderTest = new ContextTrace("kind1", 1, _executionContext, containerMock);                    
+        classUnderTest = new ContextTrace("kind1", , containerMock);                    
         // protected region ContextTraceInit end
         
-        assertThat(containerReference.get(), contains(classUnderTest));
+        
+        List<Object> list = new ArrayList<>();
+        containerReference.get().forEachRemaining(list::add);
+        assertThat(list, contains(classUnderTest));
         
         // protected region ContextTraceAttributes on begin
         // TODO Add test code for parameters (to hard to generate correct code for any/all types).                    
@@ -68,48 +68,50 @@ public class ContextTraceTest {
     public void testGuardFactory() throws Exception {
         ModuleExecutionTraceHasModuleElements containerReference = new ModuleExecutionTraceHasModuleElements(containerMock);
         when(containerMock.moduleElements()).thenReturn(containerReference);
-        IExecutionContext _executionContext = mock(IExecutionContext.class);
-                
         // protected region ContextTraceInit on begin
-        // Default init parameters can be modified
-        classUnderTest = new ContextTrace("kind1", 1, _executionContext, containerMock);                    
+        classUnderTest = new ContextTrace("kind1", , containerMock);                    
         // protected region ContextTraceInit end
         
+        List<Object> list = new ArrayList<>();
         IGuardTrace child1 = classUnderTest.createGuardTrace();
-        assertThat(classUnderTest.guard().get(), hasItem(child1));
+        classUnderTest.guard().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child1));
+        list.clear();
     @Test
     public void testExecutionContextFactory() throws Exception {
         ModuleExecutionTraceHasModuleElements containerReference = new ModuleExecutionTraceHasModuleElements(containerMock);
         when(containerMock.moduleElements()).thenReturn(containerReference);
-        IExecutionContext _executionContext = mock(IExecutionContext.class);
-                
         // protected region ContextTraceInit on begin
-        // Default init parameters can be modified
-        classUnderTest = new ContextTrace("kind1", 1, _executionContext, containerMock);                    
+        classUnderTest = new ContextTrace("kind1", , containerMock);                    
         // protected region ContextTraceInit end
         
+        List<Object> list = new ArrayList<>();
         IExecutionContext child1 = classUnderTest.createExecutionContext();
-        assertThat(classUnderTest.executionContext().get(), hasItem(child1));
+        classUnderTest.executionContext().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child1));
+        list.clear();
     @Test
     public void testConstraintsFactory() throws Exception {
         ModuleExecutionTraceHasModuleElements containerReference = new ModuleExecutionTraceHasModuleElements(containerMock);
         when(containerMock.moduleElements()).thenReturn(containerReference);
-        IExecutionContext _executionContext = mock(IExecutionContext.class);
-                
         // protected region ContextTraceInit on begin
-        // Default init parameters can be modified
-        classUnderTest = new ContextTrace("kind1", 1, _executionContext, containerMock);                    
+        classUnderTest = new ContextTrace("kind1", , containerMock);                    
         // protected region ContextTraceInit end
         
+        List<Object> list = new ArrayList<>();
         IInvariantTrace child1 = classUnderTest.createInvariantTrace("name1");
-        assertThat(classUnderTest.constraints().get(), hasItem(child1));
+        classUnderTest.constraints().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child1));
+        list.clear();
         IInvariantTrace child2 = classUnderTest.createInvariantTrace("name2");
-        assertThat(classUnderTest.constraints().get(), hasItem(child2));
-        assertThat(classUnderTest.constraints().get(), hasSize(2));
+        classUnderTest.constraints().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child2));
+        assertThat(list, hasSize(2));
+        list.clear();
         IInvariantTrace child3 = classUnderTest.createInvariantTrace("name1");
-        assertThat(classUnderTest.constraints().get(), hasSize(2));
-        
-        assertThat(classUnderTest.constraints().get(), contains(child1, child2));
+        classUnderTest.constraints().get().forEachRemaining(list::add);
+        assertThat(list, hasSize(2));
+        assertThat(list, contains(child1, child2));
         assertThat(child3, is(child1));
 	}
     
@@ -117,11 +119,8 @@ public class ContextTraceTest {
     public void testAccessesReference() throws Exception {
         ModuleExecutionTraceHasModuleElements containerReference = new ModuleExecutionTraceHasModuleElements(containerMock);
         when(containerMock.moduleElements()).thenReturn(containerReference);
-        IExecutionContext _executionContext = mock(IExecutionContext.class);
-                
         // protected region ContextTraceInit on begin
-        // Default init parameters can be modified
-        classUnderTest = new ContextTrace("kind1", 1, _executionContext, containerMock);                    
+        classUnderTest = new ContextTrace("kind1", , containerMock);                    
         // protected region ContextTraceInit end
         // TODO Implement multivalue ref test
     
