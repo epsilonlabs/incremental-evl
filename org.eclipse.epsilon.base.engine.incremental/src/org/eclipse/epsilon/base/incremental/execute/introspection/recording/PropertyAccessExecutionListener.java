@@ -163,6 +163,7 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 			}
 			propertyTrace = elementTrace.createPropertyTrace(propertyName);
 		}
+		// FIXME A property access should also generate the matching element access.
 		IPropertyAccess pa = moduleExecutionTrace.createPropertyAccess(executionTrace, propertyTrace);
 		String value = null;
 		if (model.owns(result)) {

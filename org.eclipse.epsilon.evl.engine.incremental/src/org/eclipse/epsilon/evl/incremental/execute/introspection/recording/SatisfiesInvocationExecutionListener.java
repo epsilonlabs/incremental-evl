@@ -112,6 +112,7 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 				boolean all = EvlOperationFactory.SATISFIES_ALL_OPERATION.equals(waitingFor.getOperationName());
 				record(all, parameterValues, (IInvariantTrace) currentInvariant.getCurrentTrace());
 				parameters.clear();
+				parameterValues.clear();
 				listening = false;
 				waitingFor = null;
 			} else {
@@ -123,6 +124,7 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 				}
 				// Something went wrong?
 				parameters.clear();
+				parameterValues.clear();
 				listening = false;
 				waitingFor = null;
 			}

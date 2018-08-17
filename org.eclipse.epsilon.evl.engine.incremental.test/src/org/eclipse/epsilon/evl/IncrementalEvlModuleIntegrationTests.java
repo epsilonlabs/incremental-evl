@@ -48,6 +48,7 @@ import org.eclipse.epsilon.base.incremental.trace.IAccess;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
+import org.eclipse.epsilon.base.incremental.trace.impl.PropertyAccess;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.common.parse.EpsilonTreeAdaptor;
@@ -67,10 +68,13 @@ import org.eclipse.epsilon.evl.dom.Fix;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraintContext;
 import org.eclipse.epsilon.evl.incremental.dom.TracedGuardBlock;
+import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
+import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 import org.eclipse.epsilon.evl.parse.EvlParser;
 import org.junit.After;
 import org.junit.Before;
@@ -299,20 +303,47 @@ public class IncrementalEvlModuleIntegrationTests {
 			for (IContextTrace ct : contextExecutionTraces) {
 				// Find matching row
 				IElementAccess elementAccess = (IElementAccess) ct.accesses().get().next();
-				Map<String, Object> currentRow = modelRows.stream()
-						.filter(r -> r.get("iban").equals(elementAccess.element().get().getUri())).findFirst().get();
-
+//				Map<String, Object> currentRow = modelRows.stream()
+//						.filter(r -> r.get("iban").equals(elementAccess.element().get().getUri())).findFirst().get();
+				Map<String, Object> currentRow = (Map<String, Object>) model
+						.getElementById(elementAccess.element().get().getUri());
 				if (ct.getIndex() == 1) {
+					assertThat("ContextTrace should have a guard", ct.guard().get(), is(notNullValue()));
+					if (changeDate.before(sdf.parse((String) currentRow.get("startDate")))) {
+						Iterator<IInvariantTrace> invariants = ct.constraints().get();
+						IInvariantTrace overDraftIt = invariants.next();
+						ICheckTrace checkTrace = overDraftIt.check().get();
 
+						IPropertyAccess pa = asStream(checkTrace.accesses().get())
+								.filter(IPropertyAccess.class::isInstance).map(IPropertyAccess.class::cast).findFirst()
+								.get();
+						assertThat("Check should access 'balance' property", pa.property().get().getName(),
+								is("balance"));
+
+						IInvariantTrace chargesIt = invariants.next();
+						ISatisfiesTrace satisfiesTrace = chargesIt.satisfies().get();
+						assertThat("Satisfies trace should not be for 'all'", satisfiesTrace.getAll(), is(false));
+						Set<IInvariantTrace> satInvariants = asSet(satisfiesTrace.satisfiedInvariants().get());
+						assertThat("Satisfies trace should not be for 'all'", satInvariants.size(), is(1));
+						assertThat("Satisfies trace should not be for 'isInOverdraft'",
+								satInvariants.iterator().next().getName(), is("isInOverdraft"));
+						if (!overDraftIt.getResult()) {
+							checkTrace = chargesIt.check().get();
+							Stream<IAccess> checkAccesses = asStream(checkTrace.accesses().get());
+							assertThat("Two properties accesses in check", elementAccesses.count(), is(2L));
+							pa = checkAccesses.filter(IPropertyAccess.class::isInstance)
+									.map(IPropertyAccess.class::cast).findFirst().get();
+							assertThat("Check should access 'hasOverdraft' property", pa.property().get().getName(),
+									is("hasOverdraft"));
+						}
+					}
 				} else {
-
+					assertThat("ContextTrace should not have a guard", ct.guard().get(), is(nullValue()));
 				}
 
 			}
 			/*
-			 * assertThat("All traces have guard", contextTrace1.guard().get(),
-			 * is(notNullValue())); if (changeDate.before(sdf.parse((String)
-			 * currentRow.get("startDate")))) {
+			 * if (changeDate.before(sdf.parse((String) currentRow.get("startDate")))) {
 			 * assertThat(String.format("Row %s satisfies guard", currentRow.get("id")),
 			 * contextTrace1.guard().get().getResult(), is(true)); List<IInvariantTrace>
 			 * invariantList = IteratorUtils.toList(contextTrace1.constraints().get());
