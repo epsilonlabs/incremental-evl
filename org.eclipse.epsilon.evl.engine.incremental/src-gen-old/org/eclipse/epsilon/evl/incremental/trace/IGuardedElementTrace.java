@@ -28,6 +28,6 @@ public interface IGuardedElementTrace {
     IGuardedElementTraceHasGuard guard();
                 
     /** The GuardTrace Factory. */
-    IGuardTrace createGuardTrace() throws EolIncrementalExecutionException;       
+    IGuardTrace getOrCreateGuardTrace() throws EolIncrementalExecutionException;       
    
 }

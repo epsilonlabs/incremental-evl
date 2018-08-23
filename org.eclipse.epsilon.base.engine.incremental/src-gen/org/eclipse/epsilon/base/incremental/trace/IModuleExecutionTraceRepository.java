@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -23,8 +23,23 @@ public interface IModuleExecutionTraceRepository<E extends IModuleExecutionTrace
     IModuleExecutionTrace getModuleExecutionTraceByIdentity(String uri);
 
 /** protected region IModuleExecutionTraceRepositry on begin **/
+	/**
+	 * Remove all trace information related to the element. This should be called
+	 * when an element is deleted.
+	 * 
+	 * @param moduleUri
+	 * @param elementUri
+	 * @param modellUri
+	 */
 	void removeTraceInformation(String moduleUri, String elementUri, String modellUri);
 
+	/**
+	 * Get the model trace information of a model used within a module execution.
+	 * 
+	 * @param modelUri
+	 * @param moduleUri
+	 * @return
+	 */
 	IModelTrace getModelTraceForModule(String modelUri, String moduleUri);
 
 	/** protected region IModuleExecutionTraceRepositry end **/

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceHasElements;
+// import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceHasElements;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -48,9 +48,11 @@ public class ModelElementTraceTest {
         
         ModelTraceHasElements containerReference = new ModelTraceHasElements(containerMock);
         when(containerMock.elements()).thenReturn(containerReference);
-        // protected region ModelElementTraceInit on begin
-        classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", containerMock);                    
-        // protected region ModelElementTraceInit end
+        IModelTypeTrace _type = mock(IModelTypeTrace.class);
+                
+        // protected region ModelElementTraceInit_init on begin
+        classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _type, containerMock);                    
+        // protected region ModelElementTraceInit_init end
         
         
         List<Object> list = new ArrayList<>();
@@ -66,26 +68,70 @@ public class ModelElementTraceTest {
     public void testPropertiesFactory() throws Exception {
         ModelTraceHasElements containerReference = new ModelTraceHasElements(containerMock);
         when(containerMock.elements()).thenReturn(containerReference);
-        // protected region ModelElementTraceInit on begin
-        classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", containerMock);                    
-        // protected region ModelElementTraceInit end
+        IModelTypeTrace _type = mock(IModelTypeTrace.class);
+                
+        // protected region ModelElementTraceInit_PropertiesFactory on begin
+        classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _type, containerMock);                    
+        // protected region ModelElementTraceInit_PropertiesFactory end
         
         List<Object> list = new ArrayList<>();
-        IPropertyTrace child1 = classUnderTest.createPropertyTrace("name1");
+        IPropertyTrace child1 = classUnderTest.getOrCreatePropertyTrace("name1");
         classUnderTest.properties().get().forEachRemaining(list::add);
+        
         assertThat(list, hasItem(child1));
         list.clear();
-        IPropertyTrace child2 = classUnderTest.createPropertyTrace("name2");
+        IPropertyTrace child2 = classUnderTest.getOrCreatePropertyTrace("name2");
         classUnderTest.properties().get().forEachRemaining(list::add);
         assertThat(list, hasItem(child2));
         assertThat(list, hasSize(2));
         list.clear();
-        IPropertyTrace child3 = classUnderTest.createPropertyTrace("name1");
+        IPropertyTrace child3 = classUnderTest.getOrCreatePropertyTrace("name1");
         classUnderTest.properties().get().forEachRemaining(list::add);
         assertThat(list, hasSize(2));
         assertThat(list, contains(child1, child2));
         assertThat(child3, is(child1));
-	}
+    }
+    
+    
+    @Test
+    public void testTypeReference() throws Exception {
+        ModelTraceHasElements containerReference = new ModelTraceHasElements(containerMock);
+        when(containerMock.elements()).thenReturn(containerReference);
+        IModelTypeTrace _type = mock(IModelTypeTrace.class);
+                
+        // protected region ModelElementTraceInit_TypeReference on begin
+        classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _type, containerMock);                    
+        // protected region ModelElementTraceInit_TypeReference end
+        IModelTypeTrace ref = mock(IModelTypeTrace.class);
+        
+        boolean result = classUnderTest.type().create(ref);
+        assertFalse("A new reference can not be created before destroy", result);
+        assertThat(classUnderTest.type().get(), is(_type));
+        result = classUnderTest.type().destroy(ref);
+        assertFalse("Can't destroy unexisting reference", result);
+        result = classUnderTest.type().destroy(_type);
+        assertTrue("Exising references can be destroyed", result);
+        assertThat(classUnderTest.type().get(), is(nullValue()));
+        result = classUnderTest.type().create(ref);
+        assertTrue("New references can be craeted if was null", result);
+        assertThat(classUnderTest.type().get(), is(ref));
+    
+    }
+    
+    
+    @Test
+    public void testKindReference() throws Exception {
+        ModelTraceHasElements containerReference = new ModelTraceHasElements(containerMock);
+        when(containerMock.elements()).thenReturn(containerReference);
+        IModelTypeTrace _type = mock(IModelTypeTrace.class);
+                
+        // protected region ModelElementTraceInit_KindReference on begin
+        classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _type, containerMock);                    
+        // protected region ModelElementTraceInit_KindReference end
+        // TODO Implement multivalue ref test
+    
+    }
+    
     // protected region ModelElementTraceOperations on begin
     // TODO Add test code for additional operations                 
     // protected region ModelElementTraceOperations end

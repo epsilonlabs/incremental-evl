@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -59,8 +59,8 @@ public interface IModelTrace extends IIdElement {
     public boolean sameIdentityAs(final IModelTrace other);
     
     /** The ModelElementTrace Factory. */
-    IModelElementTrace createModelElementTrace(String uri) throws EolIncrementalExecutionException;       
+    IModelElementTrace getOrCreateModelElementTrace(String uri, IModelTypeTrace type) throws EolIncrementalExecutionException;       
     /** The ModelTypeTrace Factory. */
-    IModelTypeTrace createModelTypeTrace(String name) throws EolIncrementalExecutionException;       
+    IModelTypeTrace getOrCreateModelTypeTrace(String name) throws EolIncrementalExecutionException;       
 
 }

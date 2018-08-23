@@ -95,7 +95,7 @@ public class ExecutionListenerTests {
 			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			// 2. Execute a non-all operation
-			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, "getOne", params);
+			ast = ExecutionListenerTests.getOrCreateOperationCallExpression(targetExpression, "getOne", params);
 			listener.finishedExecuting(ast, result, null);
 			// 3. Finish executing block
 			listener.finishedExecuting(blockMock, result, contextMock);
@@ -115,7 +115,7 @@ public class ExecutionListenerTests {
 			recordExecutionTrace("modelA", "typeB", executionTraceMock);
 			// Test
 			// 3. Execute all operation
-			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, "all", params);
+			ast = ExecutionListenerTests.getOrCreateOperationCallExpression(targetExpression, "all", params);
 			listener.finishedExecuting(ast, "elements", contextMock);
 
 			// 4. Finish executing block
@@ -137,7 +137,7 @@ public class ExecutionListenerTests {
 
 			// Test
 			// 3. Execute all operation
-			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, "allInstances", params);
+			ast = ExecutionListenerTests.getOrCreateOperationCallExpression(targetExpression, "allInstances", params);
 			listener.finishedExecuting(ast, "elements", contextMock);
 
 			// 4. Finish executing block
@@ -159,7 +159,7 @@ public class ExecutionListenerTests {
 
 			// Test
 			// 3. Execute all operation
-			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, "allOfKind", params);
+			ast = ExecutionListenerTests.getOrCreateOperationCallExpression(targetExpression, "allOfKind", params);
 			listener.finishedExecuting(ast, "elements", null);
 
 			// 4. Finish executing block
@@ -181,7 +181,7 @@ public class ExecutionListenerTests {
 
 			// Test
 			// 3. Execute all operation
-			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, "allOfType", params);
+			ast = ExecutionListenerTests.getOrCreateOperationCallExpression(targetExpression, "allOfType", params);
 			listener.finishedExecuting(ast, "elements", null);
 
 			// 4. Finish executing block
@@ -233,11 +233,11 @@ public class ExecutionListenerTests {
 			listener.aboutToExecute(blockMock, contextMock);
 
 			// 2. Save the leftHand side result 1st.
-			StringLiteral objectValue = createLeftSideExpression("ObjectRef");
+			StringLiteral objectValue = getOrCreateLeftSideExpression("ObjectRef");
 			listener.finishedExecuting(objectValue, instance, null);
 
 			// 3. Create the traced property call expression
-			PropertyCallExpression ast = createPropertyAccessExpression(objectValue, propertyName);
+			PropertyCallExpression ast = getOrCreatePropertyAccessExpression(objectValue, propertyName);
 
 			// 4. Record invocations
 			recordExecutionTrace(elementId, instance, propertyName, executionTraceMock);
@@ -266,12 +266,12 @@ public class ExecutionListenerTests {
 			listener.aboutToExecute(blockMock, contextMock);
 
 			// 2. Save the leftHand side result 1st.
-			StringLiteral objectValue = createLeftSideExpression("ObjectRef");
+			StringLiteral objectValue = getOrCreateLeftSideExpression("ObjectRef");
 			listener.finishedExecuting(objectValue, instance, null);
 
 			// 3. Create an operation call expression
 			StringLiteral[] params = new StringLiteral[0];
-			OperationCallExpression ast = createOperationCallExpression(objectValue, "someOp", params);
+			OperationCallExpression ast = getOrCreateOperationCallExpression(objectValue, "someOp", params);
 
 			// Test
 			// 5. Finish executing property access, should trigger ExecutionTrace access
@@ -297,12 +297,12 @@ public class ExecutionListenerTests {
 			listener.aboutToExecute(blockMock, contextMock);
 
 			// 2. Save the leftHand side result 1st.
-			StringLiteral objectValue = createLeftSideExpression("ObjectRef");
+			StringLiteral objectValue = getOrCreateLeftSideExpression("ObjectRef");
 			listener.finishedExecuting(objectValue, instance, null);
 
 			// 3. Create an operation call expression
 			StringLiteral[] params = new StringLiteral[0];
-			OperationCallExpression ast = createOperationCallExpression(objectValue, "someOp", params);
+			OperationCallExpression ast = getOrCreateOperationCallExpression(objectValue, "someOp", params);
 
 			// Test
 			// 5. Finish executing property access, should trigger ExecutionTrace access
@@ -340,20 +340,20 @@ public class ExecutionListenerTests {
 //			listener.aboutToExecute(blockMock2, contextMock);
 //			
 //			// 3a. Save the leftHand side result 1st.
-//			StringLiteral object1Value = createLeftSideExpression("Object1Ref");
+//			StringLiteral object1Value = getOrCreateLeftSideExpression("Object1Ref");
 //			listener.finishedExecuting(object1Value, instance, null);
 //			
 //			// 3b. Create the traced property call expression
-//			PropertyCallExpression ast1 = createAccessPropCall(object1Value, propertyOneName );
+//			PropertyCallExpression ast1 = getOrCreateAccessPropCall(object1Value, propertyOneName );
 //			// Record invocations
 //			recordExecutionTrace(elementId, instance, propertyOneName, executionTrace1Mock);
 //			
 //			// 4a. Save the leftHand side result 1st.
-//			StringLiteral object2Value = createLeftSideExpression("Object2Ref");
+//			StringLiteral object2Value = getOrCreateLeftSideExpression("Object2Ref");
 //			listener.finishedExecuting(object2Value, instance, null);
 //			
 //			// 4b. Create the traced property call expression
-//			PropertyCallExpression ast2 = createAccessPropCall(object2Value, propertyTwoName );
+//			PropertyCallExpression ast2 = getOrCreateAccessPropCall(object2Value, propertyTwoName );
 //			// Record invocations
 //			recordExecutionTrace(elementId, instance, propertyTwoName, executionTrace2Mock);
 //			
@@ -393,7 +393,7 @@ public class ExecutionListenerTests {
 //			IModuleExecutionHasModel hasModelMock = mock(IModuleExecutionHasModel.class);
 //			IModelTraceHasElements modelHasElementsMock = mock(IModelTraceHasElements.class);
 //			IPropertyTrace propertyTraceMock = mock(IPropertyTrace.class);
-//			IPropertyAccess pa = createNiceMock(IPropertyAccess.class);
+//			IPropertyAccess pa = getOrCreateNiceMock(IPropertyAccess.class);
 //			IModelElementTrace elementTraceMock = mock(IModelElementTrace.class);
 //			IModelElementTraceHasProperties elementHasPropMock = mock(IModelElementTraceHasProperties.class);
 //			IEolModuleExecutionRepository<TestModuleExecution> executionRepoMock = mock(IEolModuleExecutionRepository.class);
@@ -406,13 +406,13 @@ public class ExecutionListenerTests {
 			when(modelMock.knowsAboutProperty(instance, propertyName)).thenReturn(true);
 
 //			// Model repo has no model by that name
-//			IModelTraceRepository modelTraceRepoMock = createNiceMock(IModelTraceRepository.class);  // Nice so it allows add()
+//			IModelTraceRepository modelTraceRepoMock = getOrCreateNiceMock(IModelTraceRepository.class);  // Nice so it allows add()
 //			EasyMock.expect(modelTraceRepoMock.getModelTraceByName(modelName)).andReturn(null);
 //			// The trace manager returns the model trace repo mock
 //			EasyMock.expect(traceManagerMock.modelTraces()).andReturn(modelTraceRepoMock).times(2);
 //
 //			// Since not present, the evlExecution will need to create one
-//			EasyMock.expect(evlExecutionMock.createModelTrace(modelName)).andReturn(modelTraceMock);
+//			EasyMock.expect(evlExecutionMock.getOrCreateModelTrace(modelName)).andReturn(modelTraceMock);
 //				// evlExecution has models
 //			//EasyMock.expect(evlExecutionMock.model()).andReturn(hasModelMock).times(1);
 //						
@@ -422,27 +422,27 @@ public class ExecutionListenerTests {
 //						
 //			// Since not present, the model trace will create a modelElement
 //			
-//			EasyMock.expect(modelTraceMock.createModelElementTrace(elementId)).andReturn(elementTraceMock);
+//			EasyMock.expect(modelTraceMock.getOrCreateModelElementTrace(elementId)).andReturn(elementTraceMock);
 //			
 //			// Element has no properties
 //			EasyMock.expect(elementTraceMock.properties()).andReturn(elementHasPropMock);
 //			EasyMock.expect(elementHasPropMock.get()).andReturn(new ArrayDeque<>());
 //			
 //			// Since not present, the element will create a Property
-//			EasyMock.expect(elementTraceMock.createPropertyTrace(propertyName)).andReturn(propertyTraceMock);
+//			EasyMock.expect(elementTraceMock.getOrCreatePropertyTrace(propertyName)).andReturn(propertyTraceMock);
 //			
 //			// No traces for the property
 //			EasyMock.expect(traceManagerMock.moduleExecutionTraces()).andReturn((IEolModuleExecutionRepository) executionRepoMock);
 //			EasyMock.expect(executionRepoMock.getPropertyAccessFor(executionTraceMock, propertyTraceMock)).andReturn(null);
 //			
 //			// We need to create one
-//			EasyMock.expect(executionTraceMock.createPropertyAccess(propertyTraceMock)).andReturn(pa);
+//			EasyMock.expect(executionTraceMock.getOrCreatePropertyAccess(propertyTraceMock)).andReturn(pa);
 		}
 
 		/**
 		 * @return
 		 */
-		private StringLiteral createLeftSideExpression(String objectRef) {
+		private StringLiteral getOrCreateLeftSideExpression(String objectRef) {
 			PropertyCallExpression leftParent = new PropertyCallExpression();
 			StringLiteral objectValue = new StringLiteral(objectRef);
 			leftParent.setTargetExpression(objectValue);
@@ -454,7 +454,7 @@ public class ExecutionListenerTests {
 		 * @param objectValue
 		 * @return
 		 */
-		private PropertyCallExpression createPropertyAccessExpression(StringLiteral objectValue, String propertyName) {
+		private PropertyCallExpression getOrCreatePropertyAccessExpression(StringLiteral objectValue, String propertyName) {
 			PropertyCallExpression ast;
 			NameExpression propertyExp = new NameExpression(propertyName);
 			ast = new PropertyCallExpression(objectValue, propertyExp);
@@ -467,7 +467,7 @@ public class ExecutionListenerTests {
 
 	}
 
-	public static OperationCallExpression createOperationCallExpression(Expression targetExpression,
+	public static OperationCallExpression getOrCreateOperationCallExpression(Expression targetExpression,
 			String operationName, StringLiteral[] params) {
 		NameExpression nameExpression = new NameExpression(operationName);
 		OperationCallExpression oce = new OperationCallExpression(targetExpression, nameExpression, params);

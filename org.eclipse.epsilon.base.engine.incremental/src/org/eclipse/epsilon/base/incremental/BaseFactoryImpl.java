@@ -7,7 +7,7 @@ import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
 public abstract class BaseFactoryImpl implements IBaseFactory {
 
 	@Override
-	public IModelTrace createModelTrace(String uri) throws TraceModelDuplicateRelation {
+	public IModelTrace getOrCreateModelTrace(String uri) throws TraceModelDuplicateRelation {
 		return new ModelTrace(uri);
 	}
 

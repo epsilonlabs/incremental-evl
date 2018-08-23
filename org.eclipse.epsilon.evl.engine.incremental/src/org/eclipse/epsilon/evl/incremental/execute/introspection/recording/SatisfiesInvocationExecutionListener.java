@@ -149,7 +149,7 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 			IInvariantTrace targetInvariant = ContextTraceUtil.getInvariantIn(contextTrace, invariantName);
 			if (targetInvariant == null) {
 				try {
-					targetInvariant = contextTrace.createInvariantTrace((String) p);
+					targetInvariant = contextTrace.getOrCreateInvariantTrace((String) p);
 				} catch (EolIncrementalExecutionException e) {
 					logger.error("Uknown invariant for {}: {}", invariantName, p);
 					throw new IllegalStateException(String.format("Uknown invariant for %s: %s", invariantName, p), e);
@@ -159,7 +159,7 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 		}
 		ISatisfiesTrace result = null;
 		try {
-			result = invariantTrace.createSatisfiesTrace();
+			result = invariantTrace.getOrCreateSatisfiesTrace();
 		} catch (EolIncrementalExecutionException e) {
 			throw new IllegalStateException(e);
 		} finally {

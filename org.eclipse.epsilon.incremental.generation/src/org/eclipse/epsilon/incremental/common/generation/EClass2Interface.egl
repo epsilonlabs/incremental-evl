@@ -94,6 +94,6 @@ for (er in ec.getEAllReferences().select(er | er.isContainment())) {
 operation EClass factorySignature(interPrefix:String, interSufix:String) {
     var params = self.getEAttributeParameters().includingAll(self.getRequiredFeatureParameters(interPrefix, interSufix));%]
 /** The [%=self.name%] Factory. */
-[%=self.getJavaInterfaceName(interPrefix, interSufix)%] create[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException;       
+[%=self.getJavaInterfaceName(interPrefix, interSufix)%] getOrCreate[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException;       
 [%}
 %]

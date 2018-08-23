@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -115,12 +115,12 @@ public interface IInvariantTrace extends IGuardedElementTrace, IInContextModuleE
     public boolean sameIdentityAs(final IInvariantTrace other);
     
     /** The GuardTrace Factory. */
-    IGuardTrace createGuardTrace() throws EolIncrementalExecutionException;       
+    IGuardTrace getOrCreateGuardTrace() throws EolIncrementalExecutionException;       
     /** The CheckTrace Factory. */
-    ICheckTrace createCheckTrace() throws EolIncrementalExecutionException;       
+    ICheckTrace getOrCreateCheckTrace() throws EolIncrementalExecutionException;       
     /** The MessageTrace Factory. */
-    IMessageTrace createMessageTrace() throws EolIncrementalExecutionException;       
+    IMessageTrace getOrCreateMessageTrace() throws EolIncrementalExecutionException;       
     /** The SatisfiesTrace Factory. */
-    ISatisfiesTrace createSatisfiesTrace() throws EolIncrementalExecutionException;       
+    ISatisfiesTrace getOrCreateSatisfiesTrace() throws EolIncrementalExecutionException;       
 
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -48,12 +49,12 @@ public class ElementAccess implements IElementAccess {
      * container and any attributes identified as indexes.
      */    
     public ElementAccess(IModuleElementTrace executionTrace, IModelElementTrace element, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
-        this.element = new ElementAccessHasElement(this);
         this.executionTrace = new AccessHasExecutionTrace(this);
-        if (!this.element.create(element)) {
+        this.element = new ElementAccessHasElement(this);
+        if (!this.executionTrace.create(executionTrace)) {
             throw new TraceModelDuplicateRelation();
         }
-        if (!this.executionTrace.create(executionTrace)) {
+        if (!this.element.create(element)) {
             throw new TraceModelDuplicateRelation();
         }
 
@@ -102,18 +103,18 @@ public class ElementAccess implements IElementAccess {
         ElementAccess other = (ElementAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (element.get() == null) {
-            if (other.element.get() != null)
-                return false;
-        }
-        if (!element.get().equals(other.element.get())) {
-            return false;
-        }
         if (executionTrace.get() == null) {
             if (other.executionTrace.get() != null)
                 return false;
         }
         if (!executionTrace.get().equals(other.executionTrace.get())) {
+            return false;
+        }
+        if (element.get() == null) {
+            if (other.element.get() != null)
+                return false;
+        }
+        if (!element.get().equals(other.element.get())) {
             return false;
         }
         return true; 
@@ -123,8 +124,8 @@ public class ElementAccess implements IElementAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((element.get() == null) ? 0 : element.get().hashCode());
         result = prime * result + ((executionTrace.get() == null) ? 0 : executionTrace.get().hashCode());
+        result = prime * result + ((element.get() == null) ? 0 : element.get().hashCode());
         return result;
     }
 }

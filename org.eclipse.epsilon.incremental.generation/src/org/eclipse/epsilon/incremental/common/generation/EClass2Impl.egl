@@ -17,6 +17,7 @@ import "Ecore2JavaTemplates.egl";
 [%=getHeader()%]
 package [%=qp%].trace.impl;
 
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%];
 import java.util.Arrays;
 import java.util.Iterator;
@@ -51,7 +52,8 @@ for (ea in ec.getEAllAttributes().select(ea | not ea.derived)) {
 
 [%}%]
 [%  // Craete a field for each reference
-for (er in ec.getEAllReferences().select(er | not er.isDerived())) {%]
+//for (er in ec.getEAllReferences().select(er | not er.isDerived())) {
+for (er in ec.getEAllReferences()) {%]
     /**
 [%  var docs = er.getDocumentation(0);
     if (docs.isDefined()) {%]
@@ -81,10 +83,10 @@ for (er in ec.getEAllReferences().select(er | not er.isDerived())) {%]
         }
 [%  }%]
 [%}%]
-[% var derivedFeatures = ec.getEAllReferences().select(er | not er.isDerived());
+[% var derivedFeatures = ec.getEAllReferences(); //.select(er | not er.isDerived());
 for (er in derivedFeatures.excludingAll(ec.getEqualsReferences())) {%]
         this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this);
-[%  if ((er <> ec.getContainerReference().at(0)) and er.isRequired() and not er.isMany()) {%]
+[%  if ((er <> ec.getContainerReference().at(0)) and er.isRequired() and not er.isMany() and not er.isDerived()) {%]
         if (!this.[%=er.name%].create([%=er.name%])) {
             throw new TraceModelDuplicateRelation();
         }
@@ -152,22 +154,14 @@ if (container.isDefined()) {
      
 [%  }
 }%]
-[%for (er in ec.getEAllReferences().select(ea | not ea.derived)) {%]
+[%for (er in ec.getEAllReferences()) {%]
     @Override
     public [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] [%=er.name%]() {
         return [%=er.name%];
     }
 
-[%}%]
-[%for (er in ec.getEAllReferences().select(er | er.derived)) {%]
-    @Override
-    public [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] [%=er.name%]() {
-        [%=out.startPreserve("/**", "**/", er.name, true)%]
-        return null;
-        [%=out.stopPreserve()%]
-    }
-
-[%}%]
+[%}
+%]
 [%/* Factory Methods
  * If the EReferenceType is abstract, we add factory methods for each of the subclasses
  * of the EReferenceType. We only add subclasses that are not contained elsewhere or 
@@ -230,7 +224,7 @@ for (index in ec.getIndexAttributes()) {
         if (!sameIdentityAs(other))
             return false;
 [%
-// Use only the EReferneces defined in the metamodel
+// Use only the EReferneces defined in the equivalency annotation
 for (er in ec.getEqualsReferences()) {
     var access = er.name;
     if(er.isTypeOf(EReference)){
@@ -247,18 +241,15 @@ for (er in ec.getEqualsReferences()) {
         }
 [%      if (er.isMany()) {
             if (er.isOrdered) {%]
-        if (not Arrays.equals([%=access%].toArray(), other.[%=access%].toArray())) {
+        if (! IncrementalUtils.equalOrderedIterators([%=access%], other.[%=access%])) {
             return false;
         }
 [%          } else if (er.isUnique()) {%]
-        if (![%=access%].equals(other.[%=access%])) {
+        if (! IncrementalUtils.equalUniqueIterators([%=access%], other.[%=access%])) {
             return false;
         }
 [%          } else {%]
-        if ([%=access%].size() != other.[%=access%].size()) {
-        }
-        else if (not ([%=access%].containsAll(other.[%=access%]) &&
-                other.[%=access%].containsAll([%=access%])) {
+        if (! IncrementalUtils.equalIterators([%=access%], other.[%=access%])) {
             return false;
         }
 [%          } 
@@ -290,9 +281,13 @@ for (er in ec.getEqualsReferences()) {
     }
     if (er.isTypeOf(EAttribute) and (er.getEAttributeType().name == "EBoolean")) {%]
         result = prime * result + ([%=access%] ? 1 : 0);
-[%  } else { %]
+[%  } else { 
+        if (er.isMany()) {%]
+        result = prime * result + (([%=access%] == null) ? 0 : IncrementalUtils.iteratorHashCode([%=access%]));
+[%      } else {%]
         result = prime * result + (([%=access%] == null) ? 0 : [%=access%].hashCode());
-[%  }
+[%      }
+    }
 }%]
         return result;
     }
@@ -310,7 +305,7 @@ operation EClass factoryMethod(ref : EReference, subClass : Boolean, interPrefix
         vars.add("this");
     }%]
 @Override
-public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] create[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException {
+public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] getOrCreate[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException {
     [%=self.getJavaInterfaceName(interPrefix, interSufix)%] [%=instanceName%] = null;
     try {
         [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=vars.concat(", ")%]);

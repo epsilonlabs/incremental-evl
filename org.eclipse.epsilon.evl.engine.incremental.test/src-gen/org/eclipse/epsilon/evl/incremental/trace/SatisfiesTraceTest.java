@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.evl.incremental.trace.impl.SatisfiesTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTraceHasSatisfies;
+// import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTraceHasSatisfies;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -50,9 +50,9 @@ public class SatisfiesTraceTest {
         
         InvariantTraceHasSatisfies containerReference = new InvariantTraceHasSatisfies(containerMock);
         when(containerMock.satisfies()).thenReturn(containerReference);
-        // protected region SatisfiesTraceInit on begin
+        // protected region SatisfiesTraceInit_init on begin
         classUnderTest = new SatisfiesTrace(containerMock);                    
-        // protected region SatisfiesTraceInit end
+        // protected region SatisfiesTraceInit_init end
         
 
         assertThat(containerReference.get(), is(classUnderTest));
@@ -67,34 +67,10 @@ public class SatisfiesTraceTest {
     public void testAccessesReference() throws Exception {
         InvariantTraceHasSatisfies containerReference = new InvariantTraceHasSatisfies(containerMock);
         when(containerMock.satisfies()).thenReturn(containerReference);
-        // protected region SatisfiesTraceInit on begin
+        // protected region SatisfiesTraceInit_AccessesReference on begin
         classUnderTest = new SatisfiesTrace(containerMock);                    
-        // protected region SatisfiesTraceInit end
+        // protected region SatisfiesTraceInit_AccessesReference end
         // TODO Implement multivalue ref test
-    
-    }
-    
-    
-    @Test
-    public void testParentTraceReference() throws Exception {
-        InvariantTraceHasSatisfies containerReference = new InvariantTraceHasSatisfies(containerMock);
-        when(containerMock.satisfies()).thenReturn(containerReference);
-        // protected region SatisfiesTraceInit on begin
-        classUnderTest = new SatisfiesTrace(containerMock);                    
-        // protected region SatisfiesTraceInit end
-        IContextModuleElementTrace ref = mock(IContextModuleElementTrace.class);
-        
-        boolean result = classUnderTest.parentTrace().create(ref);
-        assertFalse("A new reference can not be created before destroy", result);
-        assertThat(classUnderTest.parentTrace().get(), is(_parentTrace));
-        result = classUnderTest.parentTrace().destroy(ref);
-        assertFalse("Can't destroy unexisting reference", result);
-        result = classUnderTest.parentTrace().destroy(_parentTrace);
-        assertTrue("Exising references can be destroyed", result);
-        assertThat(classUnderTest.parentTrace().get(), is(nullValue()));
-        result = classUnderTest.parentTrace().create(ref);
-        assertTrue("New references can be craeted if was null", result);
-        assertThat(classUnderTest.parentTrace().get(), is(ref));
     
     }
     
@@ -103,9 +79,9 @@ public class SatisfiesTraceTest {
     public void testSatisfiedInvariantsReference() throws Exception {
         InvariantTraceHasSatisfies containerReference = new InvariantTraceHasSatisfies(containerMock);
         when(containerMock.satisfies()).thenReturn(containerReference);
-        // protected region SatisfiesTraceInit on begin
+        // protected region SatisfiesTraceInit_SatisfiedInvariantsReference on begin
         classUnderTest = new SatisfiesTrace(containerMock);                    
-        // protected region SatisfiesTraceInit end
+        // protected region SatisfiesTraceInit_SatisfiedInvariantsReference end
         // TODO Implement multivalue ref test
     
     }

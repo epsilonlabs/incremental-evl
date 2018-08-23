@@ -91,7 +91,7 @@ public class ExecutionListenerTests {
 			blockMock.setCurrentTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			// 2. Execute a non-satisfies operation
-			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression, "getOne",
+			ast = ExecutionListenerTests.getOrCreateOperationCallExpression(targetExpression, "getOne",
 					new StringLiteral[0]);
 			listener.finishedExecuting(ast, result, null);
 			// 3. Finish executing block
@@ -114,7 +114,7 @@ public class ExecutionListenerTests {
 			recordExecutionTrace(params, executionTraceMock);
 
 			// 3. Execute a Satisfies operation
-			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression,
+			ast = ExecutionListenerTests.getOrCreateOperationCallExpression(targetExpression,
 					EvlOperationFactory.SATISFIES_OPERATION, params);
 			// 4a. About to execute operation to register for argument resolution
 			listener.aboutToExecute(ast, contextMock);
@@ -147,7 +147,7 @@ public class ExecutionListenerTests {
 			recordExecutionTrace(params, executionTraceMock);
 
 			// 3. Execute a Satisfies operation
-			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression,
+			ast = ExecutionListenerTests.getOrCreateOperationCallExpression(targetExpression,
 					EvlOperationFactory.SATISFIES_ONE_OPERATION, params);
 			// 4a. About to execute operation to register for argument resolution
 			listener.aboutToExecute(ast, contextMock);
@@ -182,7 +182,7 @@ public class ExecutionListenerTests {
 			recordExecutionTrace(params, executionTraceMock);
 
 			// 3. Execute a Satisfies operation
-			ast = ExecutionListenerTests.createOperationCallExpression(targetExpression,
+			ast = ExecutionListenerTests.getOrCreateOperationCallExpression(targetExpression,
 					EvlOperationFactory.SATISFIES_ALL_OPERATION, params);
 			// 4a. About to execute operation to register for argument resolution
 			listener.aboutToExecute(ast, contextMock);
@@ -214,15 +214,15 @@ public class ExecutionListenerTests {
 			when(contextMock.constraints()).thenReturn(contextHasInvariants); // .times(params.length);
 			when(contextHasInvariants.get()).thenReturn(new ArrayList<IInvariantTrace>().iterator()); // .times(params.length);
 			for (StringLiteral p : params) {
-				// when(evlExecutionMock.createInvariantTrace(p.getValue())).andReturn(targetInvariantMock);
+				// when(evlExecutionMock.getOrCreateInvariantTrace(p.getValue())).andReturn(targetInvariantMock);
 				when(satisfiesMock.satisfiedInvariants()).thenReturn(satisfiesHasSatisfiedInvariantMock);
 			}
-			// when(evlExecutionMock.createSatisfiesTrace(currentInvariantMock)).andReturn(satisfiesMock);
+			// when(evlExecutionMock.getOrCreateSatisfiesTrace(currentInvariantMock)).andReturn(satisfiesMock);
 		}
 
 	}
 
-	public static OperationCallExpression createOperationCallExpression(Expression targetExpression,
+	public static OperationCallExpression getOrCreateOperationCallExpression(Expression targetExpression,
 			String operationName, StringLiteral[] params) {
 		NameExpression nameExpression = new NameExpression(operationName);
 		OperationCallExpression oce = new OperationCallExpression(targetExpression, nameExpression, params);

@@ -32,7 +32,7 @@ context Row {
     
     constraint idisUnique {
         
-        check: not Row.all.excluding(self).exists(r | r.iban == self.iban)
+        check: not Row.all().excluding(self).exists(r | r.iban == self.iban)
         
         message: "Accounts " + Row.all.select(r | r.iban == self.iban) + " have duplicate ids."
     }

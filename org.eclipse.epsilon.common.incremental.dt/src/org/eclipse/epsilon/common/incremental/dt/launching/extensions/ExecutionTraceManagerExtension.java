@@ -106,7 +106,7 @@ public class ExecutionTraceManagerExtension {
 		traceManagerType.label = configurationElement.getAttribute(TRACE_MANAGER_LABEL);
 		traceManagerType.stable = Boolean.parseBoolean(configurationElement.getAttribute(TRACE_MANAGER_STABLE));
 		String contributingPlugin = configurationElement.getDeclaringExtension().getNamespaceIdentifier();
-		Image image = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPlugin,configurationElement.getAttribute(TRACE_MANAGER_IMAGE)).createImage();
+		Image image = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPlugin,configurationElement.getAttribute(TRACE_MANAGER_IMAGE)).getOrCreateImage();
 		traceManagerType.image = image;
 		return traceManagerType;
 	}
@@ -150,12 +150,12 @@ public class ExecutionTraceManagerExtension {
 	protected boolean stable;
 	
 	
-	public AbstractTraceManagerConfigurationDialog createConfigurationDialog() throws CoreException {
-		return (AbstractTraceManagerConfigurationDialog) configurationElement.createExecutableExtension(TRACE_MANAGER_DIALOG);
+	public AbstractTraceManagerConfigurationDialog getOrCreateConfigurationDialog() throws CoreException {
+		return (AbstractTraceManagerConfigurationDialog) configurationElement.getOrCreateExecutableExtension(TRACE_MANAGER_DIALOG);
 	}
 	
-	public IExecutionTraceManager createTraceManager() throws CoreException {
-		return (IExecutionTraceManager) configurationElement.createExecutableExtension(TRACE_MANAGER_CLASS);
+	public IExecutionTraceManager getOrCreateTraceManager() throws CoreException {
+		return (IExecutionTraceManager) configurationElement.getOrCreateExecutableExtension(TRACE_MANAGER_CLASS);
 	}
 	
 	public IConfigurationElement getConfigurationElement() {

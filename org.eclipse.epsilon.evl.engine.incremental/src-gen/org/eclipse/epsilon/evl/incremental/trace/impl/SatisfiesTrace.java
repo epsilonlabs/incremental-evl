@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -47,6 +48,11 @@ public class SatisfiesTrace implements ISatisfiesTrace {
     private final IModuleElementTraceHasAccesses accesses;
 
     /**
+     * The parentTrace.
+     */
+    private final IInContextModuleElementTraceHasParentTrace parentTrace;
+
+    /**
      * The invariant.
      */
     private final ISatisfiesTraceHasInvariant invariant;
@@ -63,6 +69,7 @@ public class SatisfiesTrace implements ISatisfiesTrace {
     public SatisfiesTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
         this.invariant = new SatisfiesTraceHasInvariant(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
+        this.parentTrace = new InContextModuleElementTraceHasParentTrace(this);
         this.satisfiedInvariants = new SatisfiesTraceHasSatisfiedInvariants(this);
 
         if (!container.satisfies().create(this)) {
@@ -98,6 +105,11 @@ public class SatisfiesTrace implements ISatisfiesTrace {
     }
 
     @Override
+    public IInContextModuleElementTraceHasParentTrace parentTrace() {
+        return parentTrace;
+    }
+
+    @Override
     public ISatisfiesTraceHasInvariant invariant() {
         return invariant;
     }
@@ -105,13 +117,6 @@ public class SatisfiesTrace implements ISatisfiesTrace {
     @Override
     public ISatisfiesTraceHasSatisfiedInvariants satisfiedInvariants() {
         return satisfiedInvariants;
-    }
-
-    @Override
-    public IInContextModuleElementTraceHasParentTrace parentTrace() {
-        /** protected region parentTrace on begin **/
-        return null;
-        /** protected region parentTrace end **/
     }
 
     @Override

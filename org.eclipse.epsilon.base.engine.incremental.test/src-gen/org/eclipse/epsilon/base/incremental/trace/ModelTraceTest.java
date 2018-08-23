@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -41,56 +41,61 @@ public class ModelTraceTest {
     @Test
     public void testInit() throws Exception {
         
-        // protected region ModelTraceInit on begin
+        // protected region ModelTraceInit_init on begin
         classUnderTest = new ModelTrace("uri1");                    
-        // protected region ModelTraceInit end
+        // protected region ModelTraceInit_init end
         
     }
     
     @Test
     public void testElementsFactory() throws Exception {
-        // protected region ModelTraceInit on begin
+        // protected region ModelTraceInit_ElementsFactory on begin
         classUnderTest = new ModelTrace("uri1");                    
-        // protected region ModelTraceInit end
+        // protected region ModelTraceInit_ElementsFactory end
         
+        IModelTypeTrace typeMock = mock(IModelTypeTrace.class);
         List<Object> list = new ArrayList<>();
-        IModelElementTrace child1 = classUnderTest.createModelElementTrace("url://path/in/model/to/uri/1");
+        IModelElementTrace child1 = classUnderTest.getOrCreateModelElementTrace("url://path/in/model/to/uri/1", typeMock);
         classUnderTest.elements().get().forEachRemaining(list::add);
+        
         assertThat(list, hasItem(child1));
         list.clear();
-        IModelElementTrace child2 = classUnderTest.createModelElementTrace("url://path/in/model/to/uri/2");
+        IModelElementTrace child2 = classUnderTest.getOrCreateModelElementTrace("url://path/in/model/to/uri/2", typeMock);
         classUnderTest.elements().get().forEachRemaining(list::add);
         assertThat(list, hasItem(child2));
         assertThat(list, hasSize(2));
         list.clear();
-        IModelElementTrace child3 = classUnderTest.createModelElementTrace("url://path/in/model/to/uri/1");
+        IModelElementTrace child3 = classUnderTest.getOrCreateModelElementTrace("url://path/in/model/to/uri/1", typeMock);
         classUnderTest.elements().get().forEachRemaining(list::add);
         assertThat(list, hasSize(2));
         assertThat(list, contains(child1, child2));
         assertThat(child3, is(child1));
-	}
+    }
+    
     @Test
     public void testTypesFactory() throws Exception {
-        // protected region ModelTraceInit on begin
+        // protected region ModelTraceInit_TypesFactory on begin
         classUnderTest = new ModelTrace("uri1");                    
-        // protected region ModelTraceInit end
+        // protected region ModelTraceInit_TypesFactory end
         
         List<Object> list = new ArrayList<>();
-        IModelTypeTrace child1 = classUnderTest.createModelTypeTrace("name1");
+        IModelTypeTrace child1 = classUnderTest.getOrCreateModelTypeTrace("name1");
         classUnderTest.types().get().forEachRemaining(list::add);
+        
         assertThat(list, hasItem(child1));
         list.clear();
-        IModelTypeTrace child2 = classUnderTest.createModelTypeTrace("name2");
+        IModelTypeTrace child2 = classUnderTest.getOrCreateModelTypeTrace("name2");
         classUnderTest.types().get().forEachRemaining(list::add);
         assertThat(list, hasItem(child2));
         assertThat(list, hasSize(2));
         list.clear();
-        IModelTypeTrace child3 = classUnderTest.createModelTypeTrace("name1");
+        IModelTypeTrace child3 = classUnderTest.getOrCreateModelTypeTrace("name1");
         classUnderTest.types().get().forEachRemaining(list::add);
         assertThat(list, hasSize(2));
         assertThat(list, contains(child1, child2));
         assertThat(child3, is(child1));
-	}
+    }
+    
     // protected region ModelTraceOperations on begin
     // TODO Add test code for additional operations                 
     // protected region ModelTraceOperations end

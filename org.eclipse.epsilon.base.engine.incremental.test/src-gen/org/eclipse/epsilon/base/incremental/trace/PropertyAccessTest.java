@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.base.incremental.trace.impl.PropertyAccess;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasAccesses;
+// import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasAccesses;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -55,9 +55,9 @@ public class PropertyAccessTest {
                 
         IPropertyTrace _property = mock(IPropertyTrace.class);
                 
-        // protected region PropertyAccessInit on begin
+        // protected region PropertyAccessInit_init on begin
         classUnderTest = new PropertyAccess(_executionTrace, _property, containerMock);                    
-        // protected region PropertyAccessInit end
+        // protected region PropertyAccessInit_init end
         
         
         List<Object> list = new ArrayList<>();
@@ -81,9 +81,9 @@ public class PropertyAccessTest {
                 
         IPropertyTrace _property = mock(IPropertyTrace.class);
                 
-        // protected region PropertyAccessInit on begin
+        // protected region PropertyAccessInit_ExecutionTraceReference on begin
         classUnderTest = new PropertyAccess(_executionTrace, _property, containerMock);                    
-        // protected region PropertyAccessInit end
+        // protected region PropertyAccessInit_ExecutionTraceReference end
         IModuleElementTrace ref = mock(IModuleElementTrace.class);
         IModuleElementTraceHasAccesses _moduleElementTrace2 = mock(IModuleElementTraceHasAccesses.class);
         when(_moduleElementTrace2 .get()).thenReturn(new HashSet<IAccess>().iterator());
@@ -115,9 +115,9 @@ public class PropertyAccessTest {
                 
         IPropertyTrace _property = mock(IPropertyTrace.class);
                 
-        // protected region PropertyAccessInit on begin
+        // protected region PropertyAccessInit_PropertyReference on begin
         classUnderTest = new PropertyAccess(_executionTrace, _property, containerMock);                    
-        // protected region PropertyAccessInit end
+        // protected region PropertyAccessInit_PropertyReference end
         IPropertyTrace ref = mock(IPropertyTrace.class);
         
         boolean result = classUnderTest.property().create(ref);

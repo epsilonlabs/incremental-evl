@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -58,6 +59,11 @@ public class InvariantTrace implements IInvariantTrace {
     private final IModuleElementTraceHasAccesses accesses;
 
     /**
+     * The parentTrace.
+     */
+    private final IInContextModuleElementTraceHasParentTrace parentTrace;
+
+    /**
      * The check.
      */
     private final IInvariantTraceHasCheck check;
@@ -86,6 +92,7 @@ public class InvariantTrace implements IInvariantTrace {
         this.invariantContext = new InvariantTraceHasInvariantContext(this);
         this.guard = new GuardedElementTraceHasGuard(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
+        this.parentTrace = new InContextModuleElementTraceHasParentTrace(this);
         this.check = new InvariantTraceHasCheck(this);
         this.message = new InvariantTraceHasMessage(this);
         this.satisfies = new InvariantTraceHasSatisfies(this);
@@ -133,6 +140,11 @@ public class InvariantTrace implements IInvariantTrace {
     }
 
     @Override
+    public IInContextModuleElementTraceHasParentTrace parentTrace() {
+        return parentTrace;
+    }
+
+    @Override
     public IInvariantTraceHasCheck check() {
         return check;
     }
@@ -153,14 +165,7 @@ public class InvariantTrace implements IInvariantTrace {
     }
 
     @Override
-    public IInContextModuleElementTraceHasParentTrace parentTrace() {
-        /** protected region parentTrace on begin **/
-        return null;
-        /** protected region parentTrace end **/
-    }
-
-    @Override
-    public IGuardTrace createGuardTrace() throws EolIncrementalExecutionException {
+    public IGuardTrace getOrCreateGuardTrace() throws EolIncrementalExecutionException {
         IGuardTrace guardTrace = null;
         try {
             guardTrace = new GuardTrace(this);
@@ -182,7 +187,7 @@ public class InvariantTrace implements IInvariantTrace {
     }      
                   
     @Override
-    public ICheckTrace createCheckTrace() throws EolIncrementalExecutionException {
+    public ICheckTrace getOrCreateCheckTrace() throws EolIncrementalExecutionException {
         ICheckTrace checkTrace = null;
         try {
             checkTrace = new CheckTrace(this);
@@ -204,7 +209,7 @@ public class InvariantTrace implements IInvariantTrace {
     }      
                   
     @Override
-    public IMessageTrace createMessageTrace() throws EolIncrementalExecutionException {
+    public IMessageTrace getOrCreateMessageTrace() throws EolIncrementalExecutionException {
         IMessageTrace messageTrace = null;
         try {
             messageTrace = new MessageTrace(this);
@@ -226,7 +231,7 @@ public class InvariantTrace implements IInvariantTrace {
     }      
                   
     @Override
-    public ISatisfiesTrace createSatisfiesTrace() throws EolIncrementalExecutionException {
+    public ISatisfiesTrace getOrCreateSatisfiesTrace() throws EolIncrementalExecutionException {
         ISatisfiesTrace satisfiesTrace = null;
         try {
             satisfiesTrace = new SatisfiesTrace(this);

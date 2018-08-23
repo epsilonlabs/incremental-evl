@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.impl.ContextModuleElementTraceHasExecutionContext;
+// import org.eclipse.epsilon.base.incremental.trace.impl.ContextModuleElementTraceHasExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -48,9 +48,9 @@ public class ExecutionContextTest {
         
         ContextModuleElementTraceHasExecutionContext containerReference = new ContextModuleElementTraceHasExecutionContext(containerMock);
         when(containerMock.executionContext()).thenReturn(containerReference);
-        // protected region ExecutionContextInit on begin
+        // protected region ExecutionContextInit_init on begin
         classUnderTest = new ExecutionContext(containerMock);                    
-        // protected region ExecutionContextInit end
+        // protected region ExecutionContextInit_init end
         
 
         assertThat(containerReference.get(), is(classUnderTest));
@@ -64,27 +64,29 @@ public class ExecutionContextTest {
     public void testContextVariablesFactory() throws Exception {
         ContextModuleElementTraceHasExecutionContext containerReference = new ContextModuleElementTraceHasExecutionContext(containerMock);
         when(containerMock.executionContext()).thenReturn(containerReference);
-        // protected region ExecutionContextInit on begin
+        // protected region ExecutionContextInit_ContextVariablesFactory on begin
         classUnderTest = new ExecutionContext(containerMock);                    
-        // protected region ExecutionContextInit end
+        // protected region ExecutionContextInit_ContextVariablesFactory end
         
         IModelElementTrace valueMock = mock(IModelElementTrace.class);
         List<Object> list = new ArrayList<>();
-        IModelElementVariable child1 = classUnderTest.createModelElementVariable("name1", valueMock);
+        IModelElementVariable child1 = classUnderTest.getOrCreateModelElementVariable("name1", valueMock);
         classUnderTest.contextVariables().get().forEachRemaining(list::add);
+        
         assertThat(list, hasItem(child1));
         list.clear();
-        IModelElementVariable child2 = classUnderTest.createModelElementVariable("name2", valueMock);
+        IModelElementVariable child2 = classUnderTest.getOrCreateModelElementVariable("name2", valueMock);
         classUnderTest.contextVariables().get().forEachRemaining(list::add);
         assertThat(list, hasItem(child2));
         assertThat(list, hasSize(2));
         list.clear();
-        IModelElementVariable child3 = classUnderTest.createModelElementVariable("name1", valueMock);
+        IModelElementVariable child3 = classUnderTest.getOrCreateModelElementVariable("name1", valueMock);
         classUnderTest.contextVariables().get().forEachRemaining(list::add);
         assertThat(list, hasSize(2));
         assertThat(list, containsInAnyOrder(child1, child2));
         assertThat(child3, is(child1));
-	}
+    }
+    
     // protected region ExecutionContextOperations on begin
     // TODO Add test code for additional operations                 
     // protected region ExecutionContextOperations end

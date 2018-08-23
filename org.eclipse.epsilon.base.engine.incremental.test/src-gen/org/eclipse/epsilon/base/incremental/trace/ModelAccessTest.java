@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelAccess;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasModels;
+// import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasModels;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -50,9 +50,9 @@ public class ModelAccessTest {
         when(containerMock.models()).thenReturn(containerReference);
         IModelTrace _modelTrace = mock(IModelTrace.class);
                 
-        // protected region ModelAccessInit on begin
+        // protected region ModelAccessInit_init on begin
         classUnderTest = new ModelAccess("modelName1", _modelTrace, containerMock);                    
-        // protected region ModelAccessInit end
+        // protected region ModelAccessInit_init end
         
         
         List<Object> list = new ArrayList<>();
@@ -71,9 +71,9 @@ public class ModelAccessTest {
         when(containerMock.models()).thenReturn(containerReference);
         IModelTrace _modelTrace = mock(IModelTrace.class);
                 
-        // protected region ModelAccessInit on begin
+        // protected region ModelAccessInit_ModelTraceReference on begin
         classUnderTest = new ModelAccess("modelName1", _modelTrace, containerMock);                    
-        // protected region ModelAccessInit end
+        // protected region ModelAccessInit_ModelTraceReference end
         IModelTrace ref = mock(IModelTrace.class);
         
         boolean result = classUnderTest.modelTrace().create(ref);

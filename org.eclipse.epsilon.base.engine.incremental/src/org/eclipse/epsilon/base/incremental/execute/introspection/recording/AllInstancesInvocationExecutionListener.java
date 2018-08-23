@@ -21,9 +21,11 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
+import org.eclipse.epsilon.eol.dom.NameExpression;
 import org.eclipse.epsilon.eol.dom.OperationCallExpression;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelNotFoundException;
+import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.slf4j.Logger;
@@ -76,8 +78,16 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 			OperationCallExpression oce = (OperationCallExpression) ast;
 			String operationName = oce.getOperationName();
 			if (OPERATION_NAMES.contains(operationName)) {
-				// We assume the targetExpression resolved in a type
-				String typeName = oce.getTargetExpression().getResolvedType().getName();
+				// We assume the targetExpression resolved in a type. Super hack because the
+				// NameExpression does not reflect the actual type in the model. bug?
+				Variable typeVar;
+				try {
+					typeVar = (Variable) ((NameExpression) oce.getTargetExpression()).execute(context, true);
+				} catch (EolRuntimeException e1) {
+					logger.warn("Unable to create traces for the execution of {}", ast, e1);
+					return;
+				}
+				String typeName = typeVar.getName();
 				boolean ofKind = !"allOfType".equals(operationName);
 				try {
 					record(currentAst.getCurrentTrace(), ofKind, typeName, context);
@@ -126,6 +136,9 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 			logger.warn("Can not trace non-incremental models. Model {} is not an IIncrementalModel", model);
 			throw new EolIncrementalExecutionException(modelName);
 		}
+		if (!model.hasType(typeName)) {
+			return;
+		}
 		IIncrementalModel incrementalModel = (IIncrementalModel) model;
 		IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager()
 				.getExecutionTraceRepository();
@@ -140,8 +153,7 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
 		IModelTypeTrace typeTrace = modelTraceRepository.getTypeTraceFor(incrementalModel.getModelUri(), typeName);
 		if (typeTrace == null) {
-			IModelTrace modelTrace = context.getTraceManager().getModelTraceRepository()
-					.getModelTraceByIdentity(moduleUri);
+			IModelTrace modelTrace = modelTraceRepository.getModelTraceByIdentity(incrementalModel.getModelUri());
 			if (modelTrace == null) {
 				try {
 					modelTrace = new ModelTrace(incrementalModel.getModelUri());
@@ -153,9 +165,9 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 							incrementalModel.getModelUri()));
 				}
 			}
-			typeTrace = modelTrace.createModelTypeTrace(typeName);
+			typeTrace = modelTrace.getOrCreateModelTypeTrace(typeName);
 		}
-		IAllInstancesAccess allIns = moduleExecutionTrace.createAllInstancesAccess(ofKind, executionTrace, typeTrace);
+		IAllInstancesAccess allIns = moduleExecutionTrace.getOrCreateAllInstancesAccess(ofKind, executionTrace, typeTrace);
 		executionTrace.accesses().create(allIns);
 	}
 

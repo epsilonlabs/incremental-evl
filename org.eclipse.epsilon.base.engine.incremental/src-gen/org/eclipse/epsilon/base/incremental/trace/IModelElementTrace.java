@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -57,6 +57,30 @@ public interface IModelElementTrace extends IIdElement {
      */
     IModelElementTraceHasModelTrace modelTrace();
                 
+    /**
+     * Returns the value of the '<em><b>type</b></em>' reference.
+     * <!-- protected region type-getter-doc on begin -->
+     * <p>
+     * If the meaning of the '<em>type</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
+     * </p>
+     * <!-- protected region type-getter-doc end --> 
+     * @return the value of the '<em>type</em>' reference.
+     */
+    IModelElementTraceHasType type();
+                
+    /**
+     * Returns the value of the '<em><b>kind</b></em>' reference.
+     * <!-- protected region kind-getter-doc on begin -->
+     * <p>
+     * If the meaning of the '<em>kind</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
+     * </p>
+     * <!-- protected region kind-getter-doc end --> 
+     * @return the value of the '<em>kind</em>' reference.
+     */
+    IModelElementTraceHasKind kind();
+                
  
     /**
      * ModelElementTrace has same identity in the aggregate.
@@ -64,6 +88,6 @@ public interface IModelElementTrace extends IIdElement {
     public boolean sameIdentityAs(final IModelElementTrace other);
     
     /** The PropertyTrace Factory. */
-    IPropertyTrace createPropertyTrace(String name) throws EolIncrementalExecutionException;       
+    IPropertyTrace getOrCreatePropertyTrace(String name) throws EolIncrementalExecutionException;       
 
 }

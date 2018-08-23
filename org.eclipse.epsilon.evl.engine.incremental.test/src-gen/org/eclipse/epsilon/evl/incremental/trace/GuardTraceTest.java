@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.evl.incremental.trace.impl.GuardTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.GuardedElementTraceHasGuard;
+// import org.eclipse.epsilon.evl.incremental.trace.impl.GuardedElementTraceHasGuard;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -50,9 +50,9 @@ public class GuardTraceTest {
         
         GuardedElementTraceHasGuard containerReference = new GuardedElementTraceHasGuard(containerMock);
         when(containerMock.guard()).thenReturn(containerReference);
-        // protected region GuardTraceInit on begin
+        // protected region GuardTraceInit_init on begin
         classUnderTest = new GuardTrace(containerMock);                    
-        // protected region GuardTraceInit end
+        // protected region GuardTraceInit_init end
         
 
         assertThat(containerReference.get(), is(classUnderTest));
@@ -67,21 +67,9 @@ public class GuardTraceTest {
     public void testAccessesReference() throws Exception {
         GuardedElementTraceHasGuard containerReference = new GuardedElementTraceHasGuard(containerMock);
         when(containerMock.guard()).thenReturn(containerReference);
-        // protected region GuardTraceInit on begin
+        // protected region GuardTraceInit_AccessesReference on begin
         classUnderTest = new GuardTrace(containerMock);                    
-        // protected region GuardTraceInit end
-        // TODO Implement multivalue ref test
-    
-    }
-    
-    
-    @Test
-    public void testParentTraceReference() throws Exception {
-        GuardedElementTraceHasGuard containerReference = new GuardedElementTraceHasGuard(containerMock);
-        when(containerMock.guard()).thenReturn(containerReference);
-        // protected region GuardTraceInit on begin
-        classUnderTest = new GuardTrace(containerMock);                    
-        // protected region GuardTraceInit end
+        // protected region GuardTraceInit_AccessesReference end
         // TODO Implement multivalue ref test
     
     }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -42,6 +43,11 @@ public class MessageTrace implements IMessageTrace {
     private final IModuleElementTraceHasAccesses accesses;
 
     /**
+     * The parentTrace.
+     */
+    private final IInContextModuleElementTraceHasParentTrace parentTrace;
+
+    /**
      * The invariant.
      */
     private final IMessageTraceHasInvariant invariant;
@@ -53,6 +59,7 @@ public class MessageTrace implements IMessageTrace {
     public MessageTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
         this.invariant = new MessageTraceHasInvariant(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
+        this.parentTrace = new InContextModuleElementTraceHasParentTrace(this);
 
         if (!container.message().create(this)) {
             throw new TraceModelDuplicateRelation();
@@ -76,15 +83,13 @@ public class MessageTrace implements IMessageTrace {
     }
 
     @Override
-    public IMessageTraceHasInvariant invariant() {
-        return invariant;
+    public IInContextModuleElementTraceHasParentTrace parentTrace() {
+        return parentTrace;
     }
 
     @Override
-    public IInContextModuleElementTraceHasParentTrace parentTrace() {
-        /** protected region parentTrace on begin **/
-        return null;
-        /** protected region parentTrace end **/
+    public IMessageTraceHasInvariant invariant() {
+        return invariant;
     }
 
     @Override

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementVariable;
-import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionContextHasContextVariables;
+// import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionContextHasContextVariables;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -50,9 +50,9 @@ public class ModelElementVariableTest {
         when(containerMock.contextVariables()).thenReturn(containerReference);
         IModelElementTrace _value = mock(IModelElementTrace.class);
                 
-        // protected region ModelElementVariableInit on begin
+        // protected region ModelElementVariableInit_init on begin
         classUnderTest = new ModelElementVariable("name1", _value, containerMock);                    
-        // protected region ModelElementVariableInit end
+        // protected region ModelElementVariableInit_init end
         
         
         List<Object> list = new ArrayList<>();
@@ -71,9 +71,9 @@ public class ModelElementVariableTest {
         when(containerMock.contextVariables()).thenReturn(containerReference);
         IModelElementTrace _value = mock(IModelElementTrace.class);
                 
-        // protected region ModelElementVariableInit on begin
+        // protected region ModelElementVariableInit_ValueReference on begin
         classUnderTest = new ModelElementVariable("name1", _value, containerMock);                    
-        // protected region ModelElementVariableInit end
+        // protected region ModelElementVariableInit_ValueReference end
         IModelElementTrace ref = mock(IModelElementTrace.class);
         
         boolean result = classUnderTest.value().create(ref);

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -91,7 +91,7 @@ public class ModelTraceRepositoryImpl implements IModelTraceRepository {
 		Iterator<IModelElementTrace> iterator = modelTrace.elements().get();
 		while (iterator.hasNext()) {
 			IModelElementTrace et = iterator.next();
-			if (et.getUri() == modelElementUri) {
+			if (et.getUri().equals(modelElementUri)) {
 				return et;
 			}
 		}

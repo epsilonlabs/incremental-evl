@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.base.incremental.trace.impl.ElementAccess;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasAccesses;
+// import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasAccesses;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -55,9 +55,9 @@ public class ElementAccessTest {
                 
         IModelElementTrace _element = mock(IModelElementTrace.class);
                 
-        // protected region ElementAccessInit on begin
+        // protected region ElementAccessInit_init on begin
         classUnderTest = new ElementAccess(_executionTrace, _element, containerMock);                    
-        // protected region ElementAccessInit end
+        // protected region ElementAccessInit_init end
         
         
         List<Object> list = new ArrayList<>();
@@ -81,9 +81,9 @@ public class ElementAccessTest {
                 
         IModelElementTrace _element = mock(IModelElementTrace.class);
                 
-        // protected region ElementAccessInit on begin
+        // protected region ElementAccessInit_ExecutionTraceReference on begin
         classUnderTest = new ElementAccess(_executionTrace, _element, containerMock);                    
-        // protected region ElementAccessInit end
+        // protected region ElementAccessInit_ExecutionTraceReference end
         IModuleElementTrace ref = mock(IModuleElementTrace.class);
         IModuleElementTraceHasAccesses _moduleElementTrace2 = mock(IModuleElementTraceHasAccesses.class);
         when(_moduleElementTrace2 .get()).thenReturn(new HashSet<IAccess>().iterator());
@@ -115,9 +115,9 @@ public class ElementAccessTest {
                 
         IModelElementTrace _element = mock(IModelElementTrace.class);
                 
-        // protected region ElementAccessInit on begin
+        // protected region ElementAccessInit_ElementReference on begin
         classUnderTest = new ElementAccess(_executionTrace, _element, containerMock);                    
-        // protected region ElementAccessInit end
+        // protected region ElementAccessInit_ElementReference end
         IModelElementTrace ref = mock(IModelElementTrace.class);
         
         boolean result = classUnderTest.element().create(ref);

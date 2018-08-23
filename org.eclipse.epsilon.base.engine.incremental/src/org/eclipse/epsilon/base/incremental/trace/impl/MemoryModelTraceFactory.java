@@ -58,7 +58,7 @@ public class MemoryModelTraceFactory {
 	 *
 	 * @return the model trace
 	 */
-//	public IModelTrace createModelTrace() {
+//	public IModelTrace getOrCreateModelTrace() {
 //		return modelTrace;
 //	}
 
@@ -70,7 +70,7 @@ public class MemoryModelTraceFactory {
 	 * @throws EolIncrementalExecutionException if {@link #hasType(String)} is false for the type
 	 * @see #hasType(String)
 	 */
-	public IModelTypeTrace createModelTypeTrace(String typeName) throws EolIncrementalExecutionException {
+	public IModelTypeTrace getOrCreateModelTypeTrace(String typeName) throws EolIncrementalExecutionException {
 		logger.info("Creting ModelTypeTrace for {}", typeName);
 //		if (!model.hasType(typeName)) {
 //			logger.error("Unknonw type {} in model{}.", typeName, model.getName());
@@ -100,7 +100,7 @@ public class MemoryModelTraceFactory {
 	 * @throws EolIncrementalExecutionException if the model does not own the element
 	 * @see #owns(Object)
 	 */
-	public IModelElementTrace createModelElementTrace(Object element) throws EolIncrementalExecutionException {
+	public IModelElementTrace getOrCreateModelElementTrace(Object element) throws EolIncrementalExecutionException {
 //		logger.info("Creting ModelElementTrace for {}", element);
 //		String elementId = model.getElementId(element);
 //		if (modelElementTraces.containsKey(elementId)) {
@@ -130,7 +130,7 @@ public class MemoryModelTraceFactory {
 	 * @throws EolIncrementalExecutionException if the model does not know about the property
 	 * @see #knowsAboutProperty(Object, String)
 	 */
-	public IPropertyTrace createPropertyTrace(Object element, String propertyName)
+	public IPropertyTrace getOrCreatePropertyTrace(Object element, String propertyName)
 			throws EolIncrementalExecutionException {
 		
 //		String elementId = model.getElementId(element);
@@ -146,7 +146,7 @@ public class MemoryModelTraceFactory {
 		IPropertyTrace trace = null;
 //		try {
 //			logger.info("Creating new PropertyTrace");
-//			trace = new PropertyTrace(propertyName, createModelElementTrace(element));
+//			trace = new PropertyTrace(propertyName, getOrCreateModelElementTrace(element));
 //		} catch (TraceModelDuplicateRelation e) {
 //			throw new EolIncrementalExecutionException("Error creating PropertyTrace trace property for " + propertyName +" for element " + element);
 //		}
@@ -164,7 +164,7 @@ public class MemoryModelTraceFactory {
 	 * @throws EolIncrementalExecutionException if {@link #hasType(String)} is false for the type
 	 * @see #hasType(String)
 	 */
-	public IAllInstancesAccess createAllInstancesAccess(boolean ofKind, String typeName, IModuleElementTrace executionTrace)
+	public IAllInstancesAccess getOrCreateAllInstancesAccess(boolean ofKind, String typeName, IModuleElementTrace executionTrace)
 			throws EolIncrementalExecutionException {
 		
 //		logger.info("Creting AllInstancesAccess for {} , kind: {}", typeName, ofKind);
@@ -182,7 +182,7 @@ public class MemoryModelTraceFactory {
 		IAllInstancesAccess access = null;
 //		try {
 //			logger.info("Creating new AllInstancesAccess");
-//			access = new AllInstancesAccess(ofKind, executionTrace, createModelTypeTrace(typeName));
+//			access = new AllInstancesAccess(ofKind, executionTrace, getOrCreateModelTypeTrace(typeName));
 //		} catch (TraceModelDuplicateRelation e) {
 //			throw new EolIncrementalExecutionException("Error creating AllInstancesAccess for " + typeName, e);
 //		}
@@ -200,7 +200,7 @@ public class MemoryModelTraceFactory {
 	 * @throws EolIncrementalExecutionException if the model does not know about the property
 	 * @see #knowsAboutProperty(Object, String)
 	 */
-	public IPropertyAccess createPropertyAccess(Object element, String propertyName, IModuleElementTrace executionTrace)
+	public IPropertyAccess getOrCreatePropertyAccess(Object element, String propertyName, IModuleElementTrace executionTrace)
 			throws EolIncrementalExecutionException {
 		
 //		logger.info("Creting PropertyAccess for {} , proerty: {}", element, propertyName);
@@ -213,7 +213,7 @@ public class MemoryModelTraceFactory {
 		IPropertyAccess access = null;
 //		try {
 //			logger.info("Creating new PropertyAccess");
-//			access = new PropertyAccess(executionTrace, createPropertyTrace(element, propertyName));
+//			access = new PropertyAccess(executionTrace, getOrCreatePropertyTrace(element, propertyName));
 //		} catch (TraceModelDuplicateRelation e) {
 //			throw new EolIncrementalExecutionException("Error creating AllInstancesAccess for " + element + " and property " + propertyName, e);
 //		}
@@ -230,7 +230,7 @@ public class MemoryModelTraceFactory {
 	 * @throws EolIncrementalExecutionException if the model does not own the element
 	 * @see #owns(Object)
 	 */
-	public IElementAccess createElementAccess(Object element, IModuleElementTrace currentTrace) throws EolIncrementalExecutionException {
+	public IElementAccess getOrCreateElementAccess(Object element, IModuleElementTrace currentTrace) throws EolIncrementalExecutionException {
 //		logger.info("Creting ElementAccess for {}", element);
 //		String elementId = model.getElementId(element);
 //		if (elementAccesses.containsKey(elementId)) {
@@ -240,7 +240,7 @@ public class MemoryModelTraceFactory {
 		IElementAccess access = null;
 //		try {
 //			logger.info("Creating new ElementAccess");
-//			access = new ElementAccess(currentTrace, createModelElementTrace(element));
+//			access = new ElementAccess(currentTrace, getOrCreateModelElementTrace(element));
 //		} catch (TraceModelDuplicateRelation e) {
 //			throw new EolIncrementalExecutionException("Error creating ElementAccess for " + element, e);
 //		}
@@ -255,7 +255,7 @@ public class MemoryModelTraceFactory {
 	 * @return
 	 * @throws EolIncrementalExecutionException
 	 */
-	public IModelElementVariable createModelElementVariable(String name, Object element) throws EolIncrementalExecutionException {
+	public IModelElementVariable getOrCreateModelElementVariable(String name, Object element) throws EolIncrementalExecutionException {
 		
 //		String elementId = model.getElementId(element);
 //		logger.info("Creting ModelElementVariable for {}@{}", name, elementId);
@@ -267,7 +267,7 @@ public class MemoryModelTraceFactory {
 		IModelElementVariable variable = null;
 //		try {
 //			logger.info("Creating new ModelElementVariable");
-//			variable = new ModelElementVariable(name, createModelElementTrace(element));
+//			variable = new ModelElementVariable(name, getOrCreateModelElementTrace(element));
 //		} catch (TraceModelDuplicateRelation e) {
 //			throw new EolIncrementalExecutionException("Error creating ModelElementVariable for " + name + " for element " + element);
 //		}

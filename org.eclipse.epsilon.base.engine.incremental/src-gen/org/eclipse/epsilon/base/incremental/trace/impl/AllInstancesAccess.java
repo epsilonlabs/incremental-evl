@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -54,12 +55,12 @@ public class AllInstancesAccess implements IAllInstancesAccess {
      */    
     public AllInstancesAccess(boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
         this.ofKind = ofKind;
-        this.type = new AllInstancesAccessHasType(this);
         this.executionTrace = new AccessHasExecutionTrace(this);
-        if (!this.type.create(type)) {
+        this.type = new AllInstancesAccessHasType(this);
+        if (!this.executionTrace.create(executionTrace)) {
             throw new TraceModelDuplicateRelation();
         }
-        if (!this.executionTrace.create(executionTrace)) {
+        if (!this.type.create(type)) {
             throw new TraceModelDuplicateRelation();
         }
 
@@ -121,18 +122,18 @@ public class AllInstancesAccess implements IAllInstancesAccess {
         AllInstancesAccess other = (AllInstancesAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (type.get() == null) {
-            if (other.type.get() != null)
-                return false;
-        }
-        if (!type.get().equals(other.type.get())) {
-            return false;
-        }
         if (executionTrace.get() == null) {
             if (other.executionTrace.get() != null)
                 return false;
         }
         if (!executionTrace.get().equals(other.executionTrace.get())) {
+            return false;
+        }
+        if (type.get() == null) {
+            if (other.type.get() != null)
+                return false;
+        }
+        if (!type.get().equals(other.type.get())) {
             return false;
         }
         return true; 
@@ -144,8 +145,8 @@ public class AllInstancesAccess implements IAllInstancesAccess {
         int result = 1;
         Boolean ofKind = Boolean.valueOf(getOfKind());
         result = prime * result + ((ofKind == null) ? 0 : ofKind.hashCode());
-        result = prime * result + ((type.get() == null) ? 0 : type.get().hashCode());
         result = prime * result + ((executionTrace.get() == null) ? 0 : executionTrace.get().hashCode());
+        result = prime * result + ((type.get() == null) ? 0 : type.get().hashCode());
         return result;
     }
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -47,6 +48,11 @@ public class GuardTrace implements IGuardTrace {
     private final IModuleElementTraceHasAccesses accesses;
 
     /**
+     * The parentTrace.
+     */
+    private final IInContextModuleElementTraceHasParentTrace parentTrace;
+
+    /**
      * The limits.
      */
     private final IGuardTraceHasLimits limits;
@@ -58,6 +64,7 @@ public class GuardTrace implements IGuardTrace {
     public GuardTrace(IGuardedElementTrace container) throws TraceModelDuplicateRelation {
         this.limits = new GuardTraceHasLimits(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
+        this.parentTrace = new InContextModuleElementTraceHasParentTrace(this);
 
         if (!container.guard().create(this)) {
             throw new TraceModelDuplicateRelation();
@@ -92,15 +99,13 @@ public class GuardTrace implements IGuardTrace {
     }
 
     @Override
-    public IGuardTraceHasLimits limits() {
-        return limits;
+    public IInContextModuleElementTraceHasParentTrace parentTrace() {
+        return parentTrace;
     }
 
     @Override
-    public IInContextModuleElementTraceHasParentTrace parentTrace() {
-        /** protected region parentTrace on begin **/
-        return null;
-        /** protected region parentTrace end **/
+    public IGuardTraceHasLimits limits() {
+        return limits;
     }
 
     @Override

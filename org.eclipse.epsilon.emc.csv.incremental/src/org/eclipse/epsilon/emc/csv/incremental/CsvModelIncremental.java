@@ -113,13 +113,13 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 							try {
 								changesReader = Files.newBufferedReader(Paths.get(file), cs);
 							} catch (IOException e) {
-								logger.error("Exception creating reador from file.", e);
+								logger.error("Exception creating reader from file.", e);
 								break;
 							}
 							/** The rows. */
 							List<Map<String, Object>> newRows;
 							try {
-								newRows = (List<Map<String, Object>>) CsvModel.createRows(changesReader, knownHeaders,
+								newRows = (List<Map<String, Object>>) CsvModel.getOrCreateRows(changesReader, knownHeaders,
 										fieldSeparator, varargsHeaders);
 							} catch (Exception e) {
 								logger.error("Exception reading new rows.", e);
@@ -427,14 +427,14 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 	}
 
 	@Override
-	public Object createFromString(String value) throws NotInstantiableModelElementValueException {
+	public Object getOrCreateFromString(String value) throws NotInstantiableModelElementValueException {
 		InputStream is = new ByteArrayInputStream(value.getBytes());
 
 		// read it with BufferedReader
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
 		List<Map<String, Object>> valuerows;
 		try {
-			valuerows = createRows(br, isKnownHeaders(), getFieldSeparator(), isVarargsHeaders());
+			valuerows = getOrCreateRows(br, isKnownHeaders(), getFieldSeparator(), isVarargsHeaders());
 		} catch (Exception e) {
 			throw new NotInstantiableModelElementValueException("Unable to crate instance from value.", e);
 		}

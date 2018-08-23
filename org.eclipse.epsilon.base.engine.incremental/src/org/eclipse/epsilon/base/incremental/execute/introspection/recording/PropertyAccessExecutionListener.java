@@ -14,12 +14,14 @@ import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
+import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.AssignmentStatement;
 import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
@@ -146,25 +148,12 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 		IPropertyTrace propertyTrace = modelTraceRepository.getPropertyTraceFor(model.getModelUri(),
 				model.getElementId(modelElement), propertyName);
 		if (propertyTrace == null) {
-			IModelElementTrace elementTrace = modelTraceRepository.getModelElementTraceFor(model.getModelUri(),
-					model.getElementId(modelElement));
-			if (elementTrace == null) {
-				IModelTrace modelTrace = modelTraceRepository.getModelTraceByIdentity(model.getModelUri());
-				try {
-					modelTrace = new ModelTrace(model.getModelUri());
-					modelTraceRepository.add(modelTrace);
-				} catch (TraceModelDuplicateRelation e) {
-					throw new EolIncrementalExecutionException(String.format(
-							"A modelTrace was not found for "
-									+ "the model wiht uri %s but there was an error craeting it.",
-							model.getModelUri()));
-				}
-				elementTrace = modelTrace.createModelElementTrace(model.getElementId(modelElement));
-			}
-			propertyTrace = elementTrace.createPropertyTrace(propertyName);
+			IModelElementTrace elementTrace = IncrementalUtils.getOrgetOrCreateModelElementTrace(modelElement, context,
+					model);
+			propertyTrace = elementTrace.getOrCreatePropertyTrace(propertyName);
 		}
 		// FIXME A property access should also generate the matching element access.
-		IPropertyAccess pa = moduleExecutionTrace.createPropertyAccess(executionTrace, propertyTrace);
+		IPropertyAccess pa = moduleExecutionTrace.getOrCreatePropertyAccess(executionTrace, propertyTrace);
 		String value = null;
 		if (model.owns(result)) {
 			try {

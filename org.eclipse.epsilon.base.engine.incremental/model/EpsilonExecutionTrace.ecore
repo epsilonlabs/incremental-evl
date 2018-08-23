@@ -8,10 +8,10 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModuleExecutionTrace" abstract="true"
       eSuperTypes="#//IdElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModuleExecutionTrace/uri"/>
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A ModuleExecutionTrace represents the trace of the execution of a particular Epsilon module&#xA;(e.g. Eol, Etl, etc.) for a given script (identified by the source) and a given set of Models."/>
     </eAnnotations>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModuleExecutionTrace/uri"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="uri" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="The path of the source file executed"/>
@@ -58,10 +58,10 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ContextModuleElementTrace" abstract="true"
       eSuperTypes="#//ModuleElementTrace">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ContextModuleElementTrace/executionContext"/>
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A module element that is executed in a context (e.g. contex operation, Etl rule, &#xA;etc.)."/>
     </eAnnotations>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ContextModuleElementTrace/executionContext"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="executionContext" eType="#//ExecutionContext"
         containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -87,11 +87,11 @@
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelElementVariable" eSuperTypes="#//IdElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelElementVariable/name"/>
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ModelElementVariable/value"/>
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A ModelElementVariable pairs a variable name to the model element assigned to &#xA;that variable during execution."/>
     </eAnnotations>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelElementVariable/name"/>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ModelElementVariable/value"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" lowerBound="1" eType="#//ModelElementTrace"/>
   </eClassifiers>
@@ -104,27 +104,27 @@
         eType="#//ModuleElementTrace" eOpposite="#//ModuleElementTrace/accesses"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ElementAccess" eSuperTypes="#//Access">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ElementAccess/element"/>
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="An ElementAccess denotes access to a model element as a whole. This usually&#xA;happens when an element is used for a context."/>
     </eAnnotations>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ElementAccess/element"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="element" lowerBound="1"
         eType="#//ModelElementTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AllInstancesAccess" eSuperTypes="#//Access">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//AllInstancesAccess/ofKind"/>
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//AllInstancesAccess/type"/>
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="An AllInstancesAccess denotes access to all elemens of a given type/kind. This &#xA;is the result of a call to all() (and its derivatives)."/>
     </eAnnotations>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//AllInstancesAccess/ofKind"/>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//AllInstancesAccess/type"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ofKind" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1" eType="#//ModelTypeTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PropertyAccess" eSuperTypes="#//Access">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//PropertyAccess/property"/>
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A PropertyAccess denotes access to property of a model element."/>
     </eAnnotations>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//PropertyAccess/property"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="The value of the property when it was accessed."/>
@@ -134,10 +134,10 @@
         eType="#//PropertyTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelTrace" eSuperTypes="#//IdElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelTrace/uri"/>
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A ModelTrace contains trace information for the elements and types in the model &#xA;that were accessed during execution."/>
     </eAnnotations>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelTrace/uri"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="uri" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="The uri of the model."/>
@@ -149,30 +149,34 @@
         eType="#//ModelTypeTrace" containment="true" eOpposite="#//ModelTypeTrace/modelTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelTypeTrace" eSuperTypes="#//IdElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelTypeTrace/name"/>
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A PropertyAccess denotes access to property of a model element."/>
     </eAnnotations>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelTypeTrace/name"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="modelTrace" eType="#//ModelTrace"
         eOpposite="#//ModelTrace/types"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelElementTrace" eSuperTypes="#//IdElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelElementTrace/uri"/>
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A ModelElementTrace represents a model element that was accessed during &#xA;execution. The element represented is identified by its uri."/>
     </eAnnotations>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//ModelElementTrace/uri"/>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ModelElementTrace/modelTrace"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="uri" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//AnyURI"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
         eType="#//PropertyTrace" containment="true" eOpposite="#//PropertyTrace/elementTrace"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="modelTrace" eType="#//ModelTrace"
         eOpposite="#//ModelTrace/elements"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1" eType="#//ModelTypeTrace"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="kind" upperBound="-1" eType="#//ModelTypeTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PropertyTrace" eSuperTypes="#//IdElement">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//PropertyTrace/name"/>
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A ModelElementTrace represents a model element that was accessed during &#xA;execution. The element represented is identified by its uri."/>
     </eAnnotations>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/identity" references="#//PropertyTrace/name"/>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//PropertyTrace/elementTrace"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="elementTrace" eType="#//ModelElementTrace"
         eOpposite="#//ModelElementTrace/properties"/>

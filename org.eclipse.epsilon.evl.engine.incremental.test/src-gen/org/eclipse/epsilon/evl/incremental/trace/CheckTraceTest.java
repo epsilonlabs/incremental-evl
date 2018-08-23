@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.evl.incremental.trace.impl.CheckTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTraceHasCheck;
+// import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTraceHasCheck;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -50,9 +50,9 @@ public class CheckTraceTest {
         
         InvariantTraceHasCheck containerReference = new InvariantTraceHasCheck(containerMock);
         when(containerMock.check()).thenReturn(containerReference);
-        // protected region CheckTraceInit on begin
+        // protected region CheckTraceInit_init on begin
         classUnderTest = new CheckTrace(containerMock);                    
-        // protected region CheckTraceInit end
+        // protected region CheckTraceInit_init end
         
 
         assertThat(containerReference.get(), is(classUnderTest));
@@ -67,21 +67,9 @@ public class CheckTraceTest {
     public void testAccessesReference() throws Exception {
         InvariantTraceHasCheck containerReference = new InvariantTraceHasCheck(containerMock);
         when(containerMock.check()).thenReturn(containerReference);
-        // protected region CheckTraceInit on begin
+        // protected region CheckTraceInit_AccessesReference on begin
         classUnderTest = new CheckTrace(containerMock);                    
-        // protected region CheckTraceInit end
-        // TODO Implement multivalue ref test
-    
-    }
-    
-    
-    @Test
-    public void testParentTraceReference() throws Exception {
-        InvariantTraceHasCheck containerReference = new InvariantTraceHasCheck(containerMock);
-        when(containerMock.check()).thenReturn(containerReference);
-        // protected region CheckTraceInit on begin
-        classUnderTest = new CheckTrace(containerMock);                    
-        // protected region CheckTraceInit end
+        // protected region CheckTraceInit_AccessesReference end
         // TODO Implement multivalue ref test
     
     }

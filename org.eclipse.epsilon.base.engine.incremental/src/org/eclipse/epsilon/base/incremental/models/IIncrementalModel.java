@@ -88,7 +88,7 @@ public interface IIncrementalModel extends IModel {
 	 * @throws UnsupportedOperationException if the value can not be converted to an
 	 *                                       object.
 	 */
-	Object createFromString(String value) throws NotInstantiableModelElementValueException;
+	Object getOrCreateFromString(String value) throws NotInstantiableModelElementValueException;
 
 	/**
 	 * Returns the fully qualified names of every type to which the given object

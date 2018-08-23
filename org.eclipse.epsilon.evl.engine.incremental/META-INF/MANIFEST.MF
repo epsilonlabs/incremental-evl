@@ -13,6 +13,7 @@ Require-Bundle: org.eclipse.epsilon.common,
  com.google.inject;bundle-version="3.0.0",
  javax.inject;bundle-version="1.0.0"
 Export-Package: org.eclipse.epsilon.evl,
+ org.eclipse.epsilon.evl.incremental,
  org.eclipse.epsilon.evl.incremental.dom,
  org.eclipse.epsilon.evl.incremental.execute,
  org.eclipse.epsilon.evl.incremental.execute.context,

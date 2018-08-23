@@ -172,7 +172,7 @@ public class InvariantTrace implements IInvariantTrace {
 
 
     @Override
-    public IGuardTrace createGuardTrace() throws EolIncrementalExecutionException {
+    public IGuardTrace getOrCreateGuardTrace() throws EolIncrementalExecutionException {
         IGuardTrace guardTrace = null;
         try {
             guardTrace = new GuardTrace(this);
@@ -194,7 +194,7 @@ public class InvariantTrace implements IInvariantTrace {
     }      
                   
     @Override
-    public ICheckTrace createCheckTrace() throws EolIncrementalExecutionException {
+    public ICheckTrace getOrCreateCheckTrace() throws EolIncrementalExecutionException {
         ICheckTrace checkTrace = null;
         try {
             checkTrace = new CheckTrace(this);
@@ -216,7 +216,7 @@ public class InvariantTrace implements IInvariantTrace {
     }      
                   
     @Override
-    public IMessageTrace createMessageTrace() throws EolIncrementalExecutionException {
+    public IMessageTrace getOrCreateMessageTrace() throws EolIncrementalExecutionException {
         IMessageTrace messageTrace = null;
         try {
             messageTrace = new MessageTrace(this);
@@ -238,7 +238,7 @@ public class InvariantTrace implements IInvariantTrace {
     }      
                   
     @Override
-    public ISatisfiesTrace createSatisfiesTrace() throws EolIncrementalExecutionException {
+    public ISatisfiesTrace getOrCreateSatisfiesTrace() throws EolIncrementalExecutionException {
         ISatisfiesTrace satisfiesTrace = null;
         try {
             satisfiesTrace = new SatisfiesTrace(this);

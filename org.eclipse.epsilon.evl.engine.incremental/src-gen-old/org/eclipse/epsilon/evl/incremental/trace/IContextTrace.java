@@ -58,9 +58,9 @@ public interface IContextTrace extends IGuardedElementTrace, IRuleTrace {
     public boolean sameIdentityAs(final IContextTrace other);
     
     /** The GuardTrace Factory. */
-    IGuardTrace createGuardTrace() throws EolIncrementalExecutionException;       
+    IGuardTrace getOrCreateGuardTrace() throws EolIncrementalExecutionException;       
    
     /** The InvariantTrace Factory. */
-    IInvariantTrace createInvariantTrace(String name) throws EolIncrementalExecutionException;       
+    IInvariantTrace getOrCreateInvariantTrace(String name) throws EolIncrementalExecutionException;       
    
 }

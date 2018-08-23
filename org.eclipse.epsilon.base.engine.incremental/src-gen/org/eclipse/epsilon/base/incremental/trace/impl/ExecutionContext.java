@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -68,7 +69,7 @@ public class ExecutionContext implements IExecutionContext {
     }
 
     @Override
-    public IModelElementVariable createModelElementVariable(String name, IModelElementTrace value) throws EolIncrementalExecutionException {
+    public IModelElementVariable getOrCreateModelElementVariable(String name, IModelElementTrace value) throws EolIncrementalExecutionException {
         IModelElementVariable modelElementVariable = null;
         try {
             modelElementVariable = new ModelElementVariable(name, value, this);
@@ -119,7 +120,7 @@ public class ExecutionContext implements IExecutionContext {
             if (other.contextVariables.get() != null)
                 return false;
         }
-        if (!contextVariables.get().equals(other.contextVariables.get())) {
+        if (! IncrementalUtils.equalUniqueIterators(contextVariables.get(), other.contextVariables.get())) {
             return false;
         }
         return true; 
@@ -129,7 +130,7 @@ public class ExecutionContext implements IExecutionContext {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((contextVariables.get() == null) ? 0 : contextVariables.get().hashCode());
+        result = prime * result + ((contextVariables.get() == null) ? 0 : IncrementalUtils.iteratorHashCode(contextVariables.get()));
         return result;
     }
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.evl.incremental.trace.impl.MessageTrace;
-import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTraceHasMessage;
+// import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTraceHasMessage;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -50,9 +50,9 @@ public class MessageTraceTest {
         
         InvariantTraceHasMessage containerReference = new InvariantTraceHasMessage(containerMock);
         when(containerMock.message()).thenReturn(containerReference);
-        // protected region MessageTraceInit on begin
+        // protected region MessageTraceInit_init on begin
         classUnderTest = new MessageTrace(containerMock);                    
-        // protected region MessageTraceInit end
+        // protected region MessageTraceInit_init end
         
 
         assertThat(containerReference.get(), is(classUnderTest));
@@ -67,21 +67,9 @@ public class MessageTraceTest {
     public void testAccessesReference() throws Exception {
         InvariantTraceHasMessage containerReference = new InvariantTraceHasMessage(containerMock);
         when(containerMock.message()).thenReturn(containerReference);
-        // protected region MessageTraceInit on begin
+        // protected region MessageTraceInit_AccessesReference on begin
         classUnderTest = new MessageTrace(containerMock);                    
-        // protected region MessageTraceInit end
-        // TODO Implement multivalue ref test
-    
-    }
-    
-    
-    @Test
-    public void testParentTraceReference() throws Exception {
-        InvariantTraceHasMessage containerReference = new InvariantTraceHasMessage(containerMock);
-        when(containerMock.message()).thenReturn(containerReference);
-        // protected region MessageTraceInit on begin
-        classUnderTest = new MessageTrace(containerMock);                    
-        // protected region MessageTraceInit end
+        // protected region MessageTraceInit_AccessesReference end
         // TODO Implement multivalue ref test
     
     }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.base.incremental.trace.impl.PropertyTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementTraceHasProperties;
+// import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementTraceHasProperties;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -48,9 +48,9 @@ public class PropertyTraceTest {
         
         ModelElementTraceHasProperties containerReference = new ModelElementTraceHasProperties(containerMock);
         when(containerMock.properties()).thenReturn(containerReference);
-        // protected region PropertyTraceInit on begin
+        // protected region PropertyTraceInit_init on begin
         classUnderTest = new PropertyTrace("name1", containerMock);                    
-        // protected region PropertyTraceInit end
+        // protected region PropertyTraceInit_init end
         
         
         List<Object> list = new ArrayList<>();

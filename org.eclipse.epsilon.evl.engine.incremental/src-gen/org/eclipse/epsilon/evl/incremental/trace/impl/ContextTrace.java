@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -129,7 +130,7 @@ public class ContextTrace implements IContextTrace {
     }
 
     @Override
-    public IGuardTrace createGuardTrace() throws EolIncrementalExecutionException {
+    public IGuardTrace getOrCreateGuardTrace() throws EolIncrementalExecutionException {
         IGuardTrace guardTrace = null;
         try {
             guardTrace = new GuardTrace(this);
@@ -151,7 +152,7 @@ public class ContextTrace implements IContextTrace {
     }      
                   
     @Override
-    public IExecutionContext createExecutionContext() throws EolIncrementalExecutionException {
+    public IExecutionContext getOrCreateExecutionContext() throws EolIncrementalExecutionException {
         IExecutionContext executionContext = null;
         try {
             executionContext = new ExecutionContext(this);
@@ -171,7 +172,7 @@ public class ContextTrace implements IContextTrace {
     }      
                   
     @Override
-    public IInvariantTrace createInvariantTrace(String name) throws EolIncrementalExecutionException {
+    public IInvariantTrace getOrCreateInvariantTrace(String name) throws EolIncrementalExecutionException {
         IInvariantTrace invariantTrace = null;
         try {
             invariantTrace = new InvariantTrace(name, this);

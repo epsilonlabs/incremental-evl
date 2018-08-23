@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -35,6 +35,6 @@ public interface IGuardedElementTrace extends IIdElement {
     IGuardedElementTraceHasGuard guard();
                 
     /** The GuardTrace Factory. */
-    IGuardTrace createGuardTrace() throws EolIncrementalExecutionException;       
+    IGuardTrace getOrCreateGuardTrace() throws EolIncrementalExecutionException;       
 
 }

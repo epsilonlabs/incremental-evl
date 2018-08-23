@@ -259,7 +259,7 @@ operation EClass getRequiredFeatureParameters(interPrefix, interSufix) {
 
 @cached
 operation EClass getRequiredFeatures() {
-    return self.getEAllReferences().select(er | er.isRequired() and not er.isMany() and not er.isDerived()).excluding(self.getContainerReference().at(0));
+    return self.getEAllReferences().select(er | er.isRequired() and (not er.isMany()) and (not er.isDerived())).excluding(self.getContainerReference().at(0));
 }
 
 /**
@@ -336,6 +336,18 @@ operation EClass getEqualsReferences() : Set {
     }
     return result;
 }
+
+@cached
+operation EClass getParentEClass() : EClass {
+    var result : EClass;
+    var annots = self.getAnnotations("https://eclipse.org/epsilon/incremental/parent");
+    for (annot in annots) {
+        var resultName = annot.getDetails().get("parent");
+        result = EClass.all().selectOne(ec | ec.name == resultName);
+    }
+    return result;
+}
+
 
 /**
  * Returns the first documentaiton entry found in the class hierarchy

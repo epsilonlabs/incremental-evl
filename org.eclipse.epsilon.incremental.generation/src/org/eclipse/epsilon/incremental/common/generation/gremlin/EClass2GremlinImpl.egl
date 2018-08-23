@@ -351,7 +351,7 @@ operation EClass factoryMethod(ref : EReference, subClass : Boolean, interPrefix
     vars.add("graph");
     var retType = self.getJavaInterfaceName(interPrefix, interSufix);%]
 @Override
-public [%=retType%] create[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException {
+public [%=retType%] getOrCreate[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException {
     [%=self.getJavaClassName(classPrefix, classSufix)%] [%=instanceName%] = null;
     try {
         Vertex v = g.addV("[%=self.name%]").next();

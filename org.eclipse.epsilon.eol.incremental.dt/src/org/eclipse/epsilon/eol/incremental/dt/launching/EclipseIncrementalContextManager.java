@@ -64,8 +64,8 @@ public class EclipseIncrementalContextManager extends EclipseContextManager {
 			properties.load(modelDescriptor);
 			try {
 				ExecutionTraceManagerExtension tmExtension = ExecutionTraceManagerExtension.forType(properties.getProperty(ExecutionTraceManagerExtension.TRACE_MANAGER_TYPE));
-				IExecutionTraceManager traceManager = tmExtension.createTraceManager();
-				//				ITraceModel traceModel = tmExtension.createModel();
+				IExecutionTraceManager traceManager = tmExtension.getOrCreateTraceManager();
+				//				ITraceModel traceModel = tmExtension.getOrCreateModel();
 //				traceModel.load(properties, new IRelativePathResolver() {
 //					
 //					@Override

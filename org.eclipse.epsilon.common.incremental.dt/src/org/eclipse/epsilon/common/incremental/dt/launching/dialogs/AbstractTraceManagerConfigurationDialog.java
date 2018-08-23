@@ -24,7 +24,7 @@ public abstract class AbstractTraceManagerConfigurationDialog extends TitleAreaD
 	
 	protected StringProperties properties;
 	
-	protected static Composite createGroupContainer(Composite parent, String text, int columns) {
+	protected static Composite getOrCreateGroupContainer(Composite parent, String text, int columns) {
 		final Group group = new Group(parent, SWT.FILL);
 		
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -44,9 +44,9 @@ public abstract class AbstractTraceManagerConfigurationDialog extends TitleAreaD
 	}
 	
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control getOrCreateDialogArea(Composite parent) {
 		
-		Composite superControl = (Composite) super.createDialogArea(parent);
+		Composite superControl = (Composite) super.getOrCreateDialogArea(parent);
 		
 		this.setTitle(getExecutionTraceManagerName() + " Configuration");
 		this.setMessage("Configure the details of the " + getExecutionTraceManagerName());
@@ -56,7 +56,7 @@ public abstract class AbstractTraceManagerConfigurationDialog extends TitleAreaD
 		control.setLayout(new GridLayout(1,true));
 		control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		createGroups(control);
+		getOrCreateGroups(control);
 		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, "org.eclipse.epsilon.help.emc_dialogs");
 		
@@ -72,7 +72,7 @@ public abstract class AbstractTraceManagerConfigurationDialog extends TitleAreaD
 	
 	abstract protected void storeProperties();
 
-	abstract protected void createGroups(Composite control);
+	abstract protected void getOrCreateGroups(Composite control);
 
 	abstract protected  String getExecutionTraceManagerName();
 	

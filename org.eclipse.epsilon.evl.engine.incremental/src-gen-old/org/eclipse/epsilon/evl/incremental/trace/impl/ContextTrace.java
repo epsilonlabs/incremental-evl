@@ -143,7 +143,7 @@ public class ContextTrace implements IContextTrace {
 
 
     @Override
-    public IGuardTrace createGuardTrace() throws EolIncrementalExecutionException {
+    public IGuardTrace getOrCreateGuardTrace() throws EolIncrementalExecutionException {
         IGuardTrace guardTrace = null;
         try {
             guardTrace = new GuardTrace(this);
@@ -165,7 +165,7 @@ public class ContextTrace implements IContextTrace {
     }      
                   
     @Override
-    public IInvariantTrace createInvariantTrace(String name) throws EolIncrementalExecutionException {
+    public IInvariantTrace getOrCreateInvariantTrace(String name) throws EolIncrementalExecutionException {
         IInvariantTrace invariantTrace = null;
         try {
             invariantTrace = new InvariantTrace(name, this);

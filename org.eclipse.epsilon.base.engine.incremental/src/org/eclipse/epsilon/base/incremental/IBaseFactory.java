@@ -6,8 +6,8 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 
 public interface IBaseFactory {
 
-	IModuleExecutionTrace createModuleTrace(String uri) throws TraceModelDuplicateRelation;
+	IModuleExecutionTrace getOrCreateModuleTrace(String uri) throws TraceModelDuplicateRelation;
 
-	IModelTrace createModelTrace(String uri) throws TraceModelDuplicateRelation;
+	IModelTrace getOrCreateModelTrace(String uri) throws TraceModelDuplicateRelation;
 
 }

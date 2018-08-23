@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTypeTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceHasTypes;
+// import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceHasTypes;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -48,9 +48,9 @@ public class ModelTypeTraceTest {
         
         ModelTraceHasTypes containerReference = new ModelTraceHasTypes(containerMock);
         when(containerMock.types()).thenReturn(containerReference);
-        // protected region ModelTypeTraceInit on begin
+        // protected region ModelTypeTraceInit_init on begin
         classUnderTest = new ModelTypeTrace("name1", containerMock);                    
-        // protected region ModelTypeTraceInit end
+        // protected region ModelTypeTraceInit_init end
         
         
         List<Object> list = new ArrayList<>();

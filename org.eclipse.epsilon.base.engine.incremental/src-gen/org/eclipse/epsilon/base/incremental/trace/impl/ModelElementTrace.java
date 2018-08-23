@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -50,13 +51,28 @@ public class ModelElementTrace implements IModelElementTrace {
     private final IModelElementTraceHasModelTrace modelTrace;
 
     /**
+     * The type.
+     */
+    private final IModelElementTraceHasType type;
+
+    /**
+     * The kind.
+     */
+    private final IModelElementTraceHasKind kind;
+
+    /**
      * Instantiates a new ModelElementTrace. The ModelElementTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ModelElementTrace(String uri, IModelTrace container) throws TraceModelDuplicateRelation {
+    public ModelElementTrace(String uri, IModelTypeTrace type, IModelTrace container) throws TraceModelDuplicateRelation {
         this.uri = uri;
-        this.properties = new ModelElementTraceHasProperties(this);
         this.modelTrace = new ModelElementTraceHasModelTrace(this);
+        this.properties = new ModelElementTraceHasProperties(this);
+        this.type = new ModelElementTraceHasType(this);
+        if (!this.type.create(type)) {
+            throw new TraceModelDuplicateRelation();
+        }
+        this.kind = new ModelElementTraceHasKind(this);
 
         if (!container.elements().create(this)) {
             throw new TraceModelDuplicateRelation();
@@ -90,7 +106,17 @@ public class ModelElementTrace implements IModelElementTrace {
     }
 
     @Override
-    public IPropertyTrace createPropertyTrace(String name) throws EolIncrementalExecutionException {
+    public IModelElementTraceHasType type() {
+        return type;
+    }
+
+    @Override
+    public IModelElementTraceHasKind kind() {
+        return kind;
+    }
+
+    @Override
+    public IPropertyTrace getOrCreatePropertyTrace(String name) throws EolIncrementalExecutionException {
         IPropertyTrace propertyTrace = null;
         try {
             propertyTrace = new PropertyTrace(name, this);
@@ -146,6 +172,13 @@ public class ModelElementTrace implements IModelElementTrace {
         ModelElementTrace other = (ModelElementTrace) obj;
         if (!sameIdentityAs(other))
             return false;
+        if (modelTrace.get() == null) {
+            if (other.modelTrace.get() != null)
+                return false;
+        }
+        if (!modelTrace.get().equals(other.modelTrace.get())) {
+            return false;
+        }
         return true; 
   }
 
@@ -154,6 +187,7 @@ public class ModelElementTrace implements IModelElementTrace {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((uri == null) ? 0 : uri.hashCode());
+        result = prime * result + ((modelTrace.get() == null) ? 0 : modelTrace.get().hashCode());
         return result;
     }
 }

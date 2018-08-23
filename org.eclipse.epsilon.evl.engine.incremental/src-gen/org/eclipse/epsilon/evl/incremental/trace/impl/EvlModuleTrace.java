@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -101,7 +102,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     }
 
     @Override
-    public IContextTrace createContextTrace(String kind, int index) throws EolIncrementalExecutionException {
+    public IContextTrace getOrCreateContextTrace(String kind, int index) throws EolIncrementalExecutionException {
         IContextTrace contextTrace = null;
         try {
             contextTrace = new ContextTrace(kind, index, this);
@@ -137,7 +138,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
 
                   
     @Override
-    public IElementAccess createElementAccess(IModuleElementTrace executionTrace, IModelElementTrace element) throws EolIncrementalExecutionException {
+    public IElementAccess getOrCreateElementAccess(IModuleElementTrace executionTrace, IModelElementTrace element) throws EolIncrementalExecutionException {
         IElementAccess elementAccess = null;
         try {
             elementAccess = new ElementAccess(executionTrace, element, this);
@@ -172,7 +173,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     }      
 
     @Override
-    public IAllInstancesAccess createAllInstancesAccess(boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type) throws EolIncrementalExecutionException {
+    public IAllInstancesAccess getOrCreateAllInstancesAccess(boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type) throws EolIncrementalExecutionException {
         IAllInstancesAccess allInstancesAccess = null;
         try {
             allInstancesAccess = new AllInstancesAccess(ofKind, executionTrace, type, this);
@@ -208,7 +209,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     }      
 
     @Override
-    public IPropertyAccess createPropertyAccess(IModuleElementTrace executionTrace, IPropertyTrace property) throws EolIncrementalExecutionException {
+    public IPropertyAccess getOrCreatePropertyAccess(IModuleElementTrace executionTrace, IPropertyTrace property) throws EolIncrementalExecutionException {
         IPropertyAccess propertyAccess = null;
         try {
             propertyAccess = new PropertyAccess(executionTrace, property, this);
@@ -244,7 +245,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
 
                   
     @Override
-    public IModelAccess createModelAccess(String modelName, IModelTrace modelTrace) throws EolIncrementalExecutionException {
+    public IModelAccess getOrCreateModelAccess(String modelName, IModelTrace modelTrace) throws EolIncrementalExecutionException {
         IModelAccess modelAccess = null;
         try {
             modelAccess = new ModelAccess(modelName, modelTrace, this);

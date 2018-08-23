@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-16.
+ * This file was automatically generated on: 2018-08-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -87,10 +88,10 @@ public class ModelTrace implements IModelTrace {
     }
 
     @Override
-    public IModelElementTrace createModelElementTrace(String uri) throws EolIncrementalExecutionException {
+    public IModelElementTrace getOrCreateModelElementTrace(String uri, IModelTypeTrace type) throws EolIncrementalExecutionException {
         IModelElementTrace modelElementTrace = null;
         try {
-            modelElementTrace = new ModelElementTrace(uri, this);
+            modelElementTrace = new ModelElementTrace(uri, type, this);
             
             this.elements().create(modelElementTrace);
         } catch (TraceModelDuplicateRelation e) {
@@ -103,7 +104,8 @@ public class ModelTrace implements IModelTrace {
             while (it.hasNext()) {
             	IModelElementTrace item;
                 item = (IModelElementTrace) it.next();
-    			if (item.getUri() == uri) {
+    			if (item.getUri() == uri &&
+    			    item.type().get().equals(type)) {
     				modelElementTrace = item;
     				break;
     			}
@@ -117,7 +119,7 @@ public class ModelTrace implements IModelTrace {
     }      
                   
     @Override
-    public IModelTypeTrace createModelTypeTrace(String name) throws EolIncrementalExecutionException {
+    public IModelTypeTrace getOrCreateModelTypeTrace(String name) throws EolIncrementalExecutionException {
         IModelTypeTrace modelTypeTrace = null;
         try {
             modelTypeTrace = new ModelTypeTrace(name, this);
