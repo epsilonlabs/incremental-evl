@@ -6,6 +6,6 @@ import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 
 public interface IEvlTraceFactory extends IBaseFactory {
 
-	IEvlModuleTrace getOrCreateModuleTrace(String uri) throws TraceModelDuplicateRelation;
+	IEvlModuleTrace createModuleTrace(String uri) throws TraceModelDuplicateRelation;
 
 }

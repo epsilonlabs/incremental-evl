@@ -5,10 +5,10 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelati
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTrace;
 
-public class EvlTraceFacotry extends BaseFactoryImpl implements IEvlTraceFactory {
+public class EvlTraceFactory extends BaseFactoryImpl implements IEvlTraceFactory {
 
 	@Override
-	public IEvlModuleTrace getOrCreateModuleTrace(String uri) throws TraceModelDuplicateRelation {
+	public IEvlModuleTrace createModuleTrace(String uri) throws TraceModelDuplicateRelation {
 		return new EvlModuleTrace(uri);
 	}
 

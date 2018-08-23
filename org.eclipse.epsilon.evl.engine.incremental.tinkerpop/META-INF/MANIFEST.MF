@@ -4,6 +4,11 @@ Bundle-Name: Evl Incremental Tinkerpop
 Bundle-SymbolicName: org.eclipse.epsilon.evl.engine.incremental.tinkerpop
 Bundle-Version: 1.5.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.eclipse.epsilon.eol.engine.incremental.tinkerpop;bundle-version="1.0.0";visibility:=reexport,
- org.eclipse.epsilon.evl.engine.incremental
-Export-Package: org.eclipse.epsilon.evl.incremental.trace.tinkerpop
+Require-Bundle: org.slf4j.api;bundle-version="1.7.10",
+ ch.qos.logback.classic;bundle-version="1.1.2",
+ com.google.inject;bundle-version="3.0.0",
+ org.eclipse.epsilon.base.engine.incremental,
+ org.eclipse.epsilon.evl.engine.incremental,
+ org.eclipse.epsilon.incremental.tinkerpop.dependencies;bundle-version="1.0.0",
+ org.eclipse.epsilon.base.engine.incremental.tinkerpop
+Bundle-ClassPath: lib/

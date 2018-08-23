@@ -66,7 +66,7 @@ public abstract class HashTests<M extends Module> {
 				.getTraceManager();
 		IEvlTraceFactory factory = etManager.getTraceFactory();
 
-		IModelTrace modelTrace = factory.getOrCreateModelTrace(((IIncrementalModel) model).getModelUri());
+		IModelTrace modelTrace = factory.createModelTrace(((IIncrementalModel) model).getModelUri());
 		int hashCode1 = modelTrace.hashCode();
 		int hashCode2 = modelTrace.hashCode();
 		assertThat("IModelTrace Hash code is not constant", hashCode1, is(hashCode2));
@@ -86,7 +86,7 @@ public abstract class HashTests<M extends Module> {
 		hashCode2 = propertyTrace.hashCode();
 		assertThat("IModelElementTrace Hash code is not constant", hashCode1, is(hashCode2));
 
-		IEvlModuleTrace evlModuleTrace = factory.getOrCreateModuleTrace(evlFile.getAbsolutePath());
+		IEvlModuleTrace evlModuleTrace = factory.createModuleTrace(evlFile.getAbsolutePath());
 		hashCode1 = evlModuleTrace.hashCode();
 		hashCode2 = evlModuleTrace.hashCode();
 		assertThat("IEvlModuleTrace Hash code is not constant", hashCode1, is(hashCode2));

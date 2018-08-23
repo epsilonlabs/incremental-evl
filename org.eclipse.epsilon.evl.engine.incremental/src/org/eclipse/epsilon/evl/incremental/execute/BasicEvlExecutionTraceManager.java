@@ -2,7 +2,7 @@ package org.eclipse.epsilon.evl.incremental.execute;
 
 import org.eclipse.epsilon.base.incremental.execute.AbstractEolExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
-import org.eclipse.epsilon.evl.incremental.EvlTraceFacotry;
+import org.eclipse.epsilon.evl.incremental.EvlTraceFactory;
 import org.eclipse.epsilon.evl.incremental.IEvlTraceFactory;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
@@ -19,10 +19,14 @@ public class BasicEvlExecutionTraceManager
 		extends AbstractEolExecutionTraceManager<IEvlModuleTrace, IEvlModuleTraceRepository, IEvlTraceFactory>
 		implements IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory> {
 
+	private final EvlTraceFactory evlTraceFactory;
+
 	@Inject
 	public BasicEvlExecutionTraceManager(IEvlModuleTraceRepository executionTraceRepository,
-			IModelTraceRepository modelTraceRepository) {
+			IModelTraceRepository modelTraceRepository,
+			EvlTraceFactory evlTraceFactory) {
 		super(executionTraceRepository, modelTraceRepository);
+		this.evlTraceFactory = evlTraceFactory;
 	}
 
 	@Override
@@ -34,7 +38,7 @@ public class BasicEvlExecutionTraceManager
 
 	@Override
 	public IEvlTraceFactory getTraceFactory() {
-		return new EvlTraceFacotry();
+		return evlTraceFactory;
 	}
 
 }

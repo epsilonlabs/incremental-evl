@@ -103,7 +103,6 @@ public class IncrementalEvlModule extends EvlModule implements
 
 	}
 
-	// new EvlIncrementalGuiceModule()
 	public void injectTraceManager(Module incrementalGuiceModule) {
 		Injector injector = Guice.createInjector(incrementalGuiceModule);
 		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory> etManager = injector
@@ -175,7 +174,7 @@ public class IncrementalEvlModule extends EvlModule implements
 		if (evlModuleTrace == null) {
 			try {
 				// evlModuleTrace = new EvlModuleTrace(evlScripPath);
-				evlModuleTrace = factory.getOrCreateModuleTrace(evlScripPath);
+				evlModuleTrace = factory.createModuleTrace(evlScripPath);
 				etManager.getExecutionTraceRepository().add(evlModuleTrace);
 			} catch (TraceModelDuplicateRelation e) {
 				throw new EolRuntimeException(e.getMessage());
@@ -185,7 +184,7 @@ public class IncrementalEvlModule extends EvlModule implements
 		for (IModel m : context.getModelRepository().getModels()) {
 			if (m instanceof IIncrementalModel) {
 				try {
-					IModelTrace mt = factory.getOrCreateModelTrace(((IIncrementalModel) m).getModelUri());
+					IModelTrace mt = factory.createModelTrace(((IIncrementalModel) m).getModelUri());
 					etManager.getModelTraceRepository().add(mt);
 					evlModuleTrace.getOrCreateModelAccess(m.getName(), mt);
 				} catch (TraceModelDuplicateRelation | EolIncrementalExecutionException e) {
