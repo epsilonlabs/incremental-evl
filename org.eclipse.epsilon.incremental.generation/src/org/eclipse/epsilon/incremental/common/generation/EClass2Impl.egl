@@ -30,7 +30,8 @@ import java.util.NoSuchElementException;
 [%if (ec.getEAllReferences().exists(er | er.isContainment())){%]
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 [%}%]
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 [%
 for (imp in ec.getRequiredImports(qp+".trace", interPrefix, interSufix, classPrefix, classSufix, true, true)) {%]
 import [%=imp%];
@@ -69,17 +70,37 @@ for (er in ec.getEAllReferences()) {%]
      * Instantiates a new [%=ec.getJavaClassName(classPrefix, classSufix)%]. The [%=ec.getJavaClassName(classPrefix, classSufix)%] is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public [%=ec.getJavaClassName(classPrefix, classSufix)%]([%=ec.getConstructorParameters(true, interPrefix, interSufix)%]) throws TraceModelDuplicateRelation {
+    public [%=ec.getJavaClassName(classPrefix, classSufix)%]([%=ec.getConstructorParameters(true, interPrefix, interSufix)%]) throws TraceModelDuplicateElement, TraceModelConflictRelation {
 [%for (index in ec.getIndexAttributes()) {%]
         this.[%=index.name%] = [%=index.name%];
 [%}%]
+[%
+var container = ec.getContainerReference().at(0);
+var type = ec.getContainerReference().at(1);
+var opposite = ec.getContainerReference().at(2);
+if (container.isDefined()) {
+    if (ec.getRequiredFeatures().includes(container)) {%]
+        if (!this.[%=container.name%].[%=opposite.name%]().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+  [%} else {%]
+        if (!container.[%=opposite.name%]().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+[%  }
+} else if (opposite.isDefined()) {%]
+        if (!container.[%=opposite.name%]().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+[%}%]
+
 [% for (er in ec.getEqualsReferences()) {%]
         this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this);
 [%}%]
 [% for (er in ec.getEqualsReferences()) {%]
 [%  if ((er <> ec.getContainerReference().at(0)) and er.isRequired() and not er.isMany()) {%]
         if (!this.[%=er.name%].create([%=er.name%])) {
-            throw new TraceModelDuplicateRelation();
+            throw new TraceModelDuplicateElement();
         }
 [%  }%]
 [%}%]
@@ -88,30 +109,12 @@ for (er in derivedFeatures.excludingAll(ec.getEqualsReferences())) {%]
         this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this);
 [%  if ((er <> ec.getContainerReference().at(0)) and er.isRequired() and not er.isMany() and not er.isDerived()) {%]
         if (!this.[%=er.name%].create([%=er.name%])) {
-            throw new TraceModelDuplicateRelation();
+            throw new TraceModelDuplicateElement();
         }
 [%  }%]
 [%}%]
 
-[%
-var container = ec.getContainerReference().at(0);
-var type = ec.getContainerReference().at(1);
-var opposite = ec.getContainerReference().at(2);
-if (container.isDefined()) {
-    if (ec.getRequiredFeatures().includes(container)) {%]
-        if (!this.[%=container.name%].[%=opposite.name%]().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
-  [%} else {%]
-        if (!container.[%=opposite.name%]().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
-[%  }
-} else if (opposite.isDefined()) {%]
-        if (!container.[%=opposite.name%]().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
-[%}%]
+
     }
     
 [%for (ea in ec.getEAllAttributes().select(ea | not ea.derived)) {
@@ -312,7 +315,7 @@ public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] getOrCreate[%=sel
 [% if (containment.isDefined()) {%]        
         this.[%=container.name%]().create([%=instanceName%]);
 [%  }%]
-    } catch (TraceModelDuplicateRelation e) {
+    } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
         // Pass
     } finally {
 	    if ([%=instanceName%] != null) {

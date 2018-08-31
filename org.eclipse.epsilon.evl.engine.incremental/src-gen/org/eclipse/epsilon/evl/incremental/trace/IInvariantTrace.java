@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -46,7 +46,7 @@ public interface IInvariantTrace extends IGuardedElementTrace, IInContextModuleE
      * <!-- protected region result-getter-doc end --> 
      * @return the value of the '<em>result</em>' attribute.
      */
-    boolean getResult();
+    Boolean getResult();
 
     /**
      * Sets the value of the '{@link InvariantTrace#result <em>result</em>}' attribute.

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
@@ -23,7 +24,9 @@ import java.util.NoSuchElementException;
 /** protected region ExecutionContextImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
+
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -32,11 +35,9 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
  */
 public class ExecutionContextGremlin implements IExecutionContext, GremlinWrapper<Vertex> {
     
-    /** A reference to the graph to use in factory methods and iterations */
-    private Graph graph;
 
     /** The graph traversal source for all navigations */
-    private GraphTraversalSource g;
+    private GraphTraversalSource gts;
     
     /** The delegate Vertex */
     private Vertex delegate;
@@ -56,65 +57,79 @@ public class ExecutionContextGremlin implements IExecutionContext, GremlinWrappe
      * Instantiates a new ExecutionContextGremlin. The ExecutionContextGremlin is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ExecutionContextGremlin(IContextModuleElementTrace container, Vertex vertex, Graph graph) throws TraceModelDuplicateRelation {
+    public ExecutionContextGremlin(
+        IContextModuleElementTrace container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
-        this.g = new GraphTraversalSource(graph);
-        this.graph = graph;
-        g.V(delegate)
-            .iterate();
-        this.contextVariables = new ExecutionContextHasContextVariablesGremlin(this);
-
+        this.gts = gts;
+        // FIXME We need to destroy the created edges when any edge fails
         if (!container.executionContext().create(this)) {
-            throw new TraceModelDuplicateRelation();
+            throw new TraceModelDuplicateElement();
         };
+        this.contextVariables = new ExecutionContextHasContextVariablesGremlin(this, gts);
     }
     
     @Override
     public Object getId() {
-        return (Object) g.V(delegate).values("id").next();
+        return (Object) delegate == null ? null : delegate.id();
     }
     
     
     @Override
-    public void setId(Object value) {
-        g.V(delegate).property("id", value).iterate();
+    public void setId(java.lang.Object value) {
+        throw new UnsupportedOperationException("Id is final");
+  
     }   
      
     @Override
     public IExecutionContextHasContextVariables contextVariables() {
         if (contextVariables == null) {
-            this.contextVariables = new ExecutionContextHasContextVariablesGremlin(this);
+            contextVariables = new ExecutionContextHasContextVariablesGremlin(this, this.gts);
+            GraphTraversalSource g = startTraversal();
+            try {
+                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("contextVariables");
+                if (gt.hasNext()) {
+                    ((ExecutionContextHasContextVariablesGremlin)contextVariables).delegate(gt.next());
+                }
+            } finally {
+                finishTraversal(g);
+            }
         }
         return contextVariables;
     }
 
     @Override
     public IModelElementVariable getOrCreateModelElementVariable(String name, IModelElementTrace value) throws EolIncrementalExecutionException {
+        GraphTraversalSource g = startTraversal();
         ModelElementVariableGremlin modelElementVariable = null;
         try {
-            Vertex v = g.addV("ModelElementVariable").next();
-            modelElementVariable = new ModelElementVariableGremlin(name, value, this, v, graph);
-        } catch (TraceModelDuplicateRelation e) {
-            // Pass
-        } finally {
-    	    if (modelElementVariable != null) {
-    	        return modelElementVariable;
+    	    Vertex v = null;
+    	    try {
+    	        v = g.addV("ModelElementVariable").next();
+    	        modelElementVariable = new ModelElementVariableGremlin(name, value, this, v, gts);
+    	    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+    	        v.remove();
+    	    } finally {
+    		    if (modelElementVariable != null) {
+    		        return modelElementVariable;
+    		    }
+    	        GraphTraversal<Vertex, Vertex> gt = ((ExecutionContextHasContextVariablesGremlin) this.contextVariables).getRaw()
+    	            .hasLabel("ModelElementVariable")
+    	            .has("name", name)
+    	            .as("a") 
+    	            .out("value").hasId(value.getId())
+    	            .in("value").where(P.eq("a"))
+    	            .select("a");
+    	        if (!gt.hasNext()) {
+    	            throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelElementVariable was "
+    	                    + "duplicate but previous one was not found.");
+    	        }
+    	        modelElementVariable = new ModelElementVariableGremlin();
+    	        modelElementVariable.delegate(gt.next());
+    	        modelElementVariable.graphTraversalSource(gts);
     	    }
-            GraphTraversal<Vertex, Vertex> gt = ((ExecutionContextHasContextVariablesGremlin) this.contextVariables).getRaw()
-                .hasLabel("ModelElementVariable")
-                .has("name", name)
-                .as("v")
-                .to(Direction.OUT, "value").hasId(value.getId())
-                .select("v")
-                ;
-            if (!gt.hasNext()) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelElementVariable was "
-                        + "duplicate but previous one was not found.");
-            }
-            modelElementVariable = new ModelElementVariableGremlin();
-            modelElementVariable.delegate(gt.next());
-            modelElementVariable.graph(graph);
-        }
+    	} finally {
+            finishTraversal(g);
+        }    
         return modelElementVariable;
     }      
                   
@@ -166,13 +181,19 @@ public class ExecutionContextGremlin implements IExecutionContext, GremlinWrappe
     }
     
     @Override
-    public Graph graph() {
-        return graph;    
+    public void graphTraversalSource(GraphTraversalSource gts) {
+        this.gts = gts;
     }
-
-    @Override
-    public void graph(Graph graph) {
-        this.g = new GraphTraversalSource(graph);
-        this.graph = graph;
+    
+    private GraphTraversalSource startTraversal() {
+        return this.gts.clone();
+    }
+    
+    private void finishTraversal(GraphTraversalSource g) {
+        try {
+            g.close();
+        } catch (Exception e) {
+            // Fail silently?
+        }
     }
 }

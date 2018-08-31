@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,7 +20,8 @@ import java.util.NoSuchElementException;
 /** protected region PropertyTraceImports on begin **/
 /** protected region PropertyTraceImports end **/
 
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -48,13 +49,16 @@ public class PropertyTrace implements IPropertyTrace {
      * Instantiates a new PropertyTrace. The PropertyTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public PropertyTrace(String name, IModelElementTrace container) throws TraceModelDuplicateRelation {
+    public PropertyTrace(String name,
+                         IModelElementTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.name = name;
+        if (!container.properties().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+
         this.elementTrace = new PropertyTraceHasElementTrace(this);
 
-        if (!container.properties().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
+
     }
     
     @Override
@@ -64,7 +68,7 @@ public class PropertyTrace implements IPropertyTrace {
     
     
     @Override
-    public void setId(Object value) {
+    public void setId(java.lang.Object value) {
         this.id = value;
     }   
      

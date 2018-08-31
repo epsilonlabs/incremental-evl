@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTraceHasType;
@@ -29,11 +30,8 @@ import java.util.stream.StreamSupport;
 public class ModelElementTraceHasTypeGremlin extends Feature
         implements IModelElementTraceHasType, GremlinWrapper<Edge> {
     
-    /** A reference to the graph to use in iterations */
-    private Graph graph;
-    
     /** The graph traversal source for all navigations */
-    private GraphTraversalSource g;
+    private GraphTraversalSource gts;
     
     /** The source(s) of the reference */
     protected IModelElementTrace source;
@@ -47,29 +45,36 @@ public class ModelElementTraceHasTypeGremlin extends Feature
      *
      * @param source the source of the reference
      */
-    public ModelElementTraceHasTypeGremlin (IModelElementTrace source) {
+    public ModelElementTraceHasTypeGremlin (IModelElementTrace source, GraphTraversalSource gts) {
         super(true);
         this.source = source;
+        this.gts = gts;
     }
     
     // PUBLIC API
         
     @Override
     public IModelTypeTrace get() {
-        Vertex to = g.E(delegate).outV().next();
-        /*
-        ModelTypeTraceGremlin retVal = new ModelTypeTraceGremlin();
-        retVal.delegate(to);
-        retVal.graph(graph);
-        */
-        return (IModelTypeTrace) TraceFactory.createModuleElementTrace(to, graph);
+        if (delegate == null) {
+            return null;
+        }
+        GraphTraversalSource g = startTraversal();
+        IModelTypeTrace result = null;
+        try {
+            Vertex to = g.E(delegate).outV().next();
+            result = (IModelTypeTrace) TraceFactory.createModuleElementTrace(to, gts);
+        }
+        finally {
+            finishTraversal(g);
+        }
+        return result;
     }
     
 
     @Override
-    public boolean create(IModelTypeTrace target) {
+    public boolean create(IModelTypeTrace target) throws TraceModelConflictRelation {
         if (conflict(target)) {
-            return false;
+            throw new TraceModelConflictRelation("Relation to previous IModelTypeTrace exists");
         }
         set(target);
         return true;
@@ -87,7 +92,13 @@ public class ModelElementTraceHasTypeGremlin extends Feature
     @Override
     public boolean conflict(IModelTypeTrace target) {
         boolean result = false;
-        result |= g.E(delegate).outV().hasId(target.getId()).hasNext();
+        GraphTraversalSource g = startTraversal();
+        try {
+            result |= delegate == null ? g.V(source.getId()).out("type").hasNext() : g.E(delegate).outV().hasId(target.getId()).hasNext();
+        }
+        finally {
+            finishTraversal(g);
+        }
         return result;
     }
     
@@ -96,7 +107,18 @@ public class ModelElementTraceHasTypeGremlin extends Feature
     	if (target == null) {
 			return false;
 		}
-		return g.E(delegate).outV().id().next().equals(target.getId());
+        if (delegate == null) {
+            return false;
+        }
+        GraphTraversalSource g = startTraversal();
+        boolean result = false;
+        try {
+		  result = g.E(delegate).outV().hasId(target.getId()).hasNext();
+		}
+		finally {
+            finishTraversal(g);
+        }
+        return result;
 	}
 	
 	@Override
@@ -110,14 +132,8 @@ public class ModelElementTraceHasTypeGremlin extends Feature
     }
     
     @Override
-    public Graph graph() {
-        return graph;    
-    }
-
-    @Override
-    public void graph(Graph graph) {
-        this.g = new GraphTraversalSource(graph);
-        this.graph = graph;
+    public void graphTraversalSource(GraphTraversalSource gts) {
+        this.gts = gts;
     }
         
     
@@ -125,13 +141,40 @@ public class ModelElementTraceHasTypeGremlin extends Feature
     
     @Override
     public void set(IModelTypeTrace target) {
-        delegate = g.V(source.getId()).addE("modelTrace").to(g.V(target.getId())).next();
+        GraphTraversalSource g = startTraversal();
+        try {
+            delegate = g.V(source.getId()).addE("type").to(g.V(target.getId())).next();
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            finishTraversal(g);
+        }
+        
     }
     
     @Override
     public void remove(IModelTypeTrace target) {
-        g.E(delegate).drop();
-        delegate = null;
+        GraphTraversalSource g = startTraversal();
+        try {
+            g.E(delegate).drop();
+            delegate = null;
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            finishTraversal(g);
+        }
+    }
+    
+    private GraphTraversalSource startTraversal() {
+        return this.gts.clone();
+    }
+    
+    private void finishTraversal(GraphTraversalSource g) {
+        try {
+            g.close();
+        } catch (Exception e) {
+            // Fail silently?
+        }
     }
 
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,7 +21,8 @@ import java.util.NoSuchElementException;
 /** protected region EvlModuleTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -62,11 +63,13 @@ public class EvlModuleTrace implements IEvlModuleTrace {
      * Instantiates a new EvlModuleTrace. The EvlModuleTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public EvlModuleTrace(String uri) throws TraceModelDuplicateRelation {
+    public EvlModuleTrace(String uri) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.uri = uri;
+
         this.moduleElements = new ModuleExecutionTraceHasModuleElements(this);
         this.accesses = new ModuleExecutionTraceHasAccesses(this);
         this.models = new ModuleExecutionTraceHasModels(this);
+
 
     }
     
@@ -77,7 +80,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     
     
     @Override
-    public void setId(Object value) {
+    public void setId(java.lang.Object value) {
         this.id = value;
     }   
      
@@ -102,11 +105,11 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     }
 
     @Override
-    public IContextTrace getOrCreateContextTrace(String kind, int index) throws EolIncrementalExecutionException {
+    public IContextTrace getOrCreateContextTrace(String kind, Integer index) throws EolIncrementalExecutionException {
         IContextTrace contextTrace = null;
         try {
             contextTrace = new ContextTrace(kind, index, this);
-        } catch (TraceModelDuplicateRelation e) {
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
     	    if (contextTrace != null) {
@@ -142,7 +145,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
         IElementAccess elementAccess = null;
         try {
             elementAccess = new ElementAccess(executionTrace, element, this);
-        } catch (TraceModelDuplicateRelation e) {
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
     	    if (elementAccess != null) {
@@ -173,11 +176,11 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     }      
 
     @Override
-    public IAllInstancesAccess getOrCreateAllInstancesAccess(boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type) throws EolIncrementalExecutionException {
+    public IAllInstancesAccess getOrCreateAllInstancesAccess(Boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type) throws EolIncrementalExecutionException {
         IAllInstancesAccess allInstancesAccess = null;
         try {
             allInstancesAccess = new AllInstancesAccess(ofKind, executionTrace, type, this);
-        } catch (TraceModelDuplicateRelation e) {
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
     	    if (allInstancesAccess != null) {
@@ -213,7 +216,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
         IPropertyAccess propertyAccess = null;
         try {
             propertyAccess = new PropertyAccess(executionTrace, property, this);
-        } catch (TraceModelDuplicateRelation e) {
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
     	    if (propertyAccess != null) {
@@ -249,7 +252,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
         IModelAccess modelAccess = null;
         try {
             modelAccess = new ModelAccess(modelName, modelTrace, this);
-        } catch (TraceModelDuplicateRelation e) {
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
     	    if (modelAccess != null) {

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,7 +11,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.util;
 
-import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
@@ -25,68 +25,68 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
  */
 public class TraceFactory {
 
-    public static Object createModuleElementTrace(Element delegate, Graph graph) {
+    public static Object createModuleElementTrace(Element delegate, GraphTraversalSource gts) {
         String label = delegate.label();
         switch (label) {
   
         case "ModelAccess":
             ModelAccessGremlin modelAccess = new ModelAccessGremlin();
             modelAccess.delegate((Vertex) delegate);
-            modelAccess.graph(graph);
+            modelAccess.graphTraversalSource(gts);
             return modelAccess;
   
         case "ExecutionContext":
             ExecutionContextGremlin executionContext = new ExecutionContextGremlin();
             executionContext.delegate((Vertex) delegate);
-            executionContext.graph(graph);
+            executionContext.graphTraversalSource(gts);
             return executionContext;
   
         case "ModelElementVariable":
             ModelElementVariableGremlin modelElementVariable = new ModelElementVariableGremlin();
             modelElementVariable.delegate((Vertex) delegate);
-            modelElementVariable.graph(graph);
+            modelElementVariable.graphTraversalSource(gts);
             return modelElementVariable;
   
         case "ElementAccess":
             ElementAccessGremlin elementAccess = new ElementAccessGremlin();
             elementAccess.delegate((Vertex) delegate);
-            elementAccess.graph(graph);
+            elementAccess.graphTraversalSource(gts);
             return elementAccess;
   
         case "AllInstancesAccess":
             AllInstancesAccessGremlin allInstancesAccess = new AllInstancesAccessGremlin();
             allInstancesAccess.delegate((Vertex) delegate);
-            allInstancesAccess.graph(graph);
+            allInstancesAccess.graphTraversalSource(gts);
             return allInstancesAccess;
   
         case "PropertyAccess":
             PropertyAccessGremlin propertyAccess = new PropertyAccessGremlin();
             propertyAccess.delegate((Vertex) delegate);
-            propertyAccess.graph(graph);
+            propertyAccess.graphTraversalSource(gts);
             return propertyAccess;
   
         case "ModelTrace":
             ModelTraceGremlin modelTrace = new ModelTraceGremlin();
             modelTrace.delegate((Vertex) delegate);
-            modelTrace.graph(graph);
+            modelTrace.graphTraversalSource(gts);
             return modelTrace;
   
         case "ModelTypeTrace":
             ModelTypeTraceGremlin modelTypeTrace = new ModelTypeTraceGremlin();
             modelTypeTrace.delegate((Vertex) delegate);
-            modelTypeTrace.graph(graph);
+            modelTypeTrace.graphTraversalSource(gts);
             return modelTypeTrace;
   
         case "ModelElementTrace":
             ModelElementTraceGremlin modelElementTrace = new ModelElementTraceGremlin();
             modelElementTrace.delegate((Vertex) delegate);
-            modelElementTrace.graph(graph);
+            modelElementTrace.graphTraversalSource(gts);
             return modelElementTrace;
   
         case "PropertyTrace":
             PropertyTraceGremlin propertyTrace = new PropertyTraceGremlin();
             propertyTrace.delegate((Vertex) delegate);
-            propertyTrace.graph(graph);
+            propertyTrace.graphTraversalSource(gts);
             return propertyTrace;
         
         }

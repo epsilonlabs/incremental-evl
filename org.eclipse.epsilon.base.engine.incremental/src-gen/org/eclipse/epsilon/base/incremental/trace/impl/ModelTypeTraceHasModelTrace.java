@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTraceHasModelTrace;
@@ -50,14 +51,14 @@ public class ModelTypeTraceHasModelTrace extends Feature implements IModelTypeTr
     
 
     @Override
-    public boolean create(IModelTrace target) {
+    public boolean create(IModelTrace target) throws TraceModelConflictRelation {
         if (conflict(target)) {
-            return false;
+            throw new TraceModelConflictRelation("Relation to previous IModelTrace exists");
         }
-        target.types().set(source);
         if (related(target)) {
             return false;
         }
+        target.types().set(source);
         set(target);
         return true;
     }

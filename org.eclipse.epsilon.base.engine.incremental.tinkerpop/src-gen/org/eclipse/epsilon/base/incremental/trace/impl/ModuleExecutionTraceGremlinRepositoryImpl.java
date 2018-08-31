@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,8 +11,6 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import java.util.LinkedHashSet;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
@@ -36,22 +34,27 @@ public abstract class ModuleExecutionTraceGremlinRepositoryImpl<E extends IModul
 
     private static final Logger logger = LoggerFactory.getLogger(ModuleExecutionTraceGremlinRepositoryImpl.class);
  
-    protected Graph extent;    
+    protected GraphTraversalSource gts; 
     
     public ModuleExecutionTraceGremlinRepositoryImpl() {
     }
 
-
-    public void injectGraph(Module tinkerpopGuiceModule) {
-        Injector injector = Guice.createInjector(tinkerpopGuiceModule);
-        Graph g = injector.getInstance(Graph.class);
-        this.extent = g;
-    }
-    
+ 
     
     /** protected region IModuleExecutionTraceRepositry on begin **/
-    // Specialised search methods
-
+    public void setGraphTraversalSource(final GraphTraversalSource gts) {
+    	this.gts = gts;
+    }
+    
+	@Override
+	public void dispose() {
+		try {
+			gts.close();
+		} catch (Exception e) {
+			logger.warn("Error closing GraphTraversalSource",  e);
+		}
+	}
+    
     /** protected region IModuleExecutionTraceRepositry end **/
 
 }

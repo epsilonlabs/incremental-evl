@@ -44,15 +44,12 @@ operation EClass getRequiredImports(basePackage:String, interPrefix:String, inte
 
 operation EClass getRequiredImports(basePackage:String, interPrefix:String, interSufix:String,
                                     classPrefix:String, classSufix:String, isImpl:Boolean,
-                                    flatten:Boolean) : Sequence {
-                                    
-                                    
+                                    flatten:Boolean) : Sequence {           
     var imports : Set;
     imports.add("org.eclipse.epsilon.base.incremental.trace.*");
     imports.add("org.eclipse.epsilon.base.incremental.trace.impl.*");
     imports.add("org.eclipse.epsilon." + ec.getEPackage().name + ".incremental.trace.*");
     imports.add("org.eclipse.epsilon." + ec.getEPackage().name + ".incremental.trace.impl.*");
-    
     /*
     var eas;
     var ers;
@@ -231,6 +228,15 @@ operation isJavaPrimitiveType(ecorePrimitive : String) : Boolean {
 @cached
 operation getEcorePrimitives() {
     return Sequence {"EJavaObject", "AnyURI", "Byte", "Short", "Int", "Long", "Float", "Double", "Character", "Boolean"};
+}
+
+@cached
+operation getJavaPrimitive(instanceClassName : String) : String {
+    switch(instanceClassName) {
+        case "int": return "Integer";
+        case "boolean": return "Boolean";
+        default: return instanceClassName.split("\\.").last();
+    }
 }
 
 /**

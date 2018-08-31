@@ -13,7 +13,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepositor
  * @author Horacio Hoyos Rodriguez
  *
  */
-public abstract class AbstractEolExecutionTraceManager<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<T>, F extends IBaseFactory>
+public abstract class AbstractExecutionTraceManager<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<T>, F extends IBaseFactory>
 		implements IExecutionTraceManager<T, R, F> {
 
 	/** A flag to signal parallel persistence */
@@ -38,7 +38,7 @@ public abstract class AbstractEolExecutionTraceManager<T extends IModuleExecutio
 
 	protected final IModelTraceRepository modelTraceRepository;
 
-	protected AbstractEolExecutionTraceManager(R executionTraceRepository, IModelTraceRepository modelTraceRepository) {
+	protected AbstractExecutionTraceManager(R executionTraceRepository, IModelTraceRepository modelTraceRepository) {
 		this.lastFlush = LocalDate.now();
 		this.executionTraceRepository = executionTraceRepository;
 		this.modelTraceRepository = modelTraceRepository;

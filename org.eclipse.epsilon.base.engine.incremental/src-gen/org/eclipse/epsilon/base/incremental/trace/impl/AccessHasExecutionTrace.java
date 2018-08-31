@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IAccessHasExecutionTrace;
@@ -50,14 +51,14 @@ public class AccessHasExecutionTrace extends Feature implements IAccessHasExecut
     
 
     @Override
-    public boolean create(IModuleElementTrace target) {
+    public boolean create(IModuleElementTrace target) throws TraceModelConflictRelation {
         if (conflict(target)) {
-            return false;
+            throw new TraceModelConflictRelation("Relation to previous IModuleElementTrace exists");
         }
-        target.accesses().set(source);
         if (related(target)) {
             return false;
         }
+        target.accesses().set(source);
         set(target);
         return true;
     }

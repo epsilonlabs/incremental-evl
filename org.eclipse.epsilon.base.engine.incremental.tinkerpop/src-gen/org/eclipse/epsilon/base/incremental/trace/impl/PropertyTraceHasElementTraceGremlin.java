@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTraceHasElementTrace;
@@ -29,11 +30,8 @@ import java.util.stream.StreamSupport;
 public class PropertyTraceHasElementTraceGremlin extends Feature
         implements IPropertyTraceHasElementTrace, GremlinWrapper<Edge> {
     
-    /** A reference to the graph to use in iterations */
-    private Graph graph;
-    
     /** The graph traversal source for all navigations */
-    private GraphTraversalSource g;
+    private GraphTraversalSource gts;
     
     /** The source(s) of the reference */
     protected IPropertyTrace source;
@@ -47,34 +45,41 @@ public class PropertyTraceHasElementTraceGremlin extends Feature
      *
      * @param source the source of the reference
      */
-    public PropertyTraceHasElementTraceGremlin (IPropertyTrace source) {
+    public PropertyTraceHasElementTraceGremlin (IPropertyTrace source, GraphTraversalSource gts) {
         super(true);
         this.source = source;
+        this.gts = gts;
     }
     
     // PUBLIC API
         
     @Override
     public IModelElementTrace get() {
-        Vertex to = g.E(delegate).outV().next();
-        /*
-        ModelElementTraceGremlin retVal = new ModelElementTraceGremlin();
-        retVal.delegate(to);
-        retVal.graph(graph);
-        */
-        return (IModelElementTrace) TraceFactory.createModuleElementTrace(to, graph);
+        if (delegate == null) {
+            return null;
+        }
+        GraphTraversalSource g = startTraversal();
+        IModelElementTrace result = null;
+        try {
+            Vertex to = g.E(delegate).outV().next();
+            result = (IModelElementTrace) TraceFactory.createModuleElementTrace(to, gts);
+        }
+        finally {
+            finishTraversal(g);
+        }
+        return result;
     }
     
 
     @Override
-    public boolean create(IModelElementTrace target) {
+    public boolean create(IModelElementTrace target) throws TraceModelConflictRelation {
         if (conflict(target)) {
-            return false;
+            throw new TraceModelConflictRelation("Relation to previous IModelElementTrace exists");
         }
-        target.properties().set(source);
         if (related(target)) {
             return false;
         }
+        target.properties().set(source);
         set(target);
         return true;
     }
@@ -92,11 +97,17 @@ public class PropertyTraceHasElementTraceGremlin extends Feature
     @Override
     public boolean conflict(IModelElementTrace target) {
         boolean result = false;
-        result |= g.E(delegate).outV().hasId(target.getId()).hasNext();
-		Iterable<IPropertyTrace> iterable = () -> target.properties().get();
-		Stream<IPropertyTrace> targetStream = StreamSupport.stream(iterable.spliterator(), false);
-        result |= target.properties().isUnique() &&
-        	targetStream.anyMatch(source::equals);
+        GraphTraversalSource g = startTraversal();
+        try {
+            result |= delegate == null ? g.V(source.getId()).out("elementTrace").hasNext() : g.E(delegate).outV().hasId(target.getId()).hasNext();
+            Iterable<IPropertyTrace> iterable = () -> target.properties().get();
+            Stream<IPropertyTrace> targetStream = StreamSupport.stream(iterable.spliterator(), false);
+            result |= delegate == null ? false : target.properties().isUnique() &&
+        	    targetStream.anyMatch(source::equals);
+        }
+        finally {
+            finishTraversal(g);
+        }
         return result;
     }
     
@@ -105,10 +116,20 @@ public class PropertyTraceHasElementTraceGremlin extends Feature
     	if (target == null) {
 			return false;
 		}
-        
+        if (delegate == null) {
+            return false;
+        }
 		Iterable<IPropertyTrace> iterable = () -> target.properties().get();
 		Stream<IPropertyTrace> targetStream = StreamSupport.stream(iterable.spliterator(), false);
-		return g.E(delegate).outV().id().next().equals(target.getId()) && targetStream.anyMatch(source::equals);
+        GraphTraversalSource g = startTraversal();
+        boolean result = false;
+        try {
+		  result = g.E(delegate).outV().hasId(target.getId()).hasNext() && targetStream.anyMatch(source::equals);
+		}
+		finally {
+            finishTraversal(g);
+        }
+        return result;
 	}
 	
 	@Override
@@ -122,14 +143,8 @@ public class PropertyTraceHasElementTraceGremlin extends Feature
     }
     
     @Override
-    public Graph graph() {
-        return graph;    
-    }
-
-    @Override
-    public void graph(Graph graph) {
-        this.g = new GraphTraversalSource(graph);
-        this.graph = graph;
+    public void graphTraversalSource(GraphTraversalSource gts) {
+        this.gts = gts;
     }
         
     
@@ -137,13 +152,40 @@ public class PropertyTraceHasElementTraceGremlin extends Feature
     
     @Override
     public void set(IModelElementTrace target) {
-        delegate = g.V(source.getId()).addE("modelTrace").to(g.V(target.getId())).next();
+        GraphTraversalSource g = startTraversal();
+        try {
+            delegate = g.V(source.getId()).addE("elementTrace").to(g.V(target.getId())).next();
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            finishTraversal(g);
+        }
+        
     }
     
     @Override
     public void remove(IModelElementTrace target) {
-        g.E(delegate).drop();
-        delegate = null;
+        GraphTraversalSource g = startTraversal();
+        try {
+            g.E(delegate).drop();
+            delegate = null;
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            finishTraversal(g);
+        }
+    }
+    
+    private GraphTraversalSource startTraversal() {
+        return this.gts.clone();
+    }
+    
+    private void finishTraversal(GraphTraversalSource g) {
+        try {
+            g.close();
+        } catch (Exception e) {
+            // Fail silently?
+        }
     }
 
 }

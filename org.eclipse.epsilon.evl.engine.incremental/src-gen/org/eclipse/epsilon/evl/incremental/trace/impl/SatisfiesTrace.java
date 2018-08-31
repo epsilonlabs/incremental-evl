@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,7 +20,8 @@ import java.util.NoSuchElementException;
 /** protected region SatisfiesTraceImports on begin **/
 /** protected region SatisfiesTraceImports end **/
 
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -39,7 +40,7 @@ public class SatisfiesTrace implements ISatisfiesTrace {
     /**
 	 * The all.
 	 */
-    private boolean all;
+    private Boolean all;
 
     /**
      * * The different accesses that where recorded during execution for this particular 
@@ -66,15 +67,17 @@ public class SatisfiesTrace implements ISatisfiesTrace {
      * Instantiates a new SatisfiesTrace. The SatisfiesTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public SatisfiesTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
+    public SatisfiesTrace(IInvariantTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        if (!container.satisfies().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+
         this.invariant = new SatisfiesTraceHasInvariant(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
         this.parentTrace = new InContextModuleElementTraceHasParentTrace(this);
         this.satisfiedInvariants = new SatisfiesTraceHasSatisfiedInvariants(this);
 
-        if (!container.satisfies().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
+
     }
     
     @Override
@@ -84,12 +87,12 @@ public class SatisfiesTrace implements ISatisfiesTrace {
     
     
     @Override
-    public void setId(Object value) {
+    public void setId(java.lang.Object value) {
         this.id = value;
     }   
      
     @Override
-    public boolean getAll() {
+    public Boolean getAll() {
         return all;
     }
     

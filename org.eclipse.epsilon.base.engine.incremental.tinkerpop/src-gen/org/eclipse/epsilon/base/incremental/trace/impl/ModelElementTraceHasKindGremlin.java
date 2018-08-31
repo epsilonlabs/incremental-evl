@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTraceHasKind;
@@ -29,11 +30,8 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 public class ModelElementTraceHasKindGremlin extends Feature
         implements IModelElementTraceHasKind, GremlinWrapper<Edge> {
     
-    /** A reference to the graph to use in iterations */
-    private Graph graph;
-    
     /** The graph traversal source for all navigations */
-    private GraphTraversalSource g;
+    private GraphTraversalSource gts;
     
     /** The source(s) of the reference */
     protected IModelElementTrace source;
@@ -45,30 +43,39 @@ public class ModelElementTraceHasKindGremlin extends Feature
      *
      * @param source the source of the reference
      */
-    public ModelElementTraceHasKindGremlin (IModelElementTrace source) {
+    public ModelElementTraceHasKindGremlin (IModelElementTrace source, GraphTraversalSource gts) {
         super(true);
         this.source = source;
+        this.gts = gts;
     }
     
     // PUBLIC API
         
     @Override
     public Iterator<IModelTypeTrace> get() {
-        return new GremlinUtils.IncrementalFactoryIterator<IModelTypeTrace, Vertex>(getRaw(), graph);
+        return new GremlinUtils.IncrementalFactoryIterator<IModelTypeTrace, Vertex>(getRaw(), gts);
     }
     
     /**
      * Get the Tinkerpop GraphTraversal iterator of the vertices that are part of the relation.
      */
     public  GraphTraversal<Vertex, Vertex> getRaw() {
-        return g.V(source.getId()).outE("moduleElements").toV(Direction.OUT);
+        GraphTraversalSource g = startTraversal();
+        GraphTraversal<Vertex, Vertex> result = null;
+        try {
+            result = g.V(source.getId()).outE("kind").toV(Direction.OUT);
+        }
+        finally {
+            finishTraversal(g);
+        }
+        return result;
     }
     
 
     @Override
-    public boolean create(IModelTypeTrace target) {
+    public boolean create(IModelTypeTrace target) throws TraceModelConflictRelation {
         if (conflict(target)) {
-            return false;
+            throw new TraceModelConflictRelation("Relation to previous IModelTypeTrace exists");
         }
         set(target);
         return true;
@@ -86,8 +93,17 @@ public class ModelElementTraceHasKindGremlin extends Feature
     @Override
     public boolean conflict(IModelTypeTrace target) {
         boolean result = false;
-        if (isUnique) {
-            result |= g.V(source.getId()).out("kind").hasId(target.getId()).hasNext();
+        GraphTraversalSource g = startTraversal();
+        try {
+	        // FIXME We can just remove this during generation?
+	        if (isUnique()) {
+	            result |= g.V(source.getId()).out("kind")
+                    .has("name", target.getName())
+                    .hasNext();
+            }
+        }
+        finally {
+            finishTraversal(g);
         }
         return result;
     }
@@ -97,7 +113,15 @@ public class ModelElementTraceHasKindGremlin extends Feature
     	if (target == null) {
 			return false;
 		}
-		return g.V(source.getId()).out("kind").hasId(target.getId()).hasNext();
+        GraphTraversalSource g = startTraversal();
+        boolean result = false;
+        try {
+		  result = g.V(source.getId()).out("kind").hasId(target.getId()).hasNext();
+		}
+		finally {
+            finishTraversal(g);
+        }
+        return result;
 	}
 	
 	@Override
@@ -110,14 +134,8 @@ public class ModelElementTraceHasKindGremlin extends Feature
     }
     
     @Override
-    public Graph graph() {
-        return graph;    
-    }
-
-    @Override
-    public void graph(Graph graph) {
-        this.g = new GraphTraversalSource(graph);
-        this.graph = graph;
+    public void graphTraversalSource(GraphTraversalSource gts) {
+        this.gts = gts;
     }
         
     
@@ -125,12 +143,39 @@ public class ModelElementTraceHasKindGremlin extends Feature
     
     @Override
     public void set(IModelTypeTrace target) {
-        g.V(source.getId()).addE("elements").to(g.V(target.getId())).iterate();
+        GraphTraversalSource g = startTraversal();
+        try {
+            g.V(source.getId()).addE("kind").to(g.V(target.getId())).iterate();
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            finishTraversal(g);
+        }
+        
     }
     
     @Override
     public void remove(IModelTypeTrace target) {
-        g.V(source.getId()).outE("elements").as("e").inV().hasId(target.getId()).select("e").drop().iterate();
+        GraphTraversalSource g = startTraversal();
+        try {
+            g.V(source.getId()).outE("kind").as("e").inV().hasId(target.getId()).select("e").drop().iterate();
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            finishTraversal(g);
+        }
+    }
+    
+    private GraphTraversalSource startTraversal() {
+        return this.gts.clone();
+    }
+    
+    private void finishTraversal(GraphTraversalSource g) {
+        try {
+            g.close();
+        } catch (Exception e) {
+            // Fail silently?
+        }
     }
 
 }

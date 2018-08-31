@@ -1,30 +1,31 @@
-/*******************************************************************************
-* This file was automatically generated on: 2018-08-23.
-* Only modify protected regions indicated by "/** **&#47;"
-*
-* Copyright (c) 2017 The University of York.
-* All rights reserved. This program and the accompanying materials
-* are made available under the terms of the Eclipse Public License v1.0
-* which accompanies this distribution, and is available at
-* http://www.eclipse.org/legal/epl-v10.html
-* 
-******************************************************************************/
+ /*******************************************************************************
+ * This file was automatically generated on: 2018-08-31.
+ * Only modify protected regions indicated by "/** **&#47;"
+ *
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
 import java.util.Set;
 
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
+/** protected region IEvlModuleTraceRepositoryImports on begin **/
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
-
 /** protected region IEvlModuleTraceRepositoryImports end **/
 
 public interface IEvlModuleTraceRepository extends IModuleExecutionTraceRepository<IEvlModuleTrace> {
 
-	IEvlModuleTrace getEvlModuleTraceByIdentity(String uri);
 
-	/** protected region IEvlModuleTraceRepositry on begin **/
+    IEvlModuleTrace getEvlModuleTraceByIdentity(String uri);
+
+/** protected region IEvlModuleTraceRepositry on begin **/
 	/**
 	 * Find all ExecutionTraces related to the property of the given element
 	 * 
@@ -34,7 +35,7 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 	 * @param propertyName
 	 * @return
 	 */
-	Set<IModuleElementTrace> findPropertyAccessExecutionTraces(String moduleUri, String modelUri, String elementId,
+	Set<IModuleElementTrace> findPropertyAccessExecutionTraces(String moduleUri, String modelUri, String elementUri,
 			String propertyName);
 
 	Set<IModuleElementTrace> findAllInstancesExecutionTraces(String moduleSource, String typeName);
@@ -70,6 +71,8 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 	Set<IModuleElementTrace> findAllExecutionTraces(String moduleUri, String elementUri, String modelUri);
 
 	IModelElementTrace getModelElementTraceFromModel(String elementUri, IModelTrace modelTrace);
+
+	IInvariantTrace findInvariantTraceinContext(IContextTrace contextTrace, String invariantName);
 
 	/** protected region IEvlModuleTraceRepositry end **/
 

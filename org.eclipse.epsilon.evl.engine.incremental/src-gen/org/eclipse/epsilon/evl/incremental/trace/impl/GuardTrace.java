@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,7 +20,8 @@ import java.util.NoSuchElementException;
 /** protected region GuardTraceImports on begin **/
 /** protected region GuardTraceImports end **/
 
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -39,7 +40,7 @@ public class GuardTrace implements IGuardTrace {
     /**
 	 * The result.
 	 */
-    private boolean result;
+    private Boolean result;
 
     /**
      * * The different accesses that where recorded during execution for this particular 
@@ -61,14 +62,16 @@ public class GuardTrace implements IGuardTrace {
      * Instantiates a new GuardTrace. The GuardTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public GuardTrace(IGuardedElementTrace container) throws TraceModelDuplicateRelation {
+    public GuardTrace(IGuardedElementTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        if (!container.guard().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+
         this.limits = new GuardTraceHasLimits(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
         this.parentTrace = new InContextModuleElementTraceHasParentTrace(this);
 
-        if (!container.guard().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
+
     }
     
     @Override
@@ -78,12 +81,12 @@ public class GuardTrace implements IGuardTrace {
     
     
     @Override
-    public void setId(Object value) {
+    public void setId(java.lang.Object value) {
         this.id = value;
     }   
      
     @Override
-    public boolean getResult() {
+    public Boolean getResult() {
         return result;
     }
     

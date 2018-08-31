@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,7 +20,8 @@ import java.util.NoSuchElementException;
 /** protected region MessageTraceImports on begin **/
 /** protected region MessageTraceImports end **/
 
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -56,14 +57,16 @@ public class MessageTrace implements IMessageTrace {
      * Instantiates a new MessageTrace. The MessageTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public MessageTrace(IInvariantTrace container) throws TraceModelDuplicateRelation {
+    public MessageTrace(IInvariantTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        if (!container.message().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+
         this.invariant = new MessageTraceHasInvariant(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
         this.parentTrace = new InContextModuleElementTraceHasParentTrace(this);
 
-        if (!container.message().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
+
     }
     
     @Override
@@ -73,7 +76,7 @@ public class MessageTrace implements IMessageTrace {
     
     
     @Override
-    public void setId(Object value) {
+    public void setId(java.lang.Object value) {
         this.id = value;
     }   
      

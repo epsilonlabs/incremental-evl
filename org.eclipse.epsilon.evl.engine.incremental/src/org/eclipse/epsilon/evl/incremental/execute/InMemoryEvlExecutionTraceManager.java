@@ -1,6 +1,6 @@
 package org.eclipse.epsilon.evl.incremental.execute;
 
-import org.eclipse.epsilon.base.incremental.execute.AbstractEolExecutionTraceManager;
+import org.eclipse.epsilon.base.incremental.execute.AbstractExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.evl.incremental.EvlTraceFactory;
 import org.eclipse.epsilon.evl.incremental.IEvlTraceFactory;
@@ -15,14 +15,14 @@ import com.google.inject.Inject;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class BasicEvlExecutionTraceManager
-		extends AbstractEolExecutionTraceManager<IEvlModuleTrace, IEvlModuleTraceRepository, IEvlTraceFactory>
+public class InMemoryEvlExecutionTraceManager
+		extends AbstractExecutionTraceManager<IEvlModuleTrace, IEvlModuleTraceRepository, IEvlTraceFactory>
 		implements IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory> {
 
 	private final EvlTraceFactory evlTraceFactory;
 
 	@Inject
-	public BasicEvlExecutionTraceManager(IEvlModuleTraceRepository executionTraceRepository,
+	public InMemoryEvlExecutionTraceManager(IEvlModuleTraceRepository executionTraceRepository,
 			IModelTraceRepository modelTraceRepository,
 			EvlTraceFactory evlTraceFactory) {
 		super(executionTraceRepository, modelTraceRepository);

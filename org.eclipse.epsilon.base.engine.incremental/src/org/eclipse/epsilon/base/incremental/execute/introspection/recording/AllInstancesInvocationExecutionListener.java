@@ -8,7 +8,8 @@ import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
@@ -158,7 +159,7 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 				try {
 					modelTrace = new ModelTrace(incrementalModel.getModelUri());
 					modelTraceRepository.add(modelTrace);
-				} catch (TraceModelDuplicateRelation e) {
+				} catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
 					throw new EolIncrementalExecutionException(String.format(
 							"A modelTrace was not found for "
 									+ "the model wiht uri %s but there was an error craeting it.",
@@ -168,7 +169,11 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 			typeTrace = modelTrace.getOrCreateModelTypeTrace(typeName);
 		}
 		IAllInstancesAccess allIns = moduleExecutionTrace.getOrCreateAllInstancesAccess(ofKind, executionTrace, typeTrace);
-		executionTrace.accesses().create(allIns);
+		try {
+			executionTrace.accesses().create(allIns);
+		} catch (TraceModelConflictRelation e) {
+			logger.warn("There was an error adding the access to the trace", e);
+		}
 	}
 
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -33,7 +33,7 @@ public interface ISatisfiesTrace extends IInContextModuleElementTrace {
      * <!-- protected region all-getter-doc end --> 
      * @return the value of the '<em>all</em>' attribute.
      */
-    boolean getAll();
+    Boolean getAll();
 
     /**
      * Sets the value of the '{@link SatisfiesTrace#all <em>all</em>}' attribute.

@@ -77,7 +77,7 @@ public abstract class AbstractModule implements IIncrementalModule {
 	}
 
 	@Override
-	public ModuleElement getOrCreateAst(AST cst, ModuleElement parentAst) {
+	public ModuleElement createAst(AST cst, ModuleElement parentAst) {
 		// TODO Implement IModule.createAst
 		throw new UnsupportedOperationException("Unimplemented Method    IModule.createAst invoked.");
 	}

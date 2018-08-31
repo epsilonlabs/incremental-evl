@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceHasAccesses;
@@ -29,11 +30,8 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 public class ModuleExecutionTraceHasAccessesGremlin extends Feature
         implements IModuleExecutionTraceHasAccesses, GremlinWrapper<Edge> {
     
-    /** A reference to the graph to use in iterations */
-    private Graph graph;
-    
     /** The graph traversal source for all navigations */
-    private GraphTraversalSource g;
+    private GraphTraversalSource gts;
     
     /** The source(s) of the reference */
     protected IModuleExecutionTrace source;
@@ -45,30 +43,39 @@ public class ModuleExecutionTraceHasAccessesGremlin extends Feature
      *
      * @param source the source of the reference
      */
-    public ModuleExecutionTraceHasAccessesGremlin (IModuleExecutionTrace source) {
-        super(true);
+    public ModuleExecutionTraceHasAccessesGremlin (IModuleExecutionTrace source, GraphTraversalSource gts) {
+        super(false);
         this.source = source;
+        this.gts = gts;
     }
     
     // PUBLIC API
         
     @Override
     public Iterator<IAccess> get() {
-        return new GremlinUtils.IncrementalFactoryIterator<IAccess, Vertex>(getRaw(), graph);
+        return new GremlinUtils.IncrementalFactoryIterator<IAccess, Vertex>(getRaw(), gts);
     }
     
     /**
      * Get the Tinkerpop GraphTraversal iterator of the vertices that are part of the relation.
      */
     public  GraphTraversal<Vertex, Vertex> getRaw() {
-        return g.V(source.getId()).outE("moduleElements").toV(Direction.OUT);
+        GraphTraversalSource g = startTraversal();
+        GraphTraversal<Vertex, Vertex> result = null;
+        try {
+            result = g.V(source.getId()).outE("accesses").toV(Direction.OUT);
+        }
+        finally {
+            finishTraversal(g);
+        }
+        return result;
     }
     
 
     @Override
-    public boolean create(IAccess target) {
+    public boolean create(IAccess target) throws TraceModelConflictRelation {
         if (conflict(target)) {
-            return false;
+            throw new TraceModelConflictRelation("Relation to previous IAccess exists");
         }
         set(target);
         return true;
@@ -86,8 +93,16 @@ public class ModuleExecutionTraceHasAccessesGremlin extends Feature
     @Override
     public boolean conflict(IAccess target) {
         boolean result = false;
-        if (isUnique) {
-            result |= g.V(source.getId()).out("accesses").hasId(target.getId()).hasNext();
+        GraphTraversalSource g = startTraversal();
+        try {
+	        // FIXME We can just remove this during generation?
+	        if (isUnique()) {
+	            result |= g.V(source.getId()).out("accesses")
+                    .hasNext();
+            }
+        }
+        finally {
+            finishTraversal(g);
         }
         return result;
     }
@@ -97,7 +112,15 @@ public class ModuleExecutionTraceHasAccessesGremlin extends Feature
     	if (target == null) {
 			return false;
 		}
-		return g.V(source.getId()).out("accesses").hasId(target.getId()).hasNext();
+        GraphTraversalSource g = startTraversal();
+        boolean result = false;
+        try {
+		  result = g.V(source.getId()).out("accesses").hasId(target.getId()).hasNext();
+		}
+		finally {
+            finishTraversal(g);
+        }
+        return result;
 	}
 	
 	@Override
@@ -110,14 +133,8 @@ public class ModuleExecutionTraceHasAccessesGremlin extends Feature
     }
     
     @Override
-    public Graph graph() {
-        return graph;    
-    }
-
-    @Override
-    public void graph(Graph graph) {
-        this.g = new GraphTraversalSource(graph);
-        this.graph = graph;
+    public void graphTraversalSource(GraphTraversalSource gts) {
+        this.gts = gts;
     }
         
     
@@ -125,12 +142,39 @@ public class ModuleExecutionTraceHasAccessesGremlin extends Feature
     
     @Override
     public void set(IAccess target) {
-        g.V(source.getId()).addE("elements").to(g.V(target.getId())).iterate();
+        GraphTraversalSource g = startTraversal();
+        try {
+            g.V(source.getId()).addE("accesses").to(g.V(target.getId())).iterate();
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            finishTraversal(g);
+        }
+        
     }
     
     @Override
     public void remove(IAccess target) {
-        g.V(source.getId()).outE("elements").as("e").inV().hasId(target.getId()).select("e").drop().iterate();
+        GraphTraversalSource g = startTraversal();
+        try {
+            g.V(source.getId()).outE("accesses").as("e").inV().hasId(target.getId()).select("e").drop().iterate();
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            finishTraversal(g);
+        }
+    }
+    
+    private GraphTraversalSource startTraversal() {
+        return this.gts.clone();
+    }
+    
+    private void finishTraversal(GraphTraversalSource g) {
+        try {
+            g.close();
+        } catch (Exception e) {
+            // Fail silently?
+        }
     }
 
 }

@@ -57,7 +57,7 @@ public [%if(ec.isAbstract){%]abstract [%}%]class [%=name%][%if(extends.isDefined
     private static final Logger logger = LoggerFactory.getLogger([%=ec.getJavaClassName(classPrefix, classSufix)%]RepositoryImpl.class);
  
 [%if(not extends.isDefined()){%]
-    protected Graph extent;    
+    protected GraphTraversalSource gts; 
 [%}%]
     
     public [%=ec.getJavaClassName(classPrefix, classSufix)%]RepositoryImpl() {
@@ -68,7 +68,9 @@ public [%if(ec.isAbstract){%]abstract [%}%]class [%=name%][%if(extends.isDefined
     public boolean add([%=extendGeneric%] item) {
         logger.info("Adding {} to repository", item);
         [%=ec.getJavaClassName(classPrefix, classSufix)%] impl = ([%=ec.getJavaClassName(classPrefix, classSufix)%])item;
-        Vertex a = ((DetachedVertex)impl.delegate()).attach(Attachable.Method.getOrCreate(extent));
+        Vertex a = ((DetachedVertex)impl.delegate()).attach(Attachable.Method.getOrCreate(gts.getGraph()));
+        impl.delegate(a);
+        impl.graphTraversalSource(gts);
         return a.graph() != null;
     }
 
@@ -79,30 +81,39 @@ public [%if(ec.isAbstract){%]abstract [%}%]class [%=name%][%if(extends.isDefined
         v.remove();
         return v.graph() == null;
     }
+    
+    @Override
+    public void dispose() {    
+[%  if(extends.isDefined()){%]
+        super.dispose();
+[%  } else {%]
+        try {
+            gts.close();
+        } catch (Exception e) {
+            logger.warn("Error closing GraphTraversalSource",  e);
+        }
+[%  }%]
+    } 
   
     @Override
     public [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] get(Object id) {
-        
         logger.debug("Get [%=ec.name%] with id:{}", id);
         [%=ec.getJavaClassName(classPrefix, classSufix)%] result = null;
-        GraphTraversalSource g = new GraphTraversalSource(extent);
+        GraphTraversalSource g = gts.clone();
         Vertex v = g.V(id).next();
         if (v != null) {
             result = new [%=ec.getJavaClassName(classPrefix, classSufix)%]();
             result.delegate(v);
-            result.graph(extent);
+            result.graphTraversalSource(gts);
+        }
+        try {
+            g.close();
+        } catch (Exception e) {
+            logger.error("Error closing GraphTraversalSource", e);
         }
         return result;
     }
-[%}%]
-
-[%if(not extends.isDefined()){%]
-    public void injectGraph(Module tinkerpopGuiceModule) {
-        Injector injector = Guice.createInjector(tinkerpopGuiceModule);
-        Graph g = injector.getInstance(Graph.class);
-        this.extent = g;
-    }
-[%}%]    
+[%}%] 
     
     [%=out.startPreserve("/**", "**/", ec.getJavaClassName(interPrefix, interSufix) + "Repositry", true)%]
     // Specialised search methods

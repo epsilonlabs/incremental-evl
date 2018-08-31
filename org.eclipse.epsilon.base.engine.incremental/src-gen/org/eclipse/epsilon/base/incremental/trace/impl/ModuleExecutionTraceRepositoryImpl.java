@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -45,6 +45,12 @@ public abstract class ModuleExecutionTraceRepositoryImpl<E extends IModuleExecut
         logger.info("Removing {} from repository", item);
         return extent.remove(item);
     }
+    
+    @Override
+    public void dispose() {
+        this.extent.clear();
+    }
+    
     
     /** protected region IModuleExecutionTraceRepositry on begin **/
 	// Specialised search methods

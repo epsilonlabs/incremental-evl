@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,7 +21,8 @@ import java.util.NoSuchElementException;
 /** protected region ModelTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -54,10 +55,12 @@ public class ModelTrace implements IModelTrace {
      * Instantiates a new ModelTrace. The ModelTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ModelTrace(String uri) throws TraceModelDuplicateRelation {
+    public ModelTrace(String uri) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.uri = uri;
+
         this.elements = new ModelTraceHasElements(this);
         this.types = new ModelTraceHasTypes(this);
+
 
     }
     
@@ -68,7 +71,7 @@ public class ModelTrace implements IModelTrace {
     
     
     @Override
-    public void setId(Object value) {
+    public void setId(java.lang.Object value) {
         this.id = value;
     }   
      
@@ -94,7 +97,7 @@ public class ModelTrace implements IModelTrace {
             modelElementTrace = new ModelElementTrace(uri, type, this);
             
             this.elements().create(modelElementTrace);
-        } catch (TraceModelDuplicateRelation e) {
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
     	    if (modelElementTrace != null) {
@@ -125,7 +128,7 @@ public class ModelTrace implements IModelTrace {
             modelTypeTrace = new ModelTypeTrace(name, this);
             
             this.types().create(modelTypeTrace);
-        } catch (TraceModelDuplicateRelation e) {
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
     	    if (modelTypeTrace != null) {

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,7 +21,8 @@ import java.util.NoSuchElementException;
 /** protected region ModelElementTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -64,19 +65,23 @@ public class ModelElementTrace implements IModelElementTrace {
      * Instantiates a new ModelElementTrace. The ModelElementTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ModelElementTrace(String uri, IModelTypeTrace type, IModelTrace container) throws TraceModelDuplicateRelation {
+    public ModelElementTrace(String uri,
+                             IModelTypeTrace type,
+                             IModelTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.uri = uri;
+        if (!container.elements().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+
         this.modelTrace = new ModelElementTraceHasModelTrace(this);
         this.properties = new ModelElementTraceHasProperties(this);
         this.type = new ModelElementTraceHasType(this);
         if (!this.type.create(type)) {
-            throw new TraceModelDuplicateRelation();
+            throw new TraceModelDuplicateElement();
         }
         this.kind = new ModelElementTraceHasKind(this);
 
-        if (!container.elements().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
+
     }
     
     @Override
@@ -86,7 +91,7 @@ public class ModelElementTrace implements IModelElementTrace {
     
     
     @Override
-    public void setId(Object value) {
+    public void setId(java.lang.Object value) {
         this.id = value;
     }   
      
@@ -122,7 +127,7 @@ public class ModelElementTrace implements IModelElementTrace {
             propertyTrace = new PropertyTrace(name, this);
             
             this.properties().create(propertyTrace);
-        } catch (TraceModelDuplicateRelation e) {
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
     	    if (propertyTrace != null) {

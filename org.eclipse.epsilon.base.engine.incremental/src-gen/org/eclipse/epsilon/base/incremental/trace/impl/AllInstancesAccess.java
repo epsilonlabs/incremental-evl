@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,7 +20,8 @@ import java.util.NoSuchElementException;
 /** protected region AllInstancesAccessImports on begin **/
 /** protected region AllInstancesAccessImports end **/
 
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -37,7 +38,7 @@ public class AllInstancesAccess implements IAllInstancesAccess {
     /**
 	 * The ofKind.
 	 */
-    private boolean ofKind;
+    private Boolean ofKind;
 
     /**
      * The executionTrace.
@@ -53,20 +54,25 @@ public class AllInstancesAccess implements IAllInstancesAccess {
      * Instantiates a new AllInstancesAccess. The AllInstancesAccess is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public AllInstancesAccess(boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
+    public AllInstancesAccess(Boolean ofKind,
+                              IModuleElementTrace executionTrace,
+                              IModelTypeTrace type,
+                              IModuleExecutionTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.ofKind = ofKind;
+        if (!container.accesses().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+
         this.executionTrace = new AccessHasExecutionTrace(this);
         this.type = new AllInstancesAccessHasType(this);
         if (!this.executionTrace.create(executionTrace)) {
-            throw new TraceModelDuplicateRelation();
+            throw new TraceModelDuplicateElement();
         }
         if (!this.type.create(type)) {
-            throw new TraceModelDuplicateRelation();
+            throw new TraceModelDuplicateElement();
         }
 
-        if (!container.accesses().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
+
     }
     
     @Override
@@ -76,12 +82,12 @@ public class AllInstancesAccess implements IAllInstancesAccess {
     
     
     @Override
-    public void setId(Object value) {
+    public void setId(java.lang.Object value) {
         this.id = value;
     }   
      
     @Override
-    public boolean getOfKind() {
+    public Boolean getOfKind() {
         return ofKind;
     }
     

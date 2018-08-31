@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTraceHasProperties;
@@ -29,11 +30,8 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 public class ModelElementTraceHasPropertiesGremlin extends Feature
         implements IModelElementTraceHasProperties, GremlinWrapper<Edge> {
     
-    /** A reference to the graph to use in iterations */
-    private Graph graph;
-    
     /** The graph traversal source for all navigations */
-    private GraphTraversalSource g;
+    private GraphTraversalSource gts;
     
     /** The source(s) of the reference */
     protected IModelElementTrace source;
@@ -45,35 +43,44 @@ public class ModelElementTraceHasPropertiesGremlin extends Feature
      *
      * @param source the source of the reference
      */
-    public ModelElementTraceHasPropertiesGremlin (IModelElementTrace source) {
+    public ModelElementTraceHasPropertiesGremlin (IModelElementTrace source, GraphTraversalSource gts) {
         super(true);
         this.source = source;
+        this.gts = gts;
     }
     
     // PUBLIC API
         
     @Override
     public Iterator<IPropertyTrace> get() {
-        return new GremlinUtils.IncrementalFactoryIterator<IPropertyTrace, Vertex>(getRaw(), graph);
+        return new GremlinUtils.IncrementalFactoryIterator<IPropertyTrace, Vertex>(getRaw(), gts);
     }
     
     /**
      * Get the Tinkerpop GraphTraversal iterator of the vertices that are part of the relation.
      */
     public  GraphTraversal<Vertex, Vertex> getRaw() {
-        return g.V(source.getId()).outE("moduleElements").toV(Direction.OUT);
+        GraphTraversalSource g = startTraversal();
+        GraphTraversal<Vertex, Vertex> result = null;
+        try {
+            result = g.V(source.getId()).outE("properties").toV(Direction.OUT);
+        }
+        finally {
+            finishTraversal(g);
+        }
+        return result;
     }
     
 
     @Override
-    public boolean create(IPropertyTrace target) {
+    public boolean create(IPropertyTrace target) throws TraceModelConflictRelation {
         if (conflict(target)) {
-            return false;
+            throw new TraceModelConflictRelation("Relation to previous IPropertyTrace exists");
         }
-        target.elementTrace().set(source);
         if (related(target)) {
             return false;
         }
+        target.elementTrace().set(source);
         set(target);
         return true;
     }
@@ -91,10 +98,19 @@ public class ModelElementTraceHasPropertiesGremlin extends Feature
     @Override
     public boolean conflict(IPropertyTrace target) {
         boolean result = false;
-        if (isUnique) {
-            result |= g.V(source.getId()).out("properties").hasId(target.getId()).hasNext();
+        GraphTraversalSource g = startTraversal();
+        try {
+	        // FIXME We can just remove this during generation?
+	        if (isUnique()) {
+	            result |= g.V(source.getId()).out("properties")
+                    .has("name", target.getName())
+                    .hasNext();
+            }
+            result |= target.elementTrace().get() != null;
         }
-        result |= target.elementTrace().get() != null;
+        finally {
+            finishTraversal(g);
+        }
         return result;
     }
     
@@ -103,7 +119,15 @@ public class ModelElementTraceHasPropertiesGremlin extends Feature
     	if (target == null) {
 			return false;
 		}
-		return g.V(source.getId()).out("properties").hasId(target.getId()).hasNext() && source.equals(target.elementTrace().get());
+        GraphTraversalSource g = startTraversal();
+        boolean result = false;
+        try {
+		  result = g.V(source.getId()).out("properties").hasId(target.getId()).hasNext() && source.equals(target.elementTrace().get());
+		}
+		finally {
+            finishTraversal(g);
+        }
+        return result;
 	}
 	
 	@Override
@@ -116,14 +140,8 @@ public class ModelElementTraceHasPropertiesGremlin extends Feature
     }
     
     @Override
-    public Graph graph() {
-        return graph;    
-    }
-
-    @Override
-    public void graph(Graph graph) {
-        this.g = new GraphTraversalSource(graph);
-        this.graph = graph;
+    public void graphTraversalSource(GraphTraversalSource gts) {
+        this.gts = gts;
     }
         
     
@@ -131,12 +149,39 @@ public class ModelElementTraceHasPropertiesGremlin extends Feature
     
     @Override
     public void set(IPropertyTrace target) {
-        g.V(source.getId()).addE("elements").to(g.V(target.getId())).iterate();
+        GraphTraversalSource g = startTraversal();
+        try {
+            g.V(source.getId()).addE("properties").to(g.V(target.getId())).iterate();
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            finishTraversal(g);
+        }
+        
     }
     
     @Override
     public void remove(IPropertyTrace target) {
-        g.V(source.getId()).outE("elements").as("e").inV().hasId(target.getId()).select("e").drop().iterate();
+        GraphTraversalSource g = startTraversal();
+        try {
+            g.V(source.getId()).outE("properties").as("e").inV().hasId(target.getId()).select("e").drop().iterate();
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            finishTraversal(g);
+        }
+    }
+    
+    private GraphTraversalSource startTraversal() {
+        return this.gts.clone();
+    }
+    
+    private void finishTraversal(GraphTraversalSource g) {
+        try {
+            g.close();
+        } catch (Exception e) {
+            // Fail silently?
+        }
     }
 
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -46,7 +46,7 @@ public interface IContextTrace extends IGuardedElementTrace, IContextModuleEleme
      * <!-- protected region index-getter-doc end --> 
      * @return the value of the '<em>index</em>' attribute.
      */
-    int getIndex();
+    Integer getIndex();
 
     /**
      * Returns the value of the '<em><b>constraints</b></em>' reference.

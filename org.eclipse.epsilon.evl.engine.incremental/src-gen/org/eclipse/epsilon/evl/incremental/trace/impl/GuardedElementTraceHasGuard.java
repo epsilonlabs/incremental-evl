@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,7 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTraceHasGuard;
@@ -50,14 +51,14 @@ public class GuardedElementTraceHasGuard extends Feature implements IGuardedElem
     
 
     @Override
-    public boolean create(IGuardTrace target) {
+    public boolean create(IGuardTrace target) throws TraceModelConflictRelation {
         if (conflict(target)) {
-            return false;
+            throw new TraceModelConflictRelation("Relation to previous IGuardTrace exists");
         }
-        target.limits().set(source);
         if (related(target)) {
             return false;
         }
+        target.limits().set(source);
         set(target);
         return true;
     }

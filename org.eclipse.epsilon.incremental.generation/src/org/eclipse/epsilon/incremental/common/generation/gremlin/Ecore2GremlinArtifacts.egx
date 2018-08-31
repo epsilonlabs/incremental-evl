@@ -130,7 +130,7 @@ rule EClass2RepositoryImpl
                 not ec.isInterface and
                 not EReference.all().exists(ref | ref.isContainment() and
                 (ec.getEAllSuperTypes().including(ec).includes(ref.getEReferenceType())))
-    template : "EClass2RepoImpl.egl"
+    template : "EClass2GremlinRepoImpl.egl"
     target   : project + folder + "/trace/impl/" + classPrefix + ec.name + classSufix + "RepositoryImpl.java"
   }
 

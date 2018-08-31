@@ -32,6 +32,7 @@ package [%=qp%].trace.impl;
 import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 [%if (er.isMany()) {%]
 import java.util.Queue;
 [%  if (er.isUnique() and er.isOrdered()) {%]
@@ -100,15 +101,15 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
 [%}%]    
 
     @Override
-    public boolean create([%=targetType%] target) {
+    public boolean create([%=targetType%] target) throws TraceModelConflictRelation {
         if (conflict(target)) {
-            return false;
+            throw new TraceModelConflictRelation("Relation to previous [%=targetType%] exists");
         }
 [%if (opposite.isDefined()) {%]
-        target.[%=opposite%]().set(source);
         if (related(target)) {
             return false;
         }
+        target.[%=opposite%]().set(source);
 [%}%]
         set(target);
         return true;

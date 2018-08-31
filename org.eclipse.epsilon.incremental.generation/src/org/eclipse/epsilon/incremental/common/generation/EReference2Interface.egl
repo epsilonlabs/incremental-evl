@@ -22,6 +22,7 @@ var erqp = qp.replace("." + er.getEContainingClass().getEPackage().name + ".", "
 package [%=qp%].trace;
 
 import java.util.Iterator;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 [%if (er.isMany()) {%]
 [%  if (er.isUnique() and er.isOrdered()) {%]
 import java.util.Queue;
@@ -61,8 +62,10 @@ public interface [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] {
      *
      * @see ExecutionHasAccesses#conflict([%=targetType%])
      * @see ExecutionHasAccesses#related([%=targetType%])
+     * @param target The [%=targetType%] to create a relation with
+     * @throws TraceModelConflictRelation if a relation to another [%=targetType%] exists
      */
-    boolean create([%=targetType%] target);
+    boolean create([%=targetType%] target) throws TraceModelConflictRelation;
     
     /**
      * Destroy a reference to the target element. Returns true, if the reference existed

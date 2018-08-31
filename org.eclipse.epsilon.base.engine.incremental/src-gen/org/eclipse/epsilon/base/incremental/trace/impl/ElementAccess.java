@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,7 +20,8 @@ import java.util.NoSuchElementException;
 /** protected region ElementAccessImports on begin **/
 /** protected region ElementAccessImports end **/
 
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -48,19 +49,23 @@ public class ElementAccess implements IElementAccess {
      * Instantiates a new ElementAccess. The ElementAccess is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ElementAccess(IModuleElementTrace executionTrace, IModelElementTrace element, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
+    public ElementAccess(IModuleElementTrace executionTrace,
+                         IModelElementTrace element,
+                         IModuleExecutionTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        if (!container.accesses().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+
         this.executionTrace = new AccessHasExecutionTrace(this);
         this.element = new ElementAccessHasElement(this);
         if (!this.executionTrace.create(executionTrace)) {
-            throw new TraceModelDuplicateRelation();
+            throw new TraceModelDuplicateElement();
         }
         if (!this.element.create(element)) {
-            throw new TraceModelDuplicateRelation();
+            throw new TraceModelDuplicateElement();
         }
 
-        if (!container.accesses().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
+
     }
     
     @Override
@@ -70,7 +75,7 @@ public class ElementAccess implements IElementAccess {
     
     
     @Override
-    public void setId(Object value) {
+    public void setId(java.lang.Object value) {
         this.id = value;
     }   
      

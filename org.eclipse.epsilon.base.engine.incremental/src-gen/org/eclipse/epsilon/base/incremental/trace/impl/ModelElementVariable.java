@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,7 +20,8 @@ import java.util.NoSuchElementException;
 /** protected region ModelElementVariableImports on begin **/
 /** protected region ModelElementVariableImports end **/
 
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -48,16 +49,20 @@ public class ModelElementVariable implements IModelElementVariable {
      * Instantiates a new ModelElementVariable. The ModelElementVariable is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ModelElementVariable(String name, IModelElementTrace value, IExecutionContext container) throws TraceModelDuplicateRelation {
+    public ModelElementVariable(String name,
+                                IModelElementTrace value,
+                                IExecutionContext container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.name = name;
+        if (!container.contextVariables().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+
         this.value = new ModelElementVariableHasValue(this);
         if (!this.value.create(value)) {
-            throw new TraceModelDuplicateRelation();
+            throw new TraceModelDuplicateElement();
         }
 
-        if (!container.contextVariables().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
+
     }
     
     @Override
@@ -67,7 +72,7 @@ public class ModelElementVariable implements IModelElementVariable {
     
     
     @Override
-    public void setId(Object value) {
+    public void setId(java.lang.Object value) {
         this.id = value;
     }   
      

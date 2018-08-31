@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,7 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasSatisfies;
@@ -50,14 +51,14 @@ public class InvariantTraceHasSatisfies extends Feature implements IInvariantTra
     
 
     @Override
-    public boolean create(ISatisfiesTrace target) {
+    public boolean create(ISatisfiesTrace target) throws TraceModelConflictRelation {
         if (conflict(target)) {
-            return false;
+            throw new TraceModelConflictRelation("Relation to previous ISatisfiesTrace exists");
         }
-        target.invariant().set(source);
         if (related(target)) {
             return false;
         }
+        target.invariant().set(source);
         set(target);
         return true;
     }

@@ -50,15 +50,15 @@ import com.google.inject.Module;
 
 public abstract class ExecutionTests<M extends Module> {
 
-	private IncrementalEvlModule module;
+	protected IncrementalEvlModule module;
 	private File evlFile;
 
-	public abstract EvlIncrementalGuiceModule getEvlGuiceModule();
+	public abstract M getEvlGuiceModule();
 
 	@Before
-	public void setup() throws URISyntaxException {
+	public void setup() throws Exception {
 		module = new IncrementalEvlModule();
-		module.injectTraceManager(new EvlIncrementalGuiceModule());
+		module.injectTraceManager(getEvlGuiceModule());
 		evlFile = new File(
 				// this.getClass().getClassLoader().getResource("org/eclipse/epsilon/evl/testExecution.evl").toURI());
 				ExecutionTests.class.getResource("testExecution.evl").toURI());

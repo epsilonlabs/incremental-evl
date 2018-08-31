@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -30,13 +30,13 @@ public interface IEvlModuleTrace extends IModuleExecutionTrace {
     public boolean sameIdentityAs(final IEvlModuleTrace other);
     
     /** The ContextTrace Factory. */
-    IContextTrace getOrCreateContextTrace(String kind, int index) throws EolIncrementalExecutionException;       
+    IContextTrace getOrCreateContextTrace(String kind, Integer index) throws EolIncrementalExecutionException;       
 
     /** The ElementAccess Factory. */
     IElementAccess getOrCreateElementAccess(IModuleElementTrace executionTrace, IModelElementTrace element) throws EolIncrementalExecutionException;       
 
     /** The AllInstancesAccess Factory. */
-    IAllInstancesAccess getOrCreateAllInstancesAccess(boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type) throws EolIncrementalExecutionException;       
+    IAllInstancesAccess getOrCreateAllInstancesAccess(Boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type) throws EolIncrementalExecutionException;       
 
     /** The PropertyAccess Factory. */
     IPropertyAccess getOrCreatePropertyAccess(IModuleElementTrace executionTrace, IPropertyTrace property) throws EolIncrementalExecutionException;       

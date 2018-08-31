@@ -100,7 +100,7 @@ ValueOjects are created when needed, don't have ids and don't keep references to
 
 ## https://eclipse.org/epsilon/incremental/Property
 
-  By default the tempalte assumes that EAttributes use EPrmitive types (EString, EInt, etc.) as
+  By default the template assumes that EAttributes use EPrmitive types (EString, EInt, etc.) as
   types and uses the corresponding Java type to select the appropriate Type type when creating
   properties. For cases in which this is not the case, the Property can be used to have
   more control over the used type. THIS IS NOT IMPLEMENTED YET.

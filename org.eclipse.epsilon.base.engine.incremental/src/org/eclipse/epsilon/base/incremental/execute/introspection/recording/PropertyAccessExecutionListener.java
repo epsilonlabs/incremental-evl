@@ -6,7 +6,8 @@ import java.util.WeakHashMap;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
 import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
@@ -148,7 +149,7 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 		IPropertyTrace propertyTrace = modelTraceRepository.getPropertyTraceFor(model.getModelUri(),
 				model.getElementId(modelElement), propertyName);
 		if (propertyTrace == null) {
-			IModelElementTrace elementTrace = IncrementalUtils.getOrgetOrCreateModelElementTrace(modelElement, context,
+			IModelElementTrace elementTrace = IncrementalUtils.getOrCreateModelElementTrace(modelElement, context,
 					model);
 			propertyTrace = elementTrace.getOrCreatePropertyTrace(propertyName);
 		}
@@ -170,7 +171,11 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 			}
 		}
 		pa.setValue(value);
-		executionTrace.accesses().create(pa);
+		try {
+			executionTrace.accesses().create(pa);
+		} catch (TraceModelConflictRelation e) {
+			logger.warn("There was an error adding the access to the trace", e);
+		}
 
 	}
 

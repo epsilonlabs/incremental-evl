@@ -2,8 +2,8 @@ package org.eclipse.epsilon.base.incremental.trace.gremlin.util;
 
 import java.util.Iterator;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Element;
-import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
 import org.eclipse.epsilon.base.incremental.util.TraceFactory;
 
@@ -22,13 +22,13 @@ public class GremlinUtils {
 	public static class IncrementalIterator<I, W extends GremlinWrapper<E>, E> implements Iterator<I> {
 
 		private final Iterator<E> delegate;
-		private Graph g;
+		private GraphTraversalSource g;
 		private Class<W> wrapClazz;
 
-		public IncrementalIterator(Iterator<E> delegate, Graph g, Class<W> wrapClazz) {
+		public IncrementalIterator(Iterator<E> delegate, GraphTraversalSource gts, Class<W> wrapClazz) {
 			super();
 			this.delegate = delegate;
-			this.g = g;
+			this.g = gts;
 			this.wrapClazz = wrapClazz;
 
 		}
@@ -49,7 +49,7 @@ public class GremlinUtils {
 				throw new IllegalStateException("Error wrapping iterator element");
 			}
 			retVal.delegate(next);
-			retVal.graph(g);
+			retVal.graphTraversalSource(g);
 			return (I) retVal;
 		}
 
@@ -65,12 +65,12 @@ public class GremlinUtils {
 	public static class IncrementalFactoryIterator<I, E extends Element> implements Iterator<I> {
 
 		private final Iterator<E> delegate;
-		private Graph g;
+		private GraphTraversalSource g;
 
-		public IncrementalFactoryIterator(Iterator<E> delegate, Graph g) {
+		public IncrementalFactoryIterator(Iterator<E> delegate, GraphTraversalSource gts) {
 			super();
 			this.delegate = delegate;
-			this.g = g;
+			this.g = gts;
 		}
 
 		@Override

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -31,7 +31,7 @@ public interface IPropertyAccess extends IAccess {
      * The value of the property when it was accessed.
      * @param value the new value of the '<em>value</em>' attribute.
      */
-    void setValue(String value);
+    void setValue(java.lang.String value);
 
     /**
      * Returns the value of the '<em><b>property</b></em>' reference.

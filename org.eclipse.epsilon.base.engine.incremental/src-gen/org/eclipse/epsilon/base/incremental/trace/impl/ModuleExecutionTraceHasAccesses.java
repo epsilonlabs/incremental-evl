@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,9 +14,9 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceHasAccesses;
@@ -32,7 +32,7 @@ public class ModuleExecutionTraceHasAccesses extends Feature implements IModuleE
     protected IModuleExecutionTrace source;
     
     /** The target(s) of the reference */
-    protected Set<IAccess> target =  ConcurrentHashMap.newKeySet();
+    protected Queue<IAccess> target =  new ConcurrentLinkedQueue<IAccess>();
     
     /**
      * Instantiates a new IModuleExecutionTraceHasAccesses.
@@ -40,22 +40,23 @@ public class ModuleExecutionTraceHasAccesses extends Feature implements IModuleE
      * @param source the source of the reference
      */
     public ModuleExecutionTraceHasAccesses (IModuleExecutionTrace source) {
-        super(true);
+        super(false);
         this.source = source;
     }
     
     // PUBLIC API
         
     @Override
+    
     public Iterator<IAccess> get() {
     	return target.iterator();
     }
     
 
     @Override
-    public boolean create(IAccess target) {
+    public boolean create(IAccess target) throws TraceModelConflictRelation {
         if (conflict(target)) {
-            return false;
+            throw new TraceModelConflictRelation("Relation to previous IAccess exists");
         }
         set(target);
         return true;

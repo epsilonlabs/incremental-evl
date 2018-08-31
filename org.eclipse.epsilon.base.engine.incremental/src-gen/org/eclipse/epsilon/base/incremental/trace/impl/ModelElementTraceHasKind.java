@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import java.util.Queue;
 import org.eclipse.epsilon.base.incremental.trace.util.ConcurrentSetQueue;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
@@ -53,9 +54,9 @@ public class ModelElementTraceHasKind extends Feature implements IModelElementTr
     
 
     @Override
-    public boolean create(IModelTypeTrace target) {
+    public boolean create(IModelTypeTrace target) throws TraceModelConflictRelation {
         if (conflict(target)) {
-            return false;
+            throw new TraceModelConflictRelation("Relation to previous IModelTypeTrace exists");
         }
         set(target);
         return true;

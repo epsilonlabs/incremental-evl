@@ -23,4 +23,6 @@ public interface IRepository<T> {
 	// Remove Objects
     boolean remove(T item);
     
+    // Dispose the repository when done
+    void dispose();
 }

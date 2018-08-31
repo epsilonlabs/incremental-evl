@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,14 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import java.util.LinkedHashSet;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
+import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceRepositoryImpl;
 /** protected region EvlModuleTraceRepositoryImplImports on begin **/
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,6 +51,8 @@ import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 /** protected region EvlModuleTraceRepositoryImplImports end **/
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +76,12 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
         logger.info("Removing {} from repository", item);
         return extent.remove(item);
     }
+    
+    @Override
+    public void dispose() {
+        super.dispose();
+    }
+    
     
     @Override
     public IEvlModuleTrace get(Object id) {
@@ -332,6 +348,12 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 				.filter(IElementAccess.class::isInstance).map(IElementAccess.class::cast)
 				.filter(ea -> ea.element().get().equals(modelElementTrace))
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public IInvariantTrace findInvariantTraceinContext(IContextTrace contextTrace, String invariantName) {
+		// TODO Implement IEvlModuleTraceRepository.findInvariantTraceinContext
+		throw new RuntimeException("Unimplemented Method IEvlModuleTraceRepository.findInvariantTraceinContext invoked.");
 	}
 
 	/** protected region IEvlModuleTraceRepositry end **/

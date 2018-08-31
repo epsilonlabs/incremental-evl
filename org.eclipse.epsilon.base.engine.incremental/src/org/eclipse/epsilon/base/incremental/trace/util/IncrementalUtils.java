@@ -10,7 +10,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
@@ -101,7 +102,7 @@ public class IncrementalUtils {
 	 * @throws EolIncrementalExecutionException
 	 * @throws EolRuntimeException
 	 */
-	public static IModelElementTrace getOrgetOrCreateModelElementTrace(Object modelElement,
+	public static IModelElementTrace getOrCreateModelElementTrace(Object modelElement,
 			IIncrementalBaseContext<?, ?, ?> context, final IIncrementalModel model)
 			throws EolIncrementalExecutionException, EolRuntimeException {
 
@@ -114,45 +115,29 @@ public class IncrementalUtils {
 				try {
 					modelTrace = new ModelTrace(model.getModelUri());
 					modelTraceRepository.add(modelTrace);
-				} catch (TraceModelDuplicateRelation e) {
+				} catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
 					throw new EolIncrementalExecutionException(String.format(
 							"A modelTrace was not found for "
 									+ "the model wiht uri %s but there was an error craeting it.",
 							model.getModelUri()));
 				}
 			}
-			Optional<IModelTypeTrace> typeTraceOpt = IncrementalUtils.asStream(modelTrace.types().get())
-					.filter(tt -> tt.getName().equals(model.getTypeNameOf(modelElement))).findFirst();
-			IModelTypeTrace typeTrace;
-			if (!typeTraceOpt.isPresent()) {
-				try {
-					typeTrace = modelTrace.getOrCreateModelTypeTrace(model.getTypeNameOf(modelElement));
-				} catch (EolIncrementalExecutionException e) {
-					throw new EolIncrementalExecutionException(String.format(
-							"A ModelTypeTrace was not found for " + "the type %s but there was an error craeting it.",
-							model.getTypeNameOf(modelElement)));
-				}
-			} else {
-				typeTrace = typeTraceOpt.get();
+			String elementType = model.getTypeNameOf(modelElement);
+			IModelTypeTrace typeTrace = modelTraceRepository.getTypeTraceFor(model.getModelUri(), elementType);
+			if (typeTrace == null) {
+				typeTrace = modelTrace.getOrCreateModelTypeTrace(elementType);
 			}
 			elementTrace = modelTrace.getOrCreateModelElementTrace(model.getElementId(modelElement), typeTrace);
 			for (String kind : model.getAllTypeNamesOf(modelElement)) {
-				IModelTypeTrace kindTrace;
-				Optional<IModelTypeTrace> kindTraceOpt = IncrementalUtils.asStream(modelTrace.types().get())
-						.filter(tt -> tt.getName().equals(kind)).findFirst();
-				if (!kindTraceOpt.isPresent()) {
-					try {
-						kindTrace = modelTrace.getOrCreateModelTypeTrace(model.getTypeNameOf(modelElement));
-					} catch (EolIncrementalExecutionException e) {
-						throw new EolIncrementalExecutionException(String.format(
-								"A ModelTypeTrace was not found for "
-										+ "the type %s but there was an error craeting it.",
-								model.getTypeNameOf(modelElement)));
-					}
-				} else {
-					kindTrace = kindTraceOpt.get();
+				typeTrace = modelTraceRepository.getTypeTraceFor(model.getModelUri(), kind);
+				if (typeTrace == null) {
+					typeTrace = modelTrace.getOrCreateModelTypeTrace(kind);
 				}
-				elementTrace.kind().create(kindTrace);
+				try {
+					elementTrace.kind().create(typeTrace);
+				} catch (TraceModelConflictRelation e) {
+					throw new EolIncrementalExecutionException("There was an error adding the kind information to the Element trace", e);
+				}
 			}
 		}
 		return elementTrace;

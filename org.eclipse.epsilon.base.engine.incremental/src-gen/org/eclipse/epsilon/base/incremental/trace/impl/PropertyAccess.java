@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,7 +20,8 @@ import java.util.NoSuchElementException;
 /** protected region PropertyAccessImports on begin **/
 /** protected region PropertyAccessImports end **/
 
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -53,19 +54,23 @@ public class PropertyAccess implements IPropertyAccess {
      * Instantiates a new PropertyAccess. The PropertyAccess is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public PropertyAccess(IModuleElementTrace executionTrace, IPropertyTrace property, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
-        this.property = new PropertyAccessHasProperty(this);
+    public PropertyAccess(IModuleElementTrace executionTrace,
+                          IPropertyTrace property,
+                          IModuleExecutionTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        if (!container.accesses().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+
         this.executionTrace = new AccessHasExecutionTrace(this);
-        if (!this.property.create(property)) {
-            throw new TraceModelDuplicateRelation();
-        }
+        this.property = new PropertyAccessHasProperty(this);
         if (!this.executionTrace.create(executionTrace)) {
-            throw new TraceModelDuplicateRelation();
+            throw new TraceModelDuplicateElement();
+        }
+        if (!this.property.create(property)) {
+            throw new TraceModelDuplicateElement();
         }
 
-        if (!container.accesses().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
+
     }
     
     @Override
@@ -75,7 +80,7 @@ public class PropertyAccess implements IPropertyAccess {
     
     
     @Override
-    public void setId(Object value) {
+    public void setId(java.lang.Object value) {
         this.id = value;
     }   
      
@@ -86,7 +91,7 @@ public class PropertyAccess implements IPropertyAccess {
     
     
     @Override
-    public void setValue(String value) {
+    public void setValue(java.lang.String value) {
         this.value = value;
     }   
      
@@ -119,18 +124,18 @@ public class PropertyAccess implements IPropertyAccess {
         PropertyAccess other = (PropertyAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (property.get() == null) {
-            if (other.property.get() != null)
-                return false;
-        }
-        if (!property.get().equals(other.property.get())) {
-            return false;
-        }
         if (executionTrace.get() == null) {
             if (other.executionTrace.get() != null)
                 return false;
         }
         if (!executionTrace.get().equals(other.executionTrace.get())) {
+            return false;
+        }
+        if (property.get() == null) {
+            if (other.property.get() != null)
+                return false;
+        }
+        if (!property.get().equals(other.property.get())) {
             return false;
         }
         return true; 
@@ -140,8 +145,8 @@ public class PropertyAccess implements IPropertyAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((property.get() == null) ? 0 : property.get().hashCode());
         result = prime * result + ((executionTrace.get() == null) ? 0 : executionTrace.get().hashCode());
+        result = prime * result + ((property.get() == null) ? 0 : property.get().hashCode());
         return result;
     }
 }

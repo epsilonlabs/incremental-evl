@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,7 +20,8 @@ import java.util.NoSuchElementException;
 /** protected region ModelTypeTraceImports on begin **/
 /** protected region ModelTypeTraceImports end **/
 
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -48,13 +49,16 @@ public class ModelTypeTrace implements IModelTypeTrace {
      * Instantiates a new ModelTypeTrace. The ModelTypeTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ModelTypeTrace(String name, IModelTrace container) throws TraceModelDuplicateRelation {
+    public ModelTypeTrace(String name,
+                          IModelTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.name = name;
+        if (!container.types().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+
         this.modelTrace = new ModelTypeTraceHasModelTrace(this);
 
-        if (!container.types().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
+
     }
     
     @Override
@@ -64,7 +68,7 @@ public class ModelTypeTrace implements IModelTypeTrace {
     
     
     @Override
-    public void setId(Object value) {
+    public void setId(java.lang.Object value) {
         this.id = value;
     }   
      

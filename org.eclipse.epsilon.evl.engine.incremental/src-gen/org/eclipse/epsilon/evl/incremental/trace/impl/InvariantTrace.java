@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,7 +21,8 @@ import java.util.NoSuchElementException;
 /** protected region InvariantTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -45,7 +46,7 @@ public class InvariantTrace implements IInvariantTrace {
     /**
 	 * The result.
 	 */
-    private boolean result;
+    private Boolean result;
 
     /**
      * The guard.
@@ -87,8 +88,13 @@ public class InvariantTrace implements IInvariantTrace {
      * Instantiates a new InvariantTrace. The InvariantTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public InvariantTrace(String name, IContextTrace container) throws TraceModelDuplicateRelation {
+    public InvariantTrace(String name,
+                          IContextTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.name = name;
+        if (!container.constraints().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+
         this.invariantContext = new InvariantTraceHasInvariantContext(this);
         this.guard = new GuardedElementTraceHasGuard(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
@@ -97,9 +103,7 @@ public class InvariantTrace implements IInvariantTrace {
         this.message = new InvariantTraceHasMessage(this);
         this.satisfies = new InvariantTraceHasSatisfies(this);
 
-        if (!container.constraints().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
+
     }
     
     @Override
@@ -109,7 +113,7 @@ public class InvariantTrace implements IInvariantTrace {
     
     
     @Override
-    public void setId(Object value) {
+    public void setId(java.lang.Object value) {
         this.id = value;
     }   
      
@@ -119,7 +123,7 @@ public class InvariantTrace implements IInvariantTrace {
     }
     
     @Override
-    public boolean getResult() {
+    public Boolean getResult() {
         return result;
     }
     
@@ -171,7 +175,7 @@ public class InvariantTrace implements IInvariantTrace {
             guardTrace = new GuardTrace(this);
             
             this.guard().create(guardTrace);
-        } catch (TraceModelDuplicateRelation e) {
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
     	    if (guardTrace != null) {
@@ -193,7 +197,7 @@ public class InvariantTrace implements IInvariantTrace {
             checkTrace = new CheckTrace(this);
             
             this.check().create(checkTrace);
-        } catch (TraceModelDuplicateRelation e) {
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
     	    if (checkTrace != null) {
@@ -215,7 +219,7 @@ public class InvariantTrace implements IInvariantTrace {
             messageTrace = new MessageTrace(this);
             
             this.message().create(messageTrace);
-        } catch (TraceModelDuplicateRelation e) {
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
     	    if (messageTrace != null) {
@@ -237,7 +241,7 @@ public class InvariantTrace implements IInvariantTrace {
             satisfiesTrace = new SatisfiesTrace(this);
             
             this.satisfies().create(satisfiesTrace);
-        } catch (TraceModelDuplicateRelation e) {
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
     	    if (satisfiesTrace != null) {

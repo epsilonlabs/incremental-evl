@@ -19,7 +19,8 @@ import java.util.stream.StreamSupport;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
@@ -44,7 +45,7 @@ import org.eclipse.epsilon.evl.incremental.IEvlTraceFactory;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraintContext;
 import org.eclipse.epsilon.evl.incremental.dom.TracedGuardBlock;
-import org.eclipse.epsilon.evl.incremental.execute.BasicEvlExecutionTraceManager;
+import org.eclipse.epsilon.evl.incremental.execute.InMemoryEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlModuleIncremental;
 import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
@@ -103,10 +104,11 @@ public class IncrementalEvlModule extends EvlModule implements
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public void injectTraceManager(Module incrementalGuiceModule) {
 		Injector injector = Guice.createInjector(incrementalGuiceModule);
 		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory> etManager = injector
-				.getInstance(BasicEvlExecutionTraceManager.class);
+				.getInstance(IEvlExecutionTraceManager.class);
 		this.context.setTraceManager(etManager);
 	}
 
@@ -176,19 +178,28 @@ public class IncrementalEvlModule extends EvlModule implements
 				// evlModuleTrace = new EvlModuleTrace(evlScripPath);
 				evlModuleTrace = factory.createModuleTrace(evlScripPath);
 				etManager.getExecutionTraceRepository().add(evlModuleTrace);
-			} catch (TraceModelDuplicateRelation e) {
+			} catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
 				throw new EolRuntimeException(e.getMessage());
 			}
 		}
 		// Create ModelTraces for all the models
 		for (IModel m : context.getModelRepository().getModels()) {
 			if (m instanceof IIncrementalModel) {
+				IIncrementalModel im = (IIncrementalModel) m;
+				IModelTrace mt = etManager.getModelTraceRepository().getModelTraceByIdentity(im.getModelUri());
+				if (mt == null) {
+					try {
+						mt = factory.createModelTrace(im.getModelUri());
+						etManager.getModelTraceRepository().add(mt);
+					} catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+						throw new EolRuntimeException(e.getMessage());
+					}
+				}
 				try {
-					IModelTrace mt = factory.createModelTrace(((IIncrementalModel) m).getModelUri());
-					etManager.getModelTraceRepository().add(mt);
 					evlModuleTrace.getOrCreateModelAccess(m.getName(), mt);
-				} catch (TraceModelDuplicateRelation | EolIncrementalExecutionException e) {
-					throw new EolRuntimeException(e.getMessage());
+				} catch (EolIncrementalExecutionException e) {
+					logger.error("Error creating model access trace.", e);
+					throw new EolRuntimeException("Error creating model access trace.");
 				}
 			} else {
 				throw new EolRuntimeException(String.format(

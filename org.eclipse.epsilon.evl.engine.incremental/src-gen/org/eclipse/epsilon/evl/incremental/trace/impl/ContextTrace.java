@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,7 +21,8 @@ import java.util.NoSuchElementException;
 /** protected region ContextTraceImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -45,7 +46,7 @@ public class ContextTrace implements IContextTrace {
     /**
 	 * The index.
 	 */
-    private int index;
+    private Integer index;
 
     /**
      * The guard.
@@ -75,17 +76,21 @@ public class ContextTrace implements IContextTrace {
      * Instantiates a new ContextTrace. The ContextTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ContextTrace(String kind, int index, IModuleExecutionTrace container) throws TraceModelDuplicateRelation {
+    public ContextTrace(String kind,
+                        Integer index,
+                        IModuleExecutionTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.kind = kind;
         this.index = index;
+        if (!container.moduleElements().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+
         this.executionContext = new ContextModuleElementTraceHasExecutionContext(this);
         this.guard = new GuardedElementTraceHasGuard(this);
         this.accesses = new ModuleElementTraceHasAccesses(this);
         this.constraints = new ContextTraceHasConstraints(this);
 
-        if (!container.moduleElements().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
+
     }
     
     @Override
@@ -95,7 +100,7 @@ public class ContextTrace implements IContextTrace {
     
     
     @Override
-    public void setId(Object value) {
+    public void setId(java.lang.Object value) {
         this.id = value;
     }   
      
@@ -105,7 +110,7 @@ public class ContextTrace implements IContextTrace {
     }
     
     @Override
-    public int getIndex() {
+    public Integer getIndex() {
         return index;
     }
     
@@ -136,7 +141,7 @@ public class ContextTrace implements IContextTrace {
             guardTrace = new GuardTrace(this);
             
             this.guard().create(guardTrace);
-        } catch (TraceModelDuplicateRelation e) {
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
     	    if (guardTrace != null) {
@@ -156,7 +161,7 @@ public class ContextTrace implements IContextTrace {
         IExecutionContext executionContext = null;
         try {
             executionContext = new ExecutionContext(this);
-        } catch (TraceModelDuplicateRelation e) {
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
     	    if (executionContext != null) {
@@ -178,7 +183,7 @@ public class ContextTrace implements IContextTrace {
             invariantTrace = new InvariantTrace(name, this);
             
             this.constraints().create(invariantTrace);
-        } catch (TraceModelDuplicateRelation e) {
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
     	    if (invariantTrace != null) {

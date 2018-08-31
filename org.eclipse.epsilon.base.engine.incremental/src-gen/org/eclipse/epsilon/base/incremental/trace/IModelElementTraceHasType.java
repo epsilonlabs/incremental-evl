@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,6 +12,7 @@
 package org.eclipse.epsilon.base.incremental.trace;
 
 import java.util.Iterator;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 
@@ -34,8 +35,10 @@ public interface IModelElementTraceHasType {
      *
      * @see ExecutionHasAccesses#conflict(IModelTypeTrace)
      * @see ExecutionHasAccesses#related(IModelTypeTrace)
+     * @param target The IModelTypeTrace to create a relation with
+     * @throws TraceModelConflictRelation if a relation to another IModelTypeTrace exists
      */
-    boolean create(IModelTypeTrace target);
+    boolean create(IModelTypeTrace target) throws TraceModelConflictRelation;
     
     /**
      * Destroy a reference to the target element. Returns true, if the reference existed

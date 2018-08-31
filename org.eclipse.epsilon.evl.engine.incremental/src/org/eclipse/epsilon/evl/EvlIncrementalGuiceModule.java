@@ -4,6 +4,8 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceRepositoryImpl;
 import org.eclipse.epsilon.evl.incremental.EvlTraceFactory;
 import org.eclipse.epsilon.evl.incremental.IEvlTraceFactory;
+import org.eclipse.epsilon.evl.incremental.execute.InMemoryEvlExecutionTraceManager;
+import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTraceRepositoryImpl;
 
@@ -16,6 +18,7 @@ public class EvlIncrementalGuiceModule extends AbstractModule {
 		bind(IEvlModuleTraceRepository.class).to(EvlModuleTraceRepositoryImpl.class);
 		bind(IModelTraceRepository.class).to(ModelTraceRepositoryImpl.class);
 		bind(IEvlTraceFactory.class).to(EvlTraceFactory.class);
+		bind(IEvlExecutionTraceManager.class).to(InMemoryEvlExecutionTraceManager.class);
 	}
 
 }

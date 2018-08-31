@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,8 +11,6 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import java.util.LinkedHashSet;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
@@ -24,10 +22,10 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 /** protected region ModelTraceRepositoryImplImports on begin **/
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
+
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 /** protected region ModelTraceRepositoryImplImports end **/
 
 import org.slf4j.Logger;
@@ -41,7 +39,7 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelTraceGremlinRepositoryImpl.class);
  
-    protected Graph extent;    
+    protected GraphTraversalSource gts; 
     
     public ModelTraceGremlinRepositoryImpl() {
     }
@@ -51,7 +49,9 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
     public boolean add(IModelTrace item) {
         logger.info("Adding {} to repository", item);
         ModelTraceGremlin impl = (ModelTraceGremlin)item;
-        Vertex a = ((DetachedVertex)impl.delegate()).attach(Attachable.Method.getOrCreate(extent));
+        Vertex a = ((DetachedVertex)impl.delegate()).attach(Attachable.Method.getOrCreate(gts.getGraph()));
+        impl.delegate(a);
+        impl.graphTraversalSource(gts);
         return a.graph() != null;
     }
 
@@ -62,52 +62,120 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
         v.remove();
         return v.graph() == null;
     }
+    
+    @Override
+    public void dispose() {    
+        try {
+            gts.close();
+        } catch (Exception e) {
+            logger.warn("Error closing GraphTraversalSource",  e);
+        }
+    } 
   
     @Override
     public IModelTrace get(Object id) {
-        
         logger.debug("Get ModelTrace with id:{}", id);
         ModelTraceGremlin result = null;
-        GraphTraversalSource g = new GraphTraversalSource(extent);
+        GraphTraversalSource g = gts.clone();
         Vertex v = g.V(id).next();
         if (v != null) {
             result = new ModelTraceGremlin();
             result.delegate(v);
-            result.graph(extent);
+            result.graphTraversalSource(gts);
+        }
+        try {
+            g.close();
+        } catch (Exception e) {
+            logger.error("Error closing GraphTraversalSource", e);
         }
         return result;
     }
-
-    public void injectGraph(Module tinkerpopGuiceModule) {
-        Injector injector = Guice.createInjector(tinkerpopGuiceModule);
-        Graph g = injector.getInstance(Graph.class);
-        this.extent = g;
-    }
-    
+ 
     
     /** protected region IModelTraceRepositry on begin **/
+    public void setGraphTraversalSource(final GraphTraversalSource gts) {
+    	this.gts = gts;
+    }
+   
+    
     @Override
 	public IModelTrace getModelTraceByIdentity(String uri) {
-		// TODO Auto-generated method stub
-		return null;
+    	GraphTraversalSource g = gts.clone();
+    	ModelTraceGremlin result = null;
+		GraphTraversal<Vertex, Vertex> gt = g.V().hasLabel("ModelTrace").has("uri", uri);
+		if (gt.hasNext()) {
+			result = new ModelTraceGremlin();
+	        result.delegate(gt.next());
+	        result.graphTraversalSource(gts);
+		}
+		try {
+            g.close();
+        } catch (Exception e) {
+            logger.error("Error closing GraphTraversalSource", e);
+        }
+		
+		return result;
 	}
+
 
 	@Override
 	public IModelElementTrace getModelElementTraceFor(String modelUri, String modelElementUri) {
-		// TODO Auto-generated method stub
-		return null;
+		GraphTraversalSource g = gts.clone();
+		ModelElementTraceGremlin result = null;
+		GraphTraversal<Vertex, Vertex> gt = g.V().hasLabel("ModelTrace").has("uri", modelUri)
+				.out("elements").has("uri", modelElementUri);
+		if (gt.hasNext()) {
+			result = new ModelElementTraceGremlin();
+	        result.delegate(gt.next());
+	        result.graphTraversalSource(gts);
+		}
+		try {
+            g.close();
+        } catch (Exception e) {
+            logger.error("Error closing GraphTraversalSource", e);
+        }
+		return result;
 	}
+
 
 	@Override
 	public IModelTypeTrace getTypeTraceFor(String modelUri, String typeName) {
-		// TODO Auto-generated method stub
-		return null;
+		GraphTraversalSource g = gts.clone();
+		ModelTypeTraceGremlin result = null;
+		GraphTraversal<Vertex, Vertex> gt = g.V().hasLabel("ModelTrace").has("uri", modelUri)
+				.out("types").has("name", typeName);
+		if (gt.hasNext()) {
+			result = new ModelTypeTraceGremlin();
+	        result.delegate(gt.next());
+	        result.graphTraversalSource(gts);
+		}
+		try {
+            g.close();
+        } catch (Exception e) {
+            logger.error("Error closing GraphTraversalSource", e);
+        }
+		return result;
 	}
 
+
 	@Override
-	public IPropertyTrace getPropertyTraceFor(String modelUri, String elementId, String propertyName) {
-		// TODO Auto-generated method stub
-		return null;
+	public IPropertyTrace getPropertyTraceFor(String modelUri, String modelElementUri, String propertyName) {
+		GraphTraversalSource g = gts.clone();
+		PropertyTraceGremlin result = null;
+		GraphTraversal<Vertex, Vertex> gt = g.V().hasLabel("ModelTrace").has("uri", modelUri)
+				.out("elements").has("uri", modelElementUri)
+				.out("properties").has("name", propertyName);
+		if (gt.hasNext()) {
+			result = new PropertyTraceGremlin();
+	        result.delegate(gt.next());
+	        result.graphTraversalSource(gts);
+		}
+		try {
+            g.close();
+        } catch (Exception e) {
+            logger.error("Error closing GraphTraversalSource", e);
+        }
+		return result;
 	}
 
     /** protected region IModelTraceRepositry end **/

@@ -73,6 +73,16 @@ public [%if(ec.isAbstract){%]abstract [%}%]class [%=name%][%if(extends.isDefined
         logger.info("Removing {} from repository", item);
         return extent.remove(item);
     }
+    
+    @Override
+    public void dispose() {
+[%if(extends.isDefined()){%]
+        super.dispose();
+[%} else {%]
+        this.extent.clear();
+[%}%]
+    }
+    
 [%if (not ec.isAbstract){%]    
     @Override
     public [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] get(Object id) {

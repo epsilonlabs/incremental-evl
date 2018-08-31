@@ -203,7 +203,7 @@ public class CsvModelIncrementalTests {
         
 		byte[] buffer = new byte[in.available()];
 	    in.read(buffer);
-		final File tempFile = File.getOrCreateTempFile(name, extension);
+		final File tempFile = File.createTempFile(name, extension);
         tempFile.deleteOnExit();
         try (
         		FileOutputStream out = new FileOutputStream(tempFile);

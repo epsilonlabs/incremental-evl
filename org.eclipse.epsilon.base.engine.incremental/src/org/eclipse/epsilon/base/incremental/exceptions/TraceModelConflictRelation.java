@@ -7,8 +7,10 @@ package org.eclipse.epsilon.base.incremental.exceptions;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class TraceModelDuplicateRelation extends Exception {
+public class TraceModelConflictRelation extends Exception {
 
-	private static final long serialVersionUID = -8535530819434866849L;
+	public TraceModelConflictRelation(String msg) {
+		super(msg);
+	}
 
 }

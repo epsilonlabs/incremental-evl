@@ -1,6 +1,6 @@
 package org.eclipse.epsilon.base.incremental.trace.gremlin.impl;
 
-import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 
 public interface GremlinWrapper<E> {
 
@@ -8,8 +8,7 @@ public interface GremlinWrapper<E> {
 
 	void delegate(E delegate);
 
-	Graph graph();
 
-	void graph(Graph graph);
+	void graphTraversalSource(GraphTraversalSource gts);
 
 }

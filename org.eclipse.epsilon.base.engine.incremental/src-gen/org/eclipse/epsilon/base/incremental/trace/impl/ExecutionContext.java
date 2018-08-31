@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,7 +21,8 @@ import java.util.NoSuchElementException;
 /** protected region ExecutionContextImports end **/
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -44,12 +45,14 @@ public class ExecutionContext implements IExecutionContext {
      * Instantiates a new ExecutionContext. The ExecutionContext is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ExecutionContext(IContextModuleElementTrace container) throws TraceModelDuplicateRelation {
+    public ExecutionContext(IContextModuleElementTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        if (!container.executionContext().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+
         this.contextVariables = new ExecutionContextHasContextVariables(this);
 
-        if (!container.executionContext().create(this)) {
-            throw new TraceModelDuplicateRelation();
-        };
+
     }
     
     @Override
@@ -59,7 +62,7 @@ public class ExecutionContext implements IExecutionContext {
     
     
     @Override
-    public void setId(Object value) {
+    public void setId(java.lang.Object value) {
         this.id = value;
     }   
      
@@ -73,7 +76,7 @@ public class ExecutionContext implements IExecutionContext {
         IModelElementVariable modelElementVariable = null;
         try {
             modelElementVariable = new ModelElementVariable(name, value, this);
-        } catch (TraceModelDuplicateRelation e) {
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
     	    if (modelElementVariable != null) {

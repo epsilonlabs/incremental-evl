@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -37,7 +37,7 @@ public interface IIdElement {
      * <!-- protected region id-setter-doc end --> 
      * @param value the new value of the '<em>id</em>' attribute.
      */
-    void setId(Object value);
+    void setId(java.lang.Object value);
 
 
 }

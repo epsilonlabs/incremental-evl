@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
@@ -24,9 +25,9 @@ import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
-import org.eclipse.epsilon.evl.incremental.trace.util.ContextTraceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,7 +111,7 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 			TracedModuleElement<IInvariantTrace> currentInvariant = moduleElementStack.peekFirst();
 			if (ast.equals(waitingFor)) {
 				boolean all = EvlOperationFactory.SATISFIES_ALL_OPERATION.equals(waitingFor.getOperationName());
-				record(all, parameterValues, (IInvariantTrace) currentInvariant.getCurrentTrace());
+				record(all, parameterValues, (IInvariantTrace) currentInvariant.getCurrentTrace(), context);
 				parameters.clear();
 				parameterValues.clear();
 				listening = false;
@@ -136,7 +137,11 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 		return moduleElementStack.isEmpty();
 	}
 
-	private void record(boolean all, Collection<String> parameterValues, IInvariantTrace invariantTrace) {
+	private void record(
+		boolean all,
+		Collection<String> parameterValues,
+		IInvariantTrace invariantTrace,
+		IIncrementalBaseContext<T,R,M> context) {
 		logger.info("Creating SatisfiesTrace. invariant: {}, satisfied: {}, all: {}", invariantTrace.getName(),
 				parameterValues, all);
 
@@ -146,7 +151,14 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 		for (Object p : parameterValues) {
 			assert p instanceof String;
 			String invariantName = (String) p;
-			IInvariantTrace targetInvariant = ContextTraceUtil.getInvariantIn(contextTrace, invariantName);
+			IEvlModuleTraceRepository repo = null;
+			try {
+				repo = (IEvlModuleTraceRepository) context.getTraceManager().getExecutionTraceRepository();
+			} catch (EolRuntimeException e1) {
+				logger.error("Error getting trace manager", e1);
+				throw new IllegalStateException("Error getting trace manager", e1);
+			}
+			IInvariantTrace targetInvariant = repo.findInvariantTraceinContext(contextTrace, invariantName);
 			if (targetInvariant == null) {
 				try {
 					targetInvariant = contextTrace.getOrCreateInvariantTrace((String) p);
@@ -164,7 +176,11 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 			throw new IllegalStateException(e);
 		} finally {
 			for (IInvariantTrace i : invariants) {
-				result.satisfiedInvariants().create(i);
+				try {
+					result.satisfiedInvariants().create(i);
+				} catch (TraceModelConflictRelation e) {
+					logger.error("Error created SatsifiesInvariant trace relation", e);
+				}
 			}
 			result.setAll(all);
 		}

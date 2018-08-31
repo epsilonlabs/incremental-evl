@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-23.
+ * This file was automatically generated on: 2018-08-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -30,7 +30,7 @@ public interface IAllInstancesAccess extends IAccess {
      * <!-- protected region ofKind-getter-doc end --> 
      * @return the value of the '<em>Of Kind</em>' attribute.
      */
-    boolean getOfKind();
+    Boolean getOfKind();
 
     /**
      * Returns the value of the '<em><b>type</b></em>' reference.
