@@ -26,13 +26,15 @@ if (er.getEOpposite().isDefined()) {
 }
 var pack = er.getEReferenceType().getEPackage().name;
 var erqp = qp.replace("." + er.getEContainingClass().getEPackage().name + ".", "." + pack + ".");
+var factory = er.getEContainingClass().getEPackage().name.firstToUpperCase() + "TraceFactory";
 %]
 [%=getHeader()%]
 package [%=qp%].trace.impl;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
-import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import [%=qp%].util.[%=factory%];
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import [%=qp%].trace.[%=sourceType%];
 import [%=erqp%].trace.[%=targetType%];
@@ -40,10 +42,10 @@ import [%=qp%].trace.[%=er.getRelationJavaInterfaceName(interPrefix, interSufix)
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 [%if (er.isMany()) {%]
 import java.util.Iterator;
-import org.eclipse.epsilon.base.incremental.trace.gremlin.util.GremlinUtils;
+import java.util.Map.Entry;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 [%} else {%]
-import [%=qp%].util.TraceFactory;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 [%}%]
@@ -82,7 +84,8 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
     @Override
 [%if (er.isMany()) {%]
     public Iterator<[%=targetType%]> get() {
-        return new GremlinUtils.IncrementalFactoryIterator<[%=targetType%], Vertex>(getRaw(), gts);
+        return new GremlinUtils.IncrementalFactoryIterator<[%=targetType%], Vertex>(getRaw(),
+                gts, [%=factory%].getFactory());
     }
     
     /**
@@ -92,7 +95,7 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
         GraphTraversalSource g = startTraversal();
         GraphTraversal<Vertex, Vertex> result = null;
         try {
-            result = g.V(source.getId()).outE("[%=er.name%]").toV(Direction.OUT);
+            result = g.V(source.getId()).out("[%=er.name%]");
         }
         finally {
             finishTraversal(g);
@@ -108,7 +111,7 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
         [%=targetType%] result = null;
         try {
             Vertex to = g.E(delegate).outV().next();
-            result = ([%=targetType%]) TraceFactory.createModuleElementTrace(to, gts);
+            result = ([%=targetType%]) [%=factory%].getFactory().createModuleElementTrace(to, gts);
         }
         finally {
             finishTraversal(g);
@@ -120,12 +123,12 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
     @Override
     public boolean create([%=targetType%] target) throws TraceModelConflictRelation {
         if (conflict(target)) {
+            if (related(target)) {
+                return true;
+            }
             throw new TraceModelConflictRelation("Relation to previous [%=targetType%] exists");
         }
 [%if (opposite.isDefined()) {%]
-        if (related(target)) {
-            return false;
-        }
         target.[%=opposite%]().set(source);
 [%}%]
         set(target);
@@ -150,24 +153,29 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
         GraphTraversalSource g = startTraversal();
         try {
 [%if (er.isMany()) {%]
-	        // FIXME We can just remove this during generation?
 	        if (isUnique()) {
-	            result |= g.V(source.getId()).out("[%=er.name%]")
-[%for (index in er.getEReferenceType().getIndexAttributes()) {%]
-                    .has("[%=index.name%]", target.get[%=index.name.firstToUpperCase()%]())
-[%}%]
-                    .hasNext();
+	           GraphTraversal<Vertex, Vertex> gt =  g.V(source.getId()).out("[%=er.name%]");
+                for (Entry<String, Object> id : target.getIdProperties().entrySet()) {
+                    gt.has(id.getKey(), id.getValue());
+                }
+                result |= gt.hasNext();
             }
 [%} else {%]
             result |= delegate == null ? g.V(source.getId()).out("[%=er.name%]").hasNext() : g.E(delegate).outV().hasId(target.getId()).hasNext();
 [%}
 if (opposite.isDefined()) {
     if (opp_many) {%]
-            // TODO Make this with gremlin
-            Iterable<[%=sourceType%]> iterable = () -> target.[%=opposite%]().get();
-            Stream<[%=sourceType%]> targetStream = StreamSupport.stream(iterable.spliterator(), false);
-            result |= delegate == null ? false : target.[%=opposite%]().isUnique() &&
-        	    targetStream.anyMatch(source::equals);
+            GraphTraversalSource g2 = startTraversal();
+            try {
+                result |= delegate == null ? false : (target.[%=opposite%]().isUnique() &&
+                        g.V(target.getId()).out("[%=opposite%]").hasId(source.getId()).hasNext());
+            }
+            catch (Exception ex) {
+                result = false;
+            }
+            finally {
+                finishTraversal(g2);
+            }
 [%  } else {%]
             result |= target.[%=opposite%]().get() != null;
 [%  }
@@ -188,8 +196,10 @@ if (opposite.isDefined()) {
         if (delegate == null) {
             return false;
         }
-[%}
-var sourceRel;
+[%}%]
+        boolean result = false;
+        GraphTraversalSource g = startTraversal();
+[%var sourceRel;
 if (er.isMany()) {
     sourceRel = "g.V(source.getId()).out(\"" + er.name + "\").hasId(target.getId()).hasNext()";
 } else {
@@ -200,15 +210,19 @@ if (er.isMany()) {
 var targetRel = ";";
 if (opposite.isDefined()) {
     if (opp_many) {%]
-		Iterable<[%=sourceType%]> iterable = () -> target.[%=opposite%]().get();
-		Stream<[%=sourceType%]> targetStream = StreamSupport.stream(iterable.spliterator(), false);
-[%      targetRel = " && targetStream.anyMatch(source::equals);";%]
+        boolean inTarget = false;
+        try {
+            inTarget = g.V(target.getId()).out("[%=opposite%]").hasId(source.getId()).hasNext();
+        }
+        finally {
+            finishTraversal(g);
+        }
+        g = startTraversal();
+[%      targetRel = " && inTarget;";%]
 [%  } else {
         targetRel = " && source.equals(target." + opposite + "().get());";%]
 [%  }
 }%]
-        GraphTraversalSource g = startTraversal();
-        boolean result = false;
         try {
 		  result = [%=sourceRel%][%=targetRel%]
 		}

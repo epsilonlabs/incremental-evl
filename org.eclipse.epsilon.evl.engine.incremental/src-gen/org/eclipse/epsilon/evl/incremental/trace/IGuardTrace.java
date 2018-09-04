@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,9 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
+import java.util.Map;
+
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.*;    
 import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 import org.eclipse.epsilon.evl.incremental.trace.*;    
@@ -22,30 +25,6 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.*;
  * about the different types of accesses that occured during its execution.
  */
 public interface IGuardTrace extends IInContextModuleElementTrace {
-    
-    /**
-     * Returns the value of the '{@link GuardTrace#result <em>result</em>}' attribute.
-     * <!-- protected region result-getter-doc on begin -->
-     * <p>
-     * If the meaning of the '<em>result</em>' attribute isn't clear,
-     * add it to the metamodel as a GenDoc or edit it here.
-     * </p>
-     * <!-- protected region result-getter-doc end --> 
-     * @return the value of the '<em>result</em>' attribute.
-     */
-    Boolean getResult();
-
-    /**
-     * Sets the value of the '{@link GuardTrace#result <em>result</em>}' attribute.
-     * <!-- protected region result-setter-doc on begin -->
-     * <p>
-     * If the meaning of the '<em>result</em>' attribute isn't clear,
-     * add it to the metamodel as a GenDoc or edit it here.
-     * </p>
-     * <!-- protected region result-setter-doc end --> 
-     * @param value the new value of the '<em>result</em>' attribute.
-     */
-    void setResult(boolean value);
 
     /**
      * Returns the value of the '<em><b>limits</b></em>' reference.
@@ -59,11 +38,26 @@ public interface IGuardTrace extends IInContextModuleElementTrace {
      */
     IGuardTraceHasLimits limits();
                 
+    /**
+     * Returns the value of the '<em><b>result</b></em>' reference.
+     * <!-- protected region result-getter-doc on begin -->
+     * <p>
+     * If the meaning of the '<em>result</em>' attribute isn't clear,
+     * add it to the metamodel as a GenDoc or edit it here.
+     * </p>
+     * <!-- protected region result-getter-doc end --> 
+     * @return the value of the '<em>result</em>' reference.
+     */
+    IGuardTraceHasResult result();
+                
+
  
     /**
      * GuardTrace has same identity in the aggregate.
      */
-    public boolean sameIdentityAs(final IGuardTrace other);
+    boolean sameIdentityAs(final IGuardTrace other);
     
+    /** The GuardResult Factory. */
+    IGuardResult getOrCreateGuardResult(IExecutionContext context) throws EolIncrementalExecutionException;       
 
 }

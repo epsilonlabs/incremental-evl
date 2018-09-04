@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,15 +13,17 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
-import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTraceHasExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
-import org.eclipse.epsilon.base.incremental.util.TraceFactory;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 
 /**
@@ -36,8 +38,6 @@ public class ContextModuleElementTraceHasExecutionContextGremlin extends Feature
     /** The source(s) of the reference */
     protected IContextModuleElementTrace source;
     
-    /** Fast access for single-valued references */
-    private Edge delegate;
  
     
     /**
@@ -46,7 +46,7 @@ public class ContextModuleElementTraceHasExecutionContextGremlin extends Feature
      * @param source the source of the reference
      */
     public ContextModuleElementTraceHasExecutionContextGremlin (IContextModuleElementTrace source, GraphTraversalSource gts) {
-        super(true);
+        super(false);
         this.source = source;
         this.gts = gts;
     }
@@ -54,15 +54,19 @@ public class ContextModuleElementTraceHasExecutionContextGremlin extends Feature
     // PUBLIC API
         
     @Override
-    public IExecutionContext get() {
-        if (delegate == null) {
-            return null;
-        }
+    public Iterator<IExecutionContext> get() {
+        return new GremlinUtils.IncrementalFactoryIterator<IExecutionContext, Vertex>(getRaw(),
+                gts, BaseTraceFactory.getFactory());
+    }
+    
+    /**
+     * Get the Tinkerpop GraphTraversal iterator of the vertices that are part of the relation.
+     */
+    public  GraphTraversal<Vertex, Vertex> getRaw() {
         GraphTraversalSource g = startTraversal();
-        IExecutionContext result = null;
+        GraphTraversal<Vertex, Vertex> result = null;
         try {
-            Vertex to = g.E(delegate).outV().next();
-            result = (IExecutionContext) TraceFactory.createModuleElementTrace(to, gts);
+            result = g.V(source.getId()).out("executionContext");
         }
         finally {
             finishTraversal(g);
@@ -74,6 +78,9 @@ public class ContextModuleElementTraceHasExecutionContextGremlin extends Feature
     @Override
     public boolean create(IExecutionContext target) throws TraceModelConflictRelation {
         if (conflict(target)) {
+            if (related(target)) {
+                return true;
+            }
             throw new TraceModelConflictRelation("Relation to previous IExecutionContext exists");
         }
         set(target);
@@ -94,7 +101,13 @@ public class ContextModuleElementTraceHasExecutionContextGremlin extends Feature
         boolean result = false;
         GraphTraversalSource g = startTraversal();
         try {
-            result |= delegate == null ? g.V(source.getId()).out("executionContext").hasNext() : g.E(delegate).outV().hasId(target.getId()).hasNext();
+	        if (isUnique()) {
+	           GraphTraversal<Vertex, Vertex> gt =  g.V(source.getId()).out("executionContext");
+                for (Entry<String, Object> id : target.getIdProperties().entrySet()) {
+                    gt.has(id.getKey(), id.getValue());
+                }
+                result |= gt.hasNext();
+            }
         }
         finally {
             finishTraversal(g);
@@ -107,13 +120,10 @@ public class ContextModuleElementTraceHasExecutionContextGremlin extends Feature
     	if (target == null) {
 			return false;
 		}
-        if (delegate == null) {
-            return false;
-        }
-        GraphTraversalSource g = startTraversal();
         boolean result = false;
+        GraphTraversalSource g = startTraversal();
         try {
-		  result = g.E(delegate).outV().hasId(target.getId()).hasNext();
+		  result = g.V(source.getId()).out("executionContext").hasId(target.getId()).hasNext();
 		}
 		finally {
             finishTraversal(g);
@@ -123,12 +133,11 @@ public class ContextModuleElementTraceHasExecutionContextGremlin extends Feature
 	
 	@Override
     public Edge delegate() {
-        return delegate;
+        return null;
     }
 
     @Override
     public void delegate(Edge delegate) {
-        this.delegate = delegate;
     }
     
     @Override
@@ -143,7 +152,7 @@ public class ContextModuleElementTraceHasExecutionContextGremlin extends Feature
     public void set(IExecutionContext target) {
         GraphTraversalSource g = startTraversal();
         try {
-            delegate = g.V(source.getId()).addE("executionContext").to(g.V(target.getId())).next();
+            g.V(source.getId()).addE("executionContext").to(g.V(target.getId())).iterate();
         } catch (Exception ex) {
             throw ex;
         } finally {
@@ -156,8 +165,7 @@ public class ContextModuleElementTraceHasExecutionContextGremlin extends Feature
     public void remove(IExecutionContext target) {
         GraphTraversalSource g = startTraversal();
         try {
-            g.E(delegate).drop();
-            delegate = null;
+            g.V(source.getId()).outE("executionContext").as("e").inV().hasId(target.getId()).select("e").drop().iterate();
         } catch (Exception ex) {
             throw ex;
         } finally {

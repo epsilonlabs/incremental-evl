@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,22 +11,24 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
+
 import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region ContextTraceImports on begin **/
 /** protected region ContextTraceImports end **/
-
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
-
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -48,12 +50,6 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
      * The guard.
      */
     private IGuardedElementTraceHasGuard guard;
-
-    /**
-     * * The different accesses that where recorded during execution for this particular 
-       * module element.
-     */
-    private IModuleElementTraceHasAccesses accesses;
 
     /**
      * * The execution context in which this module was executed. This is constitued
@@ -82,7 +78,6 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
         String kind, Integer index, IModuleExecutionTrace container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
-        // FIXME We need to destroy the created edges when any edge fails
         GraphTraversalSource g = startTraversal();
         try {
             g.V(delegate)
@@ -98,7 +93,6 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
         };
         this.executionContext = new ContextModuleElementTraceHasExecutionContextGremlin(this, gts);
         this.guard = new GuardedElementTraceHasGuardGremlin(this, gts);
-        this.accesses = new ModuleElementTraceHasAccessesGremlin(this, gts);
         this.constraints = new ContextTraceHasConstraintsGremlin(this, gts);
     }
     
@@ -123,9 +117,9 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
 	            result = (String) g.V(delegate).values("kind").next();
 	        } catch (NoSuchElementException ex) {
 	            /** protected region kind on begin **/
-        	// TODO Add default return value for ContextTraceGremlin.getgetKind
-	        result = "";
-        /** protected region kind end **/
+	            // TODO Add default return value for ContextTraceGremlin.getKind
+	            throw new IllegalStateException("Add default return value for ContextTraceGremlin.getKind", ex);
+	            /** protected region kind end **/
 	        }
 	    } finally {
             finishTraversal(g);
@@ -142,9 +136,9 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
 	            result = (Integer) g.V(delegate).values("index").next();
 	        } catch (NoSuchElementException ex) {
 	            /** protected region index on begin **/
-        // TODO Add default return value for ContextTraceGremlin.getgetIndex
-        return (Integer) g.V(delegate).values("index").next();
-        /** protected region index end **/
+	            // TODO Add default return value for ContextTraceGremlin.getIndex
+	            throw new IllegalStateException("Add default return value for ContextTraceGremlin.getIndex", ex);
+	            /** protected region index end **/
 	        }
 	    } finally {
             finishTraversal(g);
@@ -167,23 +161,6 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
             }
         }
         return guard;
-    }
-
-    @Override
-    public IModuleElementTraceHasAccesses accesses() {
-        if (accesses == null) {
-            accesses = new ModuleElementTraceHasAccessesGremlin(this, this.gts);
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("accesses");
-                if (gt.hasNext()) {
-                    ((ModuleElementTraceHasAccessesGremlin)accesses).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
-        return accesses;
     }
 
     @Override
@@ -225,20 +202,20 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
         GraphTraversalSource g = startTraversal();
         GuardTraceGremlin guardTrace = null;
         try {
-    	    Vertex v = null;
-    	    try {
-    	        v = g.addV("GuardTrace").next();
-    	        guardTrace = new GuardTraceGremlin(this, v, gts);
-    	    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-    	        v.remove();
-    	    } finally {
-    		    if (guardTrace != null) {
-    		        return guardTrace;
-    		    }
-    	        guardTrace = (GuardTraceGremlin) this.guard.get();
-    	        if (guardTrace  == null) {
-    	            throw new EolIncrementalExecutionException("Error creating trace model element. Requested GuardTrace was "
-    	                    + "duplicate but previous one was not found.");
+    	    GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("guard");
+    	    if (gt.hasNext()) {
+    	        guardTrace = new GuardTraceGremlin();
+    	        guardTrace.delegate(gt.next());
+    	        guardTrace.graphTraversalSource(gts);
+    	    }
+    	    else {
+    	        Vertex v = null;
+    	        try {
+    	            v = g.addV("GuardTrace").next();
+    	            guardTrace = new GuardTraceGremlin(this, v, gts);
+    	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+    	            g.V(v).as("v").properties().drop().select("v").drop();
+    	            throw new EolIncrementalExecutionException("Error creating requested GuardTrace", e);
     	        }
     	    }
     	} finally {
@@ -246,68 +223,60 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
         }    
         return guardTrace;
     }      
-                  
+
     @Override
     public IExecutionContext getOrCreateExecutionContext() throws EolIncrementalExecutionException {
         GraphTraversalSource g = startTraversal();
         ExecutionContextGremlin executionContext = null;
         try {
-    	    Vertex v = null;
-    	    try {
-    	        v = g.addV("ExecutionContext").next();
-    	        executionContext = new ExecutionContextGremlin(this, v, gts);
-    	    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-    	        v.remove();
-    	    } finally {
-    		    if (executionContext != null) {
-    		        return executionContext;
-    		    }
-    	        executionContext = (ExecutionContextGremlin) this.executionContext.get();
-    	        if (executionContext  == null) {
-    	            throw new EolIncrementalExecutionException("Error creating trace model element. Requested ExecutionContext was "
-    	                    + "duplicate but previous one was not found.");
-    	        }
-    	    }
+            Vertex v = null;
+            try {
+                v = g.addV("ExecutionContext").next();
+                executionContext = new ExecutionContextGremlin(this, v, gts);
+            } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+                g.V(v).as("v").properties().drop().select("v").drop();
+                throw new EolIncrementalExecutionException("Error creating requested ExecutionContext", e);
+            }
     	} finally {
             finishTraversal(g);
         }    
         return executionContext;
     }      
-                  
+
     @Override
     public IInvariantTrace getOrCreateInvariantTrace(String name) throws EolIncrementalExecutionException {
         GraphTraversalSource g = startTraversal();
         InvariantTraceGremlin invariantTrace = null;
         try {
-    	    Vertex v = null;
-    	    try {
-    	        v = g.addV("InvariantTrace").next();
-    	        invariantTrace = new InvariantTraceGremlin(name, this, v, gts);
-    	    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-    	        v.remove();
-    	    } finally {
-    		    if (invariantTrace != null) {
-    		        return invariantTrace;
-    		    }
-    	        GraphTraversal<Vertex, Vertex> gt = ((ContextTraceHasConstraintsGremlin) this.constraints).getRaw()
-    	            .hasLabel("InvariantTrace")
-    	            .has("name", name)
-    	            .as("a") 
-    	            .select("a");
-    	        if (!gt.hasNext()) {
-    	            throw new EolIncrementalExecutionException("Error creating trace model element. Requested InvariantTrace was "
-    	                    + "duplicate but previous one was not found.");
-    	        }
+    	    GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("constraints").has("name", name);
+    	    if (gt.hasNext()) {
     	        invariantTrace = new InvariantTraceGremlin();
     	        invariantTrace.delegate(gt.next());
     	        invariantTrace.graphTraversalSource(gts);
+    	    }
+    	    else {
+    	        Vertex v = null;
+    	        try {
+    	            v = g.addV("InvariantTrace").next();
+    	            invariantTrace = new InvariantTraceGremlin(name, this, v, gts);
+    	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+    	            g.V(v).as("v").properties().drop().select("v").drop();
+    	            throw new EolIncrementalExecutionException("Error creating requested InvariantTrace", e);
+    	        }
     	    }
     	} finally {
             finishTraversal(g);
         }    
         return invariantTrace;
     }      
-                  
+
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("kind", getKind());
+        result.put("index", getIndex());
+        return result;
+    }
+
     @Override
     public boolean sameIdentityAs(final IContextTrace other) {
         if (other == null) {
@@ -343,11 +312,11 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
         ContextTraceGremlin other = (ContextTraceGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (executionContext.get() == null) {
-            if (other.executionContext.get() != null)
-                return false;
-        }
-        if (!executionContext.get().equals(other.executionContext.get())) {
+    if (executionContext == null) {
+        if (other.executionContext != null)
+            return false;
+    }
+        if (!IncrementalUtils.equalIterators(executionContext().get(), other.executionContext().get())) {
             return false;
         }
         return true; 
@@ -360,7 +329,7 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
         result = prime * result + ((getKind() == null) ? 0 : getKind().hashCode());
         Integer index = Integer.valueOf(getIndex());
         result = prime * result + ((index == null) ? 0 : index.hashCode());
-        result = prime * result + ((executionContext.get() == null) ? 0 : executionContext.get().hashCode());
+        result = prime * result + ((executionContext().get() == null) ? 0 : executionContext().get().hashCode());
         return result;
     }
     

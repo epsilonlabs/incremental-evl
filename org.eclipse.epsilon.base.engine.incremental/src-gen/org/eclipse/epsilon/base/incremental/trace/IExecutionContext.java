@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -10,6 +10,8 @@
  * 
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
+
+import java.util.Map;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.*;    
@@ -27,13 +29,30 @@ public interface IExecutionContext extends IIdElement {
      */
     IExecutionContextHasContextVariables contextVariables();
                 
+    /**
+     * Returns the value of the '<em><b>accesses</b></em>' reference.
+     * The different accesses that where recorded during execution.
+     * @return the value of the '<em>accesses</em>' reference.
+     */
+    IExecutionContextHasAccesses accesses();
+                
+
  
     /**
      * ExecutionContext has same identity in the aggregate.
      */
-    public boolean sameIdentityAs(final IExecutionContext other);
+    boolean sameIdentityAs(final IExecutionContext other);
     
     /** The ModelElementVariable Factory. */
     IModelElementVariable getOrCreateModelElementVariable(String name, IModelElementTrace value) throws EolIncrementalExecutionException;       
+    /** The ElementAccess Factory. */
+    IElementAccess getOrCreateElementAccess(IModuleElementTrace from, IModelElementTrace element) throws EolIncrementalExecutionException;       
+
+    /** The AllInstancesAccess Factory. */
+    IAllInstancesAccess getOrCreateAllInstancesAccess(Boolean ofKind, IModuleElementTrace from, IModelTypeTrace type) throws EolIncrementalExecutionException;       
+
+    /** The PropertyAccess Factory. */
+    IPropertyAccess getOrCreatePropertyAccess(IModuleElementTrace from, IPropertyTrace property) throws EolIncrementalExecutionException;       
+
 
 }

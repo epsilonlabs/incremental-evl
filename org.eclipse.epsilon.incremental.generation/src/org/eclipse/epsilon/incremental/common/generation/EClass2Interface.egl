@@ -18,6 +18,8 @@ import "Ecore2JavaTemplates.egl";
 [%=getHeader()%]
 package [%=qp%].trace;
 
+import java.util.Map;
+
 [%if (ec.getEAllReferences().exists(er | er.isContainment())){%]
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 [%}
@@ -59,11 +61,33 @@ for (er in ec.getEReferences()) {%]
                 
 [%
 }%]
+[%
+for (op in ec.getEOperations()) {
+    op.getEType().name.println("op name ");
+    var retType;
+    if (op.getEType().name.startsWith("EMap")) {
+        var mapTypes = op.getMapTypes().println("types");
+        retType = "Map<" + mapTypes.at(0) + "," + mapTypes.at(1) + ">";
+    } else {
+        // FIXME Might need to import type
+        retType = op.getEType().isDefined(); 
+    }
+    var args = new Sequence();
+    for (p in op.getEParameters()) {
+        var type = a.getEType().getInstanceClassName();
+        var name = a.getName();
+        args.add(type + " " + name);
+    }
+%]
+    [%=retType%] [%=op.name%]([%=args.concat(", ")%]);  
+[%}
+%]
+
 [%if (not (ec.isAbstract() or ec.isInterface())) {%] 
     /**
      * [%=ec.name%] has same identity in the aggregate.
      */
-    public boolean sameIdentityAs(final [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] other);
+    boolean sameIdentityAs(final [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] other);
     
 [%}%]
 [%/* Factory Methods

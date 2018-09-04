@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,21 +11,23 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
+
 import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
-import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region ElementAccessImports on begin **/
 /** protected region ElementAccessImports end **/
-
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
-
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -42,9 +44,9 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
     private Vertex delegate;
     
     /**
-     * The executionTrace.
+     * The from.
      */
-    private IAccessHasExecutionTrace executionTrace;
+    private IAccessHasFrom from;
 
     /**
      * The element.
@@ -62,21 +64,20 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
      * container and any attributes identified as indexes.
      */    
     public ElementAccessGremlin(
-        IModuleElementTrace executionTrace, IModelElementTrace element, IModuleExecutionTrace container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        IModuleElementTrace from, IModelElementTrace element, IExecutionContext container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
-        // FIXME We need to destroy the created edges when any edge fails
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.executionTrace = new AccessHasExecutionTraceGremlin(this, gts);
         this.element = new ElementAccessHasElementGremlin(this, gts);
+        this.from = new AccessHasFromGremlin(this, gts);
         try {
-	        this.executionTrace.create(executionTrace);
 	        this.element.create(element);
+	        this.from.create(from);
         } catch (TraceModelConflictRelation ex) {
-            ((AccessHasExecutionTraceGremlin)this.executionTrace).delegate().remove();
             ((ElementAccessHasElementGremlin)this.element).delegate().remove();
+            ((AccessHasFromGremlin)this.from).delegate().remove();
             throw ex;
         }
     }
@@ -94,20 +95,20 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
     }   
      
     @Override
-    public IAccessHasExecutionTrace executionTrace() {
-        if (executionTrace == null) {
-            executionTrace = new AccessHasExecutionTraceGremlin(this, this.gts);
+    public IAccessHasFrom from() {
+        if (from == null) {
+            from = new AccessHasFromGremlin(this, this.gts);
             GraphTraversalSource g = startTraversal();
             try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("executionTrace");
+                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("from");
                 if (gt.hasNext()) {
-                    ((AccessHasExecutionTraceGremlin)executionTrace).delegate(gt.next());
+                    ((AccessHasFromGremlin)from).delegate(gt.next());
                 }
             } finally {
                 finishTraversal(g);
             }
         }
-        return executionTrace;
+        return from;
     }
 
     @Override
@@ -125,6 +126,11 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
             }
         }
         return element;
+    }
+
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        return result;
     }
 
     @Override
@@ -146,18 +152,18 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
         ElementAccessGremlin other = (ElementAccessGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (executionTrace.get() == null) {
-            if (other.executionTrace.get() != null)
-                return false;
-        }
-        if (!executionTrace.get().equals(other.executionTrace.get())) {
+    if (element == null) {
+        if (other.element != null)
+            return false;
+    }
+        if (!element().get().equals(other.element().get())) {
             return false;
         }
-        if (element.get() == null) {
-            if (other.element.get() != null)
-                return false;
-        }
-        if (!element.get().equals(other.element.get())) {
+    if (from == null) {
+        if (other.from != null)
+            return false;
+    }
+        if (!from().get().equals(other.from().get())) {
             return false;
         }
         return true; 
@@ -167,8 +173,8 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((executionTrace.get() == null) ? 0 : executionTrace.get().hashCode());
-        result = prime * result + ((element.get() == null) ? 0 : element.get().hashCode());
+        result = prime * result + ((element().get() == null) ? 0 : element().get().hashCode());
+        result = prime * result + ((from().get() == null) ? 0 : from().get().hashCode());
         return result;
     }
     

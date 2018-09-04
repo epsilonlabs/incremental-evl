@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -10,6 +10,8 @@
  * 
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
+
+import java.util.Map;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.*;    
@@ -60,11 +62,12 @@ public interface IContextTrace extends IGuardedElementTrace, IContextModuleEleme
      */
     IContextTraceHasConstraints constraints();
                 
+
  
     /**
      * ContextTrace has same identity in the aggregate.
      */
-    public boolean sameIdentityAs(final IContextTrace other);
+    boolean sameIdentityAs(final IContextTrace other);
     
     /** The GuardTrace Factory. */
     IGuardTrace getOrCreateGuardTrace() throws EolIncrementalExecutionException;       

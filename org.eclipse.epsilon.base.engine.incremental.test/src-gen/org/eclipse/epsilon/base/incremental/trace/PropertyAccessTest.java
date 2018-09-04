@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.base.incremental.trace.impl.PropertyAccess;
-// import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasAccesses;
+// import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionContextHasAccesses;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -39,19 +39,16 @@ public class PropertyAccessTest {
 
     /** Mock the container. */
     @Mock
-    private IModuleExecutionTrace containerMock;
+    private IExecutionContext containerMock;
     
     private PropertyAccess classUnderTest;
 
     @Test
     public void testInit() throws Exception {
         
-        ModuleExecutionTraceHasAccesses containerReference = new ModuleExecutionTraceHasAccesses(containerMock);
+        ExecutionContextHasAccesses containerReference = new ExecutionContextHasAccesses(containerMock);
         when(containerMock.accesses()).thenReturn(containerReference);
-        IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
-        ModuleElementTraceHasAccesses _moduleElementTrace = new ModuleElementTraceHasAccesses(_executionTrace );
-        when(_executionTrace.accesses()).thenReturn(_moduleElementTrace);
-        //when(_moduleElementTrace.get()).thenReturn(null);
+        IModuleElementTrace _from = mock(IModuleElementTrace.class);
                 
         IPropertyTrace _property = mock(IPropertyTrace.class);
                 
@@ -71,47 +68,38 @@ public class PropertyAccessTest {
     
     
     @Test
-    public void testExecutionTraceReference() throws Exception {
-        ModuleExecutionTraceHasAccesses containerReference = new ModuleExecutionTraceHasAccesses(containerMock);
+    public void testFromReference() throws Exception {
+        ExecutionContextHasAccesses containerReference = new ExecutionContextHasAccesses(containerMock);
         when(containerMock.accesses()).thenReturn(containerReference);
-        IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
-        ModuleElementTraceHasAccesses _moduleElementTrace = new ModuleElementTraceHasAccesses(_executionTrace );
-        when(_executionTrace.accesses()).thenReturn(_moduleElementTrace);
-        //when(_moduleElementTrace.get()).thenReturn(null);
+        IModuleElementTrace _from = mock(IModuleElementTrace.class);
                 
         IPropertyTrace _property = mock(IPropertyTrace.class);
                 
-        // protected region PropertyAccessInit_ExecutionTraceReference on begin
-        classUnderTest = new PropertyAccess(_executionTrace, _property, containerMock);                    
-        // protected region PropertyAccessInit_ExecutionTraceReference end
+        // protected region PropertyAccessInit_FromReference on begin
+        classUnderTest = new PropertyAccess(_from, _property, containerMock);                    
+        // protected region PropertyAccessInit_FromReference end
         IModuleElementTrace ref = mock(IModuleElementTrace.class);
-        IModuleElementTraceHasAccesses _moduleElementTrace2 = mock(IModuleElementTraceHasAccesses.class);
-        when(_moduleElementTrace2 .get()).thenReturn(new HashSet<IAccess>().iterator());
-        when(ref.accesses()).thenReturn(_moduleElementTrace2);
         
-        boolean result = classUnderTest.executionTrace().create(ref);
+        boolean result = classUnderTest.from().create(ref);
         assertFalse("A new reference can not be created before destroy", result);
-        assertThat(classUnderTest.executionTrace().get(), is(_executionTrace));
-        result = classUnderTest.executionTrace().destroy(ref);
+        assertThat(classUnderTest.from().get(), is(_from));
+        result = classUnderTest.from().destroy(ref);
         assertFalse("Can't destroy unexisting reference", result);
-        result = classUnderTest.executionTrace().destroy(_executionTrace);
+        result = classUnderTest.from().destroy(_from);
         assertTrue("Exising references can be destroyed", result);
-        assertThat(classUnderTest.executionTrace().get(), is(nullValue()));
-        result = classUnderTest.executionTrace().create(ref);
+        assertThat(classUnderTest.from().get(), is(nullValue()));
+        result = classUnderTest.from().create(ref);
         assertTrue("New references can be craeted if was null", result);
-        assertThat(classUnderTest.executionTrace().get(), is(ref));
+        assertThat(classUnderTest.from().get(), is(ref));
     
     }
     
     
     @Test
     public void testPropertyReference() throws Exception {
-        ModuleExecutionTraceHasAccesses containerReference = new ModuleExecutionTraceHasAccesses(containerMock);
+        ExecutionContextHasAccesses containerReference = new ExecutionContextHasAccesses(containerMock);
         when(containerMock.accesses()).thenReturn(containerReference);
-        IModuleElementTrace _executionTrace = mock(IModuleElementTrace.class);
-        ModuleElementTraceHasAccesses _moduleElementTrace = new ModuleElementTraceHasAccesses(_executionTrace );
-        when(_executionTrace.accesses()).thenReturn(_moduleElementTrace);
-        //when(_moduleElementTrace.get()).thenReturn(null);
+        IModuleElementTrace _from = mock(IModuleElementTrace.class);
                 
         IPropertyTrace _property = mock(IPropertyTrace.class);
                 

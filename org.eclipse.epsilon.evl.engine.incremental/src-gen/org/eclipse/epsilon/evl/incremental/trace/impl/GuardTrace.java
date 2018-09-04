@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,6 +20,7 @@ import java.util.NoSuchElementException;
 /** protected region GuardTraceImports on begin **/
 /** protected region GuardTraceImports end **/
 
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
@@ -38,25 +39,19 @@ public class GuardTrace implements IGuardTrace {
     private Object id;
 
     /**
-	 * The result.
-	 */
-    private Boolean result;
-
-    /**
-     * * The different accesses that where recorded during execution for this particular 
-       * module element.
+     * The contextModuleElement.
      */
-    private final IModuleElementTraceHasAccesses accesses;
-
-    /**
-     * The parentTrace.
-     */
-    private final IInContextModuleElementTraceHasParentTrace parentTrace;
+    private final IInContextModuleElementTraceHasContextModuleElement contextModuleElement;
 
     /**
      * The limits.
      */
     private final IGuardTraceHasLimits limits;
+
+    /**
+     * The result.
+     */
+    private final IGuardTraceHasResult result;
 
     /**
      * Instantiates a new GuardTrace. The GuardTrace is uniquely identified by its
@@ -68,8 +63,8 @@ public class GuardTrace implements IGuardTrace {
         };
 
         this.limits = new GuardTraceHasLimits(this);
-        this.accesses = new ModuleElementTraceHasAccesses(this);
-        this.parentTrace = new InContextModuleElementTraceHasParentTrace(this);
+        this.contextModuleElement = new InContextModuleElementTraceHasContextModuleElement(this);
+        this.result = new GuardTraceHasResult(this);
 
 
     }
@@ -86,24 +81,8 @@ public class GuardTrace implements IGuardTrace {
     }   
      
     @Override
-    public Boolean getResult() {
-        return result;
-    }
-    
-    
-    @Override
-    public void setResult(boolean value) {
-        this.result = value;
-    }   
-     
-    @Override
-    public IModuleElementTraceHasAccesses accesses() {
-        return accesses;
-    }
-
-    @Override
-    public IInContextModuleElementTraceHasParentTrace parentTrace() {
-        return parentTrace;
+    public IInContextModuleElementTraceHasContextModuleElement contextModuleElement() {
+        return contextModuleElement;
     }
 
     @Override
@@ -111,6 +90,39 @@ public class GuardTrace implements IGuardTrace {
         return limits;
     }
 
+    @Override
+    public IGuardTraceHasResult result() {
+        return result;
+    }
+
+    @Override
+    public IGuardResult getOrCreateGuardResult(IExecutionContext context) throws EolIncrementalExecutionException {
+        IGuardResult guardResult = null;
+        try {
+            guardResult = new GuardResult(context, this);
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
+            // Pass
+        } finally {
+    	    if (guardResult != null) {
+    	        return guardResult;
+    	    }
+            Iterator<IGuardResult> it = this.result.get();
+            while (it.hasNext()) {
+            	IGuardResult item;
+                item = (IGuardResult) it.next();
+    			if (item.context().get().equals(context)) {
+    				guardResult = item;
+    				break;
+    			}
+    		}
+    		if (guardResult == null) {
+               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested GuardResult was "
+                		+ "duplicate but previous one was not found.");
+            }
+        }
+        return guardResult;
+    }      
+                  
     @Override
     public boolean sameIdentityAs(final IGuardTrace other) {
         if (other == null) {

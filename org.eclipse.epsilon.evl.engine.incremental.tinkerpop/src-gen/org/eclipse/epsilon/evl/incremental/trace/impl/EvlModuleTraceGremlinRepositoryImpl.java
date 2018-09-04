@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,7 +18,6 @@ import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.util.Attachable;
 import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex;
-import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceGremlinRepositoryImpl;
@@ -29,7 +28,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
-import org.eclipse.epsilon.evl.incremental.util.TraceFactory;
+import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
 /** protected region EvlModuleTraceRepositoryImplImports end **/
 
 import org.slf4j.Logger;
@@ -191,7 +190,7 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 		if (properties_gt.hasNext()) {
 			GraphTraversal<Vertex, Vertex> mt_gt = properties_gt.in("property").out("executionTrace");
 			while(mt_gt.hasNext()) {
-				Object mt = TraceFactory.createModuleElementTrace(mt_gt.next(), gts);
+				Object mt = EvlTraceFactory.getFactory().createModuleElementTrace(mt_gt.next(), gts);
 				result.add((IModuleElementTrace) mt);
 			}
 		}
@@ -260,6 +259,44 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 		InvariantTraceGremlin result = null;
 		if (gt.hasNext()) {
 			result = new InvariantTraceGremlin();
+	        result.delegate(gt.next());
+	        result.graphTraversalSource(gts);
+		}
+		try {
+			gt.close();
+        } catch (Exception e) {
+            logger.error("Error closing GraphTraversalSource", e);
+        }
+		return result;
+	}
+
+
+	@Override
+	public ICheckResult findResultInCheck(ICheckTrace checkTrace, IExecutionContext currentContext) {
+		GraphTraversalSource g = gts.clone();
+		GraphTraversal<Vertex, Vertex> gt =  g.V(checkTrace.getId()).out("result").as("r").out("context").hasId(currentContext.getId()).select("r");
+		CheckResultGremlin result = null;
+		if (gt.hasNext()) {
+			result = new CheckResultGremlin();
+	        result.delegate(gt.next());
+	        result.graphTraversalSource(gts);
+		}
+		try {
+			gt.close();
+        } catch (Exception e) {
+            logger.error("Error closing GraphTraversalSource", e);
+        }
+		return result;
+	}
+
+
+	@Override
+	public IGuardResult findResultInGuard(IGuardTrace guardTrace, IExecutionContext currentContext) {
+		GraphTraversalSource g = gts.clone();
+		GraphTraversal<Vertex, Vertex> gt =  g.V(guardTrace.getId()).out("result").as("r").out("context").hasId(currentContext.getId()).select("r");
+		GuardResultGremlin result = null;
+		if (gt.hasNext()) {
+			result = new GuardResultGremlin();
 	        result.delegate(gt.next());
 	        result.graphTraversalSource(gts);
 		}

@@ -12,7 +12,7 @@ import com.arangodb.tinkerpop.gremlin.structure.ArangoDBGraph;
 
 public class ArangoDB[%=ep.getName().firstToUpperCase()%]Util {
 
-    private static final String GRAPH_NAME = "Invremental[%=ep.getName().firstToUpperCase()%]";
+    private static final String GRAPH_NAME = "Incremental[%=ep.getName().firstToUpperCase()%]";
 
     /**
      * Create a base configuration that provides the required ArangoDB schema. This can the be
@@ -21,7 +21,7 @@ public class ArangoDB[%=ep.getName().firstToUpperCase()%]Util {
      */
     public static Configuration getBaseConfiguration() {
         final Configuration conf = new BaseConfiguration();
-        // Respect the comas in relations
+        // Respect the commas in relations
         ((AbstractConfiguration) conf).setListDelimiter('/');
         
         conf.addProperty(Graph.GRAPH, ArangoDBGraph.class.getName());
@@ -38,11 +38,7 @@ for (k in byName.keySet()) {
     var target = byName.get(k).at(1).concat(",");%]
         conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".graph.edge", "[%=k%]");
         conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".graph.relation", "[%=k%]:[%=source%]->[%=target%]");
-[%}%] 
-        //conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".graph.edge", "knows");
-        //conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".graph.edge", "created");
-        //conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".graph.relation", "knows:vertex->vertex");
-        //conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".graph.relation", "created:vertex->vertex");
+[%}%]
         return conf;
     }
 }

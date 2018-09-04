@@ -380,6 +380,16 @@ operation EStructuralFeature getDocumentation(indent: Integer) : String {
     return null;
 }
 
+operation EOperation getMapTypes() : Sequence {
+    var result = new Sequence;
+    var an = self.getEAnnotation("http://www.eclipse.org/emf/2002/GenModel");
+    if (an.isDefined()) {
+        result.add(an.getDetails().get("keyType"));
+        result.add(an.getDetails().get("valueType"));
+    }
+    return result;
+} 
+
 /**
  * Get the annotations for the given annotationUri from the class hierarchy
  */

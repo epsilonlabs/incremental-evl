@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,6 +15,8 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTraceHasExecutionContext;
@@ -30,7 +32,7 @@ public class ContextModuleElementTraceHasExecutionContext extends Feature implem
     protected IContextModuleElementTrace source;
     
     /** The target(s) of the reference */
-    protected IExecutionContext target;
+    protected Queue<IExecutionContext> target =  new ConcurrentLinkedQueue<IExecutionContext>();
     
     /**
      * Instantiates a new IContextModuleElementTraceHasExecutionContext.
@@ -38,15 +40,16 @@ public class ContextModuleElementTraceHasExecutionContext extends Feature implem
      * @param source the source of the reference
      */
     public ContextModuleElementTraceHasExecutionContext (IContextModuleElementTrace source) {
-        super(true);
+        super(false);
         this.source = source;
     }
     
     // PUBLIC API
         
     @Override
-    public IExecutionContext get() {
-        return target;
+    
+    public Iterator<IExecutionContext> get() {
+    	return target.iterator();
     }
     
 
@@ -71,7 +74,9 @@ public class ContextModuleElementTraceHasExecutionContext extends Feature implem
     @Override
     public boolean conflict(IExecutionContext target) {
         boolean result = false;
-        result |= this.target != null;
+        if (isUnique) {
+            result |= this.target.contains(target);
+        }
         return result;
     }
     
@@ -80,7 +85,7 @@ public class ContextModuleElementTraceHasExecutionContext extends Feature implem
     	if (target == null) {
 			return false;
 		}
-		return target.equals(this.target);
+		return this.target.contains(target);
 	}
         
     
@@ -88,12 +93,12 @@ public class ContextModuleElementTraceHasExecutionContext extends Feature implem
     
     @Override
     public void set(IExecutionContext target) {
-        this.target = target;
+        this.target.add(target);
     }
     
     @Override
     public void remove(IExecutionContext target) {
-        this.target = null;
+        this.target.remove(target);
     }
 
 }

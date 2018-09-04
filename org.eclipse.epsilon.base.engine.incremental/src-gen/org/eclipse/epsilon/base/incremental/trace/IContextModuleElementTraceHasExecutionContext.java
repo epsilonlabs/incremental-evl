@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,6 +13,7 @@ package org.eclipse.epsilon.base.incremental.trace;
 
 import java.util.Iterator;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import java.util.Queue;
 
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 
@@ -25,7 +26,8 @@ public interface IContextModuleElementTraceHasExecutionContext {
     /**
      * Get the value(s) for the reference
      */
-    public IExecutionContext get();
+    
+    public Iterator<IExecutionContext> get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the

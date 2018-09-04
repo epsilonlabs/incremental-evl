@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -41,9 +41,9 @@ public class AllInstancesAccess implements IAllInstancesAccess {
     private Boolean ofKind;
 
     /**
-     * The executionTrace.
+     * The from.
      */
-    private final IAccessHasExecutionTrace executionTrace;
+    private final IAccessHasFrom from;
 
     /**
      * The type.
@@ -55,20 +55,20 @@ public class AllInstancesAccess implements IAllInstancesAccess {
      * container and any attributes identified as indexes.
      */    
     public AllInstancesAccess(Boolean ofKind,
-                              IModuleElementTrace executionTrace,
+                              IModuleElementTrace from,
                               IModelTypeTrace type,
-                              IModuleExecutionTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+                              IExecutionContext container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.ofKind = ofKind;
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
 
-        this.executionTrace = new AccessHasExecutionTrace(this);
         this.type = new AllInstancesAccessHasType(this);
-        if (!this.executionTrace.create(executionTrace)) {
+        this.from = new AccessHasFrom(this);
+        if (!this.type.create(type)) {
             throw new TraceModelDuplicateElement();
         }
-        if (!this.type.create(type)) {
+        if (!this.from.create(from)) {
             throw new TraceModelDuplicateElement();
         }
 
@@ -92,8 +92,8 @@ public class AllInstancesAccess implements IAllInstancesAccess {
     }
     
     @Override
-    public IAccessHasExecutionTrace executionTrace() {
-        return executionTrace;
+    public IAccessHasFrom from() {
+        return from;
     }
 
     @Override
@@ -128,18 +128,18 @@ public class AllInstancesAccess implements IAllInstancesAccess {
         AllInstancesAccess other = (AllInstancesAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (executionTrace.get() == null) {
-            if (other.executionTrace.get() != null)
-                return false;
-        }
-        if (!executionTrace.get().equals(other.executionTrace.get())) {
-            return false;
-        }
         if (type.get() == null) {
             if (other.type.get() != null)
                 return false;
         }
         if (!type.get().equals(other.type.get())) {
+            return false;
+        }
+        if (from.get() == null) {
+            if (other.from.get() != null)
+                return false;
+        }
+        if (!from.get().equals(other.from.get())) {
             return false;
         }
         return true; 
@@ -151,8 +151,8 @@ public class AllInstancesAccess implements IAllInstancesAccess {
         int result = 1;
         Boolean ofKind = Boolean.valueOf(getOfKind());
         result = prime * result + ((ofKind == null) ? 0 : ofKind.hashCode());
-        result = prime * result + ((executionTrace.get() == null) ? 0 : executionTrace.get().hashCode());
         result = prime * result + ((type.get() == null) ? 0 : type.get().hashCode());
+        result = prime * result + ((from.get() == null) ? 0 : from.get().hashCode());
         return result;
     }
 }

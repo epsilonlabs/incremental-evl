@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.dom;
 
+import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
 
@@ -25,6 +26,7 @@ public class TracedExecutableBlock<TraceType extends IModuleElementTrace, Return
 		implements TracedModuleElement<TraceType> {
 
 	protected TraceType currentTrace;
+	private IExecutionContext currentContext;
 	
 	/**
 	 * Instantiates a new traced executable block.
@@ -45,7 +47,14 @@ public class TracedExecutableBlock<TraceType extends IModuleElementTrace, Return
 		return currentTrace;
 	}
 	
+	@Override
+	public void setCurrentContext(IExecutionContext currentContext) {
+		this.currentContext = currentContext;
+	}
 
-	
+	@Override
+	public IExecutionContext getCurrentContext() {
+		return this.currentContext;
+	}
 
 }

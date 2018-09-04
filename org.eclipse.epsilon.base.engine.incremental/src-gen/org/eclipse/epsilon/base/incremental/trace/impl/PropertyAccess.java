@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -41,9 +41,9 @@ public class PropertyAccess implements IPropertyAccess {
     private String value;
 
     /**
-     * The executionTrace.
+     * The from.
      */
-    private final IAccessHasExecutionTrace executionTrace;
+    private final IAccessHasFrom from;
 
     /**
      * The property.
@@ -54,19 +54,19 @@ public class PropertyAccess implements IPropertyAccess {
      * Instantiates a new PropertyAccess. The PropertyAccess is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public PropertyAccess(IModuleElementTrace executionTrace,
+    public PropertyAccess(IModuleElementTrace from,
                           IPropertyTrace property,
-                          IModuleExecutionTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+                          IExecutionContext container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
 
-        this.executionTrace = new AccessHasExecutionTrace(this);
         this.property = new PropertyAccessHasProperty(this);
-        if (!this.executionTrace.create(executionTrace)) {
+        this.from = new AccessHasFrom(this);
+        if (!this.property.create(property)) {
             throw new TraceModelDuplicateElement();
         }
-        if (!this.property.create(property)) {
+        if (!this.from.create(from)) {
             throw new TraceModelDuplicateElement();
         }
 
@@ -96,8 +96,8 @@ public class PropertyAccess implements IPropertyAccess {
     }   
      
     @Override
-    public IAccessHasExecutionTrace executionTrace() {
-        return executionTrace;
+    public IAccessHasFrom from() {
+        return from;
     }
 
     @Override
@@ -124,18 +124,18 @@ public class PropertyAccess implements IPropertyAccess {
         PropertyAccess other = (PropertyAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (executionTrace.get() == null) {
-            if (other.executionTrace.get() != null)
-                return false;
-        }
-        if (!executionTrace.get().equals(other.executionTrace.get())) {
-            return false;
-        }
         if (property.get() == null) {
             if (other.property.get() != null)
                 return false;
         }
         if (!property.get().equals(other.property.get())) {
+            return false;
+        }
+        if (from.get() == null) {
+            if (other.from.get() != null)
+                return false;
+        }
+        if (!from.get().equals(other.from.get())) {
             return false;
         }
         return true; 
@@ -145,8 +145,8 @@ public class PropertyAccess implements IPropertyAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((executionTrace.get() == null) ? 0 : executionTrace.get().hashCode());
         result = prime * result + ((property.get() == null) ? 0 : property.get().hashCode());
+        result = prime * result + ((from.get() == null) ? 0 : from.get().hashCode());
         return result;
     }
 }

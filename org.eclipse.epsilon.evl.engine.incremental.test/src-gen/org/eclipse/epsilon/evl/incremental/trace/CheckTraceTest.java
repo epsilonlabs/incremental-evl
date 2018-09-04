@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -62,16 +62,26 @@ public class CheckTraceTest {
         // protected region CheckTraceAttributes end
     }
     
-    
     @Test
-    public void testAccessesReference() throws Exception {
+    public void testResultFactory() throws Exception {
         InvariantTraceHasCheck containerReference = new InvariantTraceHasCheck(containerMock);
         when(containerMock.check()).thenReturn(containerReference);
-        // protected region CheckTraceInit_AccessesReference on begin
+        // protected region CheckTraceInit_ResultFactory on begin
         classUnderTest = new CheckTrace(containerMock);                    
-        // protected region CheckTraceInit_AccessesReference end
-        // TODO Implement multivalue ref test
-    
+        // protected region CheckTraceInit_ResultFactory end
+        
+        IExecutionContext contextMock = mock(IExecutionContext.class);
+        List<Object> list = new ArrayList<>();
+        ICheckResult child1 = classUnderTest.getOrCreateCheckResult(contextMock);
+        classUnderTest.result().get().forEachRemaining(list::add);
+        
+        assertThat(list, hasItem(child1));
+        list.clear();
+        ICheckResult child2 = classUnderTest.getOrCreateCheckResult(contextMock);
+        classUnderTest.result().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child2));
+        assertThat(list, hasSize(2));
+        list.clear();
     }
     
     // protected region CheckTraceOperations on begin

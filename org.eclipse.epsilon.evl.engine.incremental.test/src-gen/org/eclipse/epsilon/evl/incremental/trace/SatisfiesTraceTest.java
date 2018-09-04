@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -60,18 +60,6 @@ public class SatisfiesTraceTest {
         // protected region SatisfiesTraceAttributes on begin
         // TODO Add test code for parameters (to hard to generate correct code for any/all types).                    
         // protected region SatisfiesTraceAttributes end
-    }
-    
-    
-    @Test
-    public void testAccessesReference() throws Exception {
-        InvariantTraceHasSatisfies containerReference = new InvariantTraceHasSatisfies(containerMock);
-        when(containerMock.satisfies()).thenReturn(containerReference);
-        // protected region SatisfiesTraceInit_AccessesReference on begin
-        classUnderTest = new SatisfiesTrace(containerMock);                    
-        // protected region SatisfiesTraceInit_AccessesReference end
-        // TODO Implement multivalue ref test
-    
     }
     
     

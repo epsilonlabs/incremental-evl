@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -10,6 +10,8 @@
  * 
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
+
+import java.util.Map;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.*;    
@@ -37,27 +39,12 @@ public interface IModuleExecutionTrace extends IIdElement {
     IModuleExecutionTraceHasModuleElements moduleElements();
                 
     /**
-     * Returns the value of the '<em><b>accesses</b></em>' reference.
-     * The different accesses that where recorded during execution.
-     * @return the value of the '<em>accesses</em>' reference.
-     */
-    IModuleExecutionTraceHasAccesses accesses();
-                
-    /**
      * Returns the value of the '<em><b>models</b></em>' reference.
      * The different models involved in the execution
      * @return the value of the '<em>models</em>' reference.
      */
     IModuleExecutionTraceHasModels models();
                 
-    /** The ElementAccess Factory. */
-    IElementAccess getOrCreateElementAccess(IModuleElementTrace executionTrace, IModelElementTrace element) throws EolIncrementalExecutionException;       
-
-    /** The AllInstancesAccess Factory. */
-    IAllInstancesAccess getOrCreateAllInstancesAccess(Boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type) throws EolIncrementalExecutionException;       
-
-    /** The PropertyAccess Factory. */
-    IPropertyAccess getOrCreatePropertyAccess(IModuleElementTrace executionTrace, IPropertyTrace property) throws EolIncrementalExecutionException;       
 
     /** The ModelAccess Factory. */
     IModelAccess getOrCreateModelAccess(String modelName, IModelTrace modelTrace) throws EolIncrementalExecutionException;       

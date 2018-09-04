@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,7 +15,6 @@ import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceRepositoryImpl;
@@ -348,12 +347,6 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 				.filter(IElementAccess.class::isInstance).map(IElementAccess.class::cast)
 				.filter(ea -> ea.element().get().equals(modelElementTrace))
 				.collect(Collectors.toList());
-	}
-
-	@Override
-	public IInvariantTrace findInvariantTraceinContext(IContextTrace contextTrace, String invariantName) {
-		// TODO Implement IEvlModuleTraceRepository.findInvariantTraceinContext
-		throw new RuntimeException("Unimplemented Method IEvlModuleTraceRepository.findInvariantTraceinContext invoked.");
 	}
 
 	/** protected region IEvlModuleTraceRepositry end **/

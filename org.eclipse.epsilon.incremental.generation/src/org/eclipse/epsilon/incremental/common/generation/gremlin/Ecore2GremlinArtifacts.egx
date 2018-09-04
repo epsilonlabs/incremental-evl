@@ -75,6 +75,7 @@ rule ERefernce2Class
     parameters {
       var featureType = er.getEContainingClass().name + "Has" + er.name.firstToUpperCase();
       var params : new Map;
+      params.put("targetLanguage", targetLanguage);
       params.put("today", now.toString());
       params.put("year", now.getYear().toString()); 
       params.put("qp", qp);
@@ -106,8 +107,8 @@ rule EPackage2DomainFactory
   }
   
   guard: ep.name == targetLanguage
-  template : "Ecore2DomainFactory.egl"
-  target : project + folder + "/util/TraceFactory.java"
+  template : "Ecore2DomainFactoryImpl.egl"
+  target : project + folder + "/util/" + ep.getName().firstToUpperCase() + "TraceFactory.java"
   
 }
 

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
+import java.util.Map;
+
 import org.eclipse.epsilon.base.incremental.trace.*;    
 import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
@@ -21,13 +23,6 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
  */
 public interface IModuleElementTrace extends IIdElement {
 
-    /**
-     * Returns the value of the '<em><b>accesses</b></em>' reference.
-     * The different accesses that where recorded during execution for this particular 
-     * module element.
-     * @return the value of the '<em>accesses</em>' reference.
-     */
-    IModuleElementTraceHasAccesses accesses();
-                
+
 
 }

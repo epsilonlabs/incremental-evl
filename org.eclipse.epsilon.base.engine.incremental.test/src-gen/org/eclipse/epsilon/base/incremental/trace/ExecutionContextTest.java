@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -52,8 +52,10 @@ public class ExecutionContextTest {
         classUnderTest = new ExecutionContext(containerMock);                    
         // protected region ExecutionContextInit_init end
         
-
-        assertThat(containerReference.get(), is(classUnderTest));
+        
+        List<Object> list = new ArrayList<>();
+        containerReference.get().forEachRemaining(list::add);
+        assertThat(list, contains(classUnderTest));
         
         // protected region ExecutionContextAttributes on begin
         // TODO Add test code for parameters (to hard to generate correct code for any/all types).                    

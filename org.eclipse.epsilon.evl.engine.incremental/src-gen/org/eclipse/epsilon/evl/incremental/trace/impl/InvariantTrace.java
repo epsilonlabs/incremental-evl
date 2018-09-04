@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -44,25 +44,14 @@ public class InvariantTrace implements IInvariantTrace {
     private String name;
 
     /**
-	 * The result.
-	 */
-    private Boolean result;
-
-    /**
      * The guard.
      */
     private final IGuardedElementTraceHasGuard guard;
 
     /**
-     * * The different accesses that where recorded during execution for this particular 
-       * module element.
+     * The contextModuleElement.
      */
-    private final IModuleElementTraceHasAccesses accesses;
-
-    /**
-     * The parentTrace.
-     */
-    private final IInContextModuleElementTraceHasParentTrace parentTrace;
+    private final IInContextModuleElementTraceHasContextModuleElement contextModuleElement;
 
     /**
      * The check.
@@ -97,8 +86,7 @@ public class InvariantTrace implements IInvariantTrace {
 
         this.invariantContext = new InvariantTraceHasInvariantContext(this);
         this.guard = new GuardedElementTraceHasGuard(this);
-        this.accesses = new ModuleElementTraceHasAccesses(this);
-        this.parentTrace = new InContextModuleElementTraceHasParentTrace(this);
+        this.contextModuleElement = new InContextModuleElementTraceHasContextModuleElement(this);
         this.check = new InvariantTraceHasCheck(this);
         this.message = new InvariantTraceHasMessage(this);
         this.satisfies = new InvariantTraceHasSatisfies(this);
@@ -123,29 +111,13 @@ public class InvariantTrace implements IInvariantTrace {
     }
     
     @Override
-    public Boolean getResult() {
-        return result;
-    }
-    
-    
-    @Override
-    public void setResult(boolean value) {
-        this.result = value;
-    }   
-     
-    @Override
     public IGuardedElementTraceHasGuard guard() {
         return guard;
     }
 
     @Override
-    public IModuleElementTraceHasAccesses accesses() {
-        return accesses;
-    }
-
-    @Override
-    public IInContextModuleElementTraceHasParentTrace parentTrace() {
-        return parentTrace;
+    public IInContextModuleElementTraceHasContextModuleElement contextModuleElement() {
+        return contextModuleElement;
     }
 
     @Override

@@ -16,7 +16,8 @@ import java.util.Iterator;
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.models.IModel;
@@ -26,8 +27,10 @@ import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.incremental.IEvlTraceFactory;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
+import org.eclipse.epsilon.evl.incremental.trace.ICheckResult;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
+import org.eclipse.epsilon.evl.incremental.trace.IGuardResult;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
@@ -48,6 +51,7 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 	private static final Logger logger = LoggerFactory.getLogger(TracedConstraint.class);
 
 	private IInvariantTrace trace;
+	private IExecutionContext currentContext;
 
 	/**
 	 * Flag to indicate that we are on live mode, i.e. listening to model changes
@@ -62,6 +66,16 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 	@Override
 	public IInvariantTrace getCurrentTrace() {
 		return trace;
+	}
+	
+	@Override
+	public void setCurrentContext(IExecutionContext currentContext) {
+		this.currentContext = currentContext;
+	}
+
+	@Override
+	public IExecutionContext getCurrentContext() {
+		return this.currentContext;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -84,24 +98,28 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 			logger.info("Result found in cache");
 			return context.getConstraintTrace().isSatisfied(this, self);
 		}
+		@SuppressWarnings("unchecked")
+		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlTraceFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory>> tracedEvlContext = (IncrementalEvlContext<IEvlModuleTraceRepository, IEvlTraceFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory>>) context;
 		// Return immediately if constraint does not apply
-		if (!appliesTo(self, context, checkType)) {
-			logger.info("Does not apply");
-			trace.setResult(false);
+		boolean appliesTo = appliesTo(self, context, checkType);
+		if (guardBlock != null) {
+			try {
+				IGuardTrace guardTrace = (IGuardTrace) ((TracedExecutableBlock<?, ?>) guardBlock).getCurrentTrace();
+				IGuardResult guardResult = tracedEvlContext.getTraceManager().getExecutionTraceRepository()
+						.findResultInGuard(guardTrace, getCurrentContext());
+				guardResult.setValue(false);
+			} catch (EolRuntimeException e) {
+				logger.error("Error setting guard result", e);
+			}
+		}
+		if (!appliesTo) {
+			logger.debug("Does not apply");
 			return false;
 		}
 		final UnsatisfiedConstraint unsatisfiedConstraint = preprocessCheck(self, context);
-		@SuppressWarnings("unchecked")
-		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlTraceFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory>> tracedEvlContext = (IncrementalEvlContext<IEvlModuleTraceRepository, IEvlTraceFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory>>) context;
-
-		tracedEvlContext.getPropertyAccessExecutionListener().aboutToExecute(checkBlock, tracedEvlContext);
-		tracedEvlContext.getAllInstancesInvocationExecutionListener().aboutToExecute(checkBlock, tracedEvlContext);
+		
 		Boolean result = checkBlock.execute(context, false);
 		logger.info("Result: {}", result);
-		tracedEvlContext.getPropertyAccessExecutionListener().finishedExecuting(checkBlock, result, tracedEvlContext);
-		tracedEvlContext.getAllInstancesInvocationExecutionListener().finishedExecuting(checkBlock, result,
-				tracedEvlContext);
-
 		if (messageBlock != null) {
 			tracedEvlContext.getPropertyAccessExecutionListener().aboutToExecute(messageBlock, tracedEvlContext);
 			tracedEvlContext.getAllInstancesInvocationExecutionListener().aboutToExecute(messageBlock,
@@ -114,12 +132,20 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 			tracedEvlContext.getAllInstancesInvocationExecutionListener().finishedExecuting(messageBlock, postResult,
 					tracedEvlContext);
 		}
-		boolean oldResult = trace.getResult();
-		if (!oldResult && postResult) {
-			logger.debug("Removing unsatisfied constraint");
-			removeUnsatisfiedConstraint(context, self);
+		ICheckTrace chkTrace = (ICheckTrace) ((TracedExecutableBlock<?, ?>)checkBlock).getCurrentTrace();
+		ICheckResult chkResult = tracedEvlContext.getTraceManager().getExecutionTraceRepository()
+				.findResultInCheck(chkTrace, ((TracedExecutableBlock<?, ?>)checkBlock).getCurrentContext());
+		if (chkResult == null) {
+			throw new EolRuntimeException("Result should have been previously created for the ckeck."
+					+ "See TraceContraintContext createContextTraces");
+		} else {
+			boolean oldResult = chkResult.getValue();
+			if (!oldResult && postResult) {
+				logger.debug("Removing unsatisfied constraint");
+				removeUnsatisfiedConstraint(context, self);
+			}
 		}
-		trace.setResult(postResult);
+		chkResult.setValue(postResult);
 		return postResult;
 
 	}
@@ -144,20 +170,23 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 	 * @throws EolIncrementalExecutionException
 	 */
 	@SuppressWarnings("unchecked")
-	public void getOrCreateGuardTrace() throws EolIncrementalExecutionException {
+	public IGuardTrace getOrCreateGuardTrace() throws EolIncrementalExecutionException {
+		IGuardTrace guard = null;
 		if (guardBlock != null) {
 
-			IGuardTrace guard = trace.guard().get();
+			guard = trace.guard().get();
 			if (guard == null) {
 				try {
 					guard = trace.getOrCreateGuardTrace();
 					((TracedExecutableBlock<IGuardTrace, Boolean>) guardBlock).setCurrentTrace(guard);
+					((TracedExecutableBlock<IGuardTrace, Boolean>) guardBlock).setCurrentContext(getCurrentContext());
 				} catch (EolIncrementalExecutionException e) {
 					throw new EolIncrementalExecutionException(
 							"Can't create GuardTrace for Invariant " + getName() + ".");
 				}
 			}
 		}
+		return guard;
 	}
 
 	/**
@@ -165,22 +194,26 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 	 * 
 	 * @param evlExecution
 	 * @param tracedCheck
+	 * @return 
 	 * @throws EolIncrementalExecutionException
 	 */
 	@SuppressWarnings("unchecked")
-	public void getOrCreateCheckTrace() throws EolIncrementalExecutionException {
+	public ICheckTrace getOrCreateCheckTrace() throws EolIncrementalExecutionException {
+		ICheckTrace check = null;
 		if (checkBlock != null) {
-			ICheckTrace check = trace.check().get();
+			check = trace.check().get();
 			if (check == null) {
 				try {
 					check = trace.getOrCreateCheckTrace();
 					((TracedExecutableBlock<ICheckTrace, Boolean>) checkBlock).setCurrentTrace(check);
+					((TracedExecutableBlock<IGuardTrace, Boolean>) checkBlock).setCurrentContext(getCurrentContext());
 				} catch (EolIncrementalExecutionException e) {
 					throw new EolIncrementalExecutionException(
 							"Can't create GuardTrace for Invariant " + getName() + ".");
 				}
 			}
 		}
+		return check;
 	}
 
 	/**
@@ -191,20 +224,22 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 	 * @throws EolIncrementalExecutionException
 	 */
 	@SuppressWarnings("unchecked")
-	public void getOrCreateMessageTrace() throws EolIncrementalExecutionException {
+	public IMessageTrace getOrCreateMessageTrace() throws EolIncrementalExecutionException {
+		IMessageTrace message = null;
 		if (messageBlock != null) {
-
-			IMessageTrace message = trace.message().get();
+			message = trace.message().get();
 			if (message == null) {
 				try {
 					message = trace.getOrCreateMessageTrace();
 					((TracedExecutableBlock<IMessageTrace, String>) messageBlock).setCurrentTrace(message);
+					((TracedExecutableBlock<IMessageTrace, String>) messageBlock).setCurrentContext(getCurrentContext());
 				} catch (EolIncrementalExecutionException e) {
 					throw new EolIncrementalExecutionException(
 							"Can't create MessageTrace for Invariant " + getName() + ".");
 				}
 			}
 		}
+		return message;
 	}
 
 	public boolean isListeningToChagnes() {
@@ -238,7 +273,6 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 			tracedEvlContext.getPropertyAccessExecutionListener().aboutToExecute(guardBlock, tracedEvlContext);
 			tracedEvlContext.getAllInstancesInvocationExecutionListener().aboutToExecute(guardBlock, tracedEvlContext);
 			result = guardBlock.execute(tracedEvlContext, Variable.createReadOnlyVariable("self", object));
-			trace.guard().get().setResult(result);
 			tracedEvlContext.getSatisfiesListener().finishedExecuting(this, result, tracedEvlContext);
 			tracedEvlContext.getPropertyAccessExecutionListener().finishedExecuting(guardBlock, result,
 					tracedEvlContext);
@@ -258,5 +292,7 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 			}
 		}
 	}
+
+
 
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -62,16 +62,26 @@ public class GuardTraceTest {
         // protected region GuardTraceAttributes end
     }
     
-    
     @Test
-    public void testAccessesReference() throws Exception {
+    public void testResultFactory() throws Exception {
         GuardedElementTraceHasGuard containerReference = new GuardedElementTraceHasGuard(containerMock);
         when(containerMock.guard()).thenReturn(containerReference);
-        // protected region GuardTraceInit_AccessesReference on begin
+        // protected region GuardTraceInit_ResultFactory on begin
         classUnderTest = new GuardTrace(containerMock);                    
-        // protected region GuardTraceInit_AccessesReference end
-        // TODO Implement multivalue ref test
-    
+        // protected region GuardTraceInit_ResultFactory end
+        
+        IExecutionContext contextMock = mock(IExecutionContext.class);
+        List<Object> list = new ArrayList<>();
+        IGuardResult child1 = classUnderTest.getOrCreateGuardResult(contextMock);
+        classUnderTest.result().get().forEachRemaining(list::add);
+        
+        assertThat(list, hasItem(child1));
+        list.clear();
+        IGuardResult child2 = classUnderTest.getOrCreateGuardResult(contextMock);
+        classUnderTest.result().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child2));
+        assertThat(list, hasSize(2));
+        list.clear();
     }
     
     // protected region GuardTraceOperations on begin

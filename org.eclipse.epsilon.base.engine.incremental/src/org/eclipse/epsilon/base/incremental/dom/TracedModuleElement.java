@@ -1,5 +1,6 @@
 package org.eclipse.epsilon.base.incremental.dom;
 
+import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
 
@@ -16,5 +17,11 @@ public interface TracedModuleElement<T extends IModuleElementTrace> extends Modu
 	
 	/** Get the current trace */
 	T getCurrentTrace();
+	
+	/** Set the current context */
+	void setCurrentContext(IExecutionContext currentContext);
+	
+	/** Get the current context */
+	IExecutionContext getCurrentContext();
 
 }

@@ -119,7 +119,7 @@ public abstract class HashTests<M extends Module> {
 		hashCode2 = contextTrace.hashCode();
 		assertThat("IContextTrace Hash code is not constant", hashCode1, is(hashCode2));
 
-		IModelElementVariable selfVar = contextTrace.executionContext().get().getOrCreateModelElementVariable("self",
+		IModelElementVariable selfVar = contextTrace.executionContext().get().next().getOrCreateModelElementVariable("self",
 				elementTrace);
 		hashCode1 = selfVar.hashCode();
 		hashCode2 = selfVar.hashCode();

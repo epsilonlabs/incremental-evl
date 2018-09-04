@@ -17,25 +17,27 @@ import "../Ecore2JavaTemplates.egl";
 [%=getHeader()%]
 package [%=qp%].trace.impl;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
+
 import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%];
-import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 [%=out.startPreserve("/**", "**/", ec.name + "Imports", true)%]
 
 [%=out.stopPreserve()%]
-
 [%if (ec.getEAllReferences().exists(er | er.isContainment())){%]
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 [%}%]
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
-
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 [%
 for (imp in ec.getRequiredImports(qp+".trace", interPrefix, interSufix, classPrefix, classSufix, true, true)) {%]
 import [%=imp%];
@@ -81,7 +83,6 @@ for (er in ec.getEAllReferences()) {%]
         [%=ec.getConstructorParameters(true, interPrefix, interSufix)%]) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
-        // FIXME We need to destroy the created edges when any edge fails
 [%if (not ec.getIndexAttributes().isEmpty()) {%]
         GraphTraversalSource g = startTraversal();
         try {
@@ -154,7 +155,7 @@ if (not createRefs.isEmpty()) {%]
 	        } catch (NoSuchElementException ex) {
 	            [%=out.startPreserve("/**", "**/", ea.name, true)%]
 	            // TODO Add default return value for [%=ec.getJavaClassName(classPrefix, classSufix)%].[%=ea.getGetterMethodName()%]
-	            throw new IllegalStateException(ex);
+	            throw new IllegalStateException("Add default return value for [%=ec.getJavaClassName(classPrefix, classSufix)%].[%=ea.getGetterMethodName()%]", ex);
 	            [%=out.stopPreserve()%]
 	        }
 	    } finally {
@@ -243,8 +244,41 @@ for (er in ec.getEAllReferences().select(er | er.isContainment())) {
 
 [%      }%]
 [%  }%]
-                  
+
 [%}%]
+[%
+for (op in ec.getEAllOperations()) {
+    op.getEType().name.println("op name ");
+    var retType;
+    if (op.getEType().name.startsWith("EMap")) {
+        var mapTypes = op.getMapTypes().println("types");
+        retType = "Map<" + mapTypes.at(0) + "," + mapTypes.at(1) + ">";
+    } else {
+        // FIXME Might need to import type
+        retType = op.getEType(); 
+    }
+    var args = new Sequence();
+    for (p in op.getEParameters()) {
+        var type = a.getEType().getInstanceClassName();
+        var name = a.getName();
+        args.add(type + " " + name);
+    }
+%]
+    public [%=retType%] [%=op.name%]([%=args.concat(", ")%]) {
+[%  if (op.name == "getIdProperties") {%]
+        Map<String, Object> result = new HashMap<>();
+[%      for (index in ec.getIndexAttributes()) {%]
+        result.put("[%=index.name%]", get[%=index.name.firstToUpperCase()%]());
+[%      }%]
+        return result;
+[%}    else {%]
+        [%=out.startPreserve("/**", "**/", op.name, true)%]
+        return null;
+        [%=out.stopPreserve()%]
+[%  }%]
+    }
+[%}%]
+
     @Override
     public boolean sameIdentityAs(final [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] other) {
         if (other == null) {
@@ -286,42 +320,32 @@ for (index in ec.getIndexAttributes()) {
 [%
 // Use only the EReferneces defined in the metamodel
 for (er in ec.getEqualsReferences()) {
-    var access = er.name;
-    if(er.isTypeOf(EReference)){
-        access += ".get()";
-    }%]
-[%  if (er.isTypeOf(EAttribute) and (er.getEAttributeType().name == "EBoolean")) {%]
-	    if ([%=access%] != other.[%=access%]) {
-	      return false;
-	    }
-[%  } else { %]
-        if ([%=access%] == null) {
-            if (other.[%=access%] != null)
-                return false;
-        }
-[%      if (er.isMany()) {
-            if (er.isOrdered) {%]
-        if (not Arrays.equals([%=access%].toArray(), other.[%=access%].toArray())) {
+    var access = er.name;%]
+    if ([%=access%] == null) {
+        if (other.[%=access%] != null)
             return false;
-        }
-[%          } else if (er.isUnique()) {%]
-        if (![%=access%].equals(other.[%=access%])) {
-            return false;
-        }
-[%          } else {%]
-        if ([%=access%].size() != other.[%=access%].size()) {
-        }
-        else if (not ([%=access%].containsAll(other.[%=access%]) &&
-                other.[%=access%].containsAll([%=access%])) {
-            return false;
-        }
-[%          } 
-        } else {%]
-        if (![%=access%].equals(other.[%=access%])) {
-            return false;
-        }
-[%      }
     }
+[%
+    access += "().get()";
+    if (er.isMany()) {
+        if (er.isOrdered) {%]
+        if (!IncrementalUtils.equalOrderedIterators([%=access%], other.[%=access%])) {
+            return false;
+        }
+[%      } else if (er.isUnique()) {%]
+        if (!IncrementalUtils.equalUniqueIterators([%=access%], other.[%=access%])) {
+            return false;
+        }
+[%      } else {%]
+        if (!IncrementalUtils.equalIterators([%=access%], other.[%=access%])) {
+            return false;
+        }
+[%      } 
+    } else {%]
+        if (![%=access%].equals(other.[%=access%])) {
+            return false;
+        }
+[%  }
 }%]
         return true; 
   }
@@ -342,7 +366,7 @@ for (er in ec.getEqualsReferences()) {
 [%for (er in ec.getEqualsReferences()) {
     var access = er.name;
     if(er.isTypeOf(EReference)){
-        access += ".get()";
+        access += "().get()";
     }
     if (er.isTypeOf(EAttribute) and (er.getEAttributeType().name == "EBoolean")) {%]
         result = prime * result + ([%=access%] ? 1 : 0);
@@ -400,47 +424,51 @@ public [%=retType%] getOrCreate[%=self.name%]([%=params.concat(", ")%]) throws E
     GraphTraversalSource g = startTraversal();
     [%=self.getJavaClassName(classPrefix, classSufix)%] [%=instanceName%] = null;
     try {
-	    Vertex v = null;
-	    try {
-	        v = g.addV("[%=self.name%]").next();
-	        [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=vars.concat(", ")%]);
-	    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-	        v.remove();
-	    } finally {
-		    if ([%=instanceName%] != null) {
-		        return [%=instanceName%];
+[%  var traversal = "g.V(delegate).out(\"" + ref.name + "\")";
+    if (ref.isMany()) {    
+        if (ref.isUnique()) {
+	        for (param in self.getIndexAttributes()) {
+		        traversal += ".has(\"" + param.name + "\", "+ param.name+ ")";
+		        if (hasMore) {
+		          traversal += "\n";
+		        }
 		    }
-	[%  if (ref.isMany()) {%]
-	        GraphTraversal<Vertex, Vertex> gt = (([%=ref.getRelationJavaClassName(classPrefix, classSufix)%]) this.[%=ref.name%]).getRaw()
-	            .hasLabel("[%=self.name%]")
-	[%      for (param in self.getIndexAttributes()) {%]
-	            .has("[%=param.name%]", [%=param.name%])
-	[%      }%]
-	            .as("a") 
-	[%      for (param in self.getRequiredFeatures()) {%]
-	            .out("[%=param.name%]").hasId([%=param.name%].getId())
-	            .in("[%=param.name%]").where(P.eq("a"))
-	            [%}%]
-	            .select("a");
-	        if (!gt.hasNext()) {
-	            throw new EolIncrementalExecutionException("Error creating trace model element. Requested [%=self.name%] was "
-	                    + "duplicate but previous one was not found.");
-	        }
+        }
+        else {
+            traversal = "";
+        }
+    }
+    if (traversal.length() == 0) {%]
+        Vertex v = null;
+        try {
+            v = g.addV("[%=self.name%]").next();
+            [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=vars.concat(", ")%]);
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+            g.V(v).as("v").properties().drop().select("v").drop();
+            throw new EolIncrementalExecutionException("Error creating requested [%=self.name%]", e);
+        }
+[%  } else {%]
+	    GraphTraversal<Vertex, Vertex> gt = [%=traversal%];
+	    if (gt.hasNext()) {
 	        [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]();
 	        [%=instanceName%].delegate(gt.next());
 	        [%=instanceName%].graphTraversalSource(gts);
-	[%  } else {%]
-	        [%=instanceName%] = ([%=self.getJavaClassName(classPrefix, classSufix)%]) this.[%=ref.name%].get();
-	        if ([%=instanceName%]  == null) {
-	            throw new EolIncrementalExecutionException("Error creating trace model element. Requested [%=self.name%] was "
-	                    + "duplicate but previous one was not found.");
-	        }
-	[%  }%]
 	    }
+	    else {
+	        Vertex v = null;
+	        try {
+	            v = g.addV("[%=self.name%]").next();
+	            [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=vars.concat(", ")%]);
+	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+	            g.V(v).as("v").properties().drop().select("v").drop();
+	            throw new EolIncrementalExecutionException("Error creating requested [%=self.name%]", e);
+	        }
+	    }
+[%  }%]
 	} finally {
         finishTraversal(g);
     }    
-    return [%=self.name.firstToLowerCase()%];
+    return [%=instanceName%];
 }      
 [%}
 /**

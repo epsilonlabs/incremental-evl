@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,21 +11,23 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
+
 import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
-import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region PropertyTraceImports on begin **/
 /** protected region PropertyTraceImports end **/
-
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
-
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -60,7 +62,6 @@ public class PropertyTraceGremlin implements IPropertyTrace, GremlinWrapper<Vert
         String name, IModelElementTrace container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
-        // FIXME We need to destroy the created edges when any edge fails
         GraphTraversalSource g = startTraversal();
         try {
             g.V(delegate)
@@ -97,9 +98,9 @@ public class PropertyTraceGremlin implements IPropertyTrace, GremlinWrapper<Vert
 	            result = (String) g.V(delegate).values("name").next();
 	        } catch (NoSuchElementException ex) {
 	            /** protected region name on begin **/
-            // TODO Add default return value for PropertyTraceGremlin.getgetName
-            throw new IllegalStateException(ex);
-            /** protected region name end **/
+	            // TODO Add default return value for PropertyTraceGremlin.getName
+	            throw new IllegalStateException("Add default return value for PropertyTraceGremlin.getName", ex);
+	            /** protected region name end **/
 	        }
 	    } finally {
             finishTraversal(g);
@@ -122,6 +123,12 @@ public class PropertyTraceGremlin implements IPropertyTrace, GremlinWrapper<Vert
             }
         }
         return elementTrace;
+    }
+
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("name", getName());
+        return result;
     }
 
     @Override
@@ -151,11 +158,11 @@ public class PropertyTraceGremlin implements IPropertyTrace, GremlinWrapper<Vert
         PropertyTraceGremlin other = (PropertyTraceGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (elementTrace.get() == null) {
-            if (other.elementTrace.get() != null)
-                return false;
-        }
-        if (!elementTrace.get().equals(other.elementTrace.get())) {
+    if (elementTrace == null) {
+        if (other.elementTrace != null)
+            return false;
+    }
+        if (!elementTrace().get().equals(other.elementTrace().get())) {
             return false;
         }
         return true; 
@@ -166,7 +173,7 @@ public class PropertyTraceGremlin implements IPropertyTrace, GremlinWrapper<Vert
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        result = prime * result + ((elementTrace.get() == null) ? 0 : elementTrace.get().hashCode());
+        result = prime * result + ((elementTrace().get() == null) ? 0 : elementTrace().get().hashCode());
         return result;
     }
     

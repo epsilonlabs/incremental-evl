@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -36,9 +36,9 @@ public class ElementAccess implements IElementAccess {
     private Object id;
 
     /**
-     * The executionTrace.
+     * The from.
      */
-    private final IAccessHasExecutionTrace executionTrace;
+    private final IAccessHasFrom from;
 
     /**
      * The element.
@@ -49,19 +49,19 @@ public class ElementAccess implements IElementAccess {
      * Instantiates a new ElementAccess. The ElementAccess is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ElementAccess(IModuleElementTrace executionTrace,
+    public ElementAccess(IModuleElementTrace from,
                          IModelElementTrace element,
-                         IModuleExecutionTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+                         IExecutionContext container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
 
-        this.executionTrace = new AccessHasExecutionTrace(this);
         this.element = new ElementAccessHasElement(this);
-        if (!this.executionTrace.create(executionTrace)) {
+        this.from = new AccessHasFrom(this);
+        if (!this.element.create(element)) {
             throw new TraceModelDuplicateElement();
         }
-        if (!this.element.create(element)) {
+        if (!this.from.create(from)) {
             throw new TraceModelDuplicateElement();
         }
 
@@ -80,8 +80,8 @@ public class ElementAccess implements IElementAccess {
     }   
      
     @Override
-    public IAccessHasExecutionTrace executionTrace() {
-        return executionTrace;
+    public IAccessHasFrom from() {
+        return from;
     }
 
     @Override
@@ -108,18 +108,18 @@ public class ElementAccess implements IElementAccess {
         ElementAccess other = (ElementAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (executionTrace.get() == null) {
-            if (other.executionTrace.get() != null)
-                return false;
-        }
-        if (!executionTrace.get().equals(other.executionTrace.get())) {
-            return false;
-        }
         if (element.get() == null) {
             if (other.element.get() != null)
                 return false;
         }
         if (!element.get().equals(other.element.get())) {
+            return false;
+        }
+        if (from.get() == null) {
+            if (other.from.get() != null)
+                return false;
+        }
+        if (!from.get().equals(other.from.get())) {
             return false;
         }
         return true; 
@@ -129,8 +129,8 @@ public class ElementAccess implements IElementAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((executionTrace.get() == null) ? 0 : executionTrace.get().hashCode());
         result = prime * result + ((element.get() == null) ? 0 : element.get().hashCode());
+        result = prime * result + ((from.get() == null) ? 0 : from.get().hashCode());
         return result;
     }
 }

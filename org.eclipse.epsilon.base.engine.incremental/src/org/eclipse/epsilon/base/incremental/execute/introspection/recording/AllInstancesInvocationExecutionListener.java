@@ -14,6 +14,8 @@ import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
+import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
@@ -91,7 +93,7 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 				String typeName = typeVar.getName();
 				boolean ofKind = !"allOfType".equals(operationName);
 				try {
-					record(currentAst.getCurrentTrace(), ofKind, typeName, context);
+					record(currentAst.getCurrentTrace(), currentAst.getCurrentContext(), ofKind, typeName, context);
 				} catch (EolIncrementalExecutionException e) {
 					logger.warn("Unable to create traces for the execution of {}", ast, e);
 				} catch (EolRuntimeException e) {
@@ -112,8 +114,12 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 	}
 
 	// TODO Split this method so we can test it
-	private void record(IModuleElementTrace executionTrace, boolean ofKind, String modelAndMetaClass,
-			IIncrementalBaseContext<T, R, M> context) throws EolIncrementalExecutionException, EolRuntimeException {
+	private void record(
+		IModuleElementTrace executionTrace,
+		IExecutionContext currentContext,
+		boolean ofKind,
+		String modelAndMetaClass,
+		IIncrementalBaseContext<T, R, M> context) throws EolIncrementalExecutionException, EolRuntimeException {
 
 		logger.info("Recording AllInstancesAccess. Type: {}, ofKind: {}", modelAndMetaClass, ofKind);
 		String modelName;
@@ -141,6 +147,8 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 			return;
 		}
 		IIncrementalModel incrementalModel = (IIncrementalModel) model;
+		
+		
 		IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager()
 				.getExecutionTraceRepository();
 		String moduleUri = context.getModule().getUri().toString();
@@ -168,12 +176,7 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 			}
 			typeTrace = modelTrace.getOrCreateModelTypeTrace(typeName);
 		}
-		IAllInstancesAccess allIns = moduleExecutionTrace.getOrCreateAllInstancesAccess(ofKind, executionTrace, typeTrace);
-		try {
-			executionTrace.accesses().create(allIns);
-		} catch (TraceModelConflictRelation e) {
-			logger.warn("There was an error adding the access to the trace", e);
-		}
+		currentContext.getOrCreateAllInstancesAccess(ofKind, executionTrace, typeTrace);
 	}
 
 }

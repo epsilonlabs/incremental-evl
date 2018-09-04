@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,21 +11,23 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
+
 import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
-import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region AllInstancesAccessImports on begin **/
 /** protected region AllInstancesAccessImports end **/
-
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
-
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -42,9 +44,9 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, GremlinWr
     private Vertex delegate;
     
     /**
-     * The executionTrace.
+     * The from.
      */
-    private IAccessHasExecutionTrace executionTrace;
+    private IAccessHasFrom from;
 
     /**
      * The type.
@@ -62,10 +64,9 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, GremlinWr
      * container and any attributes identified as indexes.
      */    
     public AllInstancesAccessGremlin(
-        Boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type, IModuleExecutionTrace container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        Boolean ofKind, IModuleElementTrace from, IModelTypeTrace type, IExecutionContext container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
-        // FIXME We need to destroy the created edges when any edge fails
         GraphTraversalSource g = startTraversal();
         try {
             g.V(delegate)
@@ -79,13 +80,13 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, GremlinWr
             throw new TraceModelDuplicateElement();
         };
         this.type = new AllInstancesAccessHasTypeGremlin(this, gts);
-        this.executionTrace = new AccessHasExecutionTraceGremlin(this, gts);
+        this.from = new AccessHasFromGremlin(this, gts);
         try {
 	        this.type.create(type);
-	        this.executionTrace.create(executionTrace);
+	        this.from.create(from);
         } catch (TraceModelConflictRelation ex) {
             ((AllInstancesAccessHasTypeGremlin)this.type).delegate().remove();
-            ((AccessHasExecutionTraceGremlin)this.executionTrace).delegate().remove();
+            ((AccessHasFromGremlin)this.from).delegate().remove();
             throw ex;
         }
     }
@@ -111,9 +112,9 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, GremlinWr
 	            result = (Boolean) g.V(delegate).values("ofKind").next();
 	        } catch (NoSuchElementException ex) {
 	            /** protected region ofKind on begin **/
-            // TODO Add default return value for AllInstancesAccessGremlin.getgetOfKind
-            throw new IllegalStateException(ex);
-            /** protected region ofKind end **/
+	            // TODO Add default return value for AllInstancesAccessGremlin.getOfKind
+	            throw new IllegalStateException("Add default return value for AllInstancesAccessGremlin.getOfKind", ex);
+	            /** protected region ofKind end **/
 	        }
 	    } finally {
             finishTraversal(g);
@@ -122,20 +123,20 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, GremlinWr
     }
     
     @Override
-    public IAccessHasExecutionTrace executionTrace() {
-        if (executionTrace == null) {
-            executionTrace = new AccessHasExecutionTraceGremlin(this, this.gts);
+    public IAccessHasFrom from() {
+        if (from == null) {
+            from = new AccessHasFromGremlin(this, this.gts);
             GraphTraversalSource g = startTraversal();
             try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("executionTrace");
+                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("from");
                 if (gt.hasNext()) {
-                    ((AccessHasExecutionTraceGremlin)executionTrace).delegate(gt.next());
+                    ((AccessHasFromGremlin)from).delegate(gt.next());
                 }
             } finally {
                 finishTraversal(g);
             }
         }
-        return executionTrace;
+        return from;
     }
 
     @Override
@@ -153,6 +154,12 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, GremlinWr
             }
         }
         return type;
+    }
+
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("ofKind", getOfKind());
+        return result;
     }
 
     @Override
@@ -182,18 +189,18 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, GremlinWr
         AllInstancesAccessGremlin other = (AllInstancesAccessGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (type.get() == null) {
-            if (other.type.get() != null)
-                return false;
-        }
-        if (!type.get().equals(other.type.get())) {
+    if (type == null) {
+        if (other.type != null)
+            return false;
+    }
+        if (!type().get().equals(other.type().get())) {
             return false;
         }
-        if (executionTrace.get() == null) {
-            if (other.executionTrace.get() != null)
-                return false;
-        }
-        if (!executionTrace.get().equals(other.executionTrace.get())) {
+    if (from == null) {
+        if (other.from != null)
+            return false;
+    }
+        if (!from().get().equals(other.from().get())) {
             return false;
         }
         return true; 
@@ -205,8 +212,8 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, GremlinWr
         int result = 1;
         Boolean ofKind = Boolean.valueOf(getOfKind());
         result = prime * result + ((ofKind == null) ? 0 : ofKind.hashCode());
-        result = prime * result + ((type.get() == null) ? 0 : type.get().hashCode());
-        result = prime * result + ((executionTrace.get() == null) ? 0 : executionTrace.get().hashCode());
+        result = prime * result + ((type().get() == null) ? 0 : type().get().hashCode());
+        result = prime * result + ((from().get() == null) ? 0 : from().get().hashCode());
         return result;
     }
     

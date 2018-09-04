@@ -244,15 +244,15 @@ for (er in ec.getEqualsReferences()) {
         }
 [%      if (er.isMany()) {
             if (er.isOrdered) {%]
-        if (! IncrementalUtils.equalOrderedIterators([%=access%], other.[%=access%])) {
+        if (!IncrementalUtils.equalOrderedIterators([%=access%], other.[%=access%])) {
             return false;
         }
 [%          } else if (er.isUnique()) {%]
-        if (! IncrementalUtils.equalUniqueIterators([%=access%], other.[%=access%])) {
+        if (!IncrementalUtils.equalUniqueIterators([%=access%], other.[%=access%])) {
             return false;
         }
 [%          } else {%]
-        if (! IncrementalUtils.equalIterators([%=access%], other.[%=access%])) {
+        if (!IncrementalUtils.equalIterators([%=access%], other.[%=access%])) {
             return false;
         }
 [%          } 

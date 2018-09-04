@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,6 +20,7 @@ import java.util.NoSuchElementException;
 /** protected region CheckTraceImports on begin **/
 /** protected region CheckTraceImports end **/
 
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.*;
@@ -38,20 +39,19 @@ public class CheckTrace implements ICheckTrace {
     private Object id;
 
     /**
-     * * The different accesses that where recorded during execution for this particular 
-       * module element.
+     * The contextModuleElement.
      */
-    private final IModuleElementTraceHasAccesses accesses;
-
-    /**
-     * The parentTrace.
-     */
-    private final IInContextModuleElementTraceHasParentTrace parentTrace;
+    private final IInContextModuleElementTraceHasContextModuleElement contextModuleElement;
 
     /**
      * The invariant.
      */
     private final ICheckTraceHasInvariant invariant;
+
+    /**
+     * The result.
+     */
+    private final ICheckTraceHasResult result;
 
     /**
      * Instantiates a new CheckTrace. The CheckTrace is uniquely identified by its
@@ -63,8 +63,8 @@ public class CheckTrace implements ICheckTrace {
         };
 
         this.invariant = new CheckTraceHasInvariant(this);
-        this.accesses = new ModuleElementTraceHasAccesses(this);
-        this.parentTrace = new InContextModuleElementTraceHasParentTrace(this);
+        this.contextModuleElement = new InContextModuleElementTraceHasContextModuleElement(this);
+        this.result = new CheckTraceHasResult(this);
 
 
     }
@@ -81,13 +81,8 @@ public class CheckTrace implements ICheckTrace {
     }   
      
     @Override
-    public IModuleElementTraceHasAccesses accesses() {
-        return accesses;
-    }
-
-    @Override
-    public IInContextModuleElementTraceHasParentTrace parentTrace() {
-        return parentTrace;
+    public IInContextModuleElementTraceHasContextModuleElement contextModuleElement() {
+        return contextModuleElement;
     }
 
     @Override
@@ -95,6 +90,39 @@ public class CheckTrace implements ICheckTrace {
         return invariant;
     }
 
+    @Override
+    public ICheckTraceHasResult result() {
+        return result;
+    }
+
+    @Override
+    public ICheckResult getOrCreateCheckResult(IExecutionContext context) throws EolIncrementalExecutionException {
+        ICheckResult checkResult = null;
+        try {
+            checkResult = new CheckResult(context, this);
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
+            // Pass
+        } finally {
+    	    if (checkResult != null) {
+    	        return checkResult;
+    	    }
+            Iterator<ICheckResult> it = this.result.get();
+            while (it.hasNext()) {
+            	ICheckResult item;
+                item = (ICheckResult) it.next();
+    			if (item.context().get().equals(context)) {
+    				checkResult = item;
+    				break;
+    			}
+    		}
+    		if (checkResult == null) {
+               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested CheckResult was "
+                		+ "duplicate but previous one was not found.");
+            }
+        }
+        return checkResult;
+    }      
+                  
     @Override
     public boolean sameIdentityAs(final ICheckTrace other) {
         if (other == null) {

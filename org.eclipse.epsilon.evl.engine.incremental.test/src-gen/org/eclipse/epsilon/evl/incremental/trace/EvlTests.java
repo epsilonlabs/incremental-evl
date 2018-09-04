@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,7 +18,9 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({EvlModuleTraceTest.class,
                      ContextTraceTest.class,
                      InvariantTraceTest.class,
+                     GuardResultTest.class,
                      GuardTraceTest.class,
+                     CheckResultTest.class,
                      CheckTraceTest.class,
                      MessageTraceTest.class,
                      SatisfiesTraceTest.class})

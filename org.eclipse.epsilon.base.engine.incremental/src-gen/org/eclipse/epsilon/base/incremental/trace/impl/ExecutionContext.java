@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -42,6 +42,11 @@ public class ExecutionContext implements IExecutionContext {
     private final IExecutionContextHasContextVariables contextVariables;
 
     /**
+     * * The different accesses that where recorded during execution.
+     */
+    private final IExecutionContextHasAccesses accesses;
+
+    /**
      * Instantiates a new ExecutionContext. The ExecutionContext is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
@@ -51,6 +56,7 @@ public class ExecutionContext implements IExecutionContext {
         };
 
         this.contextVariables = new ExecutionContextHasContextVariables(this);
+        this.accesses = new ExecutionContextHasAccesses(this);
 
 
     }
@@ -69,6 +75,11 @@ public class ExecutionContext implements IExecutionContext {
     @Override
     public IExecutionContextHasContextVariables contextVariables() {
         return contextVariables;
+    }
+
+    @Override
+    public IExecutionContextHasAccesses accesses() {
+        return accesses;
     }
 
     @Override
@@ -101,6 +112,113 @@ public class ExecutionContext implements IExecutionContext {
     }      
                   
     @Override
+    public IElementAccess getOrCreateElementAccess(IModuleElementTrace from, IModelElementTrace element) throws EolIncrementalExecutionException {
+        IElementAccess elementAccess = null;
+        try {
+            elementAccess = new ElementAccess(from, element, this);
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
+            // Pass
+        } finally {
+    	    if (elementAccess != null) {
+    	        return elementAccess;
+    	    }
+            Iterator<IAccess> it = this.accesses.get();
+            while (it.hasNext()) {
+            	IElementAccess item;
+                IAccess t = it.next();
+                if (t instanceof IElementAccess) {
+                    item = (IElementAccess) t;
+                }
+                else {
+                    continue;
+                }
+    			if (item.from().get().equals(from) &&
+    			    item.element().get().equals(element)) {
+    				elementAccess = item;
+    				break;
+    			}
+    		}
+    		if (elementAccess == null) {
+               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested ElementAccess was "
+                		+ "duplicate but previous one was not found.");
+            }
+        }
+        return elementAccess;
+    }      
+
+    @Override
+    public IAllInstancesAccess getOrCreateAllInstancesAccess(Boolean ofKind, IModuleElementTrace from, IModelTypeTrace type) throws EolIncrementalExecutionException {
+        IAllInstancesAccess allInstancesAccess = null;
+        try {
+            allInstancesAccess = new AllInstancesAccess(ofKind, from, type, this);
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
+            // Pass
+        } finally {
+    	    if (allInstancesAccess != null) {
+    	        return allInstancesAccess;
+    	    }
+            Iterator<IAccess> it = this.accesses.get();
+            while (it.hasNext()) {
+            	IAllInstancesAccess item;
+                IAccess t = it.next();
+                if (t instanceof IAllInstancesAccess) {
+                    item = (IAllInstancesAccess) t;
+                }
+                else {
+                    continue;
+                }
+    			if (item.getOfKind() == ofKind &&
+    			    item.from().get().equals(from) &&
+    			    item.type().get().equals(type)) {
+    				allInstancesAccess = item;
+    				break;
+    			}
+    		}
+    		if (allInstancesAccess == null) {
+               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested AllInstancesAccess was "
+                		+ "duplicate but previous one was not found.");
+            }
+        }
+        return allInstancesAccess;
+    }      
+
+    @Override
+    public IPropertyAccess getOrCreatePropertyAccess(IModuleElementTrace from, IPropertyTrace property) throws EolIncrementalExecutionException {
+        IPropertyAccess propertyAccess = null;
+        try {
+            propertyAccess = new PropertyAccess(from, property, this);
+        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
+            // Pass
+        } finally {
+    	    if (propertyAccess != null) {
+    	        return propertyAccess;
+    	    }
+            Iterator<IAccess> it = this.accesses.get();
+            while (it.hasNext()) {
+            	IPropertyAccess item;
+                IAccess t = it.next();
+                if (t instanceof IPropertyAccess) {
+                    item = (IPropertyAccess) t;
+                }
+                else {
+                    continue;
+                }
+    			if (item.from().get().equals(from) &&
+    			    item.property().get().equals(property)) {
+    				propertyAccess = item;
+    				break;
+    			}
+    		}
+    		if (propertyAccess == null) {
+               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested PropertyAccess was "
+                		+ "duplicate but previous one was not found.");
+            }
+        }
+        return propertyAccess;
+    }      
+
+                  
+    @Override
     public boolean sameIdentityAs(final IExecutionContext other) {
         if (other == null) {
             return false;
@@ -123,7 +241,7 @@ public class ExecutionContext implements IExecutionContext {
             if (other.contextVariables.get() != null)
                 return false;
         }
-        if (! IncrementalUtils.equalUniqueIterators(contextVariables.get(), other.contextVariables.get())) {
+        if (!IncrementalUtils.equalUniqueIterators(contextVariables.get(), other.contextVariables.get())) {
             return false;
         }
         return true; 

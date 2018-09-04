@@ -12,6 +12,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableMod
 import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
@@ -95,7 +96,7 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 			final IIncrementalModel model = getModelThatKnowsAboutProperty(modelElement, propertyName, context);
 			if (model != null) {
 				try {
-					record(tracedModuleElement.getCurrentTrace(), model, modelElement, propertyName, result, context);
+					record(tracedModuleElement.getCurrentTrace(), tracedModuleElement.getCurrentContext(), model, modelElement, propertyName, result, context);
 				} catch (EolIncrementalExecutionException e) {
 					logger.warn("Unable to create traces for the execution of {}", ast, e);
 				} catch (EolRuntimeException e) {
@@ -120,6 +121,7 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 	 * Save the property access information as a IPropertyAccess
 	 * 
 	 * @param executionTrace
+	 * @param iExecutionContext 
 	 * @param model
 	 * @param modelElement
 	 * @param propertyName
@@ -127,9 +129,15 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 	 * @throws EolIncrementalExecutionException
 	 * @throws EolRuntimeException
 	 */
-	private void record(IModuleElementTrace executionTrace, IIncrementalModel model, Object modelElement,
-			String propertyName, Object result, IIncrementalBaseContext<T, R, M> context)
-			throws EolIncrementalExecutionException, EolRuntimeException {
+	private void record(
+		IModuleElementTrace executionTrace,
+		IExecutionContext currentContext,
+		IIncrementalModel model,
+		Object modelElement,
+		String propertyName,
+		Object result,
+		IIncrementalBaseContext<T, R, M> context)
+		throws EolIncrementalExecutionException, EolRuntimeException {
 
 		logger.info("Recording PropertyAccess. model: {}, element: {}, property: {}, result: {}", model.getName(),
 				modelElement, propertyName, result == null ? "Null" : "SomeValue");
@@ -154,7 +162,7 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 			propertyTrace = elementTrace.getOrCreatePropertyTrace(propertyName);
 		}
 		// FIXME A property access should also generate the matching element access.
-		IPropertyAccess pa = moduleExecutionTrace.getOrCreatePropertyAccess(executionTrace, propertyTrace);
+		IPropertyAccess pa = currentContext.getOrCreatePropertyAccess(executionTrace, propertyTrace);
 		String value = null;
 		if (model.owns(result)) {
 			try {
@@ -166,17 +174,21 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 			}
 		} else {
 			// FIXME: Another model might own the result!
+			IModel resOwner = context.getModelRepository().getOwningModel(result);
+			if (resOwner != null && (resOwner instanceof IIncrementalModel)) {
+				try {
+					value = ((IIncrementalModel)resOwner).convertToString(result);
+				} catch (NotSerializableModelException e) {
+					logger.error(e.getMessage());
+					throw new EolIncrementalExecutionException(
+							"Error getting serializable value of result" + e.getMessage());
+				}
+			}
 			if (result != null) {
 				value = result.toString();
 			}
 		}
 		pa.setValue(value);
-		try {
-			executionTrace.accesses().create(pa);
-		} catch (TraceModelConflictRelation e) {
-			logger.warn("There was an error adding the access to the trace", e);
-		}
-
 	}
 
 	private boolean isLeftHandSideOfPointExpression(ModuleElement ast) {

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -38,15 +38,9 @@ public class MessageTrace implements IMessageTrace {
     private Object id;
 
     /**
-     * * The different accesses that where recorded during execution for this particular 
-       * module element.
+     * The contextModuleElement.
      */
-    private final IModuleElementTraceHasAccesses accesses;
-
-    /**
-     * The parentTrace.
-     */
-    private final IInContextModuleElementTraceHasParentTrace parentTrace;
+    private final IInContextModuleElementTraceHasContextModuleElement contextModuleElement;
 
     /**
      * The invariant.
@@ -63,8 +57,7 @@ public class MessageTrace implements IMessageTrace {
         };
 
         this.invariant = new MessageTraceHasInvariant(this);
-        this.accesses = new ModuleElementTraceHasAccesses(this);
-        this.parentTrace = new InContextModuleElementTraceHasParentTrace(this);
+        this.contextModuleElement = new InContextModuleElementTraceHasContextModuleElement(this);
 
 
     }
@@ -81,13 +74,8 @@ public class MessageTrace implements IMessageTrace {
     }   
      
     @Override
-    public IModuleElementTraceHasAccesses accesses() {
-        return accesses;
-    }
-
-    @Override
-    public IInContextModuleElementTraceHasParentTrace parentTrace() {
-        return parentTrace;
+    public IInContextModuleElementTraceHasContextModuleElement contextModuleElement() {
+        return contextModuleElement;
     }
 
     @Override

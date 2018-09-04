@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,13 +13,13 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
-import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTraceHasType;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
-import org.eclipse.epsilon.base.incremental.util.TraceFactory;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -62,7 +62,7 @@ public class ModelElementTraceHasTypeGremlin extends Feature
         IModelTypeTrace result = null;
         try {
             Vertex to = g.E(delegate).outV().next();
-            result = (IModelTypeTrace) TraceFactory.createModuleElementTrace(to, gts);
+            result = (IModelTypeTrace) BaseTraceFactory.getFactory().createModuleElementTrace(to, gts);
         }
         finally {
             finishTraversal(g);
@@ -74,6 +74,9 @@ public class ModelElementTraceHasTypeGremlin extends Feature
     @Override
     public boolean create(IModelTypeTrace target) throws TraceModelConflictRelation {
         if (conflict(target)) {
+            if (related(target)) {
+                return true;
+            }
             throw new TraceModelConflictRelation("Relation to previous IModelTypeTrace exists");
         }
         set(target);
@@ -110,8 +113,8 @@ public class ModelElementTraceHasTypeGremlin extends Feature
         if (delegate == null) {
             return false;
         }
-        GraphTraversalSource g = startTraversal();
         boolean result = false;
+        GraphTraversalSource g = startTraversal();
         try {
 		  result = g.E(delegate).outV().hasId(target.getId()).hasNext();
 		}

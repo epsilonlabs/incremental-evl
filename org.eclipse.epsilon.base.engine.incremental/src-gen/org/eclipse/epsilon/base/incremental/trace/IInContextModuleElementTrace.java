@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
+import java.util.Map;
+
 import org.eclipse.epsilon.base.incremental.trace.*;    
 import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
@@ -21,16 +23,17 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
 public interface IInContextModuleElementTrace extends IModuleElementTrace {
 
     /**
-     * Returns the value of the '<em><b>Parent Trace</b></em>' reference.
-     * <!-- protected region parentTrace-getter-doc on begin -->
+     * Returns the value of the '<em><b>Context Module Element</b></em>' reference.
+     * <!-- protected region contextModuleElement-getter-doc on begin -->
      * <p>
-     * If the meaning of the '<em>Parent Trace</em>' attribute isn't clear,
+     * If the meaning of the '<em>Context Module Element</em>' attribute isn't clear,
      * add it to the metamodel as a GenDoc or edit it here.
      * </p>
-    * <!-- protected region parentTrace-getter-doc end --> 
-     * @return the value of the '<em>Parent Trace</em>' reference.
+     * <!-- protected region contextModuleElement-getter-doc end --> 
+     * @return the value of the '<em>Context Module Element</em>' reference.
      */
-    IInContextModuleElementTraceHasParentTrace parentTrace();
+    IInContextModuleElementTraceHasContextModuleElement contextModuleElement();
                 
+
 
 }

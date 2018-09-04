@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,21 +11,24 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
+
 import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
-import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region CheckTraceImports on begin **/
 /** protected region CheckTraceImports end **/
-
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
-
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -44,20 +47,19 @@ public class CheckTraceGremlin implements ICheckTrace, GremlinWrapper<Vertex> {
     private Vertex delegate;
     
     /**
-     * * The different accesses that where recorded during execution for this particular 
-       * module element.
+     * The contextModuleElement.
      */
-    private IModuleElementTraceHasAccesses accesses;
-
-    /**
-     * The parentTrace.
-     */
-    private IInContextModuleElementTraceHasParentTrace parentTrace;
+    private IInContextModuleElementTraceHasContextModuleElement contextModuleElement;
 
     /**
      * The invariant.
      */
     private ICheckTraceHasInvariant invariant;
+
+    /**
+     * The result.
+     */
+    private ICheckTraceHasResult result;
 
     /**
      * Empty constructor for deserialization.
@@ -73,12 +75,11 @@ public class CheckTraceGremlin implements ICheckTrace, GremlinWrapper<Vertex> {
         IInvariantTrace container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
-        // FIXME We need to destroy the created edges when any edge fails
         if (!container.check().create(this)) {
             throw new TraceModelDuplicateElement();
         };
         this.invariant = new CheckTraceHasInvariantGremlin(this, gts);
-        this.accesses = new ModuleElementTraceHasAccessesGremlin(this, gts);
+        this.result = new CheckTraceHasResultGremlin(this, gts);
     }
     
     @Override
@@ -94,37 +95,20 @@ public class CheckTraceGremlin implements ICheckTrace, GremlinWrapper<Vertex> {
     }   
      
     @Override
-    public IModuleElementTraceHasAccesses accesses() {
-        if (accesses == null) {
-            accesses = new ModuleElementTraceHasAccessesGremlin(this, this.gts);
+    public IInContextModuleElementTraceHasContextModuleElement contextModuleElement() {
+        if (contextModuleElement == null) {
+            contextModuleElement = new InContextModuleElementTraceHasContextModuleElementGremlin(this, this.gts);
             GraphTraversalSource g = startTraversal();
             try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("accesses");
+                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("contextModuleElement");
                 if (gt.hasNext()) {
-                    ((ModuleElementTraceHasAccessesGremlin)accesses).delegate(gt.next());
+                    ((InContextModuleElementTraceHasContextModuleElementGremlin)contextModuleElement).delegate(gt.next());
                 }
             } finally {
                 finishTraversal(g);
             }
         }
-        return accesses;
-    }
-
-    @Override
-    public IInContextModuleElementTraceHasParentTrace parentTrace() {
-        if (parentTrace == null) {
-            parentTrace = new InContextModuleElementTraceHasParentTraceGremlin(this, this.gts);
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("parentTrace");
-                if (gt.hasNext()) {
-                    ((InContextModuleElementTraceHasParentTraceGremlin)parentTrace).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
-        return parentTrace;
+        return contextModuleElement;
     }
 
     @Override
@@ -142,6 +126,47 @@ public class CheckTraceGremlin implements ICheckTrace, GremlinWrapper<Vertex> {
             }
         }
         return invariant;
+    }
+
+    @Override
+    public ICheckTraceHasResult result() {
+        if (result == null) {
+            result = new CheckTraceHasResultGremlin(this, this.gts);
+            GraphTraversalSource g = startTraversal();
+            try {
+                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("result");
+                if (gt.hasNext()) {
+                    ((CheckTraceHasResultGremlin)result).delegate(gt.next());
+                }
+            } finally {
+                finishTraversal(g);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public ICheckResult getOrCreateCheckResult(IExecutionContext context) throws EolIncrementalExecutionException {
+        GraphTraversalSource g = startTraversal();
+        CheckResultGremlin checkResult = null;
+        try {
+            Vertex v = null;
+            try {
+                v = g.addV("CheckResult").next();
+                checkResult = new CheckResultGremlin(context, this, v, gts);
+            } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+                g.V(v).as("v").properties().drop().select("v").drop();
+                throw new EolIncrementalExecutionException("Error creating requested CheckResult", e);
+            }
+    	} finally {
+            finishTraversal(g);
+        }    
+        return checkResult;
+    }      
+
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        return result;
     }
 
     @Override
@@ -163,11 +188,11 @@ public class CheckTraceGremlin implements ICheckTrace, GremlinWrapper<Vertex> {
         CheckTraceGremlin other = (CheckTraceGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (invariant.get() == null) {
-            if (other.invariant.get() != null)
-                return false;
-        }
-        if (!invariant.get().equals(other.invariant.get())) {
+    if (invariant == null) {
+        if (other.invariant != null)
+            return false;
+    }
+        if (!invariant().get().equals(other.invariant().get())) {
             return false;
         }
         return true; 
@@ -177,7 +202,7 @@ public class CheckTraceGremlin implements ICheckTrace, GremlinWrapper<Vertex> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((invariant.get() == null) ? 0 : invariant.get().hashCode());
+        result = prime * result + ((invariant().get() == null) ? 0 : invariant().get().hashCode());
         return result;
     }
     

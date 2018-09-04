@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,13 +13,13 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
-import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTraceHasInvariant;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
-import org.eclipse.epsilon.evl.incremental.util.TraceFactory;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -62,7 +62,7 @@ public class CheckTraceHasInvariantGremlin extends Feature
         IInvariantTrace result = null;
         try {
             Vertex to = g.E(delegate).outV().next();
-            result = (IInvariantTrace) TraceFactory.createModuleElementTrace(to, gts);
+            result = (IInvariantTrace) EvlTraceFactory.getFactory().createModuleElementTrace(to, gts);
         }
         finally {
             finishTraversal(g);
@@ -74,10 +74,10 @@ public class CheckTraceHasInvariantGremlin extends Feature
     @Override
     public boolean create(IInvariantTrace target) throws TraceModelConflictRelation {
         if (conflict(target)) {
+            if (related(target)) {
+                return true;
+            }
             throw new TraceModelConflictRelation("Relation to previous IInvariantTrace exists");
-        }
-        if (related(target)) {
-            return false;
         }
         target.check().set(source);
         set(target);
@@ -116,8 +116,8 @@ public class CheckTraceHasInvariantGremlin extends Feature
         if (delegate == null) {
             return false;
         }
-        GraphTraversalSource g = startTraversal();
         boolean result = false;
+        GraphTraversalSource g = startTraversal();
         try {
 		  result = g.E(delegate).outV().hasId(target.getId()).hasNext() && source.equals(target.check().get());
 		}

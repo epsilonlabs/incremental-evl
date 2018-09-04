@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -60,18 +60,6 @@ public class MessageTraceTest {
         // protected region MessageTraceAttributes on begin
         // TODO Add test code for parameters (to hard to generate correct code for any/all types).                    
         // protected region MessageTraceAttributes end
-    }
-    
-    
-    @Test
-    public void testAccessesReference() throws Exception {
-        InvariantTraceHasMessage containerReference = new InvariantTraceHasMessage(containerMock);
-        when(containerMock.message()).thenReturn(containerReference);
-        // protected region MessageTraceInit_AccessesReference on begin
-        classUnderTest = new MessageTrace(containerMock);                    
-        // protected region MessageTraceInit_AccessesReference end
-        // TODO Implement multivalue ref test
-    
     }
     
     // protected region MessageTraceOperations on begin

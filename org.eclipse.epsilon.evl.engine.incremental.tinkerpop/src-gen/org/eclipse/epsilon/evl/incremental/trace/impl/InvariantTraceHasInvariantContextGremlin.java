@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,13 +13,13 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
-import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasInvariantContext;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
-import org.eclipse.epsilon.evl.incremental.util.TraceFactory;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -62,7 +62,7 @@ public class InvariantTraceHasInvariantContextGremlin extends Feature
         IContextTrace result = null;
         try {
             Vertex to = g.E(delegate).outV().next();
-            result = (IContextTrace) TraceFactory.createModuleElementTrace(to, gts);
+            result = (IContextTrace) EvlTraceFactory.getFactory().createModuleElementTrace(to, gts);
         }
         finally {
             finishTraversal(g);
@@ -74,10 +74,10 @@ public class InvariantTraceHasInvariantContextGremlin extends Feature
     @Override
     public boolean create(IContextTrace target) throws TraceModelConflictRelation {
         if (conflict(target)) {
+            if (related(target)) {
+                return true;
+            }
             throw new TraceModelConflictRelation("Relation to previous IContextTrace exists");
-        }
-        if (related(target)) {
-            return false;
         }
         target.constraints().set(source);
         set(target);
@@ -100,10 +100,17 @@ public class InvariantTraceHasInvariantContextGremlin extends Feature
         GraphTraversalSource g = startTraversal();
         try {
             result |= delegate == null ? g.V(source.getId()).out("invariantContext").hasNext() : g.E(delegate).outV().hasId(target.getId()).hasNext();
-            Iterable<IInvariantTrace> iterable = () -> target.constraints().get();
-            Stream<IInvariantTrace> targetStream = StreamSupport.stream(iterable.spliterator(), false);
-            result |= delegate == null ? false : target.constraints().isUnique() &&
-        	    targetStream.anyMatch(source::equals);
+            GraphTraversalSource g2 = startTraversal();
+            try {
+                result |= delegate == null ? false : (target.constraints().isUnique() &&
+                        g.V(target.getId()).out("constraints").hasId(source.getId()).hasNext());
+            }
+            catch (Exception ex) {
+                result = false;
+            }
+            finally {
+                finishTraversal(g2);
+            }
         }
         finally {
             finishTraversal(g);
@@ -119,12 +126,18 @@ public class InvariantTraceHasInvariantContextGremlin extends Feature
         if (delegate == null) {
             return false;
         }
-		Iterable<IInvariantTrace> iterable = () -> target.constraints().get();
-		Stream<IInvariantTrace> targetStream = StreamSupport.stream(iterable.spliterator(), false);
-        GraphTraversalSource g = startTraversal();
         boolean result = false;
+        GraphTraversalSource g = startTraversal();
+        boolean inTarget = false;
         try {
-		  result = g.E(delegate).outV().hasId(target.getId()).hasNext() && targetStream.anyMatch(source::equals);
+            inTarget = g.V(target.getId()).out("constraints").hasId(source.getId()).hasNext();
+        }
+        finally {
+            finishTraversal(g);
+        }
+        g = startTraversal();
+        try {
+		  result = g.E(delegate).outV().hasId(target.getId()).hasNext() && inTarget;
 		}
 		finally {
             finishTraversal(g);

@@ -55,7 +55,7 @@ public class IncrementalEmfModel extends EmfModel implements IIncrementalModel {
 	}
 
 	@Override
-	public Object createFromString(String value) throws NotInstantiableModelElementValueException {
+	public Object getOrCreateFromString(String value) throws NotInstantiableModelElementValueException {
 		return getElementById(value);
 	}
 

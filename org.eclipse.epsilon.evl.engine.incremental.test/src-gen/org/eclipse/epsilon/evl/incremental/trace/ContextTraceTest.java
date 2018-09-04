@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -91,9 +91,14 @@ public class ContextTraceTest {
         
         List<Object> list = new ArrayList<>();
         IExecutionContext child1 = classUnderTest.getOrCreateExecutionContext();
-        list.add(classUnderTest.executionContext().get());
+        classUnderTest.executionContext().get().forEachRemaining(list::add);
         
         assertThat(list, hasItem(child1));
+        list.clear();
+        IExecutionContext child2 = classUnderTest.getOrCreateExecutionContext();
+        classUnderTest.executionContext().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child2));
+        assertThat(list, hasSize(2));
         list.clear();
     }
     
@@ -121,18 +126,6 @@ public class ContextTraceTest {
         assertThat(list, hasSize(2));
         assertThat(list, contains(child1, child2));
         assertThat(child3, is(child1));
-    }
-    
-    
-    @Test
-    public void testAccessesReference() throws Exception {
-        ModuleExecutionTraceHasModuleElements containerReference = new ModuleExecutionTraceHasModuleElements(containerMock);
-        when(containerMock.moduleElements()).thenReturn(containerReference);
-        // protected region ContextTraceInit_AccessesReference on begin
-		classUnderTest = new ContextTrace("kind1", 1, containerMock);
-		// protected region ContextTraceInit_AccessesReference end
-        // TODO Implement multivalue ref test
-    
     }
     
     // protected region ContextTraceOperations on begin

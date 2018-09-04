@@ -3,6 +3,16 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="base" nsURI="http://www.eclipse.epsilon.org/incremental/base/ExecutionTrace/1.0"
     nsPrefix="base_et">
   <eClassifiers xsi:type="ecore:EClass" name="IdElement" abstract="true" interface="true">
+    <eOperations name="getIdProperties">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="keyType" value="String"/>
+        <details key="valueType" value="Object"/>
+      </eAnnotations>
+      <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EMap">
+        <eTypeArguments/>
+        <eTypeArguments/>
+      </eGenericType>
+    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
         changeable="false" iD="true"/>
   </eClassifiers>
@@ -21,12 +31,6 @@
         eType="#//ModuleElementTrace" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="The module elements that conform the module.&#xA;Each language shoud specialize this class to represent the structure of its AST."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="accesses" ordered="false"
-        unique="false" upperBound="-1" eType="#//Access" containment="true" resolveProxies="false">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="The different accesses that where recorded during execution."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="models" upperBound="-1"
@@ -49,12 +53,6 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A ModuleElementTrace represents the trace of the execution of a particular element of &#xA;an Epsilon module (e.g. Eol, Etl, etc.). The ModuleElementTrace containts information&#xA;about the different types of accesses that occured during its execution."/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="accesses" ordered="false"
-        upperBound="-1" eType="#//Access" resolveProxies="false" eOpposite="#//Access/executionTrace">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="The different accesses that where recorded during execution for this particular &#xA;module element."/>
-      </eAnnotations>
-    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ContextModuleElementTrace" abstract="true"
       eSuperTypes="#//ModuleElementTrace">
@@ -62,8 +60,8 @@
       <details key="documentation" value="A module element that is executed in a context (e.g. contex operation, Etl rule, &#xA;etc.)."/>
     </eAnnotations>
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ContextModuleElementTrace/executionContext"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="executionContext" eType="#//ExecutionContext"
-        containment="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="executionContext" ordered="false"
+        unique="false" upperBound="-1" eType="#//ExecutionContext" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="The execution context in which this module was executed. This is constitued&#xA;by the variables that define the context of the module element. In EVL this would&#xA;be ‘self’ (model element of the Context type) in ETL this would be the input (and &#xA;output variables). "/>
       </eAnnotations>
@@ -74,7 +72,7 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A module element that is not executed in a context, but that is nested in one that&#xA;is (e.g. guard, check, etc.)"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="parentTrace" lowerBound="1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="contextModuleElement" lowerBound="1"
         eType="#//ContextModuleElementTrace" derived="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ExecutionContext" eSuperTypes="#//IdElement">
@@ -83,6 +81,12 @@
         upperBound="-1" eType="#//ModelElementVariable" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="The variables that make up the context."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="accesses" ordered="false"
+        unique="false" upperBound="-1" eType="#//Access" containment="true" resolveProxies="false">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The different accesses that where recorded during execution."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -99,9 +103,8 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="An Access is the super class of all possible types of accesses that can ocurr during&#xA;execution."/>
     </eAnnotations>
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//Access/executionTrace"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="executionTrace" lowerBound="1"
-        eType="#//ModuleElementTrace" eOpposite="#//ModuleElementTrace/accesses"/>
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//Access/from"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="from" lowerBound="1" eType="#//ModuleElementTrace"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ElementAccess" eSuperTypes="#//Access">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

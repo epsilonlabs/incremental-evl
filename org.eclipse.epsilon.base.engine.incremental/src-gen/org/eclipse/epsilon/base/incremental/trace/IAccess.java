@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
+import java.util.Map;
+
 import org.eclipse.epsilon.base.incremental.trace.*;    
 import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
@@ -21,16 +23,17 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
 public interface IAccess extends IIdElement {
 
     /**
-     * Returns the value of the '<em><b>Execution Trace</b></em>' reference.
-     * <!-- protected region executionTrace-getter-doc on begin -->
+     * Returns the value of the '<em><b>from</b></em>' reference.
+     * <!-- protected region from-getter-doc on begin -->
      * <p>
-     * If the meaning of the '<em>Execution Trace</em>' attribute isn't clear,
+     * If the meaning of the '<em>from</em>' attribute isn't clear,
      * add it to the metamodel as a GenDoc or edit it here.
      * </p>
-    * <!-- protected region executionTrace-getter-doc end --> 
-     * @return the value of the '<em>Execution Trace</em>' reference.
+     * <!-- protected region from-getter-doc end --> 
+     * @return the value of the '<em>from</em>' reference.
      */
-    IAccessHasExecutionTrace executionTrace();
+    IAccessHasFrom from();
                 
+
 
 }

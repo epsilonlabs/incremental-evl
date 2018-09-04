@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
@@ -31,9 +32,11 @@ import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.csv.CsvModel;
 import org.eclipse.epsilon.emc.csv.incremental.CsvModelIncremental;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
+import org.eclipse.epsilon.evl.incremental.trace.ICheckResult;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IGuardResult;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 import org.junit.Before;
@@ -59,9 +62,7 @@ public abstract class ExecutionTests<M extends Module> {
 	public void setup() throws Exception {
 		module = new IncrementalEvlModule();
 		module.injectTraceManager(getEvlGuiceModule());
-		evlFile = new File(
-				// this.getClass().getClassLoader().getResource("org/eclipse/epsilon/evl/testExecution.evl").toURI());
-				ExecutionTests.class.getResource("testExecution.evl").toURI());
+		evlFile = new File(ExecutionTests.class.getResource("testExecution.evl").toURI());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -89,8 +90,8 @@ public abstract class ExecutionTests<M extends Module> {
 				.getAllModuleTraces();
 		assertThat("One single EvlModuleTrace", moduleTraces.size(), is(1));
 		IEvlModuleTrace moduleTrace = moduleTraces.iterator().next();
-		Stream<IModuleElementTrace> meTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get());
-		List<IContextTrace> contextExecutionTraces = meTraces.filter(t -> t instanceof IContextTrace)
+		List<IContextTrace> contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
+				.filter(t -> t instanceof IContextTrace)
 				.map(IContextTrace.class::cast).collect(Collectors.toList());
 		// We have two contexts, i.e. two traces per Row
 		Collection<Map<String, Object>> modelRows = model.getAllOfType("Row");
@@ -99,7 +100,8 @@ public abstract class ExecutionTests<M extends Module> {
 
 		// Find the model element access of the traces
 		Stream<IElementAccess> elementAccesses = contextExecutionTraces.stream()
-				.flatMap(ct -> IncrementalUtils.asStream(ct.accesses().get())).filter(a -> a instanceof IElementAccess)
+				.flatMap(ct -> IncrementalUtils.asStream(ct.executionContext().get()))
+				.flatMap(ec -> IncrementalUtils.asStream(ec.accesses().get())).filter(a -> a instanceof IElementAccess)
 				.map(IElementAccess.class::cast);
 		assertThat("One ElementAccess per Context-ModelElement pair", elementAccesses.count(),
 				is(2L * modelRows.size()));
@@ -107,10 +109,13 @@ public abstract class ExecutionTests<M extends Module> {
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
 		Date changeDate = sdf.parse("6/4/2017");
 		for (IContextTrace ct : contextExecutionTraces) {
-			// Find matching row
-			IElementAccess elementAccess = (IElementAccess) ct.accesses().get().next();
-//				Map<String, Object> currentRow = modelRows.stream()
-//						.filter(r -> r.get("iban").equals(elementAccess.element().get().getUri())).findFirst().get();
+			// Get a random element access
+			IExecutionContext context = IncrementalUtils.asStream(ct.executionContext().get()).findAny().get();
+			IElementAccess elementAccess = IncrementalUtils.asStream(context.accesses().get())
+					.filter(a -> a instanceof IElementAccess)
+					.map(IElementAccess.class::cast)
+					.findFirst()
+					.get();
 			Map<String, Object> currentRow = (Map<String, Object>) model
 					.getElementById(elementAccess.element().get().getUri());
 			if (ct.getIndex() == 1) {
@@ -120,8 +125,10 @@ public abstract class ExecutionTests<M extends Module> {
 					IInvariantTrace overDraftIt = invariants.next();
 					ICheckTrace checkTrace = overDraftIt.check().get();
 
-					IPropertyAccess pa = IncrementalUtils.asStream(checkTrace.accesses().get())
-							.filter(IPropertyAccess.class::isInstance).map(IPropertyAccess.class::cast).findFirst()
+					IPropertyAccess pa = IncrementalUtils.asStream(context.accesses().get())
+							.filter(IPropertyAccess.class::isInstance)
+							.map(IPropertyAccess.class::cast)
+							.findFirst()
 							.get();
 					assertThat("Check should access 'balance' property", pa.property().get().getName(), is("balance"));
 
@@ -133,17 +140,28 @@ public abstract class ExecutionTests<M extends Module> {
 					assertThat("Satisfies trace should not be for 'all'", satInvariants.size(), is(1));
 					assertThat("Satisfies trace should not be for 'isInOverdraft'",
 							satInvariants.iterator().next().getName(), is("isInOverdraft"));
-					if (!overDraftIt.getResult()) {
-						checkTrace = chargesIt.check().get();
-						Set<IAccess> checkAccessesSet = IncrementalUtils.asSet(checkTrace.accesses().get());
+					ICheckResult overDraftResult = IncrementalUtils.asStream(overDraftIt.check().get().result().get())
+							.filter(r -> r.context().get().equals(context))
+							.findFirst()
+							.get();
+					if (!overDraftResult.getValue()) {
+						ICheckTrace checkTrace2 = chargesIt.check().get();
+						IncrementalUtils.asStream(context.accesses().get())
+							.filter(a -> a.from().get().equals(checkTrace2) && (a instanceof IPropertyAccess))
+							.map(IPropertyAccess.class::cast)
+							.collect(Collectors.toSet());
+						// FIMXE Move this complex queries to the repository so we can exploit gremlin!
+						Set<IPropertyAccess> checkAccessesSet = IncrementalUtils.asStream(context.accesses().get())
+								.filter(a -> a.from().get().equals(checkTrace) && (a instanceof IPropertyAccess))
+								.map(IPropertyAccess.class::cast)
+								.collect(Collectors.toSet());
 						// Boolean operations can fail fast, so property access must be at least 1 and
 						// at most 2.
 						assertThat("Two properties accesses in check", checkAccessesSet.size(), greaterThan(0));
 						assertThat("Two properties accesses in check", checkAccessesSet.size(), lessThan(3));
 
-						Stream<IAccess> checkAccesses = IncrementalUtils.asStream(checkTrace.accesses().get());
-						Set<String> propNames = checkAccesses.filter(IPropertyAccess.class::isInstance)
-								.map(IPropertyAccess.class::cast).map(e -> e.property().get().getName())
+						Set<String> propNames = checkAccessesSet.stream()
+								.map(e -> e.property().get().getName())
 								.collect(Collectors.toSet());
 						assertThat("Check should access ['hasOverdraft','branch'] properties", propNames,
 								anyOf(containsInAnyOrder("hasOverdraft", "branch"), contains("hasOverdraft")));

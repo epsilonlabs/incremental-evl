@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -10,6 +10,8 @@
  * 
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
+
+import java.util.Map;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.*;    
@@ -35,30 +37,6 @@ public interface IInvariantTrace extends IGuardedElementTrace, IInContextModuleE
      * @return the value of the '<em>name</em>' attribute.
      */
     String getName();
-    
-    /**
-     * Returns the value of the '{@link InvariantTrace#result <em>result</em>}' attribute.
-     * <!-- protected region result-getter-doc on begin -->
-     * <p>
-     * If the meaning of the '<em>result</em>' attribute isn't clear,
-     * add it to the metamodel as a GenDoc or edit it here.
-     * </p>
-     * <!-- protected region result-getter-doc end --> 
-     * @return the value of the '<em>result</em>' attribute.
-     */
-    Boolean getResult();
-
-    /**
-     * Sets the value of the '{@link InvariantTrace#result <em>result</em>}' attribute.
-     * <!-- protected region result-setter-doc on begin -->
-     * <p>
-     * If the meaning of the '<em>result</em>' attribute isn't clear,
-     * add it to the metamodel as a GenDoc or edit it here.
-     * </p>
-     * <!-- protected region result-setter-doc end --> 
-     * @param value the new value of the '<em>result</em>' attribute.
-     */
-    void setResult(boolean value);
 
     /**
      * Returns the value of the '<em><b>check</b></em>' reference.
@@ -108,11 +86,12 @@ public interface IInvariantTrace extends IGuardedElementTrace, IInContextModuleE
      */
     IInvariantTraceHasInvariantContext invariantContext();
                 
+
  
     /**
      * InvariantTrace has same identity in the aggregate.
      */
-    public boolean sameIdentityAs(final IInvariantTrace other);
+    boolean sameIdentityAs(final IInvariantTrace other);
     
     /** The GuardTrace Factory. */
     IGuardTrace getOrCreateGuardTrace() throws EolIncrementalExecutionException;       

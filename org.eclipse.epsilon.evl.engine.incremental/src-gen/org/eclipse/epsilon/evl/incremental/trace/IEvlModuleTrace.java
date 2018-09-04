@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -10,6 +10,8 @@
  * 
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
+
+import java.util.Map;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.*;    
@@ -23,23 +25,15 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.*;
  */
 public interface IEvlModuleTrace extends IModuleExecutionTrace {
 
+
  
     /**
      * EvlModuleTrace has same identity in the aggregate.
      */
-    public boolean sameIdentityAs(final IEvlModuleTrace other);
+    boolean sameIdentityAs(final IEvlModuleTrace other);
     
     /** The ContextTrace Factory. */
     IContextTrace getOrCreateContextTrace(String kind, Integer index) throws EolIncrementalExecutionException;       
-
-    /** The ElementAccess Factory. */
-    IElementAccess getOrCreateElementAccess(IModuleElementTrace executionTrace, IModelElementTrace element) throws EolIncrementalExecutionException;       
-
-    /** The AllInstancesAccess Factory. */
-    IAllInstancesAccess getOrCreateAllInstancesAccess(Boolean ofKind, IModuleElementTrace executionTrace, IModelTypeTrace type) throws EolIncrementalExecutionException;       
-
-    /** The PropertyAccess Factory. */
-    IPropertyAccess getOrCreatePropertyAccess(IModuleElementTrace executionTrace, IPropertyTrace property) throws EolIncrementalExecutionException;       
 
     /** The ModelAccess Factory. */
     IModelAccess getOrCreateModelAccess(String modelName, IModelTrace modelTrace) throws EolIncrementalExecutionException;       

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,22 +11,24 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
+
 import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region ModelElementTraceImports on begin **/
 /** protected region ModelElementTraceImports end **/
-
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
-
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -76,7 +78,6 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
         String uri, IModelTypeTrace type, IModelTrace container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
-        // FIXME We need to destroy the created edges when any edge fails
         GraphTraversalSource g = startTraversal();
         try {
             g.V(delegate)
@@ -122,9 +123,9 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
 	            result = (String) g.V(delegate).values("uri").next();
 	        } catch (NoSuchElementException ex) {
 	            /** protected region uri on begin **/
-            // TODO Add default return value for ModelElementTraceGremlin.getgetUri
-            throw new IllegalStateException(ex);
-            /** protected region uri end **/
+	            // TODO Add default return value for ModelElementTraceGremlin.getUri
+	            throw new IllegalStateException("Add default return value for ModelElementTraceGremlin.getUri", ex);
+	            /** protected region uri end **/
 	        }
 	    } finally {
             finishTraversal(g);
@@ -205,35 +206,34 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
         GraphTraversalSource g = startTraversal();
         PropertyTraceGremlin propertyTrace = null;
         try {
-    	    Vertex v = null;
-    	    try {
-    	        v = g.addV("PropertyTrace").next();
-    	        propertyTrace = new PropertyTraceGremlin(name, this, v, gts);
-    	    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-    	        v.remove();
-    	    } finally {
-    		    if (propertyTrace != null) {
-    		        return propertyTrace;
-    		    }
-    	        GraphTraversal<Vertex, Vertex> gt = ((ModelElementTraceHasPropertiesGremlin) this.properties).getRaw()
-    	            .hasLabel("PropertyTrace")
-    	            .has("name", name)
-    	            .as("a") 
-    	            .select("a");
-    	        if (!gt.hasNext()) {
-    	            throw new EolIncrementalExecutionException("Error creating trace model element. Requested PropertyTrace was "
-    	                    + "duplicate but previous one was not found.");
-    	        }
+    	    GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("properties").has("name", name);
+    	    if (gt.hasNext()) {
     	        propertyTrace = new PropertyTraceGremlin();
     	        propertyTrace.delegate(gt.next());
     	        propertyTrace.graphTraversalSource(gts);
+    	    }
+    	    else {
+    	        Vertex v = null;
+    	        try {
+    	            v = g.addV("PropertyTrace").next();
+    	            propertyTrace = new PropertyTraceGremlin(name, this, v, gts);
+    	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+    	            g.V(v).as("v").properties().drop().select("v").drop();
+    	            throw new EolIncrementalExecutionException("Error creating requested PropertyTrace", e);
+    	        }
     	    }
     	} finally {
             finishTraversal(g);
         }    
         return propertyTrace;
     }      
-                  
+
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("uri", getUri());
+        return result;
+    }
+
     @Override
     public boolean sameIdentityAs(final IModelElementTrace other) {
         if (other == null) {
@@ -261,11 +261,11 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
         ModelElementTraceGremlin other = (ModelElementTraceGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (modelTrace.get() == null) {
-            if (other.modelTrace.get() != null)
-                return false;
-        }
-        if (!modelTrace.get().equals(other.modelTrace.get())) {
+    if (modelTrace == null) {
+        if (other.modelTrace != null)
+            return false;
+    }
+        if (!modelTrace().get().equals(other.modelTrace().get())) {
             return false;
         }
         return true; 
@@ -276,7 +276,7 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getUri() == null) ? 0 : getUri().hashCode());
-        result = prime * result + ((modelTrace.get() == null) ? 0 : modelTrace.get().hashCode());
+        result = prime * result + ((modelTrace().get() == null) ? 0 : modelTrace().get().hashCode());
         return result;
     }
     

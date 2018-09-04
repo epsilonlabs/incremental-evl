@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -54,12 +54,6 @@ public class ContextTrace implements IContextTrace {
     private final IGuardedElementTraceHasGuard guard;
 
     /**
-     * * The different accesses that where recorded during execution for this particular 
-       * module element.
-     */
-    private final IModuleElementTraceHasAccesses accesses;
-
-    /**
      * * The execution context in which this module was executed. This is constitued
        * by the variables that define the context of the module element. In EVL this would
        * be ‘self’ (model element of the Context type) in ETL this would be the input (and 
@@ -87,7 +81,6 @@ public class ContextTrace implements IContextTrace {
 
         this.executionContext = new ContextModuleElementTraceHasExecutionContext(this);
         this.guard = new GuardedElementTraceHasGuard(this);
-        this.accesses = new ModuleElementTraceHasAccesses(this);
         this.constraints = new ContextTraceHasConstraints(this);
 
 
@@ -117,11 +110,6 @@ public class ContextTrace implements IContextTrace {
     @Override
     public IGuardedElementTraceHasGuard guard() {
         return guard;
-    }
-
-    @Override
-    public IModuleElementTraceHasAccesses accesses() {
-        return accesses;
     }
 
     @Override
@@ -167,10 +155,18 @@ public class ContextTrace implements IContextTrace {
     	    if (executionContext != null) {
     	        return executionContext;
     	    }
-            executionContext = this.executionContext.get();
-            if (executionContext  == null) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ExecutionContext was "
-                        + "duplicate but previous one was not found.");
+            Iterator<IExecutionContext> it = this.executionContext.get();
+            while (it.hasNext()) {
+            	IExecutionContext item;
+                item = (IExecutionContext) it.next();
+    			if () {
+    				executionContext = item;
+    				break;
+    			}
+    		}
+    		if (executionContext == null) {
+               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested ExecutionContext was "
+                		+ "duplicate but previous one was not found.");
             }
         }
         return executionContext;
@@ -245,7 +241,7 @@ public class ContextTrace implements IContextTrace {
             if (other.executionContext.get() != null)
                 return false;
         }
-        if (!executionContext.get().equals(other.executionContext.get())) {
+        if (!IncrementalUtils.equalIterators(executionContext.get(), other.executionContext.get())) {
             return false;
         }
         return true; 
@@ -258,7 +254,7 @@ public class ContextTrace implements IContextTrace {
         result = prime * result + ((kind == null) ? 0 : kind.hashCode());
         Integer index = Integer.valueOf(getIndex());
         result = prime * result + ((index == null) ? 0 : index.hashCode());
-        result = prime * result + ((executionContext.get() == null) ? 0 : executionContext.get().hashCode());
+        result = prime * result + ((executionContext.get() == null) ? 0 : IncrementalUtils.iteratorHashCode(executionContext.get()));
         return result;
     }
 }

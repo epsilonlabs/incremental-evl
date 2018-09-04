@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,14 +13,16 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
-import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceHasModels;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 import java.util.Iterator;
-import org.eclipse.epsilon.base.incremental.trace.gremlin.util.GremlinUtils;
+import java.util.Map.Entry;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 
@@ -53,7 +55,8 @@ public class ModuleExecutionTraceHasModelsGremlin extends Feature
         
     @Override
     public Iterator<IModelAccess> get() {
-        return new GremlinUtils.IncrementalFactoryIterator<IModelAccess, Vertex>(getRaw(), gts);
+        return new GremlinUtils.IncrementalFactoryIterator<IModelAccess, Vertex>(getRaw(),
+                gts, BaseTraceFactory.getFactory());
     }
     
     /**
@@ -63,7 +66,7 @@ public class ModuleExecutionTraceHasModelsGremlin extends Feature
         GraphTraversalSource g = startTraversal();
         GraphTraversal<Vertex, Vertex> result = null;
         try {
-            result = g.V(source.getId()).outE("models").toV(Direction.OUT);
+            result = g.V(source.getId()).out("models");
         }
         finally {
             finishTraversal(g);
@@ -75,6 +78,9 @@ public class ModuleExecutionTraceHasModelsGremlin extends Feature
     @Override
     public boolean create(IModelAccess target) throws TraceModelConflictRelation {
         if (conflict(target)) {
+            if (related(target)) {
+                return true;
+            }
             throw new TraceModelConflictRelation("Relation to previous IModelAccess exists");
         }
         set(target);
@@ -95,11 +101,12 @@ public class ModuleExecutionTraceHasModelsGremlin extends Feature
         boolean result = false;
         GraphTraversalSource g = startTraversal();
         try {
-	        // FIXME We can just remove this during generation?
 	        if (isUnique()) {
-	            result |= g.V(source.getId()).out("models")
-                    .has("modelName", target.getModelName())
-                    .hasNext();
+	           GraphTraversal<Vertex, Vertex> gt =  g.V(source.getId()).out("models");
+                for (Entry<String, Object> id : target.getIdProperties().entrySet()) {
+                    gt.has(id.getKey(), id.getValue());
+                }
+                result |= gt.hasNext();
             }
         }
         finally {
@@ -113,8 +120,8 @@ public class ModuleExecutionTraceHasModelsGremlin extends Feature
     	if (target == null) {
 			return false;
 		}
-        GraphTraversalSource g = startTraversal();
         boolean result = false;
+        GraphTraversalSource g = startTraversal();
         try {
 		  result = g.V(source.getId()).out("models").hasId(target.getId()).hasNext();
 		}

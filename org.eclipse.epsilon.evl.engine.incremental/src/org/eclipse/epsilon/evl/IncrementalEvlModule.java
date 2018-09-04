@@ -23,9 +23,9 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelatio
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementVariable;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
@@ -44,8 +44,6 @@ import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.incremental.IEvlTraceFactory;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraintContext;
-import org.eclipse.epsilon.evl.incremental.dom.TracedGuardBlock;
-import org.eclipse.epsilon.evl.incremental.execute.InMemoryEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlModuleIncremental;
 import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
@@ -292,6 +290,7 @@ public class IncrementalEvlModule extends EvlModule implements
 		String elementId = model.getElementId(object);
 		IEvlModuleTraceRepository repo = getContext().getTraceManager().getExecutionTraceRepository();
 		String moduleUri = context.getModule().getUri().toString();
+		// FIXME We need the moduleTraces and the accesses, maybe a map?
 		Set<IModuleElementTrace> traces = repo.findPropertyAccessExecutionTraces(moduleUri, model.getModelUri(),
 				elementId, propertyName);
 		traces.addAll(repo.findAllInstancesExecutionTraces(moduleUri, model.getTypeNameOf(object)));
@@ -384,26 +383,30 @@ public class IncrementalEvlModule extends EvlModule implements
 
 	private void executeContextTrace(IContextTrace contextT, IModelTrace modelTrace) {
 		logger.info("executeContextTrace: {}[{}]", contextT.getKind(), contextT.getIndex());
-		Iterable<IModelElementVariable> iterable = () -> contextT.executionContext().get().contextVariables().get();
-		IModelElementTrace modelElementTrace = StreamSupport.stream(iterable.spliterator(), false)
-				.filter(v -> v.getName().equals("self")).findFirst().get().value().get();
-		ConstraintContext conCtx = getConstraintContextForTrace(contextT);
-		try {
-			String moduleUri = context.getModule().getUri().toString();
-			Object self = getSelf(moduleUri, modelTrace, modelElementTrace);
-			if (conCtx.appliesTo(self, getContext(), false)) {
-				for (ModuleElement me : conCtx.getChildren()) {
-					Constraint constraint = (Constraint) me;
-					if (!constraint.isLazy(getContext()) && constraint.appliesTo(self, getContext(), false)) {
-						constraint.check(self, context, false);
+		Iterator<IExecutionContext> iterator = contextT.executionContext().get();
+		while (iterator.hasNext()) {
+			IExecutionContext ec = iterator.next();
+			IModelElementTrace modelElementTrace = IncrementalUtils.asStream(ec.contextVariables().get())
+					.filter(v -> v.getName().equals("self")).findFirst().get().value().get();
+			ConstraintContext conCtx = getConstraintContextForTrace(contextT);
+			try {
+				String moduleUri = context.getModule().getUri().toString();
+				Object self = getSelf(moduleUri, modelTrace, modelElementTrace);
+				if (conCtx.appliesTo(self, getContext(), false)) {
+					for (ModuleElement me : conCtx.getChildren()) {
+						Constraint constraint = (Constraint) me;
+						if (!constraint.isLazy(getContext()) && constraint.appliesTo(self, getContext(), false)) {
+							constraint.check(self, context, false);
+						}
 					}
 				}
+			} catch (EolRuntimeException e) {
+				logger.info("Error executing ConstraintContext trace", e);
 			}
-		} catch (EolRuntimeException e) {
-			logger.info("Error executing ConstraintContext trace", e);
 		}
 	}
-
+	
+	
 	private void executeTraces(String moduleUri, IIncrementalModel model, Set<IModuleElementTrace> traces,
 			Object modelObject) {
 		if (traces == null || traces.isEmpty()) {
@@ -425,7 +428,7 @@ public class IncrementalEvlModule extends EvlModule implements
 			// the modelObject, then for each modelaccess of the invariant we need to
 			// re-execute it (i.e. the
 			// modelObject was not the one being checked by the invariant).
-			// Do allInstances access superseed property access for the same object?
+			// Do allInstances access supersede property access for the same object?
 
 			// ALL THIS RELATES TO TRIMMING THE TRACE MODEL. READ SOME REALTED LIT ABOUT IT.
 
@@ -452,17 +455,24 @@ public class IncrementalEvlModule extends EvlModule implements
 		getContext().getConstraintTrace().clear();
 	}
 
+	// EACH MODULEeLEMENTtRACE HAS TO BE EXECUTED ONCE FOR EACH EXECUTIONcONTEXT OF ITS CONTEXTmODULEeLEMENT
+	// FIXME make sure we only reexecute for the context in which the access occurred!
+	
 	private void executeTrace(String moduleUri, IIncrementalModel model, IInvariantTrace t, Object modelObject)
 			throws EolRuntimeException {
 		logger.info("Re-executing InvariantTrace");
-		IContextModuleElementTrace ruleTrace = t.parentTrace().get();
-		Iterable<IModelElementVariable> iterable = () -> ruleTrace.executionContext().get().contextVariables().get();
-		IModelElementTrace selfTrace = StreamSupport.stream(iterable.spliterator(), false)
+		
+		IContextModuleElementTrace ruleTrace = t.contextModuleElement().get();
+		Iterator<IExecutionContext> iterator = ruleTrace.executionContext().get();
+		while (iterator.hasNext()) {
+			IExecutionContext ec = iterator.next();
+			IModelElementTrace selfTrace = IncrementalUtils.asStream(ec.contextVariables().get())
 				.filter(v -> v.getName().equals("self")).findFirst().get().value().get();// .getUri();
-		IModelTrace modelTrace = getContext().getTraceManager().getExecutionTraceRepository()
-				.getModelTraceForModule(model.getModelUri(), moduleUri);
-		Object self = getSelf(moduleUri, modelTrace, selfTrace);
-		executeInvariantTrace(self, t);
+			IModelTrace modelTrace = getContext().getTraceManager().getExecutionTraceRepository()
+					.getModelTraceForModule(model.getModelUri(), moduleUri);
+			Object self = getSelf(moduleUri, modelTrace, selfTrace);
+			executeInvariantTrace(self, t);
+		}
 	}
 
 	/**
@@ -481,32 +491,34 @@ public class IncrementalEvlModule extends EvlModule implements
 	private void executeTrace(String moduleUri, IIncrementalModel model, IGuardTrace t, Object modelObject)
 			throws EolRuntimeException {
 		logger.info("Re-executing GuardTrace");
-		IContextModuleElementTrace ruleTrace = t.parentTrace().get();
-		IGuardedElementTrace guardedElement = t.limits().get();
-		Iterable<IModelElementVariable> iterable = () -> ruleTrace.executionContext().get().contextVariables().get();
-		IModelElementTrace selfTrace = StreamSupport.stream(iterable.spliterator(), false)
+		IContextModuleElementTrace ruleTrace = t.contextModuleElement().get();
+		Iterator<IExecutionContext> iterator = ruleTrace.executionContext().get();
+		while (iterator.hasNext()) {
+			IExecutionContext ec = iterator.next();
+			IModelElementTrace selfTrace = IncrementalUtils.asStream(ec.contextVariables().get())
 				.filter(v -> v.getName().equals("self")).findFirst().get().value().get();
-
-		IModelTrace modelTrace = getContext().getTraceManager().getExecutionTraceRepository()
-				.getModelTraceForModule(model.getModelUri(), moduleUri);
-		Object self = getSelf(moduleUri, modelTrace, selfTrace);
-		if (guardedElement instanceof IInvariantTrace) {
-			logger.info("GuardTrace applies to Invariant");
-			IInvariantTrace invariantT = (IInvariantTrace) guardedElement;
-			executeInvariantTrace(self, invariantT);
-		} else {
-			logger.info("GuardTrace applies to Context");
-			IContextTrace contextT = (IContextTrace) guardedElement;
-			// Execute all the invariants in the InvariantContext
-			ConstraintContext conCtx = getConstraintContextForTrace(contextT);
-			if (conCtx.appliesTo(self, getContext())) {
-				for (Constraint constraint : conCtx.getConstraints()) {
-					// Find trace
-					Iterable<IInvariantTrace> iterable2 = () -> contextT.constraints().get();
-					IInvariantTrace invariantT = StreamSupport.stream(iterable2.spliterator(), false)
-							.filter(i -> i.getName().equals(constraint.getName())).findFirst().orElse(null);
-					if (invariantT != null) {
-						constraint.check(self, getContext());
+			IGuardedElementTrace guardedElement = t.limits().get();
+			IModelTrace modelTrace = getContext().getTraceManager().getExecutionTraceRepository()
+					.getModelTraceForModule(model.getModelUri(), moduleUri);
+			Object self = getSelf(moduleUri, modelTrace, selfTrace);
+			if (guardedElement instanceof IInvariantTrace) {
+				logger.info("GuardTrace applies to Invariant");
+				IInvariantTrace invariantT = (IInvariantTrace) guardedElement;
+				executeInvariantTrace(self, invariantT);
+			} else {
+				logger.info("GuardTrace applies to Context");
+				IContextTrace contextT = (IContextTrace) guardedElement;
+				// Execute all the invariants in the InvariantContext
+				ConstraintContext conCtx = getConstraintContextForTrace(contextT);
+				if (conCtx.appliesTo(self, getContext())) {
+					for (Constraint constraint : conCtx.getConstraints()) {
+						// Find trace
+						Iterable<IInvariantTrace> iterable2 = () -> contextT.constraints().get();
+						IInvariantTrace invariantT = StreamSupport.stream(iterable2.spliterator(), false)
+								.filter(i -> i.getName().equals(constraint.getName())).findFirst().orElse(null);
+						if (invariantT != null) {
+							constraint.check(self, getContext());
+						}
 					}
 				}
 			}
@@ -517,47 +529,54 @@ public class IncrementalEvlModule extends EvlModule implements
 			throws EolRuntimeException {
 
 		logger.info("Re-executing MessageTrace");
-		IContextModuleElementTrace ruleTrace = t.parentTrace().get();
-		Iterable<IModelElementVariable> iterable = () -> ruleTrace.executionContext().get().contextVariables().get();
-		IModelElementTrace selfTrace = StreamSupport.stream(iterable.spliterator(), false)
+		IContextModuleElementTrace ruleTrace = t.contextModuleElement().get();
+		Iterator<IExecutionContext> iterator = ruleTrace.executionContext().get();
+		while (iterator.hasNext()) {
+			IExecutionContext ec = iterator.next();
+			IModelElementTrace selfTrace = IncrementalUtils.asStream(ec.contextVariables().get())
 				.filter(v -> v.getName().equals("self")).findFirst().get().value().get();
-		IModelTrace modelTrace = getContext().getTraceManager().getExecutionTraceRepository()
-				.getModelTraceForModule(model.getModelUri(), moduleUri);
-		Object self = getSelf(moduleUri, modelTrace, selfTrace);
-		IInvariantTrace invariantT = t.invariant().get();
-		executeInvariantTrace(self, invariantT);
+			IModelTrace modelTrace = getContext().getTraceManager().getExecutionTraceRepository()
+					.getModelTraceForModule(model.getModelUri(), moduleUri);
+			Object self = getSelf(moduleUri, modelTrace, selfTrace);
+			IInvariantTrace invariantT = t.invariant().get();
+			executeInvariantTrace(self, invariantT);
+		}
 	}
 
 	private void executeTrace(String moduleUri, IIncrementalModel model, ICheckTrace t, Object modelObject)
 			throws EolRuntimeException {
 
 		logger.info("Re-executing CheckTrace");
-		IContextModuleElementTrace ruleTrace = t.parentTrace().get();
-
-		IModelElementTrace selfTrace = IncrementalUtils
-				.asStream(ruleTrace.executionContext().get().contextVariables().get())
-				.filter(v -> v.getName().equals("self")).findFirst().get().value().get();// .getUri();
-
-		IModelTrace modelTrace = getContext().getTraceManager().getExecutionTraceRepository()
-				.getModelTraceForModule(model.getModelUri(), moduleUri);
-		Object self = getSelf(moduleUri, modelTrace, selfTrace);
-		IInvariantTrace invariantT = t.invariant().get();
-		executeInvariantTrace(self, invariantT);
+		IContextModuleElementTrace ruleTrace = t.contextModuleElement().get();
+		Iterator<IExecutionContext> iterator = ruleTrace.executionContext().get();
+		while (iterator.hasNext()) {
+			IExecutionContext ec = iterator.next();
+			IModelElementTrace selfTrace = IncrementalUtils.asStream(ec.contextVariables().get())
+				.filter(v -> v.getName().equals("self")).findFirst().get().value().get();
+			IModelTrace modelTrace = getContext().getTraceManager().getExecutionTraceRepository()
+					.getModelTraceForModule(model.getModelUri(), moduleUri);
+			Object self = getSelf(moduleUri, modelTrace, selfTrace);
+			IInvariantTrace invariantT = t.invariant().get();
+			executeInvariantTrace(self, invariantT);
+		}
 	}
 
 	private void executeTrace(String moduleUri, IIncrementalModel model, ISatisfiesTrace t, Object modelObject)
 			throws EolRuntimeException {
 
 		logger.info("Re-executing SatisfiesTrace");
-		IContextModuleElementTrace ruleTrace = t.parentTrace().get();
-		Iterable<IModelElementVariable> iterable = () -> ruleTrace.executionContext().get().contextVariables().get();
-		IModelElementTrace selfTrace = StreamSupport.stream(iterable.spliterator(), false)
-				.filter(v -> v.getName().equals("self")).findFirst().get().value().get();// .getUri();
-		IModelTrace modelTrace = getContext().getTraceManager().getExecutionTraceRepository()
-				.getModelTraceForModule(model.getModelUri(), moduleUri);
-		Object self = getSelf(moduleUri, modelTrace, selfTrace);
-		IInvariantTrace invariantT = t.invariant().get();
-		executeInvariantTrace(self, invariantT);
+		IContextModuleElementTrace ruleTrace = t.contextModuleElement().get();
+		Iterator<IExecutionContext> iterator = ruleTrace.executionContext().get();
+		while (iterator.hasNext()) {
+			IExecutionContext ec = iterator.next();
+			IModelElementTrace selfTrace = IncrementalUtils.asStream(ec.contextVariables().get())
+				.filter(v -> v.getName().equals("self")).findFirst().get().value().get();
+			IModelTrace modelTrace = getContext().getTraceManager().getExecutionTraceRepository()
+					.getModelTraceForModule(model.getModelUri(), moduleUri);
+			Object self = getSelf(moduleUri, modelTrace, selfTrace);
+			IInvariantTrace invariantT = t.invariant().get();
+			executeInvariantTrace(self, invariantT);
+		}
 	}
 
 	/**
@@ -616,7 +635,7 @@ public class IncrementalEvlModule extends EvlModule implements
 
 	private ExecutableBlock<Boolean> getOrCreateGuardBlock() {
 		if (incrementalMode) {
-			return new TracedGuardBlock(Boolean.class);
+			return new TracedExecutableBlock<IGuardTrace, Boolean>(Boolean.class);
 		} else {
 			return new ExecutableBlock<Boolean>(Boolean.class);
 		}

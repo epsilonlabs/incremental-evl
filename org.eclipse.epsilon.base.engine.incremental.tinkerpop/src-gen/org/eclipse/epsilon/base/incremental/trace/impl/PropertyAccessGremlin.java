@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,21 +11,23 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
+
 import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
-import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region PropertyAccessImports on begin **/
 /** protected region PropertyAccessImports end **/
-
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
-
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -42,9 +44,9 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
     private Vertex delegate;
     
     /**
-     * The executionTrace.
+     * The from.
      */
-    private IAccessHasExecutionTrace executionTrace;
+    private IAccessHasFrom from;
 
     /**
      * The property.
@@ -62,21 +64,20 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
      * container and any attributes identified as indexes.
      */    
     public PropertyAccessGremlin(
-        IModuleElementTrace executionTrace, IPropertyTrace property, IModuleExecutionTrace container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        IModuleElementTrace from, IPropertyTrace property, IExecutionContext container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
-        // FIXME We need to destroy the created edges when any edge fails
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.executionTrace = new AccessHasExecutionTraceGremlin(this, gts);
         this.property = new PropertyAccessHasPropertyGremlin(this, gts);
+        this.from = new AccessHasFromGremlin(this, gts);
         try {
-	        this.executionTrace.create(executionTrace);
 	        this.property.create(property);
+	        this.from.create(from);
         } catch (TraceModelConflictRelation ex) {
-            ((AccessHasExecutionTraceGremlin)this.executionTrace).delegate().remove();
             ((PropertyAccessHasPropertyGremlin)this.property).delegate().remove();
+            ((AccessHasFromGremlin)this.from).delegate().remove();
             throw ex;
         }
     }
@@ -102,9 +103,9 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
 	            result = (String) g.V(delegate).values("value").next();
 	        } catch (NoSuchElementException ex) {
 	            /** protected region value on begin **/
-            // TODO Add default return value for PropertyAccessGremlin.getgetValue
-            throw new IllegalStateException(ex);
-            /** protected region value end **/
+	            // TODO Add default return value for PropertyAccessGremlin.getValue
+	            throw new IllegalStateException("Add default return value for PropertyAccessGremlin.getValue", ex);
+	            /** protected region value end **/
 	        }
 	    } finally {
             finishTraversal(g);
@@ -125,20 +126,20 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
     }   
      
     @Override
-    public IAccessHasExecutionTrace executionTrace() {
-        if (executionTrace == null) {
-            executionTrace = new AccessHasExecutionTraceGremlin(this, this.gts);
+    public IAccessHasFrom from() {
+        if (from == null) {
+            from = new AccessHasFromGremlin(this, this.gts);
             GraphTraversalSource g = startTraversal();
             try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("executionTrace");
+                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("from");
                 if (gt.hasNext()) {
-                    ((AccessHasExecutionTraceGremlin)executionTrace).delegate(gt.next());
+                    ((AccessHasFromGremlin)from).delegate(gt.next());
                 }
             } finally {
                 finishTraversal(g);
             }
         }
-        return executionTrace;
+        return from;
     }
 
     @Override
@@ -156,6 +157,11 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
             }
         }
         return property;
+    }
+
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        return result;
     }
 
     @Override
@@ -177,18 +183,18 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
         PropertyAccessGremlin other = (PropertyAccessGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (executionTrace.get() == null) {
-            if (other.executionTrace.get() != null)
-                return false;
-        }
-        if (!executionTrace.get().equals(other.executionTrace.get())) {
+    if (property == null) {
+        if (other.property != null)
+            return false;
+    }
+        if (!property().get().equals(other.property().get())) {
             return false;
         }
-        if (property.get() == null) {
-            if (other.property.get() != null)
-                return false;
-        }
-        if (!property.get().equals(other.property.get())) {
+    if (from == null) {
+        if (other.from != null)
+            return false;
+    }
+        if (!from().get().equals(other.from().get())) {
             return false;
         }
         return true; 
@@ -198,8 +204,8 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((executionTrace.get() == null) ? 0 : executionTrace.get().hashCode());
-        result = prime * result + ((property.get() == null) ? 0 : property.get().hashCode());
+        result = prime * result + ((property().get() == null) ? 0 : property().get().hashCode());
+        result = prime * result + ((from().get() == null) ? 0 : from().get().hashCode());
         return result;
     }
     

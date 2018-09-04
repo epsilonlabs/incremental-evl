@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,6 +16,7 @@ import java.util.Set;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 /** protected region IEvlModuleTraceRepositoryImports on begin **/
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 /** protected region IEvlModuleTraceRepositoryImports end **/
@@ -73,6 +74,10 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 	IModelElementTrace getModelElementTraceFromModel(String elementUri, IModelTrace modelTrace);
 
 	IInvariantTrace findInvariantTraceinContext(IContextTrace contextTrace, String invariantName);
+
+	ICheckResult findResultInCheck(ICheckTrace checkTrace, IExecutionContext currentContext);
+	
+	IGuardResult findResultInGuard(IGuardTrace guardTrace, IExecutionContext currentContext);
 
 	/** protected region IEvlModuleTraceRepositry end **/
 

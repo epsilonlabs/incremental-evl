@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,21 +11,23 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
+
 import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
-import org.eclipse.epsilon.base.incremental.trace.gremlin.impl.GremlinWrapper;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region ModelAccessImports on begin **/
 /** protected region ModelAccessImports end **/
-
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
-
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -60,7 +62,6 @@ public class ModelAccessGremlin implements IModelAccess, GremlinWrapper<Vertex> 
         String modelName, IModelTrace modelTrace, IModuleExecutionTrace container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
-        // FIXME We need to destroy the created edges when any edge fails
         GraphTraversalSource g = startTraversal();
         try {
             g.V(delegate)
@@ -103,9 +104,9 @@ public class ModelAccessGremlin implements IModelAccess, GremlinWrapper<Vertex> 
 	            result = (String) g.V(delegate).values("modelName").next();
 	        } catch (NoSuchElementException ex) {
 	            /** protected region modelName on begin **/
-            // TODO Add default return value for ModelAccessGremlin.getgetModelName
-            throw new IllegalStateException(ex);
-            /** protected region modelName end **/
+	            // TODO Add default return value for ModelAccessGremlin.getModelName
+	            throw new IllegalStateException("Add default return value for ModelAccessGremlin.getModelName", ex);
+	            /** protected region modelName end **/
 	        }
 	    } finally {
             finishTraversal(g);
@@ -128,6 +129,12 @@ public class ModelAccessGremlin implements IModelAccess, GremlinWrapper<Vertex> 
             }
         }
         return modelTrace;
+    }
+
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("modelName", getModelName());
+        return result;
     }
 
     @Override
@@ -157,11 +164,11 @@ public class ModelAccessGremlin implements IModelAccess, GremlinWrapper<Vertex> 
         ModelAccessGremlin other = (ModelAccessGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (modelTrace.get() == null) {
-            if (other.modelTrace.get() != null)
-                return false;
-        }
-        if (!modelTrace.get().equals(other.modelTrace.get())) {
+    if (modelTrace == null) {
+        if (other.modelTrace != null)
+            return false;
+    }
+        if (!modelTrace().get().equals(other.modelTrace().get())) {
             return false;
         }
         return true; 
@@ -172,7 +179,7 @@ public class ModelAccessGremlin implements IModelAccess, GremlinWrapper<Vertex> 
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getModelName() == null) ? 0 : getModelName().hashCode());
-        result = prime * result + ((modelTrace.get() == null) ? 0 : modelTrace.get().hashCode());
+        result = prime * result + ((modelTrace().get() == null) ? 0 : modelTrace().get().hashCode());
         return result;
     }
     

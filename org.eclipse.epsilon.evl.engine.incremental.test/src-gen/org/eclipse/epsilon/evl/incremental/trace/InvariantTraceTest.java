@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2018-09-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -126,18 +126,6 @@ public class InvariantTraceTest {
         
         assertThat(list, hasItem(child1));
         list.clear();
-    }
-    
-    
-    @Test
-    public void testAccessesReference() throws Exception {
-        ContextTraceHasConstraints containerReference = new ContextTraceHasConstraints(containerMock);
-        when(containerMock.constraints()).thenReturn(containerReference);
-        // protected region InvariantTraceInit_AccessesReference on begin
-        classUnderTest = new InvariantTrace("name1", containerMock);                    
-        // protected region InvariantTraceInit_AccessesReference end
-        // TODO Implement multivalue ref test
-    
     }
     
     // protected region InvariantTraceOperations on begin
