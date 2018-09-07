@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-05.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,8 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -66,7 +68,6 @@ public class GuardTrace implements IGuardTrace {
         this.contextModuleElement = new InContextModuleElementTraceHasContextModuleElement(this);
         this.result = new GuardTraceHasResult(this);
 
-
     }
     
     @Override
@@ -106,7 +107,7 @@ public class GuardTrace implements IGuardTrace {
     	    if (guardResult != null) {
     	        return guardResult;
     	    }
-            Iterator<IGuardResult> it = this.result.get();
+    		Iterator<IGuardResult> it = this.result.get();
             while (it.hasNext()) {
             	IGuardResult item;
                 item = (IGuardResult) it.next();
@@ -123,6 +124,11 @@ public class GuardTrace implements IGuardTrace {
         return guardResult;
     }      
                   
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        return result;
+    }
+
     @Override
     public boolean sameIdentityAs(final IGuardTrace other) {
         if (other == null) {

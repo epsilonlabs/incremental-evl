@@ -31,6 +31,7 @@ import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.csv.CsvModel;
 import org.eclipse.epsilon.emc.csv.incremental.CsvModelIncremental;
+import org.eclipse.epsilon.eol.dom.XorOperatorExpression;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckResult;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
@@ -90,15 +91,21 @@ public abstract class ExecutionTests<M extends Module> {
 				.getAllModuleTraces();
 		assertThat("One single EvlModuleTrace", moduleTraces.size(), is(1));
 		IEvlModuleTrace moduleTrace = moduleTraces.iterator().next();
+		
+		
 		List<IContextTrace> contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
 				.filter(t -> t instanceof IContextTrace)
 				.map(IContextTrace.class::cast).collect(Collectors.toList());
-		// We have two contexts, i.e. two traces per Row
+		// We have two contexts, traces per Row
 		Collection<Map<String, Object>> modelRows = model.getAllOfType("Row");
-		assertThat("One Context-ModelElement pair per model element", contextExecutionTraces.size(),
-				is(2 * modelRows.size()));
-
-		// Find the model element access of the traces
+		assertThat("One ContextTrace per Evl ContraintContext", contextExecutionTraces.size(),
+				is(2));
+		// Each context should have as many ExecutionContexts as Rows in the model
+		for (IContextTrace ct : contextExecutionTraces) {
+			List<IExecutionContext> excts = IncrementalUtils.asList(ct.executionContext().get());
+			assertThat("One ExecutionContext per Row", excts.size(), is(modelRows.size()));
+		}
+		// Find the model element access of the ContextTraces
 		Stream<IElementAccess> elementAccesses = contextExecutionTraces.stream()
 				.flatMap(ct -> IncrementalUtils.asStream(ct.executionContext().get()))
 				.flatMap(ec -> IncrementalUtils.asStream(ec.accesses().get())).filter(a -> a instanceof IElementAccess)

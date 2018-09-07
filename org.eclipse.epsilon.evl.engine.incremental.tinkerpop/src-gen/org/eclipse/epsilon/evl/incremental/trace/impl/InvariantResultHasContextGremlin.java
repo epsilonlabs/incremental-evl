@@ -62,7 +62,7 @@ public class InvariantResultHasContextGremlin extends Feature
         IExecutionContext result = null;
         try {
             Vertex to = g.E(delegate).outV().next();
-            result = (IExecutionContext) EvlTraceFactory.getFactory().createModuleElementTrace(to, gts);
+            result = (IExecutionContext) EvlTraceFactory.getFactory().createTraceElement(to, gts);
         }
         finally {
             finishTraversal(g);

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-05.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,8 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -65,7 +67,6 @@ public class ElementAccess implements IElementAccess {
             throw new TraceModelDuplicateElement();
         }
 
-
     }
     
     @Override
@@ -87,6 +88,11 @@ public class ElementAccess implements IElementAccess {
     @Override
     public IElementAccessHasElement element() {
         return element;
+    }
+
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        return result;
     }
 
     @Override

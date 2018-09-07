@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,8 +13,8 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
-import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
@@ -38,17 +38,23 @@ public class ContextTraceHasConstraintsGremlin extends Feature
     /** The source(s) of the reference */
     protected IContextTrace source;
     
- 
+    /** Factory used to wrap referenced elements */
+    protected final TraceFactory factory;
+    
     
     /**
      * Instantiates a new IContextTraceHasConstraints.
      *
      * @param source the source of the reference
      */
-    public ContextTraceHasConstraintsGremlin (IContextTrace source, GraphTraversalSource gts) {
+    public ContextTraceHasConstraintsGremlin (
+        IContextTrace source,
+        GraphTraversalSource gts, 
+        TraceFactory factory) {
         super(true);
         this.source = source;
         this.gts = gts;
+        this.factory = factory; 
     }
     
     // PUBLIC API
@@ -56,7 +62,7 @@ public class ContextTraceHasConstraintsGremlin extends Feature
     @Override
     public Iterator<IInvariantTrace> get() {
         return new GremlinUtils.IncrementalFactoryIterator<IInvariantTrace, Vertex>(getRaw(),
-                gts, EvlTraceFactory.getFactory());
+                gts, factory);
     }
     
     /**

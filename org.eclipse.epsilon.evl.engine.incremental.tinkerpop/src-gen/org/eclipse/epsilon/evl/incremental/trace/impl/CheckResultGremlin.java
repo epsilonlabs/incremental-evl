@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckResult;
+import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region CheckResultImports on begin **/
@@ -53,8 +54,7 @@ public class CheckResultGremlin implements ICheckResult, GremlinWrapper<Vertex> 
     /**
      * Empty constructor for deserialization.
      */    
-    public CheckResultGremlin() {
-    }
+    public CheckResultGremlin() { }
     
     /**
      * Instantiates a new CheckResultGremlin. The CheckResultGremlin is uniquely identified by its
@@ -67,7 +67,7 @@ public class CheckResultGremlin implements ICheckResult, GremlinWrapper<Vertex> 
         if (!container.result().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.context = new CheckResultHasContextGremlin(this, gts);
+        this.context = new CheckResultHasContextGremlin(this, gts, EvlTraceFactory.getFactory());
         try {
 	        this.context.create(context);
         } catch (TraceModelConflictRelation ex) {
@@ -121,7 +121,7 @@ public class CheckResultGremlin implements ICheckResult, GremlinWrapper<Vertex> 
     @Override
     public ICheckResultHasContext context() {
         if (context == null) {
-            context = new CheckResultHasContextGremlin(this, this.gts);
+            context = new CheckResultHasContextGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("context");

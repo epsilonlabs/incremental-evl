@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-05.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,8 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -90,7 +92,6 @@ public class InvariantTrace implements IInvariantTrace {
         this.check = new InvariantTraceHasCheck(this);
         this.message = new InvariantTraceHasMessage(this);
         this.satisfies = new InvariantTraceHasSatisfies(this);
-
 
     }
     
@@ -228,6 +229,12 @@ public class InvariantTrace implements IInvariantTrace {
         return satisfiesTrace;
     }      
                   
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("name", getName());
+        return result;
+    }
+
     @Override
     public boolean sameIdentityAs(final IInvariantTrace other) {
         if (other == null) {

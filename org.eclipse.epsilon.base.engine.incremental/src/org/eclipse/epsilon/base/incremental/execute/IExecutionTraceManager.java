@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.epsilon.base.incremental.execute;
 
-import org.eclipse.epsilon.base.incremental.IBaseFactory;
+import org.eclipse.epsilon.base.incremental.IBaseRootElementsFactory;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
@@ -32,7 +32,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepositor
  *        {@link IModuleExecutionTrace}
  * @param <F> the generic type of the RootElements Factory
  */
-public interface IExecutionTraceManager<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<T>, F extends IBaseFactory> {
+public interface IExecutionTraceManager<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<T>, F extends IBaseRootElementsFactory> {
 
 	/**
 	 * Instruct the manager to persist the model changes using a parallel execution.

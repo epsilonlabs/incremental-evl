@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementVariable;
+import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region ModelElementVariableImports on begin **/
@@ -51,8 +52,7 @@ public class ModelElementVariableGremlin implements IModelElementVariable, Greml
     /**
      * Empty constructor for deserialization.
      */    
-    public ModelElementVariableGremlin() {
-    }
+    public ModelElementVariableGremlin() { }
     
     /**
      * Instantiates a new ModelElementVariableGremlin. The ModelElementVariableGremlin is uniquely identified by its
@@ -74,7 +74,7 @@ public class ModelElementVariableGremlin implements IModelElementVariable, Greml
         if (!container.contextVariables().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.value = new ModelElementVariableHasValueGremlin(this, gts);
+        this.value = new ModelElementVariableHasValueGremlin(this, gts, BaseTraceFactory.getFactory());
         try {
 	        this.value.create(value);
         } catch (TraceModelConflictRelation ex) {
@@ -117,7 +117,7 @@ public class ModelElementVariableGremlin implements IModelElementVariable, Greml
     @Override
     public IModelElementVariableHasValue value() {
         if (value == null) {
-            value = new ModelElementVariableHasValueGremlin(this, this.gts);
+            value = new ModelElementVariableHasValueGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("value");

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-05.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,8 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -66,7 +68,6 @@ public class CheckTrace implements ICheckTrace {
         this.contextModuleElement = new InContextModuleElementTraceHasContextModuleElement(this);
         this.result = new CheckTraceHasResult(this);
 
-
     }
     
     @Override
@@ -106,7 +107,7 @@ public class CheckTrace implements ICheckTrace {
     	    if (checkResult != null) {
     	        return checkResult;
     	    }
-            Iterator<ICheckResult> it = this.result.get();
+    		Iterator<ICheckResult> it = this.result.get();
             while (it.hasNext()) {
             	ICheckResult item;
                 item = (ICheckResult) it.next();
@@ -123,6 +124,11 @@ public class CheckTrace implements ICheckTrace {
         return checkResult;
     }      
                   
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        return result;
+    }
+
     @Override
     public boolean sameIdentityAs(final ICheckTrace other) {
         if (other == null) {

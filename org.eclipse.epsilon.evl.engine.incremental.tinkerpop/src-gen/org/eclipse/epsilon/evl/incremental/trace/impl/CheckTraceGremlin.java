@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
+import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region CheckTraceImports on begin **/
@@ -64,8 +65,7 @@ public class CheckTraceGremlin implements ICheckTrace, GremlinWrapper<Vertex> {
     /**
      * Empty constructor for deserialization.
      */    
-    public CheckTraceGremlin() {
-    }
+    public CheckTraceGremlin() { }
     
     /**
      * Instantiates a new CheckTraceGremlin. The CheckTraceGremlin is uniquely identified by its
@@ -78,8 +78,8 @@ public class CheckTraceGremlin implements ICheckTrace, GremlinWrapper<Vertex> {
         if (!container.check().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.invariant = new CheckTraceHasInvariantGremlin(this, gts);
-        this.result = new CheckTraceHasResultGremlin(this, gts);
+        this.invariant = new CheckTraceHasInvariantGremlin(this, gts, EvlTraceFactory.getFactory());
+        this.result = new CheckTraceHasResultGremlin(this, gts, EvlTraceFactory.getFactory());
     }
     
     @Override
@@ -97,7 +97,7 @@ public class CheckTraceGremlin implements ICheckTrace, GremlinWrapper<Vertex> {
     @Override
     public IInContextModuleElementTraceHasContextModuleElement contextModuleElement() {
         if (contextModuleElement == null) {
-            contextModuleElement = new InContextModuleElementTraceHasContextModuleElementGremlin(this, this.gts);
+            contextModuleElement = new InContextModuleElementTraceHasContextModuleElementGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("contextModuleElement");
@@ -114,7 +114,7 @@ public class CheckTraceGremlin implements ICheckTrace, GremlinWrapper<Vertex> {
     @Override
     public ICheckTraceHasInvariant invariant() {
         if (invariant == null) {
-            invariant = new CheckTraceHasInvariantGremlin(this, this.gts);
+            invariant = new CheckTraceHasInvariantGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("invariant");
@@ -131,7 +131,7 @@ public class CheckTraceGremlin implements ICheckTrace, GremlinWrapper<Vertex> {
     @Override
     public ICheckTraceHasResult result() {
         if (result == null) {
-            result = new CheckTraceHasResultGremlin(this, this.gts);
+            result = new CheckTraceHasResultGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("result");

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
+import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region InvariantTraceImports on begin **/
@@ -79,8 +80,7 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
     /**
      * Empty constructor for deserialization.
      */    
-    public InvariantTraceGremlin() {
-    }
+    public InvariantTraceGremlin() { }
     
     /**
      * Instantiates a new InvariantTraceGremlin. The InvariantTraceGremlin is uniquely identified by its
@@ -102,11 +102,11 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
         if (!container.constraints().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.invariantContext = new InvariantTraceHasInvariantContextGremlin(this, gts);
-        this.guard = new GuardedElementTraceHasGuardGremlin(this, gts);
-        this.check = new InvariantTraceHasCheckGremlin(this, gts);
-        this.message = new InvariantTraceHasMessageGremlin(this, gts);
-        this.satisfies = new InvariantTraceHasSatisfiesGremlin(this, gts);
+        this.invariantContext = new InvariantTraceHasInvariantContextGremlin(this, gts, EvlTraceFactory.getFactory());
+        this.guard = new GuardedElementTraceHasGuardGremlin(this, gts, EvlTraceFactory.getFactory());
+        this.check = new InvariantTraceHasCheckGremlin(this, gts, EvlTraceFactory.getFactory());
+        this.message = new InvariantTraceHasMessageGremlin(this, gts, EvlTraceFactory.getFactory());
+        this.satisfies = new InvariantTraceHasSatisfiesGremlin(this, gts, EvlTraceFactory.getFactory());
     }
     
     @Override
@@ -143,7 +143,7 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
     @Override
     public IGuardedElementTraceHasGuard guard() {
         if (guard == null) {
-            guard = new GuardedElementTraceHasGuardGremlin(this, this.gts);
+            guard = new GuardedElementTraceHasGuardGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("guard");
@@ -160,7 +160,7 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
     @Override
     public IInContextModuleElementTraceHasContextModuleElement contextModuleElement() {
         if (contextModuleElement == null) {
-            contextModuleElement = new InContextModuleElementTraceHasContextModuleElementGremlin(this, this.gts);
+            contextModuleElement = new InContextModuleElementTraceHasContextModuleElementGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("contextModuleElement");
@@ -177,7 +177,7 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
     @Override
     public IInvariantTraceHasCheck check() {
         if (check == null) {
-            check = new InvariantTraceHasCheckGremlin(this, this.gts);
+            check = new InvariantTraceHasCheckGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("check");
@@ -194,7 +194,7 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
     @Override
     public IInvariantTraceHasMessage message() {
         if (message == null) {
-            message = new InvariantTraceHasMessageGremlin(this, this.gts);
+            message = new InvariantTraceHasMessageGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("message");
@@ -211,7 +211,7 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
     @Override
     public IInvariantTraceHasSatisfies satisfies() {
         if (satisfies == null) {
-            satisfies = new InvariantTraceHasSatisfiesGremlin(this, this.gts);
+            satisfies = new InvariantTraceHasSatisfiesGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("satisfies");
@@ -228,7 +228,7 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
     @Override
     public IInvariantTraceHasInvariantContext invariantContext() {
         if (invariantContext == null) {
-            invariantContext = new InvariantTraceHasInvariantContextGremlin(this, this.gts);
+            invariantContext = new InvariantTraceHasInvariantContextGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("invariantContext");

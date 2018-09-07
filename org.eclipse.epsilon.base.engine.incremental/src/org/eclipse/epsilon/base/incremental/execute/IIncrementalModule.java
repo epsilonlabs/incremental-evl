@@ -2,7 +2,7 @@ package org.eclipse.epsilon.base.incremental.execute;
 
 import java.util.Set;
 
-import org.eclipse.epsilon.base.incremental.IBaseFactory;
+import org.eclipse.epsilon.base.incremental.IBaseRootElementsFactory;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
@@ -27,7 +27,7 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
  * 
  * @author Horacio Hoyos Rodriguez
  */
-public interface IIncrementalModule<M extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<M>, F extends IBaseFactory, T extends IExecutionTraceManager<M, R, F>>
+public interface IIncrementalModule<M extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<M>, F extends IBaseRootElementsFactory, T extends IExecutionTraceManager<M, R, F>>
 		extends IModule {
 
 	/**

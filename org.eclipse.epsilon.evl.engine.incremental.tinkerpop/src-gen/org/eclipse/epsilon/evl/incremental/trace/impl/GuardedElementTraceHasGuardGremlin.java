@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,8 +13,8 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
-import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
@@ -36,19 +36,25 @@ public class GuardedElementTraceHasGuardGremlin extends Feature
     /** The source(s) of the reference */
     protected IGuardedElementTrace source;
     
+    /** Factory used to wrap referenced elements */
+    protected final TraceFactory factory;
+    
     /** Fast access for single-valued references */
     private Edge delegate;
- 
     
     /**
      * Instantiates a new IGuardedElementTraceHasGuard.
      *
      * @param source the source of the reference
      */
-    public GuardedElementTraceHasGuardGremlin (IGuardedElementTrace source, GraphTraversalSource gts) {
+    public GuardedElementTraceHasGuardGremlin (
+        IGuardedElementTrace source,
+        GraphTraversalSource gts, 
+        TraceFactory factory) {
         super(true);
         this.source = source;
         this.gts = gts;
+        this.factory = factory; 
     }
     
     // PUBLIC API
@@ -62,7 +68,7 @@ public class GuardedElementTraceHasGuardGremlin extends Feature
         IGuardTrace result = null;
         try {
             Vertex to = g.E(delegate).outV().next();
-            result = (IGuardTrace) EvlTraceFactory.getFactory().createModuleElementTrace(to, gts);
+            result = (IGuardTrace) factory.createTraceElement(to, gts);
         }
         finally {
             finishTraversal(g);

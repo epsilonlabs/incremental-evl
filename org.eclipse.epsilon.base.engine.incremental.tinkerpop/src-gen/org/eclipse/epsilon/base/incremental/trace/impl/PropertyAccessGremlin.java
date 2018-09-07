@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
+import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region PropertyAccessImports on begin **/
@@ -56,8 +57,7 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
     /**
      * Empty constructor for deserialization.
      */    
-    public PropertyAccessGremlin() {
-    }
+    public PropertyAccessGremlin() { }
     
     /**
      * Instantiates a new PropertyAccessGremlin. The PropertyAccessGremlin is uniquely identified by its
@@ -70,8 +70,8 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.property = new PropertyAccessHasPropertyGremlin(this, gts);
-        this.from = new AccessHasFromGremlin(this, gts);
+        this.property = new PropertyAccessHasPropertyGremlin(this, gts, BaseTraceFactory.getFactory());
+        this.from = new AccessHasFromGremlin(this, gts, BaseTraceFactory.getFactory());
         try {
 	        this.property.create(property);
 	        this.from.create(from);
@@ -128,7 +128,7 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
     @Override
     public IAccessHasFrom from() {
         if (from == null) {
-            from = new AccessHasFromGremlin(this, this.gts);
+            from = new AccessHasFromGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("from");
@@ -145,7 +145,7 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
     @Override
     public IPropertyAccessHasProperty property() {
         if (property == null) {
-            property = new PropertyAccessHasPropertyGremlin(this, this.gts);
+            property = new PropertyAccessHasPropertyGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("property");

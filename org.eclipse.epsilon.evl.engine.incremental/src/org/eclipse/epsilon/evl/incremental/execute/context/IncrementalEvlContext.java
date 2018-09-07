@@ -15,7 +15,7 @@ import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllI
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.evl.execute.context.EvlContext;
-import org.eclipse.epsilon.evl.incremental.IEvlTraceFactory;
+import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.introspection.recording.SatisfiesInvocationExecutionListener;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
@@ -28,7 +28,7 @@ import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class IncrementalEvlContext<R extends IEvlModuleTraceRepository, F extends IEvlTraceFactory, M extends IEvlExecutionTraceManager<R, F>>
+public class IncrementalEvlContext<R extends IEvlModuleTraceRepository, F extends IEvlRootElementsFactory, M extends IEvlExecutionTraceManager<R, F>>
 		extends EvlContext implements IIncrementalEvlContext<IEvlModuleTrace, R, F, M> {
 
 	private M traceManager;

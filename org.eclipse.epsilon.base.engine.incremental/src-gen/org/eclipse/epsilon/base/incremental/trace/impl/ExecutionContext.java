@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-05.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,8 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -57,7 +59,6 @@ public class ExecutionContext implements IExecutionContext {
 
         this.contextVariables = new ExecutionContextHasContextVariables(this);
         this.accesses = new ExecutionContextHasAccesses(this);
-
 
     }
     
@@ -218,6 +219,11 @@ public class ExecutionContext implements IExecutionContext {
     }      
 
                   
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        return result;
+    }
+
     @Override
     public boolean sameIdentityAs(final IExecutionContext other) {
         if (other == null) {

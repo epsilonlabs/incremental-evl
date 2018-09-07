@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
+import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region ModelAccessImports on begin **/
@@ -51,8 +52,7 @@ public class ModelAccessGremlin implements IModelAccess, GremlinWrapper<Vertex> 
     /**
      * Empty constructor for deserialization.
      */    
-    public ModelAccessGremlin() {
-    }
+    public ModelAccessGremlin() { }
     
     /**
      * Instantiates a new ModelAccessGremlin. The ModelAccessGremlin is uniquely identified by its
@@ -74,7 +74,7 @@ public class ModelAccessGremlin implements IModelAccess, GremlinWrapper<Vertex> 
         if (!container.models().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.modelTrace = new ModelAccessHasModelTraceGremlin(this, gts);
+        this.modelTrace = new ModelAccessHasModelTraceGremlin(this, gts, BaseTraceFactory.getFactory());
         try {
 	        this.modelTrace.create(modelTrace);
         } catch (TraceModelConflictRelation ex) {
@@ -117,7 +117,7 @@ public class ModelAccessGremlin implements IModelAccess, GremlinWrapper<Vertex> 
     @Override
     public IModelAccessHasModelTrace modelTrace() {
         if (modelTrace == null) {
-            modelTrace = new ModelAccessHasModelTraceGremlin(this, this.gts);
+            modelTrace = new ModelAccessHasModelTraceGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("modelTrace");

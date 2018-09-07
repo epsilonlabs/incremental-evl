@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-05.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,8 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -82,7 +84,6 @@ public class ContextTrace implements IContextTrace {
         this.executionContext = new ContextModuleElementTraceHasExecutionContext(this);
         this.guard = new GuardedElementTraceHasGuard(this);
         this.constraints = new ContextTraceHasConstraints(this);
-
 
     }
     
@@ -155,15 +156,6 @@ public class ContextTrace implements IContextTrace {
     	    if (executionContext != null) {
     	        return executionContext;
     	    }
-            Iterator<IExecutionContext> it = this.executionContext.get();
-            while (it.hasNext()) {
-            	IExecutionContext item;
-                item = (IExecutionContext) it.next();
-    			if () {
-    				executionContext = item;
-    				break;
-    			}
-    		}
     		if (executionContext == null) {
                	throw new EolIncrementalExecutionException("Error creating trace model element. Requested ExecutionContext was "
                 		+ "duplicate but previous one was not found.");
@@ -185,7 +177,7 @@ public class ContextTrace implements IContextTrace {
     	    if (invariantTrace != null) {
     	        return invariantTrace;
     	    }
-            Iterator<IInvariantTrace> it = this.constraints.get();
+    		Iterator<IInvariantTrace> it = this.constraints.get();
             while (it.hasNext()) {
             	IInvariantTrace item;
                 item = (IInvariantTrace) it.next();
@@ -202,6 +194,13 @@ public class ContextTrace implements IContextTrace {
         return invariantTrace;
     }      
                   
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("kind", getKind());
+        result.put("index", getIndex());
+        return result;
+    }
+
     @Override
     public boolean sameIdentityAs(final IContextTrace other) {
         if (other == null) {

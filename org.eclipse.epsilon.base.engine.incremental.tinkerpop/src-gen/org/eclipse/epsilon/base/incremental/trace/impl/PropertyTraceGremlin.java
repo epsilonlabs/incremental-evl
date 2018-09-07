@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
+import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region PropertyTraceImports on begin **/
@@ -51,8 +52,7 @@ public class PropertyTraceGremlin implements IPropertyTrace, GremlinWrapper<Vert
     /**
      * Empty constructor for deserialization.
      */    
-    public PropertyTraceGremlin() {
-    }
+    public PropertyTraceGremlin() { }
     
     /**
      * Instantiates a new PropertyTraceGremlin. The PropertyTraceGremlin is uniquely identified by its
@@ -74,7 +74,7 @@ public class PropertyTraceGremlin implements IPropertyTrace, GremlinWrapper<Vert
         if (!container.properties().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.elementTrace = new PropertyTraceHasElementTraceGremlin(this, gts);
+        this.elementTrace = new PropertyTraceHasElementTraceGremlin(this, gts, BaseTraceFactory.getFactory());
     }
     
     @Override
@@ -111,7 +111,7 @@ public class PropertyTraceGremlin implements IPropertyTrace, GremlinWrapper<Vert
     @Override
     public IPropertyTraceHasElementTrace elementTrace() {
         if (elementTrace == null) {
-            elementTrace = new PropertyTraceHasElementTraceGremlin(this, this.gts);
+            elementTrace = new PropertyTraceHasElementTraceGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("elementTrace");

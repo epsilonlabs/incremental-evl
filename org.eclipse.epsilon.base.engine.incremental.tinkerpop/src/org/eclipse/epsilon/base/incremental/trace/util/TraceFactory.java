@@ -5,6 +5,6 @@ import org.apache.tinkerpop.gremlin.structure.Element;
 
 public interface TraceFactory {
 
-	Object createModuleElementTrace(Element delegate, GraphTraversalSource gts);
+	Object createTraceElement(Element delegate, GraphTraversalSource gts);
 
 }

@@ -380,6 +380,7 @@ operation EStructuralFeature getDocumentation(indent: Integer) : String {
     return null;
 }
 
+@cached
 operation EOperation getMapTypes() : Sequence {
     var result = new Sequence;
     var an = self.getEAnnotation("http://www.eclipse.org/emf/2002/GenModel");

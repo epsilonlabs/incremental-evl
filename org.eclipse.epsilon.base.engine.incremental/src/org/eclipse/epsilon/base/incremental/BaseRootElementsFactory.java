@@ -5,7 +5,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElemen
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
 
-public abstract class BaseFactoryImpl implements IBaseFactory {
+public abstract class BaseRootElementsFactory implements IBaseRootElementsFactory {
 
 	@Override
 	public IModelTrace createModelTrace(String uri) throws TraceModelDuplicateElement, TraceModelConflictRelation {

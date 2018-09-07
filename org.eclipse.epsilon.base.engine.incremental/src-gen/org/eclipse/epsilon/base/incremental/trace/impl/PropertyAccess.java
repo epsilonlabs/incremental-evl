@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-05.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,8 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -61,15 +63,14 @@ public class PropertyAccess implements IPropertyAccess {
             throw new TraceModelDuplicateElement();
         };
 
-        this.property = new PropertyAccessHasProperty(this);
         this.from = new AccessHasFrom(this);
-        if (!this.property.create(property)) {
-            throw new TraceModelDuplicateElement();
-        }
+        this.property = new PropertyAccessHasProperty(this);
         if (!this.from.create(from)) {
             throw new TraceModelDuplicateElement();
         }
-
+        if (!this.property.create(property)) {
+            throw new TraceModelDuplicateElement();
+        }
 
     }
     
@@ -105,6 +106,11 @@ public class PropertyAccess implements IPropertyAccess {
         return property;
     }
 
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        return result;
+    }
+
     @Override
     public boolean sameIdentityAs(final IPropertyAccess other) {
         if (other == null) {
@@ -124,18 +130,18 @@ public class PropertyAccess implements IPropertyAccess {
         PropertyAccess other = (PropertyAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (property.get() == null) {
-            if (other.property.get() != null)
-                return false;
-        }
-        if (!property.get().equals(other.property.get())) {
-            return false;
-        }
         if (from.get() == null) {
             if (other.from.get() != null)
                 return false;
         }
         if (!from.get().equals(other.from.get())) {
+            return false;
+        }
+        if (property.get() == null) {
+            if (other.property.get() != null)
+                return false;
+        }
+        if (!property.get().equals(other.property.get())) {
             return false;
         }
         return true; 
@@ -145,8 +151,8 @@ public class PropertyAccess implements IPropertyAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((property.get() == null) ? 0 : property.get().hashCode());
         result = prime * result + ((from.get() == null) ? 0 : from.get().hashCode());
+        result = prime * result + ((property.get() == null) ? 0 : property.get().hashCode());
         return result;
     }
 }

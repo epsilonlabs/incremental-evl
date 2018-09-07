@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-05.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,8 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -58,7 +60,6 @@ public class ModelTypeTrace implements IModelTypeTrace {
 
         this.modelTrace = new ModelTypeTraceHasModelTrace(this);
 
-
     }
     
     @Override
@@ -80,6 +81,12 @@ public class ModelTypeTrace implements IModelTypeTrace {
     @Override
     public IModelTypeTraceHasModelTrace modelTrace() {
         return modelTrace;
+    }
+
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("name", getName());
+        return result;
     }
 
     @Override

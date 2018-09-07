@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,8 +13,8 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
-import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckResult;
@@ -38,17 +38,23 @@ public class CheckTraceHasResultGremlin extends Feature
     /** The source(s) of the reference */
     protected ICheckTrace source;
     
- 
+    /** Factory used to wrap referenced elements */
+    protected final TraceFactory factory;
+    
     
     /**
      * Instantiates a new ICheckTraceHasResult.
      *
      * @param source the source of the reference
      */
-    public CheckTraceHasResultGremlin (ICheckTrace source, GraphTraversalSource gts) {
+    public CheckTraceHasResultGremlin (
+        ICheckTrace source,
+        GraphTraversalSource gts, 
+        TraceFactory factory) {
         super(false);
         this.source = source;
         this.gts = gts;
+        this.factory = factory; 
     }
     
     // PUBLIC API
@@ -56,7 +62,7 @@ public class CheckTraceHasResultGremlin extends Feature
     @Override
     public Iterator<ICheckResult> get() {
         return new GremlinUtils.IncrementalFactoryIterator<ICheckResult, Vertex>(getRaw(),
-                gts, EvlTraceFactory.getFactory());
+                gts, factory);
     }
     
     /**

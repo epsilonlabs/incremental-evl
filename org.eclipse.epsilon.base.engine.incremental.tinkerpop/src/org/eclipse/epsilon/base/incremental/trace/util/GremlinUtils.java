@@ -87,7 +87,7 @@ public class GremlinUtils {
 			E next = delegate.next();
 			I retVal = null;
 			try {
-				retVal = (I) f.createModuleElementTrace(next, g);
+				retVal = (I) f.createTraceElement(next, g);
 			} catch (Exception e) {
 				throw new IllegalStateException("Error wrapping iterator element", e);
 			}

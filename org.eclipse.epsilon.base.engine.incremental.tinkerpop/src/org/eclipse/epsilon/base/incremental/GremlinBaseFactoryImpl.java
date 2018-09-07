@@ -9,7 +9,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceGremlin;
 
 
-public abstract class GremlinBaseFactoryImpl implements IBaseFactory {
+public abstract class GremlinBaseFactoryImpl implements IBaseRootElementsFactory {
     
 
 	public GremlinBaseFactoryImpl() {

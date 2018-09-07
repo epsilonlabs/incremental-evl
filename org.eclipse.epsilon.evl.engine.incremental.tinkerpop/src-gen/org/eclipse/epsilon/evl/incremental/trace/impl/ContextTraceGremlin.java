@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region ContextTraceImports on begin **/
@@ -67,8 +68,7 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
     /**
      * Empty constructor for deserialization.
      */    
-    public ContextTraceGremlin() {
-    }
+    public ContextTraceGremlin() { }
     
     /**
      * Instantiates a new ContextTraceGremlin. The ContextTraceGremlin is uniquely identified by its
@@ -91,9 +91,9 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
         if (!container.moduleElements().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.executionContext = new ContextModuleElementTraceHasExecutionContextGremlin(this, gts);
-        this.guard = new GuardedElementTraceHasGuardGremlin(this, gts);
-        this.constraints = new ContextTraceHasConstraintsGremlin(this, gts);
+        this.executionContext = new ContextModuleElementTraceHasExecutionContextGremlin(this, gts, EvlTraceFactory.getFactory());
+        this.guard = new GuardedElementTraceHasGuardGremlin(this, gts, EvlTraceFactory.getFactory());
+        this.constraints = new ContextTraceHasConstraintsGremlin(this, gts, EvlTraceFactory.getFactory());
     }
     
     @Override
@@ -149,7 +149,7 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
     @Override
     public IGuardedElementTraceHasGuard guard() {
         if (guard == null) {
-            guard = new GuardedElementTraceHasGuardGremlin(this, this.gts);
+            guard = new GuardedElementTraceHasGuardGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("guard");
@@ -166,7 +166,7 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
     @Override
     public IContextModuleElementTraceHasExecutionContext executionContext() {
         if (executionContext == null) {
-            executionContext = new ContextModuleElementTraceHasExecutionContextGremlin(this, this.gts);
+            executionContext = new ContextModuleElementTraceHasExecutionContextGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("executionContext");
@@ -183,7 +183,7 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
     @Override
     public IContextTraceHasConstraints constraints() {
         if (constraints == null) {
-            constraints = new ContextTraceHasConstraintsGremlin(this, this.gts);
+            constraints = new ContextTraceHasConstraintsGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("constraints");

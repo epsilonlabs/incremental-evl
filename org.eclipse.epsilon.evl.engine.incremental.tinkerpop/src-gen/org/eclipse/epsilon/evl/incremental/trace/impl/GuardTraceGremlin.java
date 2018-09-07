@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
+import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region GuardTraceImports on begin **/
@@ -64,8 +65,7 @@ public class GuardTraceGremlin implements IGuardTrace, GremlinWrapper<Vertex> {
     /**
      * Empty constructor for deserialization.
      */    
-    public GuardTraceGremlin() {
-    }
+    public GuardTraceGremlin() { }
     
     /**
      * Instantiates a new GuardTraceGremlin. The GuardTraceGremlin is uniquely identified by its
@@ -78,8 +78,8 @@ public class GuardTraceGremlin implements IGuardTrace, GremlinWrapper<Vertex> {
         if (!container.guard().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.limits = new GuardTraceHasLimitsGremlin(this, gts);
-        this.result = new GuardTraceHasResultGremlin(this, gts);
+        this.limits = new GuardTraceHasLimitsGremlin(this, gts, EvlTraceFactory.getFactory());
+        this.result = new GuardTraceHasResultGremlin(this, gts, EvlTraceFactory.getFactory());
     }
     
     @Override
@@ -97,7 +97,7 @@ public class GuardTraceGremlin implements IGuardTrace, GremlinWrapper<Vertex> {
     @Override
     public IInContextModuleElementTraceHasContextModuleElement contextModuleElement() {
         if (contextModuleElement == null) {
-            contextModuleElement = new InContextModuleElementTraceHasContextModuleElementGremlin(this, this.gts);
+            contextModuleElement = new InContextModuleElementTraceHasContextModuleElementGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("contextModuleElement");
@@ -114,7 +114,7 @@ public class GuardTraceGremlin implements IGuardTrace, GremlinWrapper<Vertex> {
     @Override
     public IGuardTraceHasLimits limits() {
         if (limits == null) {
-            limits = new GuardTraceHasLimitsGremlin(this, this.gts);
+            limits = new GuardTraceHasLimitsGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("limits");
@@ -131,7 +131,7 @@ public class GuardTraceGremlin implements IGuardTrace, GremlinWrapper<Vertex> {
     @Override
     public IGuardTraceHasResult result() {
         if (result == null) {
-            result = new GuardTraceHasResultGremlin(this, this.gts);
+            result = new GuardTraceHasResultGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("result");

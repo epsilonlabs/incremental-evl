@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
+import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region EvlModuleTraceImports on begin **/
@@ -60,8 +61,7 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
     /**
      * Empty constructor for deserialization.
      */    
-    public EvlModuleTraceGremlin() {
-    }
+    public EvlModuleTraceGremlin() { }
     
     /**
      * Instantiates a new EvlModuleTraceGremlin. The EvlModuleTraceGremlin is uniquely identified by its
@@ -80,8 +80,8 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
         finally {
             finishTraversal(g);
         }
-        this.moduleElements = new ModuleExecutionTraceHasModuleElementsGremlin(this, gts);
-        this.models = new ModuleExecutionTraceHasModelsGremlin(this, gts);
+        this.moduleElements = new ModuleExecutionTraceHasModuleElementsGremlin(this, gts, EvlTraceFactory.getFactory());
+        this.models = new ModuleExecutionTraceHasModelsGremlin(this, gts, EvlTraceFactory.getFactory());
     }
     
     @Override
@@ -105,8 +105,7 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
 	            result = (String) g.V(delegate).values("uri").next();
 	        } catch (NoSuchElementException ex) {
 	            /** protected region uri on begin **/
-	            // TODO Add default return value for EvlModuleTraceGremlin.getUri
-	            throw new IllegalStateException("Add default return value for EvlModuleTraceGremlin.getUri", ex);
+	            result = "";
 	            /** protected region uri end **/
 	        }
 	    } finally {
@@ -118,7 +117,7 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
     @Override
     public IModuleExecutionTraceHasModuleElements moduleElements() {
         if (moduleElements == null) {
-            moduleElements = new ModuleExecutionTraceHasModuleElementsGremlin(this, this.gts);
+            moduleElements = new ModuleExecutionTraceHasModuleElementsGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("moduleElements");
@@ -135,7 +134,7 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
     @Override
     public IModuleExecutionTraceHasModels models() {
         if (models == null) {
-            models = new ModuleExecutionTraceHasModelsGremlin(this, this.gts);
+            models = new ModuleExecutionTraceHasModelsGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("models");

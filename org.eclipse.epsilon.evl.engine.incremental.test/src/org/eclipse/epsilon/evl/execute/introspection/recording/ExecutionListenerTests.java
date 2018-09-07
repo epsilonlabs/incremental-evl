@@ -6,7 +6,7 @@ import static org.mockito.Mockito.*;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 
-import org.eclipse.epsilon.base.incremental.IBaseFactory;
+import org.eclipse.epsilon.base.incremental.IBaseRootElementsFactory;
 import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
@@ -53,9 +53,9 @@ public class ExecutionListenerTests {
 		public MockitoRule mockitoRule = MockitoJUnit.rule();
 
 		@Mock
-		private IIncrementalBaseContext<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IExecutionTraceManager<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IBaseFactory>> contextMock;
+		private IIncrementalBaseContext<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IExecutionTraceManager<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IBaseRootElementsFactory>> contextMock;
 
-		private SatisfiesInvocationExecutionListener<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IExecutionTraceManager<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IBaseFactory>> listener;
+		private SatisfiesInvocationExecutionListener<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IExecutionTraceManager<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IBaseRootElementsFactory>> listener;
 
 		private OperationCallExpression ast;
 

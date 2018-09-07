@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region ModelElementTraceImports on begin **/
@@ -67,8 +68,7 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
     /**
      * Empty constructor for deserialization.
      */    
-    public ModelElementTraceGremlin() {
-    }
+    public ModelElementTraceGremlin() { }
     
     /**
      * Instantiates a new ModelElementTraceGremlin. The ModelElementTraceGremlin is uniquely identified by its
@@ -90,10 +90,10 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
         if (!container.elements().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.modelTrace = new ModelElementTraceHasModelTraceGremlin(this, gts);
-        this.properties = new ModelElementTraceHasPropertiesGremlin(this, gts);
-        this.type = new ModelElementTraceHasTypeGremlin(this, gts);
-        this.kind = new ModelElementTraceHasKindGremlin(this, gts);
+        this.modelTrace = new ModelElementTraceHasModelTraceGremlin(this, gts, BaseTraceFactory.getFactory());
+        this.properties = new ModelElementTraceHasPropertiesGremlin(this, gts, BaseTraceFactory.getFactory());
+        this.type = new ModelElementTraceHasTypeGremlin(this, gts, BaseTraceFactory.getFactory());
+        this.kind = new ModelElementTraceHasKindGremlin(this, gts, BaseTraceFactory.getFactory());
         try {
 	        this.type.create(type);
         } catch (TraceModelConflictRelation ex) {
@@ -136,7 +136,7 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
     @Override
     public IModelElementTraceHasProperties properties() {
         if (properties == null) {
-            properties = new ModelElementTraceHasPropertiesGremlin(this, this.gts);
+            properties = new ModelElementTraceHasPropertiesGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("properties");
@@ -153,7 +153,7 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
     @Override
     public IModelElementTraceHasModelTrace modelTrace() {
         if (modelTrace == null) {
-            modelTrace = new ModelElementTraceHasModelTraceGremlin(this, this.gts);
+            modelTrace = new ModelElementTraceHasModelTraceGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("modelTrace");
@@ -170,7 +170,7 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
     @Override
     public IModelElementTraceHasType type() {
         if (type == null) {
-            type = new ModelElementTraceHasTypeGremlin(this, this.gts);
+            type = new ModelElementTraceHasTypeGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("type");
@@ -187,7 +187,7 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
     @Override
     public IModelElementTraceHasKind kind() {
         if (kind == null) {
-            kind = new ModelElementTraceHasKindGremlin(this, this.gts);
+            kind = new ModelElementTraceHasKindGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("kind");

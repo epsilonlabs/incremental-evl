@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region ModelTypeTraceImports on begin **/
@@ -51,8 +52,7 @@ public class ModelTypeTraceGremlin implements IModelTypeTrace, GremlinWrapper<Ve
     /**
      * Empty constructor for deserialization.
      */    
-    public ModelTypeTraceGremlin() {
-    }
+    public ModelTypeTraceGremlin() { }
     
     /**
      * Instantiates a new ModelTypeTraceGremlin. The ModelTypeTraceGremlin is uniquely identified by its
@@ -74,7 +74,7 @@ public class ModelTypeTraceGremlin implements IModelTypeTrace, GremlinWrapper<Ve
         if (!container.types().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.modelTrace = new ModelTypeTraceHasModelTraceGremlin(this, gts);
+        this.modelTrace = new ModelTypeTraceHasModelTraceGremlin(this, gts, BaseTraceFactory.getFactory());
     }
     
     @Override
@@ -111,7 +111,7 @@ public class ModelTypeTraceGremlin implements IModelTypeTrace, GremlinWrapper<Ve
     @Override
     public IModelTypeTraceHasModelTrace modelTrace() {
         if (modelTrace == null) {
-            modelTrace = new ModelTypeTraceHasModelTraceGremlin(this, this.gts);
+            modelTrace = new ModelTypeTraceHasModelTraceGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("modelTrace");

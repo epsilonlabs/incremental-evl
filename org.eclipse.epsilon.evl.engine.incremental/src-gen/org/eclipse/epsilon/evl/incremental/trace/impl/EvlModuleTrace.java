@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-05.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,8 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -64,7 +66,6 @@ public class EvlModuleTrace implements IEvlModuleTrace {
         this.moduleElements = new ModuleExecutionTraceHasModuleElements(this);
         this.models = new ModuleExecutionTraceHasModels(this);
 
-
     }
     
     @Override
@@ -104,7 +105,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     	    if (contextTrace != null) {
     	        return contextTrace;
     	    }
-            Iterator<IModuleElementTrace> it = this.moduleElements.get();
+    		Iterator<IModuleElementTrace> it = this.moduleElements.get();
             while (it.hasNext()) {
             	IContextTrace item;
                 IModuleElementTrace t = it.next();
@@ -140,7 +141,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     	    if (modelAccess != null) {
     	        return modelAccess;
     	    }
-            Iterator<IModelAccess> it = this.models.get();
+    		Iterator<IModelAccess> it = this.models.get();
             while (it.hasNext()) {
             	IModelAccess item;
                 item = (IModelAccess) it.next();
@@ -158,6 +159,12 @@ public class EvlModuleTrace implements IEvlModuleTrace {
         return modelAccess;
     }      
                   
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("uri", getUri());
+        return result;
+    }
+
     @Override
     public boolean sameIdentityAs(final IEvlModuleTrace other) {
         if (other == null) {

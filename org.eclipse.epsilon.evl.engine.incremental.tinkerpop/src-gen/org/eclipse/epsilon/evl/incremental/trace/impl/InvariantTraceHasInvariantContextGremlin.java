@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,8 +13,8 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
-import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
@@ -36,19 +36,25 @@ public class InvariantTraceHasInvariantContextGremlin extends Feature
     /** The source(s) of the reference */
     protected IInvariantTrace source;
     
+    /** Factory used to wrap referenced elements */
+    protected final TraceFactory factory;
+    
     /** Fast access for single-valued references */
     private Edge delegate;
- 
     
     /**
      * Instantiates a new IInvariantTraceHasInvariantContext.
      *
      * @param source the source of the reference
      */
-    public InvariantTraceHasInvariantContextGremlin (IInvariantTrace source, GraphTraversalSource gts) {
+    public InvariantTraceHasInvariantContextGremlin (
+        IInvariantTrace source,
+        GraphTraversalSource gts, 
+        TraceFactory factory) {
         super(true);
         this.source = source;
         this.gts = gts;
+        this.factory = factory; 
     }
     
     // PUBLIC API
@@ -62,7 +68,7 @@ public class InvariantTraceHasInvariantContextGremlin extends Feature
         IContextTrace result = null;
         try {
             Vertex to = g.E(delegate).outV().next();
-            result = (IContextTrace) EvlTraceFactory.getFactory().createModuleElementTrace(to, gts);
+            result = (IContextTrace) factory.createTraceElement(to, gts);
         }
         finally {
             finishTraversal(g);

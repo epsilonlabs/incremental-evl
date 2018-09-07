@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # Use latest versions
-mvn versions:display-property-updates
-mvn versions:update-properties 
+#mvn versions:display-property-updates -Dversions.allowSnapshots=true -DallowMinorUpdates=false -DallowMajorUpdates=false -DallowIncrementalUpdates=false
+#mvn versions:update-properties -Dversions.allowSnapshots=true -DallowMinorUpdates=false -DallowMajorUpdates=false -DallowIncrementalUpdates=false
+
 
 # This will copy the depedencies to the lib folder
 rm -rf lib/

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -37,7 +37,7 @@ public class EvlTraceFactory implements TraceFactory {
         return FACTORY;
     }
     
-    public Object createModuleElementTrace(Element delegate, GraphTraversalSource gts) {
+    public Object createTraceElement(Element delegate, GraphTraversalSource gts) {
         String label = delegate.label();
         switch (label) {
   
@@ -96,7 +96,7 @@ public class EvlTraceFactory implements TraceFactory {
             return satisfiesTrace;
         default:
             TraceFactory sf = BaseTraceFactory.getFactory();
-            return sf.createModuleElementTrace(delegate, gts);
+            return sf.createTraceElement(delegate, gts);
         }
     }
 }

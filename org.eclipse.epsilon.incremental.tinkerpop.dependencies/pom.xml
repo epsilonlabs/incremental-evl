@@ -6,7 +6,7 @@
   <name>Incremental Tinkerpop Dependencies</name>
   <properties>
     <tinkerpop.version>3.3.3</tinkerpop.version>
-    <arango.provider.version>1.0.4</arango.provider.version>
+    <arango.provider.version>1.0.6-SNAPSHOT</arango.provider.version>
   </properties>
   <dependencies>
     <dependency>
@@ -20,13 +20,43 @@
       <version>${tinkerpop.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.arangodb</groupId>
+      <groupId>com.arangodb.community</groupId>
       <artifactId>arangodb-tinkerpop-provider</artifactId>
       <version>${arango.provider.version}</version>
     </dependency>
   </dependencies>
     <build>
+	    <!-- To define the plugin version in your parent POM -->
+	    <pluginManagement>
+	      <plugins>
+	        <plugin>
+	          <groupId>org.codehaus.mojo</groupId>
+	          <artifactId>versions-maven-plugin</artifactId>
+	          <version>2.6</version>
+	          
+	        </plugin>
+	      </plugins>
+	    </pluginManagement>
         <plugins>
+            <!--plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <executions>
+                  <execution>
+                      <id>update-properties</id>
+                      <phase>clean</phase>
+                      <goals>
+                           <goal>update-properties</goal>
+                      </goals>
+                      <configuration>
+                            <allowSnapshots>true</allowSnapshots>
+                            <allowMinorUpdates>false</allowMinorUpdates>
+                            <allowMajorUpdates>false</allowMajorUpdates>
+                            <allowIncrementalUpdates>false</allowIncrementalUpdates>
+                      </configuration>
+                  </execution>
+              </executions>
+            </plugin-->
 	        <!--  Copy dependencies & sources to lib -->
 		    <plugin>
 		        <groupId>org.apache.maven.plugins</groupId>

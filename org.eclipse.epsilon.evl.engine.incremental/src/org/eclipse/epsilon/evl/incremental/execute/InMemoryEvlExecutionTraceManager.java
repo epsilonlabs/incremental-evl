@@ -2,8 +2,8 @@ package org.eclipse.epsilon.evl.incremental.execute;
 
 import org.eclipse.epsilon.base.incremental.execute.AbstractExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
-import org.eclipse.epsilon.evl.incremental.EvlTraceFactory;
-import org.eclipse.epsilon.evl.incremental.IEvlTraceFactory;
+import org.eclipse.epsilon.evl.incremental.EvlRootElementsFactory;
+import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 
@@ -16,15 +16,15 @@ import com.google.inject.Inject;
  *
  */
 public class InMemoryEvlExecutionTraceManager
-		extends AbstractExecutionTraceManager<IEvlModuleTrace, IEvlModuleTraceRepository, IEvlTraceFactory>
-		implements IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory> {
+		extends AbstractExecutionTraceManager<IEvlModuleTrace, IEvlModuleTraceRepository, IEvlRootElementsFactory>
+		implements IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> {
 
-	private final EvlTraceFactory evlTraceFactory;
+	private final EvlRootElementsFactory evlTraceFactory;
 
 	@Inject
 	public InMemoryEvlExecutionTraceManager(IEvlModuleTraceRepository executionTraceRepository,
 			IModelTraceRepository modelTraceRepository,
-			EvlTraceFactory evlTraceFactory) {
+			EvlRootElementsFactory evlTraceFactory) {
 		super(executionTraceRepository, modelTraceRepository);
 		this.evlTraceFactory = evlTraceFactory;
 	}
@@ -37,7 +37,7 @@ public class InMemoryEvlExecutionTraceManager
 	}
 
 	@Override
-	public IEvlTraceFactory getTraceFactory() {
+	public IEvlRootElementsFactory getTraceFactory() {
 		return evlTraceFactory;
 	}
 

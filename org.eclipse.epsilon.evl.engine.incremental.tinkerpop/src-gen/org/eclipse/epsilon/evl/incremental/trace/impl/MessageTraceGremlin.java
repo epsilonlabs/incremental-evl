@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
+import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region MessageTraceImports on begin **/
@@ -58,8 +59,7 @@ public class MessageTraceGremlin implements IMessageTrace, GremlinWrapper<Vertex
     /**
      * Empty constructor for deserialization.
      */    
-    public MessageTraceGremlin() {
-    }
+    public MessageTraceGremlin() { }
     
     /**
      * Instantiates a new MessageTraceGremlin. The MessageTraceGremlin is uniquely identified by its
@@ -72,7 +72,7 @@ public class MessageTraceGremlin implements IMessageTrace, GremlinWrapper<Vertex
         if (!container.message().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.invariant = new MessageTraceHasInvariantGremlin(this, gts);
+        this.invariant = new MessageTraceHasInvariantGremlin(this, gts, EvlTraceFactory.getFactory());
     }
     
     @Override
@@ -90,7 +90,7 @@ public class MessageTraceGremlin implements IMessageTrace, GremlinWrapper<Vertex
     @Override
     public IInContextModuleElementTraceHasContextModuleElement contextModuleElement() {
         if (contextModuleElement == null) {
-            contextModuleElement = new InContextModuleElementTraceHasContextModuleElementGremlin(this, this.gts);
+            contextModuleElement = new InContextModuleElementTraceHasContextModuleElementGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("contextModuleElement");
@@ -107,7 +107,7 @@ public class MessageTraceGremlin implements IMessageTrace, GremlinWrapper<Vertex
     @Override
     public IMessageTraceHasInvariant invariant() {
         if (invariant == null) {
-            invariant = new MessageTraceHasInvariantGremlin(this, this.gts);
+            invariant = new MessageTraceHasInvariantGremlin(this, this.gts, EvlTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("invariant");

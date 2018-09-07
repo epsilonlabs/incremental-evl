@@ -9,7 +9,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElemen
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTraceGremlin;
 
-public class EvlTraceGremlinFactory extends GremlinBaseFactoryImpl implements IEvlTraceFactory {
+public class EvlTraceGremlinFactory extends GremlinBaseFactoryImpl implements IEvlRootElementsFactory {
 
 	public EvlTraceGremlinFactory() {
 		super();

@@ -24,7 +24,7 @@ import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
-import org.eclipse.epsilon.evl.incremental.IEvlTraceFactory;
+import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckResult;
@@ -86,7 +86,7 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 			return false;
 		}
 		return _appliesTo(object,
-				(IncrementalEvlContext<IEvlModuleTraceRepository, IEvlTraceFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory>>) context);
+				(IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>>) context);
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 			return context.getConstraintTrace().isSatisfied(this, self);
 		}
 		@SuppressWarnings("unchecked")
-		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlTraceFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory>> tracedEvlContext = (IncrementalEvlContext<IEvlModuleTraceRepository, IEvlTraceFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory>>) context;
+		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> tracedEvlContext = (IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>>) context;
 		// Return immediately if constraint does not apply
 		boolean appliesTo = appliesTo(self, context, checkType);
 		if (guardBlock != null) {
@@ -263,7 +263,7 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 	}
 
 	private boolean _appliesTo(Object object,
-			IncrementalEvlContext<IEvlModuleTraceRepository, IEvlTraceFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory>> tracedEvlContext)
+			IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> tracedEvlContext)
 			throws EolRuntimeException {
 
 		Boolean result = true;

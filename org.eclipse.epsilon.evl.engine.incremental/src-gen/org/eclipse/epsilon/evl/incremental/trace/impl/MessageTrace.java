@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-05.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,6 +14,8 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -59,7 +61,6 @@ public class MessageTrace implements IMessageTrace {
         this.invariant = new MessageTraceHasInvariant(this);
         this.contextModuleElement = new InContextModuleElementTraceHasContextModuleElement(this);
 
-
     }
     
     @Override
@@ -81,6 +82,11 @@ public class MessageTrace implements IMessageTrace {
     @Override
     public IMessageTraceHasInvariant invariant() {
         return invariant;
+    }
+
+    public Map<String,Object> getIdProperties() {
+        Map<String, Object> result = new HashMap<>();
+        return result;
     }
 
     @Override

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
+import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region AllInstancesAccessImports on begin **/
@@ -56,8 +57,7 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, GremlinWr
     /**
      * Empty constructor for deserialization.
      */    
-    public AllInstancesAccessGremlin() {
-    }
+    public AllInstancesAccessGremlin() { }
     
     /**
      * Instantiates a new AllInstancesAccessGremlin. The AllInstancesAccessGremlin is uniquely identified by its
@@ -79,14 +79,14 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, GremlinWr
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.type = new AllInstancesAccessHasTypeGremlin(this, gts);
-        this.from = new AccessHasFromGremlin(this, gts);
+        this.from = new AccessHasFromGremlin(this, gts, BaseTraceFactory.getFactory());
+        this.type = new AllInstancesAccessHasTypeGremlin(this, gts, BaseTraceFactory.getFactory());
         try {
-	        this.type.create(type);
 	        this.from.create(from);
+	        this.type.create(type);
         } catch (TraceModelConflictRelation ex) {
-            ((AllInstancesAccessHasTypeGremlin)this.type).delegate().remove();
             ((AccessHasFromGremlin)this.from).delegate().remove();
+            ((AllInstancesAccessHasTypeGremlin)this.type).delegate().remove();
             throw ex;
         }
     }
@@ -125,7 +125,7 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, GremlinWr
     @Override
     public IAccessHasFrom from() {
         if (from == null) {
-            from = new AccessHasFromGremlin(this, this.gts);
+            from = new AccessHasFromGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("from");
@@ -142,7 +142,7 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, GremlinWr
     @Override
     public IAllInstancesAccessHasType type() {
         if (type == null) {
-            type = new AllInstancesAccessHasTypeGremlin(this, this.gts);
+            type = new AllInstancesAccessHasTypeGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("type");
@@ -189,18 +189,18 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, GremlinWr
         AllInstancesAccessGremlin other = (AllInstancesAccessGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-    if (type == null) {
-        if (other.type != null)
-            return false;
-    }
-        if (!type().get().equals(other.type().get())) {
-            return false;
-        }
     if (from == null) {
         if (other.from != null)
             return false;
     }
         if (!from().get().equals(other.from().get())) {
+            return false;
+        }
+    if (type == null) {
+        if (other.type != null)
+            return false;
+    }
+        if (!type().get().equals(other.type().get())) {
             return false;
         }
         return true; 
@@ -212,8 +212,8 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, GremlinWr
         int result = 1;
         Boolean ofKind = Boolean.valueOf(getOfKind());
         result = prime * result + ((ofKind == null) ? 0 : ofKind.hashCode());
-        result = prime * result + ((type().get() == null) ? 0 : type().get().hashCode());
         result = prime * result + ((from().get() == null) ? 0 : from().get().hashCode());
+        result = prime * result + ((type().get() == null) ? 0 : type().get().hashCode());
         return result;
     }
     

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,8 +13,8 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
-import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementVariable;
@@ -38,17 +38,23 @@ public class ExecutionContextHasContextVariablesGremlin extends Feature
     /** The source(s) of the reference */
     protected IExecutionContext source;
     
- 
+    /** Factory used to wrap referenced elements */
+    protected final TraceFactory factory;
+    
     
     /**
      * Instantiates a new IExecutionContextHasContextVariables.
      *
      * @param source the source of the reference
      */
-    public ExecutionContextHasContextVariablesGremlin (IExecutionContext source, GraphTraversalSource gts) {
+    public ExecutionContextHasContextVariablesGremlin (
+        IExecutionContext source,
+        GraphTraversalSource gts, 
+        TraceFactory factory) {
         super(true);
         this.source = source;
         this.gts = gts;
+        this.factory = factory; 
     }
     
     // PUBLIC API
@@ -56,7 +62,7 @@ public class ExecutionContextHasContextVariablesGremlin extends Feature
     @Override
     public Iterator<IModelElementVariable> get() {
         return new GremlinUtils.IncrementalFactoryIterator<IModelElementVariable, Vertex>(getRaw(),
-                gts, BaseTraceFactory.getFactory());
+                gts, factory);
     }
     
     /**

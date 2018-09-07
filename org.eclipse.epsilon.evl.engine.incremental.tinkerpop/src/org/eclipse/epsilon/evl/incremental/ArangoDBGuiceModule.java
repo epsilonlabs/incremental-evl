@@ -16,7 +16,7 @@ public class ArangoDBGuiceModule extends AbstractModule {
 	protected void configure() {
 		bind(IEvlModuleTraceRepository.class).to(EvlModuleTraceGremlinRepositoryImpl.class);
 		bind(IModelTraceRepository.class).to(ModelTraceGremlinRepositoryImpl.class);
-		bind(IEvlTraceFactory.class).to(EvlTraceGremlinFactory.class);
+		bind(IEvlRootElementsFactory.class).to(EvlTraceGremlinFactory.class);
 		bind(IEvlExecutionTraceManager.class).to(TinkerPopEvlExecutionTraceManager.class);
 	}
 	

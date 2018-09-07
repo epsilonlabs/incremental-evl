@@ -19,7 +19,7 @@ import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.csv.CsvModel;
 import org.eclipse.epsilon.emc.csv.incremental.CsvModelIncremental;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
-import org.eclipse.epsilon.evl.incremental.IEvlTraceFactory;
+import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
@@ -62,9 +62,9 @@ public abstract class HashTests<M extends Module> {
 		// module.parse(evlFile);
 		// module.context.getModelRepository().addModel(model);
 
-		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory> etManager = module.context
+		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = module.context
 				.getTraceManager();
-		IEvlTraceFactory factory = etManager.getTraceFactory();
+		IEvlRootElementsFactory factory = etManager.getTraceFactory();
 
 		IModelTrace modelTrace = factory.createModelTrace(((IIncrementalModel) model).getModelUri());
 		int hashCode1 = modelTrace.hashCode();

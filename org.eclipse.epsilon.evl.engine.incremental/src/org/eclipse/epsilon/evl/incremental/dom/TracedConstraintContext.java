@@ -21,7 +21,7 @@ import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
-import org.eclipse.epsilon.evl.incremental.IEvlTraceFactory;
+import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
@@ -81,7 +81,7 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 			return false;
 		}
 		@SuppressWarnings("unchecked")
-		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlTraceFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory>> tracedEvlContext = (IncrementalEvlContext<IEvlModuleTraceRepository, IEvlTraceFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory>>) context;
+		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> tracedEvlContext = (IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>>) context;
 		return appliesTo(object, (IIncrementalModel) owningModel, tracedEvlContext);
 
 	}
@@ -89,7 +89,7 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 	private boolean appliesTo(
 		Object object,
 		IIncrementalModel owningModel,
-		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlTraceFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory>> tracedEvlContext)
+		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> tracedEvlContext)
 		throws EolRuntimeException {
 		try {
 			createContextTraces(object, tracedEvlContext, owningModel);
@@ -126,7 +126,7 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 	 * @throws TraceModelDuplicateElement
 	 */
 	private void createContextTraces(Object modelElement,
-			IncrementalEvlContext<IEvlModuleTraceRepository, IEvlTraceFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory>> context,
+			IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> context,
 			final IIncrementalModel model) throws EolIncrementalExecutionException, EolRuntimeException {
 
 		logger.info("createContextTrace: element: {}, context: {}", modelElement, getTypeName());
@@ -187,7 +187,7 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 	 * @throws EolRuntimeException
 	 */
 	private IEvlModuleTrace getModuleExecutionTrace(
-			IncrementalEvlContext<IEvlModuleTraceRepository, IEvlTraceFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlTraceFactory>> context,
+			IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> context,
 			String moduleUri) throws EolIncrementalExecutionException, EolRuntimeException {
 		IEvlModuleTraceRepository repo = context.getTraceManager().getExecutionTraceRepository();
 		IEvlModuleTrace moduleExecutionTrace = repo.getEvlModuleTraceByIdentity(moduleUri);

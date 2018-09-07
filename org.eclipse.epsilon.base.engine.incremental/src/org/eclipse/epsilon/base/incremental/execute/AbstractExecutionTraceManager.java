@@ -2,7 +2,7 @@ package org.eclipse.epsilon.base.incremental.execute;
 
 import java.time.LocalDate;
 
-import org.eclipse.epsilon.base.incremental.IBaseFactory;
+import org.eclipse.epsilon.base.incremental.IBaseRootElementsFactory;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
@@ -13,7 +13,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepositor
  * @author Horacio Hoyos Rodriguez
  *
  */
-public abstract class AbstractExecutionTraceManager<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<T>, F extends IBaseFactory>
+public abstract class AbstractExecutionTraceManager<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<T>, F extends IBaseRootElementsFactory>
 		implements IExecutionTraceManager<T, R, F> {
 
 	/** A flag to signal parallel persistence */

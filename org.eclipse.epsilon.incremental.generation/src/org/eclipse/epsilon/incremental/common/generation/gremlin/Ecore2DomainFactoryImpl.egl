@@ -45,7 +45,7 @@ public class [%=ep.getName().firstToUpperCase()%]TraceFactory implements TraceFa
         return FACTORY;
     }
     
-    public Object createModuleElementTrace(Element delegate, GraphTraversalSource gts) {
+    public Object createTraceElement(Element delegate, GraphTraversalSource gts) {
         String label = delegate.label();
         switch (label) {
 [%
@@ -62,7 +62,7 @@ for (ec in ep.getEClassifiers().select(ec |
 [%if(baseLanguage.length() > 0) {%]
         default:
             TraceFactory sf = [%=baseLanguage.firstToUpperCase()%]TraceFactory.getFactory();
-            return sf.createModuleElementTrace(delegate, gts);
+            return sf.createTraceElement(delegate, gts);
         }
 [%} else {%]        
         }

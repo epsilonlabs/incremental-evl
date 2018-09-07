@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region ModelTraceImports on begin **/
@@ -57,8 +58,7 @@ public class ModelTraceGremlin implements IModelTrace, GremlinWrapper<Vertex> {
     /**
      * Empty constructor for deserialization.
      */    
-    public ModelTraceGremlin() {
-    }
+    public ModelTraceGremlin() { }
     
     /**
      * Instantiates a new ModelTraceGremlin. The ModelTraceGremlin is uniquely identified by its
@@ -77,8 +77,8 @@ public class ModelTraceGremlin implements IModelTrace, GremlinWrapper<Vertex> {
         finally {
             finishTraversal(g);
         }
-        this.elements = new ModelTraceHasElementsGremlin(this, gts);
-        this.types = new ModelTraceHasTypesGremlin(this, gts);
+        this.elements = new ModelTraceHasElementsGremlin(this, gts, BaseTraceFactory.getFactory());
+        this.types = new ModelTraceHasTypesGremlin(this, gts, BaseTraceFactory.getFactory());
     }
     
     @Override
@@ -115,7 +115,7 @@ public class ModelTraceGremlin implements IModelTrace, GremlinWrapper<Vertex> {
     @Override
     public IModelTraceHasElements elements() {
         if (elements == null) {
-            elements = new ModelTraceHasElementsGremlin(this, this.gts);
+            elements = new ModelTraceHasElementsGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("elements");
@@ -132,7 +132,7 @@ public class ModelTraceGremlin implements IModelTrace, GremlinWrapper<Vertex> {
     @Override
     public IModelTraceHasTypes types() {
         if (types == null) {
-            types = new ModelTraceHasTypesGremlin(this, this.gts);
+            types = new ModelTraceHasTypesGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("types");

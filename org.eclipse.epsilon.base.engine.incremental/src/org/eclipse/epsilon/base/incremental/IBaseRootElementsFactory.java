@@ -5,7 +5,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElemen
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 
-public interface IBaseFactory {
+public interface IBaseRootElementsFactory {
 
 	IModuleExecutionTrace createModuleTrace(String uri) throws TraceModelDuplicateElement, TraceModelConflictRelation;
 

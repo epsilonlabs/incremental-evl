@@ -20,6 +20,8 @@ package [%=qp%].trace.impl;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%];
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -114,7 +116,6 @@ for (er in derivedFeatures.excludingAll(ec.getEqualsReferences())) {%]
 [%  }%]
 [%}%]
 
-
     }
     
 [%for (ea in ec.getEAllAttributes().select(ea | not ea.derived)) {
@@ -188,6 +189,38 @@ for (er in ec.getEAllReferences().select(er | er.isContainment())) {
 [%  }%]
                   
 [%}%]
+[%
+for (op in ec.getEAllOperations()) {
+    var retType;
+    if (op.getEType().name.startsWith("EMap")) {
+        var mapTypes = op.getMapTypes();
+        retType = "Map<" + mapTypes.at(0) + "," + mapTypes.at(1) + ">";
+    } else {
+        // FIXME Might need to import type
+        retType = op.getEType(); 
+    }
+    var args = new Sequence();
+    for (p in op.getEParameters()) {
+        var type = a.getEType().getInstanceClassName();
+        var name = a.getName();
+        args.add(type + " " + name);
+    }
+%]
+    public [%=retType%] [%=op.name%]([%=args.concat(", ")%]) {
+[%  if (op.name == "getIdProperties") {%]
+        Map<String, Object> result = new HashMap<>();
+[%      for (index in ec.getIndexAttributes()) {%]
+        result.put("[%=index.name%]", get[%=index.name.firstToUpperCase()%]());
+[%      }%]
+        return result;
+[%}    else {%]
+        [%=out.startPreserve("/**", "**/", op.name, true)%]
+        return null;
+        [%=out.stopPreserve()%]
+[%  }%]
+    }
+[%}%]
+
     @Override
     public boolean sameIdentityAs(final [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] other) {
         if (other == null) {
@@ -322,8 +355,19 @@ public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] getOrCreate[%=sel
 	        return [%=instanceName%];
 	    }
 [%  if (ref.isMany()) {
-		var conds: Sequence;%]
-        Iterator<[%=ref.getEType().getJavaInterfaceName(interPrefix, interSufix)%]> it = this.[%=ref.name%].get();
+        var conds: Sequence;
+		for (param in self.getIndexAttributes()) {
+            if (isJavaPrimitiveType(param.getEAttributeType().name)) {
+                conds.add("item.get" + param.name.firstToUpperCase() + "() == " + param.name);
+            } else {
+                conds.add("item.get" + param.name.firstToUpperCase() + "().equals(" + param.name + ")");
+            }
+        }
+        for (param in self.getRequiredFeatures()) {
+            conds.add("item." + param.name + "().get().equals(" + param.name + ")");
+        }
+        if (not conds.isEmpty()) {%]
+		Iterator<[%=ref.getEType().getJavaInterfaceName(interPrefix, interSufix)%]> it = this.[%=ref.name%].get();
         while (it.hasNext()) {
         	[%=self.getJavaInterfaceName(interPrefix, interSufix)%] item;
 [%// Need to filter and cast for subclasses
@@ -338,21 +382,12 @@ public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] getOrCreate[%=sel
 [%      } else {%]
             item = ([%=self.getJavaInterfaceName(interPrefix, interSufix)%]) it.next();
 [%      }%]
-[%      for (param in self.getIndexAttributes()) {
-            if (isJavaPrimitiveType(param.getEAttributeType().name)) {
-            	conds.add("item.get" + param.name.firstToUpperCase() + "() == " + param.name);%]
-[%          } else {
-				conds.add("item.get" + param.name.firstToUpperCase() + "().equals(" + param.name + ")");%]
-[%          }
-        }%]
-[%      for (param in self.getRequiredFeatures()) {
-			conds.add("item." + param.name + "().get().equals(" + param.name + ")");%]
-[%      }%]
 			if ([%=conds.concat(" &&\n")%]) {
 				[%=instanceName%] = item;
 				break;
 			}
 		}
+[%      }%]
 		if ([%=instanceName%] == null) {
            	throw new EolIncrementalExecutionException("Error creating trace model element. Requested [%=self.name%] was "
             		+ "duplicate but previous one was not found.");

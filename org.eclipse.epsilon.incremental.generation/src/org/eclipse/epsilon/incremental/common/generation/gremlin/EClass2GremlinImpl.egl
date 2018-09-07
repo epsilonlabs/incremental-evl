@@ -13,6 +13,7 @@
  * A template to generate an implementation of an EClass that can be used as a DTO.
  */
 import "../Ecore2JavaTemplates.egl";
+var factory :String = ec.getEPackage().name.firstToUpperCase() + "TraceFactory";
 %]
 [%=getHeader()%]
 package [%=qp%].trace.impl;
@@ -27,6 +28,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%];
+import [%=qp%].util.[%=factory%];
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 [%=out.startPreserve("/**", "**/", ec.name + "Imports", true)%]
@@ -72,8 +74,7 @@ for (er in ec.getEAllReferences()) {%]
     /**
      * Empty constructor for deserialization.
      */    
-    public [%=ec.getJavaClassName(classPrefix, classSufix)%]() {
-    }
+    public [%=ec.getJavaClassName(classPrefix, classSufix)%]() { }
     
     /**
      * Instantiates a new [%=ec.getJavaClassName(classPrefix, classSufix)%]. The [%=ec.getJavaClassName(classPrefix, classSufix)%] is uniquely identified by its
@@ -115,11 +116,11 @@ if (container.isDefined()) {
 [%}%]
 [%
 for (er in ec.getEqualsReferences()) {%]
-        this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, gts);
+        this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, gts, [%=factory%].getFactory());
 [%}
 var derivedFeatures = ec.getEAllReferences().select(er | not er.isDerived());
 for (er in derivedFeatures.excludingAll(ec.getEqualsReferences())) {%]
-        this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, gts);
+        this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, gts, [%=factory%].getFactory());
 [%}
 var createRefs = ec.getEqualsReferences().includingAll(derivedFeatures.excludingAll(ec.getEqualsReferences()))
     .select(er | (er <> ec.getContainerReference().at(0)) and er.isRequired() and not er.isMany());
@@ -208,7 +209,7 @@ if (not createRefs.isEmpty()) {%]
     @Override
     public [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] [%=er.name%]() {
         if ([%=er.name%] == null) {
-            [%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, this.gts);
+            [%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, this.gts, [%=factory%].getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("[%=er.name%]");
@@ -248,10 +249,9 @@ for (er in ec.getEAllReferences().select(er | er.isContainment())) {
 [%}%]
 [%
 for (op in ec.getEAllOperations()) {
-    op.getEType().name.println("op name ");
     var retType;
     if (op.getEType().name.startsWith("EMap")) {
-        var mapTypes = op.getMapTypes().println("types");
+        var mapTypes = op.getMapTypes();
         retType = "Map<" + mapTypes.at(0) + "," + mapTypes.at(1) + ">";
     } else {
         // FIXME Might need to import type

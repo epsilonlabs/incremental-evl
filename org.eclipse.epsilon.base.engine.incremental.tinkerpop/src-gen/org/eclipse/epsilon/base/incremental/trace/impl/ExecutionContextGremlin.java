@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
+import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region ExecutionContextImports on begin **/
@@ -57,8 +58,7 @@ public class ExecutionContextGremlin implements IExecutionContext, GremlinWrappe
     /**
      * Empty constructor for deserialization.
      */    
-    public ExecutionContextGremlin() {
-    }
+    public ExecutionContextGremlin() { }
     
     /**
      * Instantiates a new ExecutionContextGremlin. The ExecutionContextGremlin is uniquely identified by its
@@ -71,8 +71,8 @@ public class ExecutionContextGremlin implements IExecutionContext, GremlinWrappe
         if (!container.executionContext().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.contextVariables = new ExecutionContextHasContextVariablesGremlin(this, gts);
-        this.accesses = new ExecutionContextHasAccessesGremlin(this, gts);
+        this.contextVariables = new ExecutionContextHasContextVariablesGremlin(this, gts, BaseTraceFactory.getFactory());
+        this.accesses = new ExecutionContextHasAccessesGremlin(this, gts, BaseTraceFactory.getFactory());
     }
     
     @Override
@@ -90,7 +90,7 @@ public class ExecutionContextGremlin implements IExecutionContext, GremlinWrappe
     @Override
     public IExecutionContextHasContextVariables contextVariables() {
         if (contextVariables == null) {
-            contextVariables = new ExecutionContextHasContextVariablesGremlin(this, this.gts);
+            contextVariables = new ExecutionContextHasContextVariablesGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("contextVariables");
@@ -107,7 +107,7 @@ public class ExecutionContextGremlin implements IExecutionContext, GremlinWrappe
     @Override
     public IExecutionContextHasAccesses accesses() {
         if (accesses == null) {
-            accesses = new ExecutionContextHasAccessesGremlin(this, this.gts);
+            accesses = new ExecutionContextHasAccessesGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("accesses");

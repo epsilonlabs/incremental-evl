@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-04.
+ * This file was automatically generated on: 2018-09-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -21,6 +21,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
+import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region ElementAccessImports on begin **/
@@ -56,8 +57,7 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
     /**
      * Empty constructor for deserialization.
      */    
-    public ElementAccessGremlin() {
-    }
+    public ElementAccessGremlin() { }
     
     /**
      * Instantiates a new ElementAccessGremlin. The ElementAccessGremlin is uniquely identified by its
@@ -70,14 +70,14 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.element = new ElementAccessHasElementGremlin(this, gts);
-        this.from = new AccessHasFromGremlin(this, gts);
+        this.from = new AccessHasFromGremlin(this, gts, BaseTraceFactory.getFactory());
+        this.element = new ElementAccessHasElementGremlin(this, gts, BaseTraceFactory.getFactory());
         try {
-	        this.element.create(element);
 	        this.from.create(from);
+	        this.element.create(element);
         } catch (TraceModelConflictRelation ex) {
-            ((ElementAccessHasElementGremlin)this.element).delegate().remove();
             ((AccessHasFromGremlin)this.from).delegate().remove();
+            ((ElementAccessHasElementGremlin)this.element).delegate().remove();
             throw ex;
         }
     }
@@ -97,7 +97,7 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
     @Override
     public IAccessHasFrom from() {
         if (from == null) {
-            from = new AccessHasFromGremlin(this, this.gts);
+            from = new AccessHasFromGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("from");
@@ -114,7 +114,7 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
     @Override
     public IElementAccessHasElement element() {
         if (element == null) {
-            element = new ElementAccessHasElementGremlin(this, this.gts);
+            element = new ElementAccessHasElementGremlin(this, this.gts, BaseTraceFactory.getFactory());
             GraphTraversalSource g = startTraversal();
             try {
                 GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("element");
@@ -152,18 +152,18 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
         ElementAccessGremlin other = (ElementAccessGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-    if (element == null) {
-        if (other.element != null)
-            return false;
-    }
-        if (!element().get().equals(other.element().get())) {
-            return false;
-        }
     if (from == null) {
         if (other.from != null)
             return false;
     }
         if (!from().get().equals(other.from().get())) {
+            return false;
+        }
+    if (element == null) {
+        if (other.element != null)
+            return false;
+    }
+        if (!element().get().equals(other.element().get())) {
             return false;
         }
         return true; 
@@ -173,8 +173,8 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((element().get() == null) ? 0 : element().get().hashCode());
         result = prime * result + ((from().get() == null) ? 0 : from().get().hashCode());
+        result = prime * result + ((element().get() == null) ? 0 : element().get().hashCode());
         return result;
     }
     
