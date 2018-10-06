@@ -40,7 +40,7 @@ public class Startup implements IStartup {
 		}
 
 		// Attach the page listener;
-		page.addPartListener(new EditorListener());
+//		page.addPartListener(new EditorListener());
 	}
 
 }

@@ -1,6 +1,7 @@
+
 context IncBook {
 
-    constraint NumberOfCopiesValid {
+    constraint NumberOfCopiesValid { //IncBook.NumberOfCopiesValid
         check: self.copies > -1
     }
 

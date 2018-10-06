@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OrientDB Incremental Tracing
+Bundle-SymbolicName: org.eclipse.epsilon.evl.incremental.orientdb
+Bundle-Version: 0.0.1.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.epsilon.evl.incremental.dependencies,
+ org.eclipse.epsilon.eol.engine.incremental;visibility:=reexport
+Export-Package: org.eclipse.epsilon.evl.incremental.orientdb,
+ org.eclipse.epsilon.evl.incremental.orientdb.impl

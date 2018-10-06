@@ -3,11 +3,6 @@
 <plugin>
    <extension
          point="org.eclipse.epsilon.evl.emf.validation">
-      <constraintsBinding
-            compose="true"
-            constraints="library.evl"
-            namespaceURI="org.eclipse.epsilon.evl.incremental.example.library">
-      </constraintsBinding>
    </extension>
 
 </plugin>
