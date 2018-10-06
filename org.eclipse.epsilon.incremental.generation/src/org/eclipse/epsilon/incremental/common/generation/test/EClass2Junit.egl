@@ -1,0 +1,242 @@
+[%
+/*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Horacio Hoyos Rodriguez - initial API and implementation
+ ******************************************************************************/
+/**
+ * A template to generate a JUnit test class for an EClass.
+ */
+import "../Ecore2JavaTemplates.egl";
+
+var containerRef = ec.getContainerReference().at(0);
+var containerClass = ec.getContainerReference().at(1);
+var containmentRef = ec.getContainerReference().at(2);
+var containment_many = false;
+var contReferenceClass;
+var contReferenceInterface;
+var contReferenceVar;
+if (containmentRef.isDefined()) {     // Container exists
+    containment_many = containmentRef.isMany();
+    contReferenceInterface = containmentRef.getRelationJavaInterfaceName(interPrefix, interSufix);
+    contReferenceClass = containmentRef.getRelationJavaClassName(classPrefix, classSufix);
+    contReferenceVar = containerClass.name.firstToLowerCase();
+}
+out.setContentType("Java");%]
+[%=getHeader()%]
+package [%=qp%].trace;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+import [%=qp%].trace.impl.[%=ec.name%];
+[%  if (containerRef.isDefined() or containmentRef.isDefined()) {%]
+// import [%=qp%].trace.impl.[%=contReferenceClass%];
+[%}
+
+for (imp in ec.getRequiredImports(qp+".trace", interPrefix, interSufix, classPrefix, classSufix, true, true)) {%]
+import [%=imp%];
+[%}%]
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
+
+public class [%=ec.getJavaClassName(classPrefix, classSufix)%]Test {
+    
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+
+[%if (containerRef.isDefined() or containmentRef.isDefined()) {%]
+    /** Mock the container. */
+    @Mock
+    private [%=containerClass.getJavaInterfaceName(interPrefix, interSufix)%] containerMock;
+    
+[%}%]
+    private [%=ec.name%] classUnderTest;
+
+    @Test
+    public void testInit() throws Exception {
+        
+        [%=ec.initClassUnderTest("init")%]
+        
+[%if (containerRef.isDefined() or containmentRef.isDefined()) {
+        if (containment_many){%]
+        
+        List<Object> list = new ArrayList<>();
+        containerReference.get().forEachRemaining(list::add);
+        assertThat(list, contains(classUnderTest));
+[%} else {%]
+
+        assertThat(containerReference.get(), is(classUnderTest));
+[%}%]        
+        [%=out.startPreserve(ec.name + "Attributes", true)%]
+        // TODO Add test code for parameters (to hard to generate correct code for any/all types).                    
+        [%=out.stopPreserve()%]
+[%}%]
+    }
+    
+[%
+// Test factory methods
+for (er in ec.getEAllReferences()
+        .excluding(containerRef).select(er | er.isContainment)
+        .select(er | not er.getEReferenceType().isAbstract())) {
+    var erClass = er.getEReferenceType();%]
+    @Test
+    public void test[%=er.name.firstToUpperCase()%]Factory() throws Exception {
+        [%=ec.initClassUnderTest(er.name.firstToUpperCase()+"Factory")%]
+        
+[%
+	var initMocks = erClass.getRequiredFeatures();
+    for (er in initMocks) {%]
+        [%=er.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix)%] [%=er.name%]Mock = mock([%=er.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix)%].class);
+[%}
+	var params = erClass.getIndexAttributes().collect(a | a.getInitValue(1));
+	params.addAll(initMocks.collect(er | er.name + "Mock"));
+	if (params.isEmpty()) {
+	    params = "";
+	}
+	else {
+	    params = params.concat(", ");
+	}%]
+        List<Object> list = new ArrayList<>();
+        [%=erClass.getJavaInterfaceName(interPrefix, interSufix)%] child1 = classUnderTest.getOrCreate[%=erClass.name%]([%=params%]);
+[%  if (er.isMany) {%]
+        classUnderTest.[%=er.name%]().get().forEachRemaining(list::add);
+[%  } else {%]
+        list.add(classUnderTest.[%=er.name%]().get());
+[%  }%]        
+        assertThat(list, hasItem(child1));
+        list.clear();
+[%
+	if (er.isMany) {
+		var params2 = erClass.getIndexAttributes().collect(a | a.getInitValue(2));
+		params2.addAll(initMocks.collect(er | er.name + "Mock"));
+		if (params2.isEmpty()) {
+		    params2 = "";
+		}
+		else {
+		    params2 = params2.concat(", ");
+		}%]
+        [%=erClass.getJavaInterfaceName(interPrefix, interSufix)%] child2 = classUnderTest.getOrCreate[%=erClass.name%]([%=params2%]);
+        classUnderTest.[%=er.name%]().get().forEachRemaining(list::add);
+        assertThat(list, hasItem(child2));
+        assertThat(list, hasSize(2));
+        list.clear();
+	[%    // Test that duplicates are not allowed
+        if (er.isUnique) {%]
+        [%=erClass.getJavaInterfaceName(interPrefix, interSufix)%] child3 = classUnderTest.getOrCreate[%=erClass.name%]([%=params%]);
+        classUnderTest.[%=er.name%]().get().forEachRemaining(list::add);
+        assertThat(list, hasSize(2));
+[%      var check = "containsInAnyOrder";
+        if (er.isOrdered) { check = "contains"; }%]
+        assertThat(list, [%=check%](child1, child2));
+        assertThat(child3, is(child1));
+[%      }
+    }%]
+    }
+    
+[%}
+for (er in ec.getEAllReferences().excluding(containerRef).select(er | not er.isContainment and not er.derived)) {
+    var erClass = er.getEReferenceType();%]
+    
+    @Test
+    public void test[%=er.name.firstToUpperCase()%]Reference() throws Exception {
+        [%=ec.initClassUnderTest(er.name.firstToUpperCase()+"Reference")%]
+[%  if (er.isMany) {%]
+        // TODO Implement multivalue ref test
+[%} else {%]
+        [%=erClass.getJavaInterfaceName(interPrefix, interSufix)%] ref = mock([%=erClass.getJavaInterfaceName(interPrefix, interSufix)%].class);
+[%      if (er.getEOpposite().isDefined()) {
+            var opp = er.getEOpposite();
+            var oppClass = opp.getRelationJavaInterfaceName(interPrefix, interSufix);
+            var oppVar = opp.getEContainingClass().name.firstToLowerCase();%]
+        [%=oppClass%] _[%=oppVar%]2 = mock([%=oppClass%].class);
+        when(_[%=oppVar%]2 .get()).thenReturn(new HashSet<[%=opp.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix)%]>().iterator());
+        when(ref.[%=er.getEOpposite().name%]()).thenReturn(_[%=oppVar%]2);
+[%      }%]        
+        boolean result = classUnderTest.[%=er.name%]().create(ref);
+        assertFalse("A new reference can not be created before destroy", result);
+        assertThat(classUnderTest.[%=er.name%]().get(), is(_[%=er.name%]));
+        result = classUnderTest.[%=er.name%]().destroy(ref);
+        assertFalse("Can't destroy unexisting reference", result);
+        result = classUnderTest.[%=er.name%]().destroy(_[%=er.name%]);
+        assertTrue("Exising references can be destroyed", result);
+        assertThat(classUnderTest.[%=er.name%]().get(), is(nullValue()));
+        result = classUnderTest.[%=er.name%]().create(ref);
+        assertTrue("New references can be craeted if was null", result);
+        assertThat(classUnderTest.[%=er.name%]().get(), is(ref));
+[%}%]    
+    }
+    
+[%}%]
+    [%=out.startPreserve(ec.name + "Operations", true)%]
+    // TODO Add test code for additional operations                 
+    [%=out.stopPreserve()%]
+}
+
+[%
+@template
+operation EClass initClassUnderTest(method : String) {
+    var mockContainer;
+    if (containerRef.isDefined() or containmentRef.isDefined()) {
+        mockContainer = "containerMock";%]
+[%=contReferenceClass%] containerReference = new [%=contReferenceClass%]([%=mockContainer%]);
+when([%=mockContainer%].[%=containmentRef.name%]()).thenReturn(containerReference);
+[%  }%]
+[%  for (rf in self.getRequiredFeatures()) {%]
+[%=rf.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix)%] _[%=rf.name%] = mock([%=rf.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix)%].class);
+[%      if (not rf.isMany() and rf.getEOpposite().isDefined()) {
+            var opp = rf.getEOpposite();
+            var oppClass = opp.getRelationJavaClassName(classPrefix, classSufix);
+            var oppVar = opp.getEContainingClass().name.firstToLowerCase();%]
+[%=oppClass%] _[%=oppVar%] = new [%=oppClass%](_[%=rf.name%] );
+when(_[%=rf.name%].[%=rf.getEOpposite().name%]()).thenReturn(_[%=oppVar%]);
+//when(_[%=oppVar%].get()).thenReturn(null);
+[%      }%]        
+[%  }%]
+[%  
+    var params = self.getIndexAttributes().collect(a | a.getInitValue(1));
+    // We need a mock for the Required EReferences used in the constructor
+    params.addAll(self.getRequiredFeatures().collect(a | "_" + a.name));
+    if (containerClass.isDefined()) {
+        params.add(mockContainer);
+    }
+    if (params.isEmpty()) {
+        params = "";
+    }
+    else {
+        params = params.concat(", ");
+    }%]
+[%=out.startPreserve(self.name + "Init_"+method, true)%]
+classUnderTest = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=params%]);                    
+[%=out.stopPreserve()%]
+[%}
+
+
+operation EAttribute getInitValue(index) : Any {
+    switch(self.getEAttributeType().getName()) {
+        case "EString": return '"' + self.name + index + '"';
+        case "EIntegerObject": return 0 + index;
+        case "EBoolean": return false and (index.mod(2) == 0);
+        case "AnyURI": return '"url://path/in/model/to/' + self.name + "/" + index + '"';
+        default: self.getEAttributeType().getName(); return null;
+    }
+    
+}
+
+%]

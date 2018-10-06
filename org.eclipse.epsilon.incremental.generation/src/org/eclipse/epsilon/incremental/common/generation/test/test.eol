@@ -1,0 +1,9 @@
+import "../EcoreHelper.eol";
+
+var classUnderTest = EClass.all().selectOne(ec | ec.name == "ModelElementTrace");
+classUnderTest.println("cut ");
+
+for (sf in classUnderTest.getEAllReferences()) {
+    sf.isRequired().println(sf.name + " ");
+}
+classUnderTest.getRequiredFeatures().name.println();

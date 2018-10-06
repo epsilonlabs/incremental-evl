@@ -1,0 +1,404 @@
+[%
+import "../../../../../../../../../org.eclipse.epsilon.incremental.common/src/org/eclipse/epsilon/incremental/common/generation/Ecore2JavaTemplates.egl";
+/**
+ *  The DAO template generates four CRUD methods for each EClass:
+ *      - create(args...)
+ *      - delete(Vertex v)
+ *      - update(Vertex v)
+ *      - getById(Object id)
+ *  Additionally a getBy<Index> method is added if the EClass has an OrientDbIndex annotation.
+ 
+ */
+%]
+ /*******************************************************************************
+ * This file was automatically generated on: [%=today%].
+ * Only modify protected regions indicated by "<!-- -->"
+ *
+ * Copyright (c) 2016 University of York
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Jonathan Co - Initial API and implementation
+ *     Horacio Hoyos - API extension
+ *******************************************************************************/
+package [%=qp%].execute;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
+import org.eclipse.epsilon.evl.incremental.orientdb.trace.impl.*;
+
+import com.orientechnologies.orient.core.metadata.schema.OType;
+import com.orientechnologies.orient.core.storage.ORecordDuplicatedException;
+import com.tinkerpop.blueprints.Parameter;
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
+import com.tinkerpop.blueprints.impls.orient.OrientGraph;
+import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
+import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
+import com.tinkerpop.blueprints.impls.orient.OrientVertex;
+import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
+
+/**
+ * The OrientDbDAO provides methods for CRUD operations on the graph db. 
+ */
+public class [%=p.getName().firstToUpperCase()%]OrientDbDAO {
+
+    /** Factory to retrieve graph instances */
+	private OrientGraphFactory factory;
+	
+	/** The class loger */
+	private Logger logger;
+	
+	public [%=p.getName().firstToUpperCase()%]OrientDbDAO(OrientGraphFactory factory) {
+		this.factory = factory;
+		logger = LoggerFactory.getLogger([%=p.getName().firstToUpperCase()%]OrientDbDAO.class);
+	}
+	
+	// Schema Methods
+	
+    /**
+     * Setup the DB schema. This operation uses a Non-Transactional Graph. Extending classes should implement the 
+     * {@link #createDbTypes(OrientGraphNoTx)} to add the required vertex and edge types to the db.
+     */
+    public static void setupSchema(OrientGraphFactory factory) {
+        OrientGraphNoTx graph = factory.getNoTx();
+        createDbTypes(graph);
+        graph.shutdown();
+    }
+	
+	/**
+     * Add vertex types to OrientDB, define keys and setup node properties
+     *
+     * @param graph The graph to add vertex types to
+     */
+    private static void createDbTypes(OrientBaseGraph g) {
+        
+[%  //for (c in p.getEClassifiers().select(ec | ec.isTypeOf(ecore!EClass) and
+    //        not ec.isAbstract() and not ec.isInterface())) {
+    for (c in EClass.all.select(ec | not ec.isAbstract() and not ec.isInterface())) {
+        var cName = c.getJavaTypeName("", "OrientDbImpl");
+        var cType = c.getName().firstToLowerCase() + "Type";%]  
+        OrientVertexType [%=cType%] = g.getVertexType([%=cName%].VERTEX_TYPE);
+        if ([%=cType%]  == null) {
+            [%=cType%]  = g.createVertexType([%=cName%].VERTEX_TYPE);[%
+        for (a in c.getEAllAttributes().select(a | not a.isId())) {
+            var oType = a.getEAttributeType().getInstanceClassName().split("\\.").last().toUpperCase();
+            if (a.isMany()) oType = "EMBEDDEDLIST";%]    
+            [%=cType%].createProperty([%=cName%].[%=a.getName().splitCamelCase("_").toUpperCase()%], OType.[%=oType%]);[%
+        }
+        var index = c.getIndex();
+        if (index <> null) {%]
+        
+            g.createKeyIndex([%=cName%].VERTEX_INDEX, Vertex.class,
+                    new Parameter<String, String>("type", "[%=index.at(1)%]"),
+                    new Parameter<String, String>("class", [%=cName%].VERTEX_TYPE));
+[%      }%]
+        }
+[%  }%]
+    [%var edges = ecore!EClass.all
+            .collect(c | c.getEReferences())
+            .flatten()
+            .select(r | r.isEdge())
+            .collect(r | "\"" + r.name.firstToUpperCase() + "\"");%]
+        setupEdgeTypes(g, [%=edges.concat(", ")%]);
+    }
+    
+   /**
+     * Add edge types to the OrientDB.
+     *
+     * @param graph the graph
+     * @param types the types for the edges
+     */
+    private static void setupEdgeTypes(OrientBaseGraph g, String... types) {
+        for (String type : types) {
+            if (g.getEdgeType(type) == null) g.createEdgeType(type);
+        }
+    }
+    
+    // Direct DB Access
+    /**
+     * Get a transactional graph. The caller is responsible for the life cycle of the graph.
+     * 
+     * @return an OrientGraph
+     */
+    public OrientGraph getTransactionalGraph() {
+        
+        return factory.getTx();
+    }
+    
+    /**
+     * Get a non-transactional graph. The caller is responsible for the life cycle of the graph.
+     * 
+     * @return an OrientGraphNoTx
+     */
+    public OrientGraphNoTx getNonTransactionalGraph() {
+        
+        return factory.getNoTx();
+    }
+    
+[%
+for (ec in EClass.all.select(ec | not ec.isAbstract() and not ec.isInterface())) {%]
+    /**
+     * Create a vertex of type [%=ec.name%]
+     *
+     * @return [%=ec.name%]OrientDbImpl wrapping the vertex
+     * @throws EolIncrementalExecutionException if there was an error creating the vertex
+     */
+    [%=ec.getCreateSignature()%] throws EolIncrementalExecutionException {    
+        
+        OrientGraph graph = factory.getTx();
+[%  // For each property create "name", value pair
+    var index = ec.getIndexAttribute();
+    var properties : Sequence;
+    for (ea in ec.getEAllAttributes().select(a | not a.isId())) {
+            properties.add("\"" + ea.name + "\"");
+            properties.add(ea.name);        
+    }%]
+        OrientVertex vertex = null;
+        try {[%
+    if (properties.isEmpty()) {%]
+        
+            vertex = graph.addVertex("class:[%=ec.name%]");
+            graph.commit();   
+        } catch (Exception e) {
+            graph.rollback();
+            logger.debug("Error in Record creation - [%=ec.name%]", e);
+            throw new EolIncrementalExecutionException("Error creating [%=ec.name%]", e);
+        }
+        logger.debug("Record created - [%=ec.name%]");
+[%  } else {%]
+
+            vertex = graph.addVertex("class:[%=ec.name%]", [%=properties.concat(", ")%]);
+            graph.commit();
+        } catch (ORecordDuplicatedException e) {
+            logger.debug("Duplicate Record creation - [%=ec.name%]:{}", [%=index.name%]);
+            vertex = (OrientVertex) graph.getVertices("[%=ec.name%].[%=index.name%]", [%=index.name%]).iterator().next();
+            // TODO we would probably want a null test and/or a NoSuchElementException handler
+        } catch (Exception e2) {
+            graph.rollback();
+            logger.debug("Error in Record creation - [%=ec.name%]:{}", [%=index.name%], e2);
+            throw new EolIncrementalExecutionException("Error creating [%=ec.name%]", e2);
+        }
+        logger.debug("Record created - [%=ec.name%]:{}", [%=index.name%]);
+[%  }%]
+        [%=ec.name%]OrientDbImpl impl = new [%=ec.name%]OrientDbImpl(vertex);
+        graph.shutdown();
+        return impl;
+    }
+    
+    /**
+     * Delete a vertex of type [%=ec.name%]
+     *
+     * @throws EolIncrementalExecutionException if there was an error deleting the vertex
+     */
+    [%=ec.getDeleteSignature()%] throws EolIncrementalExecutionException {
+        OrientGraph graph = factory.getTx();
+        try{
+            impl.getDelegate().attach(graph);
+            graph.removeVertex(impl.getDelegate());
+        } catch (Exception e) {
+            graph.rollback();
+            logger.debug("Error in Record deletion - [%=ec.name%]:{}", impl.getDelegate(), e);
+            throw new EolIncrementalExecutionException("Error deleting [%=ec.name%]", e);
+        }
+        logger.debug("Record deleted - [%=ec.name%]:{}", impl);
+        graph.shutdown();
+    }
+    
+    /**
+     * Update a a vertex of type [%=ec.name%]. The passed implementation is no longer valid after
+     * updating so the getXXXById must be used to get a new wrapper.
+     *
+     * This only updates the vertex properties, not its references!
+     * 
+     * @throws EolIncrementalExecutionException if there was an error updating the vertex
+     */
+    [%=ec.getUpdateSignature()%] throws EolIncrementalExecutionException {
+        OrientGraph graph = factory.getTx();
+        OrientVertex vertex = impl.getDelegate();
+        try{
+            vertex.attach(graph);
+            vertex.save();
+            vertex = graph.getVertex(vertex.getId());
+        } catch (Exception e) {
+            graph.rollback();
+            logger.debug("Error in Record update - [%=ec.name%]:{}", vertex, e);
+            throw new EolIncrementalExecutionException("Error updating [%=ec.name%]", e);
+        }
+        logger.debug("Record updated - [%=ec.name%]:{}", vertex);
+        graph.shutdown();
+        return get[%=ec.name%]ById(impl.getId());
+    }
+    
+    /**
+     * Find a vertex of type [%=ec.name%] by id.
+     *
+     * @return [%=ec.name%]OrientDbImpl wrapping the vertex, if found
+     * @throws EolIncrementalExecutionException in no vertex for that id is found
+     */
+    [%=ec.getGetByIdSignature()%] throws EolIncrementalExecutionException {
+        OrientGraph graph = factory.getTx();
+        OrientVertex vertex = graph.getVertex(id);
+        if (vertex == null) {
+            logger.debug("Finding Record by id was null - [%=ec.name%]:{}", id);
+            throw new EolIncrementalExecutionException("No [%=ec.name%] found with id: " + id);
+        }
+        [%=ec.name%]OrientDbImpl impl = new [%=ec.name%]OrientDbImpl(vertex);
+        graph.shutdown();
+        return impl;
+    }
+    
+[%  if (index.isDefined()) {%]    
+    /**
+     * Find a vertex of type [%=ec.name%] by index
+     * 
+     * @return [%=ec.name%]OrientDbImpl wrapping the vertex, if found
+     * @throws EolIncrementalExecutionException if no vertex for that index is found
+     */
+    [%=ec.getGetByIndexSignature()%]  throws EolIncrementalExecutionException {
+        OrientGraph graph = factory.getTx();
+        OrientVertex vertex = (OrientVertex) graph.getVertices("[%=ec.name%].[%=index.name%]", [%=index.name%]).iterator().next();
+        if (vertex == null) {
+            logger.debug("Finding Record by index was null - [%=ec.name%]:{}", [%=index.name%]);
+            throw new EolIncrementalExecutionException("No [%=ec.name%] found with index ([%=index.name%]): " + [%=index.name%]);
+        }
+        [%=ec.name%]OrientDbImpl impl = new [%=ec.name%]OrientDbImpl(vertex);
+        graph.shutdown();
+        return impl;
+    }
+    
+[%  }
+}%]   
+    
+}
+
+[%
+// Create the method signature for a CREATE operation
+@template
+operation EClass getCreateSignature() {
+    if (self.getEAllAttributes().select(ea | not ea.isId()).isEmpty()) {%]
+public [%=self.getJavaTypeName("", "OrientDbImpl")%] create[%=self.name.firstToUpperCase()%]()[%
+    } else {%]
+public [%=self.getJavaTypeName("", "OrientDbImpl")%] create[%=self.name.firstToUpperCase()%](
+        [%=self.getCreateParameters()%])
+[%  }
+}
+
+// Create the method signature for a DELETE operation
+@template
+operation EClass getDeleteSignature() {%]
+public void delete[%=self.name%]([%=self.getJavaTypeName("", "OrientDbImpl")%] impl)
+[%
+}
+
+// Create the method signature for an UPDATE operation
+@template
+operation EClass getUpdateSignature() {%]
+public [%=self.getJavaTypeName("", "OrientDbImpl")%] update[%=self.name%]([%=self.getJavaTypeName("", "OrientDbImpl")%] impl)
+[%
+}
+
+// Create the method signature for a GET operation
+@template
+operation EClass getGetByIdSignature() {%]
+public [%=self.getJavaTypeName("", "OrientDbImpl")%] get[%=self.name%]ById(Object id)
+[%
+}
+
+// Create the method signature for a GET by INDEX operation, assumes index is UNIQUE
+@template
+operation EClass getGetByIndexSignature() {%]
+public [%=self.getJavaTypeName("", "OrientDbImpl")%] get[%=self.name%]ByIndex([%=self.getIndexGetterArgument()%])
+[%
+}
+
+// Assumes the annotation is tested
+@template
+operation EClass getIndexGetterArgument() {
+    var index = self.getIndexAttribute();%]
+[%=index.getSetterParamterType("List")%] [%=index.name%][%
+}
+
+/**
+ * Get the required parameters for initialization of objects of this EClass. This returns
+ * a list of type,name tuples, one for each EAttribute of the class.
+ */
+@template
+operation EClass getCreateParameters() {
+	var results : Sequence = new Sequence();
+	for (a in self.getEAllAttributes().select(ea | not ea.isId())) {
+		var type = a.getGetterReturnType("List");
+		var name = a.getName();
+		results.add(type + " " + name);
+	}%]
+	[%=results.concat(",\n")%][%
+}
+
+// EReference Statements
+@template
+operation EAttribute getSetStatement(instanceName : String) {
+	if (self.isMany())%][%=self.getSingleSetStatement(instanceName)%][%
+	else%][%=self.getSingleSetStatement(instanceName)%][%
+}
+
+@template
+operation EAttribute getSingleSetStatement(instanceName : String) {%]
+[%=instanceName%].[%=self.getSetterMethodName()%]([%=self.getName()%]);[%
+}
+
+@template
+operation EAttribute getManySetStatement(instanceName : String) {%]
+[%=self.getGetterReturnType("List")%] [%=self.getName()%]Val = [%=instanceName%].[%=self.getGetterMethodName()%]();
+[%=self.getName()%]Val.addAll([%=self.getName()%]);[%
+}
+
+@template
+operation EAttribute getUpdateStatement(instanceName : String, persistedInstanceName : String) {
+	if (self.isMany())%][%=self.getManyUpdateStatement(instanceName, persistedInstanceName)%][%
+	else%][%=self.getSingleUpdateStatement(instanceName, persistedInstanceName)%][%
+}
+
+@template
+operation EAttribute getSingleUpdateStatement(instanceName : String, persistedInstanceName : String) {%]
+[%=persistedInstanceName%].[%=self.getSetterMethodName()%]([%=instanceName%].[%=self.getGetterMethodName()%]());[%
+}
+
+@template
+operation EAttribute getManyUpdateStatement(instanceName : String, persistedInstanceName : String) {%]
+[%=self.getGetterReturnType("List")%] [%=persistedInstanceName%][%=self.getName().firstToUpperCase()%]Val = [%=persistedInstanceName%].[%=self.getGetterMethodName()%]();
+[%=persistedInstanceName%][%=self.getName().firstToUpperCase()%]Val.addAll([%=instanceName%].[%=self.getGetterMethodName()%]());
+[%}
+
+
+// EReference Statements
+@template
+operation EReference getUpdateStatement(instanceName : String, persistedInstanceName : String) {
+	if (self.isMany())%][%=self.getManyUpdateStatement(instanceName, persistedInstanceName)%][%
+	else%][%=self.getSingleUpdateStatement(instanceName, persistedInstanceName)%][%
+}
+
+@template
+operation EReference getSingleUpdateStatement(instanceName : String, persistedInstanceName : String) {%]
+[%=persistedInstanceName%].[%=self.getSetterMethodName()%]([%=instanceName%].[%=self.getGetterMethodName()%]());[%
+}
+
+@template
+operation EReference getManyUpdateStatement(instanceName : String, persistedInstanceName : String) {%]
+[%=self.getGetterReturnType("Iterable", "V", "")%] [%=persistedInstanceName%][%=self.getName().firstToUpperCase()%]Values = [%=instanceName%].[%=self.getGetterMethodName()%]();
+[%=self.getGetterReturnType("List", "V", "")%] [%=instanceName%][%=self.getName().firstToUpperCase()%]Values = new ArrayList<>();
+for ([%=self.getEReferenceType().getJavaTypeName("V","")%] nv : [%=instanceName%].[%=self.getGetterMethodName()%]()) {
+	[%=instanceName%][%=self.getName().firstToUpperCase()%]Values.add(nv);
+}
+for ([%=self.getEReferenceType().getJavaTypeName("V","")%] ov : [%=persistedInstanceName%][%=self.getName().firstToUpperCase()%]Values) {
+	if (![%=instanceName%][%=self.getName().firstToUpperCase()%]Values.contains(ov)) {
+		[%=persistedInstanceName%].remove[%=self.getName().firstToUpperCase()%](ov);
+	}
+}
+for ([%=self.getEReferenceType().getJavaTypeName("V","")%]  nv : [%=instanceName%][%=self.getName().firstToUpperCase()%]Values ) {
+	[%=persistedInstanceName%].add[%=self.getName().firstToUpperCase()%](nv);
+}[%}
+%]

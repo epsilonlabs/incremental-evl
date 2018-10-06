@@ -17,6 +17,12 @@ Require-Bundle: org.eclipse.core.commands,
  org.eclipse.emf.edit,
  org.eclipse.epsilon.eol.engine,
  org.eclipse.epsilon.evl.engine,
+ org.eclipse.epsilon.base.engine.incremental,
  org.eclipse.epsilon.evl.engine.incremental,
- org.eclipse.epsilon.emc.emf.incremental
-Import-Package: org.eclipse.epsilon.emc.emf
+ org.eclipse.epsilon.emc.emf.incremental,
+ org.eclipse.debug.core,
+ org.eclipse.debug.ui,
+ org.eclipse.epsilon.eol.dt;bundle-version="1.5.0",
+ org.eclipse.epsilon.erl.dt;bundle-version="1.5.0",
+ org.eclipse.epsilon.evl.dt,
+ org.eclipse.epsilon.common.incremental.dt

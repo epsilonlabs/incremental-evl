@@ -1,0 +1,15 @@
+# Ignore workspace settings
+.metadata
+.settings/
+
+# Built binaries
+bin/
+
+# Sonar files
+.sonar
+
+# Ignore examples
+*examples*
+
+
+\.DS_Store

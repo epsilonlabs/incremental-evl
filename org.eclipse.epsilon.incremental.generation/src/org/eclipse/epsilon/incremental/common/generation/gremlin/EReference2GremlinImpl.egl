@@ -1,0 +1,311 @@
+[%
+/*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Horacio Hoyos Rodriguez - initial API and implementation
+ ******************************************************************************/
+/**
+ * A template to generate an implementation of an EClass that can be used as a DTO.
+ */
+import "../Ecore2JavaTemplates.egl";
+var sourceType = er.getEContainingClass().getJavaInterfaceName(interPrefix, interSufix);
+var targetType = er.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix);
+var targetTypeImpl = er.getEReferenceType().getJavaClassName(classPrefix, classSufix);
+var unique = "true";
+if (not er.isUnique()) { unique = "false";}
+var opposite;
+var opp_many = false;
+if (er.getEOpposite().isDefined()) {
+    opposite = er.getEOpposite().name;
+    opp_many = er.getEOpposite().isMany();
+}
+var pack = er.getEReferenceType().getEPackage().name;
+var erqp = qp.replace("." + er.getEContainingClass().getEPackage().name + ".", "." + pack + ".");
+%]
+[%=getHeader()%]
+package [%=qp%].trace.impl;
+
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.*;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import [%=qp%].trace.[%=sourceType%];
+import [%=erqp%].trace.[%=targetType%];
+import [%=qp%].trace.[%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%];
+import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
+[%if (er.isMany()) {%]
+import java.util.Iterator;
+import java.util.Map.Entry;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+[%} else {%]
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+[%}%]
+
+
+/**
+ * Implementation of [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] reference. 
+ */
+public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends Feature
+        implements [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%], GremlinWrapper<Edge> {
+    
+    /** The graph traversal source for all navigations */
+    private GraphTraversalSource gts;
+    
+    /** The source(s) of the reference */
+    protected [%=sourceType%] source;
+    
+    /** Factory used to wrap referenced elements */
+    protected final TraceFactory factory;
+    
+[%if (not er.isMany()) {%]
+    /** Fast access for single-valued references */
+    private Edge delegate;
+[%}%]
+    
+    /**
+     * Instantiates a new [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%].
+     *
+     * @param source the source of the reference
+     */
+    public [%=er.getRelationJavaClassName(classPrefix, classSufix)%] (
+        [%=sourceType%] source,
+        GraphTraversalSource gts, 
+        TraceFactory factory) {
+        super([%=unique%]);
+        this.source = source;
+        this.gts = gts;
+        this.factory = factory; 
+    }
+    
+    // PUBLIC API
+        
+    @Override
+[%if (er.isMany()) {%]
+    public Iterator<[%=targetType%]> get() {
+        return new GremlinUtils.IncrementalFactoryIterator<[%=targetType%], Vertex>(getRaw(),
+                gts, factory);
+    }
+    
+    /**
+     * Get the Tinkerpop GraphTraversal iterator of the vertices that are part of the relation.
+     */
+    public  GraphTraversal<Vertex, Vertex> getRaw() {
+        GraphTraversalSource g = startTraversal();
+        GraphTraversal<Vertex, Vertex> result = null;
+        try {
+            result = g.V(source.getId()).out("[%=er.name%]");
+        }
+        finally {
+            finishTraversal(g);
+        }
+        return result;
+    }
+[%} else {%]
+    public [%=targetType%] get() {
+        if (delegate == null) {
+            return null;
+        }
+        GraphTraversalSource g = startTraversal();
+        [%=targetType%] result = null;
+        try {
+            Vertex to = g.E(delegate).outV().next();
+            result = ([%=targetType%]) factory.createTraceElement(to, gts);
+        }
+        finally {
+            finishTraversal(g);
+        }
+        return result;
+    }
+[%}%]    
+
+    @Override
+    public boolean create([%=targetType%] target) throws TraceModelConflictRelation {
+        if (conflict(target)) {
+            if (related(target)) {
+                return true;
+            }
+            throw new TraceModelConflictRelation("Relation to previous [%=targetType%] exists");
+        }
+[%if (opposite.isDefined()) {%]
+        target.[%=opposite%]().set(source);
+[%}%]
+        set(target);
+        return true;
+    }
+
+    @Override
+    public boolean destroy([%=targetType%] target) {
+        if (!related(target)) {
+            return false;
+        }
+[%if (opposite.isDefined()) {%]
+        target.[%=opposite%]().remove(source);
+[%}%]
+        remove(target);
+        return true;
+    }
+    
+    @Override
+    public boolean conflict([%=targetType%] target) {
+        boolean result = false;
+        GraphTraversalSource g = startTraversal();
+        try {
+[%if (er.isMany()) {%]
+	        if (isUnique()) {
+	           GraphTraversal<Vertex, Vertex> gt =  g.V(source.getId()).out("[%=er.name%]");
+                for (Entry<String, Object> id : target.getIdProperties().entrySet()) {
+                    gt.has(id.getKey(), id.getValue());
+                }
+                result |= gt.hasNext();
+            }
+[%} else {%]
+            result |= delegate == null ? g.V(source.getId()).out("[%=er.name%]").hasNext() : g.E(delegate).outV().hasId(target.getId()).hasNext();
+[%}
+if (opposite.isDefined()) {
+    if (opp_many) {%]
+            GraphTraversalSource g2 = startTraversal();
+            try {
+                result |= delegate == null ? false : (target.[%=opposite%]().isUnique() &&
+                        g.V(target.getId()).out("[%=opposite%]").hasId(source.getId()).hasNext());
+            }
+            catch (Exception ex) {
+                result = false;
+            }
+            finally {
+                finishTraversal(g2);
+            }
+[%  } else {%]
+            result |= target.[%=opposite%]().get() != null;
+[%  }
+}%]
+        }
+        finally {
+            finishTraversal(g);
+        }
+        return result;
+    }
+    
+    @Override
+    public boolean related([%=targetType%] target) {
+    	if (target == null) {
+			return false;
+		}
+[%if (not er.isMany()) {%]
+        if (delegate == null) {
+            return false;
+        }
+[%}%]
+        boolean result = false;
+        GraphTraversalSource g = startTraversal();
+[%var sourceRel;
+if (er.isMany()) {
+    sourceRel = "g.V(source.getId()).out(\"" + er.name + "\").hasId(target.getId()).hasNext()";
+} else {
+    sourceRel = "g.E(delegate).outV().hasId(target.getId()).hasNext()";
+}
+// If there is an opposite, need to check that too. The check depends on the
+// multiplicity of the opposite
+var targetRel = ";";
+if (opposite.isDefined()) {
+    if (opp_many) {%]
+        boolean inTarget = false;
+        try {
+            inTarget = g.V(target.getId()).out("[%=opposite%]").hasId(source.getId()).hasNext();
+        }
+        finally {
+            finishTraversal(g);
+        }
+        g = startTraversal();
+[%      targetRel = " && inTarget;";%]
+[%  } else {
+        targetRel = " && source.equals(target." + opposite + "().get());";%]
+[%  }
+}%]
+        try {
+		  result = [%=sourceRel%][%=targetRel%]
+		}
+		finally {
+            finishTraversal(g);
+        }
+        return result;
+	}
+	
+	@Override
+    public Edge delegate() {
+[%if (not er.isMany()) {%]
+        return delegate;
+[%} else {%]
+        return null;
+[%}%]
+    }
+
+    @Override
+    public void delegate(Edge delegate) {
+[%if (not er.isMany()) {%]
+        this.delegate = delegate;
+[%}%]
+    }
+    
+    @Override
+    public void graphTraversalSource(GraphTraversalSource gts) {
+        this.gts = gts;
+    }
+        
+    
+    // PRIVATE API
+    
+    @Override
+    public void set([%=targetType%] target) {
+        GraphTraversalSource g = startTraversal();
+        try {
+[%if (er.isMany()) {%]
+            g.V(source.getId()).addE("[%=er.name%]").to(g.V(target.getId())).iterate();
+[%} else {%]
+            delegate = g.V(source.getId()).addE("[%=er.name%]").to(g.V(target.getId())).next();
+[%}%]
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            finishTraversal(g);
+        }
+        
+    }
+    
+    @Override
+    public void remove([%=targetType%] target) {
+        GraphTraversalSource g = startTraversal();
+        try {
+[%if (er.isMany()) {%]
+            g.V(source.getId()).outE("[%=er.name%]").as("e").inV().hasId(target.getId()).select("e").drop().iterate();
+[%} else {%]
+            g.E(delegate).drop();
+            delegate = null;
+[%}%]
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            finishTraversal(g);
+        }
+    }
+    
+    private GraphTraversalSource startTraversal() {
+        return this.gts.clone();
+    }
+    
+    private void finishTraversal(GraphTraversalSource g) {
+        try {
+            g.close();
+        } catch (Exception e) {
+            // Fail silently?
+        }
+    }
+
+}

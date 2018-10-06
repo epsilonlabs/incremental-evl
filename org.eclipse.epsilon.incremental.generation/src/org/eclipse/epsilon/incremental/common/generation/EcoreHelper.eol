@@ -1,0 +1,442 @@
+/** Get the Name for the Java Interface for the EClass */
+@cached
+operation EClass getJavaInterfaceName(interPrefix:String, interSufix:String) {
+    
+    return interPrefix + self.name + interSufix;
+}
+
+/** Get the Name for the Java Class for the EClass */
+@cached
+operation EClass getJavaClassName(classPrefix:String, classSufix:String) {
+    
+    return classPrefix + self.name + classSufix;
+}
+
+/** Get the Name for the Java Interface for the EReference */
+@cached
+operation EReference getRelationJavaInterfaceName(interPrefix:String, interSufix:String) {
+    
+    return interPrefix + self.getEContainingClass().name  + "Has" + self.name.firstToUpperCase() + interSufix;
+}
+
+/** Get the Name for the Java Class for the EReference */
+@cached
+operation EReference getRelationJavaClassName(classPrefix:String, classSufix:String) {
+    
+    return classPrefix + self.getEContainingClass().name  + "Has" + self.name.firstToUpperCase() + classSufix;
+}
+
+// Get all EDataTypes that are not java.lang.* and all EClasses that are not
+// in the same pacakge. Assumes other packages are generated in the same
+// base package
+operation EClass getRequiredImports(basePackage:String, interPrefix:String, interSufix:String,
+                                    classPrefix:String, classSufix:String) : Sequence {
+    return self.getRequiredImports(basePackage, interPrefix, interSufix, classPrefix, classSufix, false);
+}
+/**
+ * If isImpl is True, it will also add concrete implementations of the collections imports
+ */
+operation EClass getRequiredImports(basePackage:String, interPrefix:String, interSufix:String,
+                                    classPrefix:String, classSufix:String,
+                                    isImpl:Boolean) : Sequence {
+    return self.getRequiredImports(basePackage, interPrefix, interSufix, classPrefix, classSufix, false, false);
+}
+
+operation EClass getRequiredImports(basePackage:String, interPrefix:String, interSufix:String,
+                                    classPrefix:String, classSufix:String, isImpl:Boolean,
+                                    flatten:Boolean) : Sequence {           
+    var imports : Set;
+    imports.add("org.eclipse.epsilon.base.incremental.trace.*");
+    imports.add("org.eclipse.epsilon.base.incremental.trace.impl.*");
+    imports.add("org.eclipse.epsilon." + ec.getEPackage().name + ".incremental.trace.*");
+    imports.add("org.eclipse.epsilon." + ec.getEPackage().name + ".incremental.trace.impl.*");
+    /*
+    var eas;
+    var ers;
+    //if (not flatten) {
+    //    eas = self.getEAttributes();
+    //    ers = self.getEReferences();
+    //}
+    //else {
+        //self.name.println("EAllFeatures ");
+        eas = self.getEAllAttributes();
+        ers = self.getEAllReferences();
+    //}
+    for (ea in eas) {
+        imports.addAll(ea.getImports(isImpl));
+    }
+    for (er in ers) {
+        var type = er.getEReferenceType();
+        var erqp = type.getCorrectPackage(basePackage, self);
+        //var pack = er.getEReferenceType().getEPackage().name;
+        //var erqp = basePackage.replace("." + self.getEPackage().name + ".", "." + pack + ".");
+        if (er.isContainment()) {
+            if (type.isAbstract()) {
+                var subClasses = er.getEReferenceType().getEAllSubclasses()
+		                .select(sc | not sc.isAbstract() and
+		                    not EReference.all().exists(aller |
+		                    (aller.getEReferenceType() == sc) and 
+		                    aller.isContainment)
+		                );
+		        for (sc in subClasses) {
+		            erqp = sc.getCorrectPackage(basePackage, self);
+		            imports.add(erqp + "." + sc.getJavaInterfaceName(interPrefix, interSufix));
+	                if (isImpl and not sc.isAbstract()) {
+	                    imports.add(erqp + ".impl." + sc.getJavaClassName(classPrefix, classSufix));
+	                }
+	                // Add imports for the constructor 
+	                for (ea in sc.getIndexAttributes()) {
+	                   imports.addAll(ea.getImports(isImpl));
+	                }
+	                for (er in sc.getRequiredFeatures()) {
+	                   var rferqp = er.getEReferenceType().getCorrectPackage(basePackage, self);
+	                   imports.add(rferqp + "." + er.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix));
+	                }
+		        }
+            }
+            else {
+                imports.add(erqp + "." + type.getJavaInterfaceName(interPrefix, interSufix));
+                if (isImpl) {
+                    imports.add(erqp + ".impl." + type.getJavaClassName(classPrefix, classSufix));
+                }
+                // We also need the types of the constructor!
+                var extraTypes = type.getEReferences().select(er | er.isRequired())
+                        .collect(er | er.getEReferenceType());
+                for (et in extraTypes) {
+                    var rferqp = et.getCorrectPackage(basePackage, self);
+                    imports.add(rferqp + "." + et.getJavaInterfaceName(interPrefix, interSufix));
+	                //if (isImpl) {
+	                //    imports.add(rferqp + ".impl." + et.getJavaInterfaceName(interPrefix, interSufix));
+	                //}
+                }
+            }
+        }
+        else {
+            imports.add(erqp + "." + type.getJavaInterfaceName(interPrefix, interSufix));
+        }
+        if (flatten) {
+            if (er.getEContainingClass().getEPackage() <> self.getEPackage()) {
+                erqp = er.getEContainingClass().getCorrectPackage(basePackage, self);
+                imports.add(erqp + "." + er.getRelationJavaInterfaceName(interPrefix, interSufix));
+            }
+            else {
+                //imports.add(basePackage + "." + er.getRelationJavaClassName(classPrefix, classSufix));
+                imports.add(basePackage + "." + er.getRelationJavaInterfaceName(interPrefix, interSufix));
+            }
+            
+        }
+        if (isImpl) {
+            //er.name.println("Adding impl import ");
+            if (er.getEContainingClass().getEPackage() <> self.getEPackage()) {
+                erqp = er.getEContainingClass().getCorrectPackage(basePackage, self);
+                imports.add(erqp + ".impl." + er.getRelationJavaClassName(classPrefix, classSufix));
+            }
+            else {
+                imports.add(basePackage + ".impl." + er.getRelationJavaClassName(classPrefix, classSufix));
+            }
+        }
+    }
+    if (isImpl) {
+		var containerType = self.getContainerReference().at(1);
+		if (containerType.isDefined()) {
+		    var fullpath = basePackage;
+		    if (containerType.getEPackage() <> self.getEPackage()) {
+		        fullpath = basePackage.replace("." + self.getEPackage().name + ".", "." + containerType.getEPackage().name + ".");
+		    }
+		    imports.add(fullpath  + "." + containerType.getJavaInterfaceName(interPrefix, interSufix));
+		}
+    }
+    for (ec in self.getESuperTypes().select(st | not (isImpl and st.isAbstract()))) {
+        if (ec.getEPackage() <> self.getEPackage()) {
+            imports.add("org.eclipse.epsilon." + ec.getEPackage().name + ".incremental.trace." + ec.getJavaInterfaceName(interPrefix, interSufix));
+        }
+    }
+    */
+    return imports.sortBy(im | im);
+}
+
+operation EClass getCorrectPackage(basePackage, baseClass : EClass) : String {
+    //"getCorrectPackage".println();
+    //self.name.println("class ");
+    var pack = self.getEPackage().name;
+    //pack.println("in ");
+    //baseClass.name.println("against ");
+    //baseClass.getEPackage().name.println("in ");
+    //basePackage.println("was ");
+    var erqp = basePackage.replace("." + baseClass.getEPackage().name + ".", "." + pack + ".");
+    //erqp.println("returns ");
+    //"getCorrectPackage END".println();
+    return erqp;
+}
+
+// Return the EReference and Type of the container reference
+@cached
+operation EClass getContainerReference() : Sequence {
+    var container = self.getEAllReferences().selectOne(er | er.isContainer());
+    var type;
+    var opposite;
+    if (container.isUndefined()) {
+        //Containment might not have an opposite, we assume elements can only be contained by one other relation
+        opposite = EReference.all.selectOne(er | er.isContainment() and
+                ((er.getEReferenceType() == self) or
+                (self.getEAllSuperTypes().includes(er.getEReferenceType())))); // And a reference to a superType?
+        if (opposite.isDefined()) {
+            type = opposite.getEContainingClass();
+        }
+    }
+    else {
+        opposite = container.getEOpposite();
+        type = container.getEReferenceType();
+    }
+    return Sequence{container, type, opposite};
+}
+
+@cached
+operation EStructuralFeature getRequiredImports(isImpl:Boolean) : Set {
+    var result = new Set();
+    if (self.isMany()) {
+        if (self.isOrdered) {
+            result.add("java.util.List");
+            if (isImpl) {
+                result.add("java.util.ArrayList");                
+            }
+        }
+        else {
+            result.add("java.util.Set");
+            if (isImpl) {
+                result.add("java.util.HashSet");                
+            }
+        }
+    }
+    return result;
+}
+
+operation EAttribute getImports(isImpl : Boolean) : Set {
+    var result = new Set();
+    var dataTypeName = self.getEAttributeType().name;
+    if (not isJavaPrimitiveType(dataTypeName)) {
+        result.add(dataTypeName);
+    }
+    result.addAll(self.getRequiredImports(isImpl));
+    return result;
+}
+
+operation isJavaPrimitiveType(ecorePrimitive : String) : Boolean {
+    return getEcorePrimitives().exists(jp | jp.isSubstringOf(ecorePrimitive)); 
+}
+
+@cached
+operation getEcorePrimitives() {
+    return Sequence {"EJavaObject", "AnyURI", "Byte", "Short", "Int", "Long", "Float", "Double", "Character", "Boolean"};
+}
+
+@cached
+operation getJavaPrimitive(instanceClassName : String) : String {
+    switch(instanceClassName) {
+        case "int": return "Integer";
+        case "boolean": return "Boolean";
+        default: return instanceClassName.split("\\.").last();
+    }
+}
+
+/**
+ * Get a list of <Type name> strings for each of the EAttributes of the class.
+ */
+@cached
+operation EClass getEAttributeParameters() : Sequence {
+    var results : Sequence = new Sequence();
+    var attr =self.getIndexAttributes(); 
+    for (a in attr) {
+        var type = a.getGetterReturnType("");
+        var name = a.getName();
+        results.add(type + " " + name);
+    }
+    return results;
+}
+
+@cached
+operation EClass getRequiredFeatureParameters(interPrefix, interSufix) {
+    var results : Sequence = new Sequence();
+    for (er in self.getRequiredFeatures()) {
+        results.add(er.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix) + " " + er.name);
+    }
+    return results;
+}
+
+@cached
+operation EClass getRequiredFeatures() {
+    return self.getEAllReferences().select(er | er.isRequired() and (not er.isMany()) and (not er.isDerived())).excluding(self.getContainerReference().at(0));
+}
+
+/**
+ * Get the select methods information. If available, returns a Bag containing two Sequences. The 
+ * first is the list of types in the path, the second is the list of attributes/references to match.
+ */
+@cached 
+operation EClass getSelect() : Sequence {
+    var annot = self.getEAnnotation("https://eclipse.org/epsilon/incremental/OrientDbSelect");
+    var result : Bag;
+    if (annot.isUndefined()) {
+        return result;
+    }
+    result.add(annot.getReferences());
+    var details = annot.getDetails();
+    if (details.containsKey('match')) {
+        result.add(details.get('match').split(','));
+    }
+    return result;
+}
+
+/**
+ * Get the index information. If available, returns a Sequence containing the EAttribute static 
+ * identifier (same used when creating the vertex class) and the index type.
+ */
+// FIXME Once we are back to working with DBs
+/*
+@cached 
+operation EClass getIndex() : Sequence {
+	var annots = self.getIndentityAnnotations();
+    if (annots.isEmpty()) {
+        return null;
+    }
+    for (annot in annots) {
+	    var details = annot.getDetails();
+	    if (details.containsKey('type')) {
+	        var attr = annot.getReferences().first().getName().splitCamelCase("_").toUpperCase();
+	        var type = details.get('type');
+	        var res : Sequence();
+	        res.add(attr);
+	        res.add(type);
+	        return res;
+	    }
+	}
+    return null;
+}
+*/
+
+/**
+ * Return all the EAttributes that make up the EClass identity (defined by
+ * https://eclipse.org/epsilon/incremental/identity annotations)
+ */
+@cached
+operation EClass getIndexAttributes() : Sequence {
+    var result : Sequence();
+    var annots = self.getAnnotations("https://eclipse.org/epsilon/incremental/identity");
+    for (annot in annots) {
+        result.addAll(annot.getReferences());
+    }
+    return result;
+}
+
+/**
+ * Return the EReferences that make up the EClass equivalency (defined by
+ * https://eclipse.org/epsilon/incremental/equivalency annotations). The
+ * EClass's hierarchy is traversed too. 
+ */
+@cached
+operation EClass getEqualsReferences() : Set {
+    var result : Set();
+    var annots = self.getAnnotations("https://eclipse.org/epsilon/incremental/equivalency");
+    for (annot in annots) {
+        result.addAll(annot.getReferences());
+    }
+    return result;
+}
+
+@cached
+operation EClass getParentEClass() : EClass {
+    var result : EClass;
+    var annots = self.getAnnotations("https://eclipse.org/epsilon/incremental/parent");
+    for (annot in annots) {
+        var resultName = annot.getDetails().get("parent");
+        result = EClass.all().selectOne(ec | ec.name == resultName);
+    }
+    return result;
+}
+
+
+/**
+ * Returns the first documentaiton entry found in the class hierarchy
+ */
+operation EClass getDocumentation(indent: Integer) : String {
+    var annots = self.getAnnotations("http://www.eclipse.org/emf/2002/GenModel");
+    if (not annots.isEmpty()) {
+        var docs = annots.at(0).getDetails().get("documentation");
+        if (docs.isDefined()) {
+            return "* " + docs.replace("\n", "\n* ");
+        }
+    }
+    return null;
+}
+
+operation EStructuralFeature getDocumentation(indent: Integer) : String {
+    var an = self.getEAnnotation("http://www.eclipse.org/emf/2002/GenModel");
+    if (an.isDefined()) {
+	    var docs = an.getDetails().get("documentation");
+	    if (docs.isDefined()) {
+	        return "* " + docs.replace("\n", "\n* ");
+	    }
+	}
+    return null;
+}
+
+@cached
+operation EOperation getMapTypes() : Sequence {
+    var result = new Sequence;
+    var an = self.getEAnnotation("http://www.eclipse.org/emf/2002/GenModel");
+    if (an.isDefined()) {
+        result.add(an.getDetails().get("keyType"));
+        result.add(an.getDetails().get("valueType"));
+    }
+    return result;
+} 
+
+/**
+ * Get the annotations for the given annotationUri from the class hierarchy
+ */
+operation EClass getAnnotations(annotationUri : String) : Sequence {
+    var annot = Sequence{};
+    var an = self.getEAnnotation(annotationUri);
+    if (an.isDefined()) annot.add(an);
+    annot.addAll(self.getEAllSuperTypes()
+            .collect(st | st.getEAnnotation(annotationUri))
+            .select(an | an.isDefined())
+            .flatten());
+    return annot;
+}
+
+@cached
+operation EClass getEAllSubclasses() {
+    return EClass.all().select(ec | ec.getEAllSuperTypes().includes(self));
+}
+
+@cached
+operation EDataType getJavaClassName() {
+    return self.getInstanceTypeName().split("\\.").last();
+}
+
+@cahced
+operation EReference isEdge() : Boolean {
+    var annot = self.getEAnnotation("https://eclipse.org/epsilon/incremental/Graph");
+    if (annot.isUndefined()) {
+        return false;
+    }
+    var details = annot.getDetails();
+    if (details.containsKey('edge')) {
+        var isEdge = details.get('edge');
+        return isEdge == 'true';
+    }
+    return false;
+}
+
+operation String splitCamelCase() : String {
+	return self.splitCamelCase(" ");
+}
+
+operation String splitCamelCase(char : String) : String {
+	var sp = self.split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
+	if (sp.size() > 1) {
+	   return sp.concat(char).firstToUpperCase();
+	}
+	return sp.first();
+}

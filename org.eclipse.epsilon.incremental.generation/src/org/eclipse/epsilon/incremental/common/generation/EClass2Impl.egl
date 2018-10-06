@@ -1,0 +1,406 @@
+[%
+/*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Horacio Hoyos Rodriguez - initial API and implementation
+ ******************************************************************************/
+/**
+ * A template to generate an implementation of an EClass that can be used as a DTO.
+ */
+import "Ecore2JavaTemplates.egl";
+ %]
+[%=getHeader()%]
+package [%=qp%].trace.impl;
+
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
+import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%];
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+[%=out.startPreserve("/**", "**/", ec.name + "Imports", true)%]
+
+[%=out.stopPreserve()%]
+
+[%if (ec.getEAllReferences().exists(er | er.isContainment())){%]
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+[%}%]
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
+[%
+for (imp in ec.getRequiredImports(qp+".trace", interPrefix, interSufix, classPrefix, classSufix, true, true)) {%]
+import [%=imp%];
+[%}%]
+
+/**
+ * Implementation of [%=ec.getJavaInterfaceName(interPrefix, interSufix)%]. 
+ */
+public class [%=ec.getJavaClassName(classPrefix, classSufix)%] implements [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] {
+
+[%  // Craete a field for each attribute
+for (ea in ec.getEAllAttributes().select(ea | not ea.derived)) {
+    var multi = "List";
+    if (ea.isOrdered()) { multi = "Set"; }%]
+    /**
+	 * The [%=ea.name%].
+	 */
+    private [%=ea.getGetterReturnType(multi)%] [%=ea.name%];
+
+[%}%]
+[%  // Craete a field for each reference
+//for (er in ec.getEAllReferences().select(er | not er.isDerived())) {
+for (er in ec.getEAllReferences()) {%]
+    /**
+[%  var docs = er.getDocumentation(0);
+    if (docs.isDefined()) {%]
+     * [%=docs%]
+    [%} else {%]
+     * The [%=er.name%].
+    [%}%]
+     */
+    private final [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] [%=er.name%];
+
+[%}%]
+    /**
+     * Instantiates a new [%=ec.getJavaClassName(classPrefix, classSufix)%]. The [%=ec.getJavaClassName(classPrefix, classSufix)%] is uniquely identified by its
+     * container and any attributes identified as indexes.
+     */    
+    public [%=ec.getJavaClassName(classPrefix, classSufix)%]([%=ec.getConstructorParameters(true, interPrefix, interSufix)%]) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+[%for (index in ec.getIndexAttributes()) {%]
+        this.[%=index.name%] = [%=index.name%];
+[%}%]
+[%
+var container = ec.getContainerReference().at(0);
+var type = ec.getContainerReference().at(1);
+var opposite = ec.getContainerReference().at(2);
+if (container.isDefined()) {
+    if (ec.getRequiredFeatures().includes(container)) {%]
+        if (!this.[%=container.name%].[%=opposite.name%]().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+  [%} else {%]
+        if (!container.[%=opposite.name%]().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+[%  }
+} else if (opposite.isDefined()) {%]
+        if (!container.[%=opposite.name%]().create(this)) {
+            throw new TraceModelDuplicateElement();
+        };
+[%}%]
+
+[% for (er in ec.getEqualsReferences()) {%]
+        this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this);
+[%}%]
+[% for (er in ec.getEqualsReferences()) {%]
+[%  if ((er <> ec.getContainerReference().at(0)) and er.isRequired() and not er.isMany()) {%]
+        if (!this.[%=er.name%].create([%=er.name%])) {
+            throw new TraceModelDuplicateElement();
+        }
+[%  }%]
+[%}%]
+[% var derivedFeatures = ec.getEAllReferences(); //.select(er | not er.isDerived());
+for (er in derivedFeatures.excludingAll(ec.getEqualsReferences())) {%]
+        this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this);
+[%  if ((er <> ec.getContainerReference().at(0)) and er.isRequired() and not er.isMany() and not er.isDerived()) {%]
+        if (!this.[%=er.name%].create([%=er.name%])) {
+            throw new TraceModelDuplicateElement();
+        }
+[%  }%]
+[%}%]
+
+    }
+    
+[%for (ea in ec.getEAllAttributes().select(ea | not ea.derived)) {
+    var multi = "List";
+    if (ea.isUnique()) {
+        multi = "Set";
+    }%]
+    @Override
+    public [%=ea.makeGetterSignature(multi)%] {
+        return [%=ea.name%];
+    }
+    
+[%  if (not ea.isMany() and not ec.getIndexAttributes().includes(ea)) {%]    
+    @Override
+    public [%=ea.makeSetterSignature(multi)%] {
+        this.[%=ea.name%] = value;
+    }   
+     
+[%  }
+}%]
+[%for (ea in ec.getEAllAttributes().select(ea | ea.derived)) {
+    var multi = "List";
+    if (ea.isUnique()) {
+        multi = "Set";
+    }%]
+    @Override
+    public [%=ea.makeGetterSignature(multi)%] {
+        [%=out.startPreserve("/**", "**/", ea.name, true)%]
+        return null;
+        [%=out.stopPreserve()%]
+    }
+    
+[%  if (not ea.isMany() and not ec.getIndexAttributes().includes(ea)) {%]    
+    @Override
+    public [%=ea.makeSetterSignature(multi)%] {
+        [%=out.startPreserve("/**", "**/", ea.name, true)%]
+        return null;
+        [%=out.stopPreserve()%]
+    }   
+     
+[%  }
+}%]
+[%for (er in ec.getEAllReferences()) {%]
+    @Override
+    public [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] [%=er.name%]() {
+        return [%=er.name%];
+    }
+
+[%}
+%]
+[%/* Factory Methods
+ * If the EReferenceType is abstract, we add factory methods for each of the subclasses
+ * of the EReferenceType. We only add subclasses that are not contained elsewhere or 
+ * contained in this EClass supertypes (i.e. we need to implement all factories from
+ * inhereted interfaces).
+ */
+for (er in ec.getEAllReferences().select(er | er.isContainment())) {
+    if (not er.getEReferenceType().isAbstract()) {%]
+    [%=er.getEReferenceType().factoryMethod(er, false, interPrefix, interSufix, classPrefix, classSufix)%]
+[%  } else {
+        var subClasses = er.getEReferenceType().getEAllSubclasses()
+                .select(sc | not sc.isAbstract() and
+                    not EReference.all().exists(aller |
+                    (aller.getEReferenceType() == sc) and 
+                    aller.isContainment)
+                );
+        for (sc in subClasses) {%]
+    [%=sc.factoryMethod(er, true, interPrefix, interSufix, classPrefix, classSufix)%]
+
+[%      }%]
+[%  }%]
+                  
+[%}%]
+[%
+for (op in ec.getEAllOperations()) {
+    var retType;
+    if (op.getEType().name.startsWith("EMap")) {
+        var mapTypes = op.getMapTypes();
+        retType = "Map<" + mapTypes.at(0) + "," + mapTypes.at(1) + ">";
+    } else {
+        // FIXME Might need to import type
+        retType = op.getEType(); 
+    }
+    var args = new Sequence();
+    for (p in op.getEParameters()) {
+        var type = a.getEType().getInstanceClassName();
+        var name = a.getName();
+        args.add(type + " " + name);
+    }
+%]
+    public [%=retType%] [%=op.name%]([%=args.concat(", ")%]) {
+[%  if (op.name == "getIdProperties") {%]
+        Map<String, Object> result = new HashMap<>();
+[%      for (index in ec.getIndexAttributes()) {%]
+        result.put("[%=index.name%]", get[%=index.name.firstToUpperCase()%]());
+[%      }%]
+        return result;
+[%}    else {%]
+        [%=out.startPreserve("/**", "**/", op.name, true)%]
+        return null;
+        [%=out.stopPreserve()%]
+[%  }%]
+    }
+[%}%]
+
+    @Override
+    public boolean sameIdentityAs(final [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] other) {
+        if (other == null) {
+            return false;
+        }
+[%
+for (index in ec.getIndexAttributes()) {
+    var typeName = primitives.get(index.getEAttributeType().getJavaClassName());
+    if (typeName.isDefined()) {%]
+        [%=typeName%] [%=index.name%] = [%=typeName%].valueOf(get[%=index.name.firstToUpperCase()%]());
+        [%=typeName%] other[%=index.name.firstToUpperCase()%] = [%=typeName%].valueOf(other.get[%=index.name.firstToUpperCase()%]());
+[%  }
+    else {
+        typeName = index.getEAttributeType().getJavaClassName();%]
+        [%=typeName%] [%=index.name%] = get[%=index.name.firstToUpperCase()%]();
+        [%=typeName%] other[%=index.name.firstToUpperCase()%] = other.get[%=index.name.firstToUpperCase()%]();
+[%  }%]
+        if ([%=index.name%] == null) {
+            if (other[%=index.name.firstToUpperCase()%] != null)
+                return false;
+        } else if (![%=index.name%].equals(other[%=index.name.firstToUpperCase()%])) {
+            return false;
+        }
+[%}%]
+        return true;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof [%=ec.getJavaClassName(classPrefix, classSufix)%]))
+            return false;
+        [%=ec.getJavaClassName(classPrefix, classSufix)%] other = ([%=ec.getJavaClassName(classPrefix, classSufix)%]) obj;
+        if (!sameIdentityAs(other))
+            return false;
+[%
+// Use only the EReferneces defined in the equivalency annotation
+for (er in ec.getEqualsReferences()) {
+    var access = er.name;
+    if(er.isTypeOf(EReference)){
+        access += ".get()";
+    }%]
+[%  if (er.isTypeOf(EAttribute) and (er.getEAttributeType().name == "EBoolean")) {%]
+	    if ([%=access%] != other.[%=access%]) {
+	      return false;
+	    }
+[%  } else { %]
+        if ([%=access%] == null) {
+            if (other.[%=access%] != null)
+                return false;
+        }
+[%      if (er.isMany()) {
+            if (er.isOrdered) {%]
+        if (!IncrementalUtils.equalOrderedIterators([%=access%], other.[%=access%])) {
+            return false;
+        }
+[%          } else if (er.isUnique()) {%]
+        if (!IncrementalUtils.equalUniqueIterators([%=access%], other.[%=access%])) {
+            return false;
+        }
+[%          } else {%]
+        if (!IncrementalUtils.equalIterators([%=access%], other.[%=access%])) {
+            return false;
+        }
+[%          } 
+        } else {%]
+        if (![%=access%].equals(other.[%=access%])) {
+            return false;
+        }
+[%      }
+    }
+}%]
+        return true; 
+  }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+[%for (index in ec.getIndexAttributes()) {
+    var typeName = primitives.get(index.getEAttributeType().getJavaClassName());
+    if (typeName.isDefined()) {%]
+        [%=typeName%] [%=index.name%] = [%=typeName%].valueOf(get[%=index.name.firstToUpperCase()%]());
+[%  }%]
+        result = prime * result + (([%=index.name%] == null) ? 0 : [%=index.name%].hashCode());
+[%}%]
+[%for (er in ec.getEqualsReferences()) {
+    var access = er.name;
+    if(er.isTypeOf(EReference)){
+        access += ".get()";
+    }
+    if (er.isTypeOf(EAttribute) and (er.getEAttributeType().name == "EBoolean")) {%]
+        result = prime * result + ([%=access%] ? 1 : 0);
+[%  } else { 
+        if (er.isMany()) {%]
+        result = prime * result + (([%=access%] == null) ? 0 : IncrementalUtils.iteratorHashCode([%=access%]));
+[%      } else {%]
+        result = prime * result + (([%=access%] == null) ? 0 : [%=access%].hashCode());
+[%      }
+    }
+}%]
+        return result;
+    }
+}
+[%
+@template
+operation EClass factoryMethod(ref : EReference, subClass : Boolean, interPrefix:String,
+                               interSufix:String, classPrefix:String, classSufix:String) {
+    var instanceName = self.name.firstToLowerCase();
+    var params = self.getEAttributeParameters().includingAll(self.getRequiredFeatureParameters(interPrefix, interSufix));
+    var vars = self.getIndexAttributes().includingAll(self.getRequiredFeatures()).collect(a | a.name);
+    var container = self.getContainerReference().at(2);
+    var containment = self.getContainerReference().at(0);
+    if (container.isDefined()) {
+        vars.add("this");
+    }%]
+@Override
+public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] getOrCreate[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException {
+    [%=self.getJavaInterfaceName(interPrefix, interSufix)%] [%=instanceName%] = null;
+    try {
+        [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=vars.concat(", ")%]);
+[% if (containment.isDefined()) {%]        
+        this.[%=container.name%]().create([%=instanceName%]);
+[%  }%]
+    } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
+        // Pass
+    } finally {
+	    if ([%=instanceName%] != null) {
+	        return [%=instanceName%];
+	    }
+[%  if (ref.isMany()) {
+        var conds: Sequence;
+		for (param in self.getIndexAttributes()) {
+            if (isJavaPrimitiveType(param.getEAttributeType().name)) {
+                conds.add("item.get" + param.name.firstToUpperCase() + "() == " + param.name);
+            } else {
+                conds.add("item.get" + param.name.firstToUpperCase() + "().equals(" + param.name + ")");
+            }
+        }
+        for (param in self.getRequiredFeatures()) {
+            conds.add("item." + param.name + "().get().equals(" + param.name + ")");
+        }
+        if (not conds.isEmpty()) {%]
+		Iterator<[%=ref.getEType().getJavaInterfaceName(interPrefix, interSufix)%]> it = this.[%=ref.name%].get();
+        while (it.hasNext()) {
+        	[%=self.getJavaInterfaceName(interPrefix, interSufix)%] item;
+[%// Need to filter and cast for subclasses
+        if (subClass) {%]
+            [%=ref.getEType().getJavaInterfaceName(interPrefix, interSufix)%] t = it.next();
+            if (t instanceof [%=self.getJavaInterfaceName(interPrefix, interSufix)%]) {
+                item = ([%=self.getJavaInterfaceName(interPrefix, interSufix)%]) t;
+            }
+            else {
+                continue;
+            }
+[%      } else {%]
+            item = ([%=self.getJavaInterfaceName(interPrefix, interSufix)%]) it.next();
+[%      }%]
+			if ([%=conds.concat(" &&\n")%]) {
+				[%=instanceName%] = item;
+				break;
+			}
+		}
+[%      }%]
+		if ([%=instanceName%] == null) {
+           	throw new EolIncrementalExecutionException("Error creating trace model element. Requested [%=self.name%] was "
+            		+ "duplicate but previous one was not found.");
+        }
+[%  } else {%]
+        [%=instanceName%] = [%if (subClass) {%]([%=self.name%]) [%}%]this.[%=ref.name%].get();
+        if ([%=instanceName%]  == null) {
+            throw new EolIncrementalExecutionException("Error creating trace model element. Requested [%=self.name%] was "
+                    + "duplicate but previous one was not found.");
+        }
+[%  }%]
+    }
+    return [%=self.name.firstToLowerCase()%];
+}      
+[%}
+%]
