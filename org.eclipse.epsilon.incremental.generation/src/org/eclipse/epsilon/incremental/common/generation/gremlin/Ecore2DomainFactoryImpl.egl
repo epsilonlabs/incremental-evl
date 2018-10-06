@@ -1,0 +1,73 @@
+[%
+/*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Horacio Hoyos Rodriguez - initial API and implementation
+ ******************************************************************************/
+/**
+ * A template to generate an implementation of an EClass that can be used as a DTO.
+ */
+import "../Ecore2JavaTemplates.egl";
+%]
+[%=getHeader()%]
+package [%=qp%].util;
+
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.Element;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
+[%if(baseLanguage.length() > 0) {%]
+import org.eclipse.epsilon.[%=baseLanguage%].incremental.util.[%=baseLanguage.firstToUpperCase()%]TraceFactory;
+[%}%]
+import org.eclipse.epsilon.[%=ep.getName()%].incremental.trace.impl.*;
+
+/**
+ * A Factory to wrap Vertices around concrete classes based on the Vertex label.
+ * It is useful for instantiating domain elements back from Gremlin elements
+ * 
+ * @author Horacio Hoyos
+ *
+ */
+public class [%=ep.getName().firstToUpperCase()%]TraceFactory implements TraceFactory {
+    
+    private static final TraceFactory FACTORY = new [%=ep.getName().firstToUpperCase()%]TraceFactory ();
+
+    private [%=ep.getName().firstToUpperCase()%]TraceFactory () {
+        
+    }
+
+    public static TraceFactory getFactory() {
+        return FACTORY;
+    }
+    
+    public Object createTraceElement(Element delegate, GraphTraversalSource gts) {
+        String label = delegate.label();
+        switch (label) {
+[%
+for (ec in ep.getEClassifiers().select(ec |
+        ec.isTypeOf(EClass)
+        and not ec.isInterface()
+        and not ec.isAbstract())) {%]  
+        case "[%=ec.name%]":
+            [%=ec.name%]Gremlin [%=ec.name.firstToLowerCase()%] = new [%=ec.name%]Gremlin();
+            [%=ec.name.firstToLowerCase()%].delegate((Vertex) delegate);
+            [%=ec.name.firstToLowerCase()%].graphTraversalSource(gts);
+            return [%=ec.name.firstToLowerCase()%];
+[%}%]
+[%if(baseLanguage.length() > 0) {%]
+        default:
+            TraceFactory sf = [%=baseLanguage.firstToUpperCase()%]TraceFactory.getFactory();
+            return sf.createTraceElement(delegate, gts);
+        }
+[%} else {%]        
+        }
+        throw new IllegalArgumentException("Trace Class unkown. If you changed the metamodel make sure "
+                + "the Ecore2Domain factory is executed to regenerate this factory.");
+[%}%]
+    }
+}

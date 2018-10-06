@@ -17,8 +17,9 @@ package org.eclipse.epsilon.evl.incremental.orientdb.trace.impl;
 import java.util.Iterator;
 import java.util.HashSet;
 import java.util.Set;
-import org.eclipse.epsilon.incremental.trace.eol.ModuleElement;
-import org.eclipse.epsilon.incremental.trace.eol.Trace;
+
+import org.eclipse.epsilon.base.incremental.trace.eol.ModuleElement;
+import org.eclipse.epsilon.base.incremental.trace.eol.Trace;
 import org.eclipse.epsilon.evl.incremental.trace.tinkerpop.AbstractGuardImpl;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;

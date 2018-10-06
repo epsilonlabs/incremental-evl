@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.common.dt.console.EpsilonConsole;
 import org.eclipse.epsilon.common.dt.util.EclipseUtil;
 import org.eclipse.epsilon.common.dt.util.LogUtil;
@@ -29,9 +30,6 @@ import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.eol.dt.launching.EclipseContextManager;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
-import org.eclipse.epsilon.eol.incremental.execute.IEolIncrementalContext;
-import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
-import org.eclipse.epsilon.eol.incremental.models.ITraceModel;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 
 public class EclipseIncrementalContextManager extends EclipseContextManager {
@@ -66,26 +64,26 @@ public class EclipseIncrementalContextManager extends EclipseContextManager {
 			properties.load(modelDescriptor);
 			try {
 				ExecutionTraceManagerExtension tmExtension = ExecutionTraceManagerExtension.forType(properties.getProperty(ExecutionTraceManagerExtension.TRACE_MANAGER_TYPE));
-				IEolExecutionTraceManager traceManager = tmExtension.createTraceManager();
-				ITraceModel traceModel = tmExtension.createModel();
-				traceModel.load(properties, new IRelativePathResolver() {
-					
-					@Override
-					public String resolve(String relativePath) {
-						try {
-							IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(relativePath));
-							if (file != null) { 
-								return file.getLocation().toOSString(); 
-							}
-						}
-						catch (Exception ex) { LogUtil.log("Error while resolving absolute path for " + relativePath, ex); }
-						
-						return EclipseUtil.getWorkspacePath() + relativePath;
-					}
-				});
-				traceManager.setTraceModel(traceModel);
-				context.setTraceManager(traceManager);
-			} catch (CoreException | EolModelLoadingException e) {
+				IExecutionTraceManager traceManager = tmExtension.getOrCreateTraceManager();
+				//				ITraceModel traceModel = tmExtension.getOrCreateModel();
+//				traceModel.load(properties, new IRelativePathResolver() {
+//					
+//					@Override
+//					public String resolve(String relativePath) {
+//						try {
+//							IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(relativePath));
+//							if (file != null) { 
+//								return file.getLocation().toOSString(); 
+//							}
+//						}
+//						catch (Exception ex) { LogUtil.log("Error while resolving absolute path for " + relativePath, ex); }
+//						
+//						return EclipseUtil.getWorkspacePath() + relativePath;
+//					}
+//				});
+				//traceManager.setTraceModel(traceModel);
+				context.setExecutionTraceManager(traceManager);
+			} catch (CoreException e) {
 				EpsilonConsole.getInstance().getErrorStream().print(e.toString());
 				LogUtil.log(e);
 			}

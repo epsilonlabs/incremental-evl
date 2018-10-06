@@ -64,9 +64,9 @@ public class ExecutionTraceManagerSelectionDialog extends TitleAreaDialog implem
 	}
 	
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control getOrCreateDialogArea(Composite parent) {
 		
-		Composite dialogArea = (Composite) super.createDialogArea(parent);
+		Composite dialogArea = (Composite) super.getOrCreateDialogArea(parent);
 		GridData dialogAreaData = new GridData(GridData.FILL_BOTH);
 		dialogArea.setLayoutData(dialogAreaData);
 		
@@ -75,7 +75,7 @@ public class ExecutionTraceManagerSelectionDialog extends TitleAreaDialog implem
 		this.setTitle("Execution Trace Manager Selection");
 		this.setMessage("Select the execution trace manager to use");
 		this.getShell().setText("Select execution trace manager");
-		this.getShell().setImage(EpsilonCommonsPlugin.getDefault().createImage("icons/model.gif"));
+		this.getShell().setImage(EpsilonCommonsPlugin.getDefault().getOrCreateImage("icons/model.gif"));
 		
 		//GridLayout controlLayout = new GridLayout(1, false);
 		//control.setLayout(controlLayout);

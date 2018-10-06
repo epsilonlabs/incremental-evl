@@ -11,17 +11,17 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
+import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
+import org.eclipse.epsilon.common.exceptions.EolInternalException;
+import org.eclipse.epsilon.common.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.common.incremental.dt.launching.dialogs.AbstractTraceManagerConfigurationDialog;
 import org.eclipse.epsilon.common.incremental.dt.launching.dialogs.ExecutionTraceManagerSelectionDialog;
 import org.eclipse.epsilon.common.incremental.dt.launching.extensions.ExecutionTraceManagerExtension;
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.emf.InMemoryEmfModel;
 import org.eclipse.epsilon.emc.emf.incremental.IncrementalInMemoryEmfModel;
-import org.eclipse.epsilon.eol.exceptions.EolInternalException;
-import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.incremental.EolIncrementalExecutionException;
 import org.eclipse.epsilon.eol.incremental.dom.IIncrementalModule;
-import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
 import org.eclipse.epsilon.eol.models.ModelRepository;
 import org.eclipse.epsilon.evl.IncrementalEvlModule;
 import org.eclipse.epsilon.evl.dt.views.ValidationViewFixer;
@@ -137,7 +137,7 @@ public class EnableLiveValidationHandler extends AbstractHandler implements IEle
 		
 		
 		final IncrementalEvlModule module = new IncrementalEvlModule();
-		IEolExecutionTraceManager traceManager = null;
+		IExecutionTraceManager traceManager = null;
 		try {
 			traceManager = managerExtension.createTraceManager();
 		} catch (CoreException e1) {

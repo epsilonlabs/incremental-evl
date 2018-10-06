@@ -1,0 +1,64 @@
+[%
+/*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Horacio Hoyos Rodriguez - initial API and implementation
+ ******************************************************************************/
+import "Ecore2JavaTemplates.egl";
+%]
+[%=getHeader()%]
+package [%=qp%].trace;
+
+import java.util.Set;
+
+[%var superClass = "";
+var name = "";
+if (ec.getESuperTypes().isEmpty) {
+    superClass = "IRepository<E>";
+    name = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<E extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";%]
+import org.eclipse.epsilon.base.incremental.execute.IRepository;
+[%}
+else {
+    superClass = ec.getESuperTypes().first();
+    var erqp = superClass.getCorrectPackage(qp+".trace", ec);%]
+import [%=erqp%].[%="I" + superClass.name + "Repository"%];
+[%  if (ec.getEAllSubclasses().isEmpty()) {
+        if (ec.isAbstract) {
+            superClass = "I" + superClass.name + "Repository<E>";
+            name = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<E extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+        }
+        else {    
+            superClass = "I" + superClass.name + "Repository<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+            name = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository";
+        }
+    }
+    else {
+        superClass = "I" + superClass.name + "Repository<E>";
+        name = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<E extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+    }
+}
+%]
+[%=out.startPreserve("/**", "**/", ec.getJavaInterfaceName(interPrefix, interSufix) + "RepositoryImports", true)%]
+
+[%=out.stopPreserve()%]
+
+public interface [%=name%] extends [%=superClass%] {
+
+[%
+var ids = ec.getIndexAttributes();
+if (not ids.isEmpty()) {%]
+
+    [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] get[%=ec.name%]ByIdentity([%=ec.getEAttributeParameters().concat(", ")%]);
+[%}%]
+
+[%=out.startPreserve("/**", "**/", ec.getJavaInterfaceName(interPrefix, interSufix) + "Repositry", true)%]
+    // Specialised search methods
+
+[%=out.stopPreserve()%]
+
+}

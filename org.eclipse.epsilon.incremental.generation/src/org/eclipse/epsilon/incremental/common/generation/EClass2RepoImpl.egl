@@ -1,0 +1,108 @@
+[%
+/*******************************************************************************
+ * Copyright (c) 2017 The University of York.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Horacio Hoyos Rodriguez - initial API and implementation
+ ******************************************************************************/
+import "Ecore2JavaTemplates.egl";
+%]
+[%=getHeader()%]
+package [%=qp%].trace.impl;
+
+import java.util.LinkedHashSet;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
+import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%];
+import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%]Repository;
+[%
+var superClass = ec.getESuperTypes().first();
+var extends = null;
+var name = ec.getJavaClassName(classPrefix, classSufix) + "RepositoryImpl";
+var implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository";
+var extendGeneric = ec.getJavaInterfaceName(interPrefix, interSufix);
+if (ec.isAbstract) {
+    name = name + "<E extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+    implements = implements + "<E>";
+    extendGeneric = "E";
+}
+if (not superClass.isInterface) {
+    extends = superClass.name + "RepositoryImpl<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";    
+    var erqp = superClass.getCorrectPackage(qp+".trace", ec);%]
+import [%=erqp%].impl.[%=superClass.name%]RepositoryImpl;
+[%
+}
+%]
+[%=out.startPreserve("/**", "**/", ec.name + "RepositoryImplImports", true)%]
+
+[%=out.stopPreserve()%]
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public [%if(ec.isAbstract){%]abstract [%}%]class [%=name%][%if(extends.isDefined()){%] extends [%=extends%][%}%] implements [%=implements%] {
+
+    private static final Logger logger = LoggerFactory.getLogger([%=ec.getJavaClassName(classPrefix, classSufix)%]RepositoryImpl.class);
+ 
+[%if(not extends.isDefined()){%]
+    protected final Set<[%=extendGeneric%]> extent;    
+[%}%]
+    
+    public [%=ec.getJavaClassName(classPrefix, classSufix)%]RepositoryImpl() {
+[%if(extends.isDefined()){%]
+        super();
+[%} else {%]
+        this.extent = new LinkedHashSet<>();
+[%}%]
+    }
+    
+    @Override
+    public boolean add([%=extendGeneric%] item) {
+        logger.info("Adding {} to repository", item);
+        return extent.add(item);
+    }
+
+    @Override
+    public boolean remove([%=extendGeneric%] item) {
+        logger.info("Removing {} from repository", item);
+        return extent.remove(item);
+    }
+    
+    @Override
+    public void dispose() {
+[%if(extends.isDefined()){%]
+        super.dispose();
+[%} else {%]
+        this.extent.clear();
+[%}%]
+    }
+    
+[%if (not ec.isAbstract){%]    
+    @Override
+    public [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] get(Object id) {
+        
+        logger.debug("Get [%=ec.name%] with id:{}", id);
+        [%=ec.getJavaInterfaceName(interPrefix, interSufix)%]  result = null;
+        try {
+            result = ([%=ec.getJavaInterfaceName(interPrefix, interSufix)%])extent.stream()
+                    .filter(item -> item.getId().equals(id))
+                    .findFirst()
+                    .get();
+        } catch (NoSuchElementException  e) {
+            // No info about the ModelTrace
+        }
+        return result;
+    }
+[%}%]    
+    [%=out.startPreserve("/**", "**/", ec.getJavaClassName(interPrefix, interSufix) + "Repositry", true)%]
+    // Specialised search methods
+
+    [%=out.stopPreserve()%]
+
+}

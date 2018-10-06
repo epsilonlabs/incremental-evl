@@ -18,9 +18,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.common.incremental.dt.launching.dialogs.AbstractTraceManagerConfigurationDialog;
-import org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager;
-import org.eclipse.epsilon.eol.incremental.models.ITraceModel;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -38,8 +37,6 @@ public class ExecutionTraceManagerExtension {
 	public static final String EXTENSION_POINT = "org.eclipse.epsilon.common.incremental.dt.executionTraceManager";
 
 	public static final String TRACE_MANAGER_CLASS = "class";
-	
-	public static final String TRACE_MODEL_CLASS = "model";
 	
 	public static final String TRACE_MANAGER_DIALOG = "dialog";
 	
@@ -104,13 +101,12 @@ public class ExecutionTraceManagerExtension {
 		ExecutionTraceManagerExtension traceManagerType = new ExecutionTraceManagerExtension();
 		traceManagerType.configurationElement = configurationElement;
 		traceManagerType.managerclazz = configurationElement.getAttribute(TRACE_MANAGER_CLASS);
-		traceManagerType.modelClass = configurationElement.getAttribute(TRACE_MODEL_CLASS);
 		traceManagerType.dialogclazz = configurationElement.getAttribute(TRACE_MANAGER_DIALOG);
 		traceManagerType.type = configurationElement.getAttribute(TRACE_MANAGER_TYPE);
 		traceManagerType.label = configurationElement.getAttribute(TRACE_MANAGER_LABEL);
 		traceManagerType.stable = Boolean.parseBoolean(configurationElement.getAttribute(TRACE_MANAGER_STABLE));
 		String contributingPlugin = configurationElement.getDeclaringExtension().getNamespaceIdentifier();
-		Image image = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPlugin,configurationElement.getAttribute(TRACE_MANAGER_IMAGE)).createImage();
+		Image image = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPlugin,configurationElement.getAttribute(TRACE_MANAGER_IMAGE)).getOrCreateImage();
 		traceManagerType.image = image;
 		return traceManagerType;
 	}
@@ -154,16 +150,12 @@ public class ExecutionTraceManagerExtension {
 	protected boolean stable;
 	
 	
-	public AbstractTraceManagerConfigurationDialog createConfigurationDialog() throws CoreException {
-		return (AbstractTraceManagerConfigurationDialog) configurationElement.createExecutableExtension(TRACE_MANAGER_DIALOG);
+	public AbstractTraceManagerConfigurationDialog getOrCreateConfigurationDialog() throws CoreException {
+		return (AbstractTraceManagerConfigurationDialog) configurationElement.getOrCreateExecutableExtension(TRACE_MANAGER_DIALOG);
 	}
 	
-	public IEolExecutionTraceManager createTraceManager() throws CoreException {
-		return (IEolExecutionTraceManager) configurationElement.createExecutableExtension(TRACE_MANAGER_CLASS);
-	}
-	
-	public ITraceModel createModel() throws CoreException {
-		return (ITraceModel) configurationElement.createExecutableExtension(TRACE_MODEL_CLASS);
+	public IExecutionTraceManager getOrCreateTraceManager() throws CoreException {
+		return (IExecutionTraceManager) configurationElement.getOrCreateExecutableExtension(TRACE_MANAGER_CLASS);
 	}
 	
 	public IConfigurationElement getConfigurationElement() {

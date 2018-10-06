@@ -1,8 +1,17 @@
 # Sonar files
 .sonar
 
+# Binaries
+/**/bin/
+
 # Ignore examples
 *examples*
 
 
 \.DS_Store
+
+/**/target/
+
+org\.eclipse\.epsilon\.incremental\.tinkerpop\.dependencies/\.settings/
+
+org\.eclipse\.epsilon\.incremental\.tinkerpop\.dependencies/lib/

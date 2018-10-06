@@ -16,5 +16,15 @@
             description="Create a configuration to launch an EVL Incremental Validation"
             id="org.eclipse.epsilon.evl.dt.launching.EvlLaunchConfigurationTabGroup"
             type="org.epsilon.evl.eclipse.dt.launching.EvlIncrementalLaunchConfigurationDelegate"/>
+   </extension>
+   <extension
+         point="org.eclipse.epsilon.common.dt.moduleImplementation">
+      <implementation
+            class="org.eclipse.epsilon.evl.IncrementalEvlModule"
+            default="false"
+            dialog="org.eclipse.epsilon.evl.incremental.dt.launching.tabs.IncrementalEvlModuleConfiguration"
+            language="EVL"
+            name="iEvl">
+      </implementation>
    </extension> 
 </plugin>

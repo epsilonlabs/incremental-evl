@@ -60,17 +60,7 @@
                   The class that implements the TraceManager interface
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.epsilon.eol.incremental.execute.IIncrementalExecutionTraceManager"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="model" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The class that implements the ITraceModel interface and that is used by the trace manager.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.epsilon.eol.incremental.models.ITraceModel"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.epsilon.eol.incremental.execute.IEolExecutionTraceManager"/>
                </appinfo>
             </annotation>
          </attribute>

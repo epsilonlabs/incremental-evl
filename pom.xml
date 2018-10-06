@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.eclipse.epsilon.incremental-evl</groupId>
+  <artifactId>parent</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <tycho.version>1.0.0</tycho.version>
+  </properties>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <modules>
+    <module>org.eclipse.epsilon.base.engine.incremental</module>
+    <module>org.eclipse.epsilon.evl.engine.incremental</module>
+    <module>org.eclipse.epsilon.emc.csv.incremental</module>
+    <module>org.eclipse.epsilon.emc.emf.incremental</module>
+  </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>${tycho.version}</version>
+          <extensions>true</extensions>
+        <configuration>
+          <encoding>UTF-8</encoding>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.7.0</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+
+      <!-- Generate source bundles (exclude target so we don't enter
+           an infinite loop for binary-only plugins, which have itself
+           as the source). -->
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-source-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <executions>
+          <execution>
+            <id>plugin-source</id>
+            <goals>
+              <goal>plugin-source</goal>
+            </goals>
+              <configuration>
+                <excludes>
+                    <exclude>target/**</exclude>
+                </excludes>
+              </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+          <groupId>org.eclipse.tycho</groupId>
+          <artifactId>target-platform-configuration</artifactId>
+        <version>${tycho.version}</version>
+          <configuration>
+          <executionEnvironment>JavaSE-1.8</executionEnvironment>
+          <target>
+            <artifact>
+                <groupId>org.eclipse.epsilon</groupId>
+                <artifactId>org.eclipse.epsilon.targetplatform</artifactId>
+                <version>1.5.0-SNAPSHOT</version>
+            </artifact>
+          </target>
+            <dependency-resolution>
+              <extraRequirements>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.hamcrest.core</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+            </extraRequirements>
+          </dependency-resolution>
+            <environments>
+              <environment>
+                <os>linux</os>
+                <ws>gtk</ws>
+                <arch>x86</arch>
+              </environment>
+              <environment>
+                <os>linux</os>
+                <ws>gtk</ws>
+                <arch>x86_64</arch>
+              </environment>
+              <environment>
+                <os>win32</os>
+                <ws>win32</ws>
+                <arch>x86</arch>
+              </environment>
+              <environment>
+                <os>win32</os>
+                <ws>win32</ws>
+                <arch>x86_64</arch>
+              </environment>
+              <environment>
+                <os>macosx</os>
+                <ws>cocoa</ws>
+                <arch>x86_64</arch>
+              </environment>
+            </environments>
+          </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.3</version>
+          <configuration>
+            <additionalparam>${javadoc.opts}</additionalparam>
+          </configuration>
+      </plugin>
+
+      <plugin>
+        <!--
+          Bugs in older versions prevent altReleaseDeploymentRepository
+          and altSnapshotDeploymentRepository from working correctly
+          https://maven.apache.org/plugins/maven-deploy-plugin/deploy-mojo.html
+         -->
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.8.1</version>
+      </plugin>
+    </plugins>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.3</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <additionalparam>${javadoc.opts}</additionalparam>
+            <doctitle>Epsilon Interim API</doctitle>
+            <sourceFileIncludes>
+              <sourceFileInclude>org/eclipse/epsilon/**/*.java</sourceFileInclude>
+            </sourceFileIncludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <profiles>
+    <profile>
+      <id>ossrh</id>
+      <build>
+          <plugins>
+            <plugin>
+              <groupId>org.sonatype.plugins</groupId>
+              <artifactId>nexus-staging-maven-plugin</artifactId>
+              <version>1.6.7</version>
+              <extensions>true</extensions>
+              <configuration>
+              <serverId>ossrh</serverId>
+              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+
+                <!-- We want to check staged releases manually on
+                     Sonatype OSSRH before we propagate to Central. -->
+              <autoReleaseAfterClose>false</autoReleaseAfterClose>
+              </configuration>
+            </plugin>
+
+            <!-- Anything that goes to Central must be GPG signed -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-gpg-plugin</artifactId>
+              <version>1.6</version>
+              <executions>
+              <execution>
+                    <id>sign-artifacts</id>
+                    <phase>verify</phase>
+                    <goals>
+                      <goal>sign</goal>
+                    </goals>
+              </execution>
+              </executions>
+            </plugin>
+          </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>java8-doclint-disabled</id>
+      <activation>
+          <jdk>[1.8,)</jdk>
+      </activation>
+      <properties>
+          <javadoc.opts>-Xdoclint:none</javadoc.opts>
+      </properties>
+    </profile>
+  </profiles>
+</project>

@@ -1,0 +1,77 @@
+[%
+import "../../EcoreHelper.eol";
+var ep = evl!EPackage.all().at(0);
+%]
+package org.eclipse.epsilon.evl.incremental.util;
+
+import org.apache.commons.configuration.AbstractConfiguration;
+import org.apache.commons.configuration.BaseConfiguration;
+import org.apache.commons.configuration.Configuration;
+import org.apache.tinkerpop.gremlin.structure.Graph;
+import com.arangodb.tinkerpop.gremlin.structure.ArangoDBGraph;
+
+public class ArangoDB[%=ep.getName().firstToUpperCase()%]Util {
+
+    private static final String GRAPH_NAME = "Incremental[%=ep.getName().firstToUpperCase()%]";
+
+    /**
+     * Create a base configuration that provides the required ArangoDB schema. This can the be
+     * augmented with the user specific information: uri, user:passwrd, etc. 
+     * @return The base Apache Configuration
+     */
+    public static Configuration getBaseConfiguration() {
+        final Configuration conf = new BaseConfiguration();
+        // Respect the commas in relations
+        ((AbstractConfiguration) conf).setListDelimiter('/');
+        
+        conf.addProperty(Graph.GRAPH, ArangoDBGraph.class.getName());
+        conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + "." + ArangoDBGraph.CONFIG_GRAPH_NAME, GRAPH_NAME);
+[%
+for (ec in EClass.all().select(ec | not ec.isAbstract())) {%]
+        conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".graph.vertex", "[%=ec.name%]");
+[%
+}
+var byName = EReference.all()
+        .aggregate(er | er.name, addValues(total, er.getEContainingClass(), er.getEReferenceType()), createValueList()); 
+for (k in byName.keySet()) {
+    var source = byName.get(k).at(0).concat(",");
+    var target = byName.get(k).at(1).concat(",");%]
+        conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".graph.edge", "[%=k%]");
+        conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".graph.relation", "[%=k%]:[%=source%]->[%=target%]");
+[%}%]
+        return conf;
+    }
+}
+[%
+// Aggregate will always replace the map value, so we need to return the list.
+// The source is the containing class, the target is the reference type. 
+operation addValues(l : Sequence, class: EClassifier, type: EClassifier) : Sequence {
+    if (class.isAbstract()) {
+        var scs = class.closure(c | c.getEAllSubclasses()).select(c | not c.isAbstract()).asSet();
+        for (sc in scs) {
+            l.at(0).add(sc.name);
+        }
+    }
+    else {
+        l.at(0).add(class.name);
+    }
+    if (type.isAbstract()) {
+        var scs = type.closure(c | c.getEAllSubclasses()).select(c | not c.isAbstract()).asSet();
+        for (sc in scs) {
+            l.at(1).add(sc.name);
+        }
+    }
+    else {
+        l.at(1).add(type.name);
+    }
+    return l;
+}
+// Each key has a set of source and target node names.
+operation createValueList() : Sequence {
+    var l = new Sequence();
+    l.add(new Set());
+    l.add(new Set());
+    return l;
+}
+
+%]
