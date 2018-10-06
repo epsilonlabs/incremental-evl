@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-05.
+ * This file was automatically generated on: 2018-09-12.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -53,7 +53,7 @@ public class ElementAccessTest {
         IModelElementTrace _element = mock(IModelElementTrace.class);
                 
         // protected region ElementAccessInit_init on begin
-        classUnderTest = new ElementAccess(_executionTrace, _element, containerMock);                    
+        classUnderTest = new ElementAccess(_from, _element, containerMock);                    
         // protected region ElementAccessInit_init end
         
         
@@ -104,7 +104,7 @@ public class ElementAccessTest {
         IModelElementTrace _element = mock(IModelElementTrace.class);
                 
         // protected region ElementAccessInit_ElementReference on begin
-        classUnderTest = new ElementAccess(_executionTrace, _element, containerMock);                    
+        classUnderTest = new ElementAccess(_from, _element, containerMock);                    
         // protected region ElementAccessInit_ElementReference end
         IModelElementTrace ref = mock(IModelElementTrace.class);
         

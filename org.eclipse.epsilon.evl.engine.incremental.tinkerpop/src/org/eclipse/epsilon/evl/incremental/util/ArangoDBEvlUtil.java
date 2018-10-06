@@ -3,6 +3,7 @@ package org.eclipse.epsilon.evl.incremental.util;
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.DefaultConfigurationBuilder;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import com.arangodb.tinkerpop.gremlin.structure.ArangoDBGraph;
 
@@ -16,6 +17,7 @@ public class ArangoDBEvlUtil {
      * @return The base Apache Configuration
      */
     public static Configuration getBaseConfiguration() {
+    	
         final Configuration conf = new BaseConfiguration();
         // Respect the commas in relations
         ((AbstractConfiguration) conf).setListDelimiter('/');

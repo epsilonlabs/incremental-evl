@@ -13,10 +13,10 @@ import org.eclipse.epsilon.common.module.ModuleElement;
 public interface TracedModuleElement<T extends IModuleElementTrace> extends ModuleElement {
 	
 	/** Set the current trace */
-	void setCurrentTrace(T trace);
+	void setModuleElementTrace(T trace);
 	
 	/** Get the current trace */
-	T getCurrentTrace();
+	T getModuleElementTrace();
 	
 	/** Set the current context */
 	void setCurrentContext(IExecutionContext currentContext);

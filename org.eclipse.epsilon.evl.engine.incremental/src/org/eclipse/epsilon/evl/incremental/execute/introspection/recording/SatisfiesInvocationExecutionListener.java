@@ -14,6 +14,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionEx
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 import org.eclipse.epsilon.common.module.ModuleElement;
@@ -43,7 +44,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<?>, M extends IExecutionTraceManager<?, ?, ?>>
-		implements IExecutionListener<IIncrementalBaseContext<T, R, M>> {
+		implements IExecutionListener{
 
 	private static final Logger logger = LoggerFactory.getLogger(SatisfiesInvocationExecutionListener.class);
 
@@ -76,11 +77,15 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 		super();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void aboutToExecute(ModuleElement ast, IIncrementalBaseContext<T, R, M> context) {
+	public void aboutToExecute(ModuleElement ast, IEolContext context) {
 		logger.debug("aboutToExecute {}", ast);
 		if (ast instanceof TracedModuleElement) {
-			moduleElementStack.addLast((TracedModuleElement<IInvariantTrace>) ast);
+			IModuleElementTrace met = ((TracedModuleElement<?>) ast).getModuleElementTrace();
+			if (met instanceof IInvariantTrace) {
+				moduleElementStack.addLast((TracedModuleElement<IInvariantTrace>) ast);
+			}
 		}
 		if (!moduleElementStack.isEmpty()) {
 			if (ast instanceof OperationCallExpression) {
@@ -88,6 +93,7 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 				String operationName = oce.getOperationName();
 				if (OPERATION_NAMES.contains(operationName)) {
 					listening = true;
+					// FIXME 
 					parameters.addAll(oce.getParameterExpressions());
 					waitingFor = oce;
 				}
@@ -95,8 +101,9 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void finishedExecuting(ModuleElement ast, Object result, IIncrementalBaseContext<T, R, M> context) {
+	public void finishedExecuting(ModuleElement ast, Object result, IEolContext context) {
 		logger.debug("finishedExecuting {} for {}", ast, result);
 		if (moduleElementStack.isEmpty()) {
 			return;
@@ -111,7 +118,7 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 			TracedModuleElement<IInvariantTrace> currentInvariant = moduleElementStack.peekFirst();
 			if (ast.equals(waitingFor)) {
 				boolean all = EvlOperationFactory.SATISFIES_ALL_OPERATION.equals(waitingFor.getOperationName());
-				record(all, parameterValues, (IInvariantTrace) currentInvariant.getCurrentTrace(), context);
+				record(all, parameterValues, (IInvariantTrace) currentInvariant.getModuleElementTrace(), (IIncrementalBaseContext<T, R, M>) context);
 				parameters.clear();
 				parameterValues.clear();
 				listening = false;
@@ -130,9 +137,29 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 				waitingFor = null;
 			}
 		}
-
 	}
-
+	
+	@Override
+	public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception,
+			IEolContext context) {
+		logger.debug("finishedExecutingWithException");
+		if (moduleElementStack.isEmpty()) {
+			return;
+		}
+		TracedModuleElement<IInvariantTrace> currentInvariant = moduleElementStack.peekFirst();
+		if (ast instanceof TracedConstraint) {
+			TracedConstraint block = (TracedConstraint) ast;
+			if (currentInvariant.equals(block)) {
+				moduleElementStack.pollFirst();
+			}
+		}
+		// Something went wrong?
+		parameters.clear();
+		parameterValues.clear();
+		listening = false;
+		waitingFor = null;
+	}
+	
 	public boolean done() {
 		return moduleElementStack.isEmpty();
 	}
@@ -186,10 +213,6 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 		}
 	}
 
-	@Override
-	public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception,
-			IIncrementalBaseContext<T, R, M> context) {
-		logger.debug("finishedExecutingWithException");
-	}
+
 
 }

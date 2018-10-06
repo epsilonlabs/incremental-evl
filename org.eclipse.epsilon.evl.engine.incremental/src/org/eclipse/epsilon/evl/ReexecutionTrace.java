@@ -63,4 +63,37 @@ public abstract class ReexecutionTrace<T extends IModuleElementTrace> implements
 		this.parent.getDependentTraces().add(this);
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((exexutionContext == null) ? 0 : exexutionContext.hashCode());
+		result = prime * result + ((moduleTrace == null) ? 0 : moduleTrace.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ReexecutionTrace other = (ReexecutionTrace) obj;
+		if (exexutionContext == null) {
+			if (other.exexutionContext != null)
+				return false;
+		} else if (!exexutionContext.equals(other.exexutionContext))
+			return false;
+		if (moduleTrace == null) {
+			if (other.moduleTrace != null)
+				return false;
+		} else if (!moduleTrace.equals(other.moduleTrace))
+			return false;
+		return true;
+	}
+	
+	
+
 }

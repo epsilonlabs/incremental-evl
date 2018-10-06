@@ -10,13 +10,15 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.execute.context;
 
+import java.util.Collection;
+
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
-import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
-import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
+import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 
 /**
  * The Interface IIncrementalEolContext.
@@ -24,8 +26,11 @@ import org.eclipse.epsilon.eol.execute.context.IEolContext;
  * @param <T> the type of ExecutionTraceManager (see
  *        {@link IExecutionTraceManager}
  */
-public interface IIncrementalBaseContext<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<?>, M extends IExecutionTraceManager<?, ?, ?>>
-		extends IEolContext {
+public interface IIncrementalBaseContext<
+		T extends IModuleExecutionTrace,
+		R extends IModuleExecutionTraceRepository<?>,
+		M extends IExecutionTraceManager<?, ?, ?>
+	> extends IEolContext {
 
 	/**
 	 * Gets the trace manager.
@@ -42,18 +47,20 @@ public interface IIncrementalBaseContext<T extends IModuleExecutionTrace, R exte
 	 */
 	void setTraceManager(M traceManager);
 
+	Collection<IExecutionListener> getIncrementalExecutionListeners();
+	
 	/**
 	 * Gets the property access execution listener.
 	 *
 	 * @return the property access execution listener
 	 */
-	PropertyAccessExecutionListener<T, R, M> getPropertyAccessExecutionListener();
+	//PropertyAccessExecutionListener<T, R, M> getPropertyAccessExecutionListener();
 
 	/**
 	 * Gets the all instances invocation execution listener.
 	 *
 	 * @return the all instances invocation execution listener
 	 */
-	AllInstancesInvocationExecutionListener<T, R, M> getAllInstancesInvocationExecutionListener();
+	//AllInstancesInvocationExecutionListener<T, R, M> getAllInstancesInvocationExecutionListener();
 
 }

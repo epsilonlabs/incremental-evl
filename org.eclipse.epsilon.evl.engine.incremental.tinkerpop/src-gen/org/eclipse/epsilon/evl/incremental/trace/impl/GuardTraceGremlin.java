@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-07.
+ * This file was automatically generated on: 2018-09-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,9 +11,11 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+
 import java.util.Arrays;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.tinkerpop.gremlin.process.traversal.P;
@@ -202,7 +204,8 @@ public class GuardTraceGremlin implements IGuardTrace, GremlinWrapper<Vertex> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((limits().get() == null) ? 0 : limits().get().hashCode());
+        IGuardedElementTrace limits = limits().get();
+        result = prime * result + ((limits == null) ? 0 : limits.hashCode());
         return result;
     }
     

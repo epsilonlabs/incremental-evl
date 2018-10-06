@@ -10,9 +10,13 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.dom;
 
+import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
+import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.eol.execute.context.IEolContext;
+import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 
 /**
  * An executable block that can be traced during execution
@@ -25,7 +29,7 @@ public class TracedExecutableBlock<TraceType extends IModuleElementTrace, Return
 		extends ExecutableBlock<ReturnType>
 		implements TracedModuleElement<TraceType> {
 
-	protected TraceType currentTrace;
+	protected TraceType moduleElementTrace;
 	private IExecutionContext currentContext;
 	
 	/**
@@ -38,13 +42,13 @@ public class TracedExecutableBlock<TraceType extends IModuleElementTrace, Return
 	}
 
 	@Override
-	public void setCurrentTrace(TraceType trace) {
-		currentTrace = trace;
+	public void setModuleElementTrace(TraceType moduleElementTrace) {
+		this.moduleElementTrace = moduleElementTrace;
 	}
 
 	@Override
-	public TraceType getCurrentTrace() {
-		return currentTrace;
+	public TraceType getModuleElementTrace() {
+		return moduleElementTrace;
 	}
 	
 	@Override
@@ -55,6 +59,27 @@ public class TracedExecutableBlock<TraceType extends IModuleElementTrace, Return
 	@Override
 	public IExecutionContext getCurrentContext() {
 		return this.currentContext;
+	}
+	
+	@Override
+	public Object executeBody(IEolContext context) throws EolRuntimeException {
+		IIncrementalBaseContext<?, ?, ?> ic =  (IIncrementalBaseContext<?, ?, ?>) context;
+		for (IExecutionListener iel : ic.getIncrementalExecutionListeners()) {
+			iel.aboutToExecute(this, context);
+		}
+		Object result;
+		try {
+			result = super.executeBody(context);	
+			for (IExecutionListener iel : ic.getIncrementalExecutionListeners()) {
+				iel.finishedExecuting(this, result, context);
+			}
+		} catch (EolRuntimeException ex) {
+			for (IExecutionListener iel : ic.getIncrementalExecutionListeners()) {
+				iel.finishedExecutingWithException(this, ex, context);
+			}
+			throw ex;
+		}
+		return result;
 	}
 
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-07.
+ * This file was automatically generated on: 2018-09-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,9 +11,11 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+
 import java.util.Arrays;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.tinkerpop.gremlin.process.traversal.P;
@@ -135,7 +137,7 @@ public class ExecutionContextGremlin implements IExecutionContext, GremlinWrappe
     	    else {
     	        Vertex v = null;
     	        try {
-    	            v = g.addV("ModelElementVariable").next();
+                v = g.addV("ModelElementVariable").property(T.id, GremlinUtils.identityToString(name, value, this)).next();
     	            modelElementVariable = new ModelElementVariableGremlin(name, value, this, v, gts);
     	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
     	            g.V(v).as("v").properties().drop().select("v").drop();
@@ -174,7 +176,7 @@ public class ExecutionContextGremlin implements IExecutionContext, GremlinWrappe
         try {
             Vertex v = null;
             try {
-                v = g.addV("AllInstancesAccess").next();
+                v = g.addV("AllInstancesAccess").property(T.id, GremlinUtils.identityToString(ofKind, from, type, this)).next();
                 allInstancesAccess = new AllInstancesAccessGremlin(ofKind, from, type, this, v, gts);
             } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
                 g.V(v).as("v").properties().drop().select("v").drop();
@@ -244,7 +246,8 @@ public class ExecutionContextGremlin implements IExecutionContext, GremlinWrappe
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((contextVariables().get() == null) ? 0 : contextVariables().get().hashCode());
+        Iterator<IModelElementVariable> contextVariables = contextVariables().get();
+        result = prime * result + ((contextVariables == null) ? 0 : contextVariables.hashCode());
         return result;
     }
     

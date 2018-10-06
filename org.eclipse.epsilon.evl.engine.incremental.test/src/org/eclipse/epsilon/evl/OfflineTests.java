@@ -9,10 +9,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.csv.CsvModel;
 import org.eclipse.epsilon.emc.csv.incremental.CsvCompare;
@@ -23,6 +27,7 @@ import org.eclipse.epsilon.emc.csv.incremental.CsvCompare.DifferenceSource;
 import org.eclipse.epsilon.emc.csv.incremental.CsvModelIncremental;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,11 +47,11 @@ import ch.qos.logback.classic.Logger;
  */
 public abstract class OfflineTests<M extends Module> {
 
-	private IncrementalEvlModule module;
+	protected IncrementalEvlModule module;
 	private File evlFile;
 	private File tempModel;
 
-	public abstract EvlIncrementalGuiceModule getEvlGuiceModule();
+	public abstract M getEvlGuiceModule();
 
 	@Before
 	public void setup() throws Exception {
@@ -61,6 +66,7 @@ public abstract class OfflineTests<M extends Module> {
 
 	@After
 	public void teardown() throws Exception {
+			
 	}
 
 	@Test
@@ -83,14 +89,21 @@ public abstract class OfflineTests<M extends Module> {
 		module.execute();
 		// Save the previous state so we can compare changes
 		// ContextTraces
-		Set<IModuleElementTrace> executionTraces = module.getContext().getTraceManager().getExecutionTraceRepository()
-				.getAllExecutionTraces();
-		long contextExecutionTracesCnt = executionTraces.stream().filter(t -> t instanceof IContextTrace)
-				.map(IContextTrace.class::cast).count();
-		// We have two contexts, i.e. two traces per Row
+		IEvlModuleTrace moduleTrace = module.getContext().getTraceManager().getExecutionTraceRepository()
+				.getAllModuleTraces().iterator().next();
+		List<IContextTrace> contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
+				.filter(t -> t instanceof IContextTrace)
+				.map(IContextTrace.class::cast).collect(Collectors.toList());
+		long contextExecutionTracesCnt = contextExecutionTraces.size();
+		// We have two contexts, traces per Row
 		Collection<Map<String, Object>> modelRows = model.getAllOfType("Row");
-		assertThat("One Context-ModelElement pair per model element", contextExecutionTracesCnt,
-				is(2L * modelRows.size()));
+		assertThat("One ContextTrace per Evl ContraintContext", contextExecutionTraces.size(),
+				is(2));
+		// Each context should have as many ExecutionContexts as Rows in the model
+		for (IContextTrace ct : contextExecutionTraces) {
+			List<IExecutionContext> excts = IncrementalUtils.asList(ct.executionContext().get());
+			assertThat("One ExecutionContext per Row", excts.size(), is(modelRows.size()));
+		}
 		// Unsatisfied constraints
 		long unsatisfied = module.getContext().getUnsatisfiedConstraints().size();
 
@@ -121,11 +134,11 @@ public abstract class OfflineTests<M extends Module> {
 				module.onChange(model2, object, d.getFieldName());
 			}
 		}
-		executionTraces = module.getContext().getTraceManager().getExecutionTraceRepository().getAllExecutionTraces();
-
-		long contextExecutionTracesNew = executionTraces.stream().filter(t -> t instanceof IContextTrace)
-				.map(IContextTrace.class::cast).count();
-		assertThat("Change should not create new traces", contextExecutionTracesNew - contextExecutionTracesCnt,
+		contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
+				.filter(t -> t instanceof IContextTrace)
+				.map(IContextTrace.class::cast).collect(Collectors.toList());
+		long contextExecutionTracesCntNew = contextExecutionTraces.size();
+		assertThat("Change should not create new traces", contextExecutionTracesCntNew - contextExecutionTracesCnt,
 				is(0L));
 		long unsatisfiedNew = module.getContext().getUnsatisfiedConstraints().size();
 		assertThat("Change breaks one constraint", unsatisfiedNew - unsatisfied, is(1L));
@@ -153,14 +166,21 @@ public abstract class OfflineTests<M extends Module> {
 
 		// Save the previous state so we can compare changes
 		// ContextTraces
-		Set<IModuleElementTrace> executionTraces = module.getContext().getTraceManager().getExecutionTraceRepository()
-				.getAllExecutionTraces();
-		long contextExecutionTracesCnt = executionTraces.stream().filter(t -> t instanceof IContextTrace)
-				.map(IContextTrace.class::cast).count();
-		// We have two contexts, i.e. two traces per Row
+		IEvlModuleTrace moduleTrace = module.getContext().getTraceManager().getExecutionTraceRepository()
+				.getAllModuleTraces().iterator().next();
+		List<IContextTrace> contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
+				.filter(t -> t instanceof IContextTrace)
+				.map(IContextTrace.class::cast).collect(Collectors.toList());
+		long contextExecutionTracesCnt = contextExecutionTraces.size();
+		// We have two contexts, traces per Row
 		Collection<Map<String, Object>> modelRows = model.getAllOfType("Row");
-		assertThat("One Context-ModelElement pair per model element", contextExecutionTracesCnt,
-				is(2L * modelRows.size()));
+		assertThat("One ContextTrace per Evl ContraintContext", contextExecutionTraces.size(),
+				is(2));
+		// Each context should have as many ExecutionContexts as Rows in the model
+		for (IContextTrace ct : contextExecutionTraces) {
+			List<IExecutionContext> excts = IncrementalUtils.asList(ct.executionContext().get());
+			assertThat("One ExecutionContext per Row", excts.size(), is(modelRows.size()));
+		}
 		// Unsatisfied constraints
 		long unsatisfied = module.getContext().getUnsatisfiedConstraints().size();
 
@@ -191,9 +211,10 @@ public abstract class OfflineTests<M extends Module> {
 				module.onCreate(model2, object);
 			}
 		}
-
-		executionTraces = module.getContext().getTraceManager().getExecutionTraceRepository().getAllExecutionTraces();
-		long contextExecutionTracesCntNew = executionTraces.stream().filter(t -> t instanceof IContextTrace).count();
+		contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
+				.filter(t -> t instanceof IContextTrace)
+				.map(IContextTrace.class::cast).collect(Collectors.toList());
+		long contextExecutionTracesCntNew = contextExecutionTraces.size();
 		assertThat("A new row adss two new ContextTraces", contextExecutionTracesCntNew,
 				is(contextExecutionTracesCnt + 2));
 		int unsatisfiedNew = module.getContext().getUnsatisfiedConstraints().size();
@@ -222,14 +243,23 @@ public abstract class OfflineTests<M extends Module> {
 
 		// Save the previous state so we can compare changes
 		// ContextTraces
-		Set<IModuleElementTrace> executionTraces = module.getContext().getTraceManager().getExecutionTraceRepository()
-				.getAllExecutionTraces();
-		long contextExecutionTracesCnt = executionTraces.stream().filter(t -> t instanceof IContextTrace)
-				.map(IContextTrace.class::cast).count();
-		// We have two contexts, i.e. two traces per Row
+		IEvlModuleTrace moduleTrace = module.getContext().getTraceManager().getExecutionTraceRepository()
+				.getAllModuleTraces().iterator().next();
+		List<IContextTrace> contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
+				.filter(t -> t instanceof IContextTrace)
+				.map(IContextTrace.class::cast).collect(Collectors.toList());
+		long contextExecutionTracesCnt = contextExecutionTraces.size();
+		
+		// We have two contexts, traces per Row
 		Collection<Map<String, Object>> modelRows = model.getAllOfType("Row");
-		assertThat("One Context-ModelElement pair per model element", contextExecutionTracesCnt,
-				is(2L * modelRows.size()));
+		assertThat("One ContextTrace per Evl ContraintContext", contextExecutionTraces.size(),
+				is(2));
+		// Each context should have as many ExecutionContexts as Rows in the model
+		for (IContextTrace ct : contextExecutionTraces) {
+			List<IExecutionContext> excts = IncrementalUtils.asList(ct.executionContext().get());
+			assertThat("One ExecutionContext per Row", excts.size(), is(modelRows.size()));
+		}
+		
 		// Unsatisfied constraints
 		long unsatisfied = module.getContext().getUnsatisfiedConstraints().size();
 
@@ -261,8 +291,10 @@ public abstract class OfflineTests<M extends Module> {
 			}
 		}
 
-		executionTraces = module.getContext().getTraceManager().getExecutionTraceRepository().getAllExecutionTraces();
-		long contextExecutionTracesCntNew = executionTraces.stream().filter(t -> t instanceof IContextTrace).count();
+		contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
+				.filter(t -> t instanceof IContextTrace)
+				.map(IContextTrace.class::cast).collect(Collectors.toList());
+		long contextExecutionTracesCntNew = contextExecutionTraces.size();
 		assertThat("Deleted rows removes four ContextTraces", contextExecutionTracesCntNew,
 				is(contextExecutionTracesCnt - 4));
 		// TODO Make sure invariants, etc disappeared too?

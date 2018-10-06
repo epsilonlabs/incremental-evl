@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-07.
+ * This file was automatically generated on: 2018-09-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,9 +11,11 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+
 import java.util.Arrays;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.tinkerpop.gremlin.process.traversal.P;
@@ -163,7 +165,7 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
     	    else {
     	        Vertex v = null;
     	        try {
-    	            v = g.addV("ContextTrace").next();
+                v = g.addV("ContextTrace").property(T.id, GremlinUtils.identityToString(kind, index, this)).next();
     	            contextTrace = new ContextTraceGremlin(kind, index, this, v, gts);
     	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
     	            g.V(v).as("v").properties().drop().select("v").drop();
@@ -191,7 +193,7 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
     	    else {
     	        Vertex v = null;
     	        try {
-    	            v = g.addV("ModelAccess").next();
+                v = g.addV("ModelAccess").property(T.id, GremlinUtils.identityToString(modelName, modelTrace, this)).next();
     	            modelAccess = new ModelAccessGremlin(modelName, modelTrace, this, v, gts);
     	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
     	            g.V(v).as("v").properties().drop().select("v").drop();

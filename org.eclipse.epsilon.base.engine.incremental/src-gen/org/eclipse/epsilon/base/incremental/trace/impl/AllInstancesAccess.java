@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-05.
+ * This file was automatically generated on: 2018-09-12.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -65,12 +65,12 @@ public class AllInstancesAccess implements IAllInstancesAccess {
             throw new TraceModelDuplicateElement();
         };
 
-        this.from = new AccessHasFrom(this);
         this.type = new AllInstancesAccessHasType(this);
-        if (!this.from.create(from)) {
+        this.from = new AccessHasFrom(this);
+        if (!this.type.create(type)) {
             throw new TraceModelDuplicateElement();
         }
-        if (!this.type.create(type)) {
+        if (!this.from.create(from)) {
             throw new TraceModelDuplicateElement();
         }
 
@@ -135,18 +135,18 @@ public class AllInstancesAccess implements IAllInstancesAccess {
         AllInstancesAccess other = (AllInstancesAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (from.get() == null) {
-            if (other.from.get() != null)
-                return false;
-        }
-        if (!from.get().equals(other.from.get())) {
-            return false;
-        }
         if (type.get() == null) {
             if (other.type.get() != null)
                 return false;
         }
         if (!type.get().equals(other.type.get())) {
+            return false;
+        }
+        if (from.get() == null) {
+            if (other.from.get() != null)
+                return false;
+        }
+        if (!from.get().equals(other.from.get())) {
             return false;
         }
         return true; 
@@ -158,8 +158,8 @@ public class AllInstancesAccess implements IAllInstancesAccess {
         int result = 1;
         Boolean ofKind = Boolean.valueOf(getOfKind());
         result = prime * result + ((ofKind == null) ? 0 : ofKind.hashCode());
-        result = prime * result + ((from.get() == null) ? 0 : from.get().hashCode());
         result = prime * result + ((type.get() == null) ? 0 : type.get().hashCode());
+        result = prime * result + ((from.get() == null) ? 0 : from.get().hashCode());
         return result;
     }
 }

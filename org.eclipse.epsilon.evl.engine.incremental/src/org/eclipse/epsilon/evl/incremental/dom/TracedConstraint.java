@@ -12,15 +12,13 @@
 package org.eclipse.epsilon.evl.incremental.dom;
 
 import java.util.Iterator;
+import java.util.Optional;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
-import org.eclipse.epsilon.eol.execute.context.Variable;
-import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
@@ -50,7 +48,7 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 
 	private static final Logger logger = LoggerFactory.getLogger(TracedConstraint.class);
 
-	private IInvariantTrace trace;
+	private IInvariantTrace moduleElementTrace;
 	private IExecutionContext currentContext;
 
 	/**
@@ -59,13 +57,13 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 	private boolean listeningToChagnes = false;
 
 	@Override
-	public void setCurrentTrace(IInvariantTrace trace) {
-		this.trace = trace;
+	public void setModuleElementTrace(IInvariantTrace trace) {
+		this.moduleElementTrace = trace;
 	}
 
 	@Override
-	public IInvariantTrace getCurrentTrace() {
-		return trace;
+	public IInvariantTrace getModuleElementTrace() {
+		return moduleElementTrace;
 	}
 	
 	@Override
@@ -77,89 +75,65 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 	public IExecutionContext getCurrentContext() {
 		return this.currentContext;
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean appliesTo(Object object, IEvlContext context, final boolean checkType) throws EolRuntimeException {
-		final IModel owningModel = context.getModelRepository().getOwningModel(object);
-		if (checkType && !owningModel.isOfKind(object, constraintContext.getTypeName())) {
-			return false;
-		}
-		return _appliesTo(object,
-				(IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>>) context);
-	}
-
-	@Override
-	public boolean check(Object self, IEvlContext context, boolean checkType) throws EolRuntimeException {
-
-		logger.info("Check {} for {}", getName(), self);
-		// First look in the cache
-		if (context.getConstraintTrace().isChecked(this, self)) {
-			logger.info("Result found in cache");
-			return context.getConstraintTrace().isSatisfied(this, self);
-		}
-		@SuppressWarnings("unchecked")
-		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> tracedEvlContext = (IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>>) context;
-		// Return immediately if constraint does not apply
-		boolean appliesTo = appliesTo(self, context, checkType);
-		if (guardBlock != null) {
+	
+	public boolean shouldBeChecked(Object modelElement, IEvlContext context) throws EolRuntimeException {
+		
+		boolean result = !isLazy(context);
+		if (result && (guardBlock != null)) {
+			result &= appliesTo(modelElement, context);
 			try {
-				IGuardTrace guardTrace = (IGuardTrace) ((TracedExecutableBlock<?, ?>) guardBlock).getCurrentTrace();
+				@SuppressWarnings("unchecked")
+				IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> tracedEvlContext = (IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>>) context;
+				IGuardTrace guardTrace = (IGuardTrace) ((TracedExecutableBlock<?, ?>) guardBlock).getModuleElementTrace();
 				IGuardResult guardResult = tracedEvlContext.getTraceManager().getExecutionTraceRepository()
 						.findResultInGuard(guardTrace, getCurrentContext());
-				guardResult.setValue(false);
+				guardResult.setValue(result);
 			} catch (EolRuntimeException e) {
 				logger.error("Error setting guard result", e);
 			}
 		}
-		if (!appliesTo) {
-			logger.debug("Does not apply");
-			return false;
-		}
-		final UnsatisfiedConstraint unsatisfiedConstraint = preprocessCheck(self, context);
-		
-		Boolean result = checkBlock.execute(context, false);
-		logger.info("Result: {}", result);
-		if (messageBlock != null) {
-			tracedEvlContext.getPropertyAccessExecutionListener().aboutToExecute(messageBlock, tracedEvlContext);
-			tracedEvlContext.getAllInstancesInvocationExecutionListener().aboutToExecute(messageBlock,
-					tracedEvlContext);
-		}
-		boolean postResult = postprocessCheck(self, context, unsatisfiedConstraint, result);
-		if (messageBlock != null) {
-			tracedEvlContext.getPropertyAccessExecutionListener().finishedExecuting(messageBlock, postResult,
-					tracedEvlContext);
-			tracedEvlContext.getAllInstancesInvocationExecutionListener().finishedExecuting(messageBlock, postResult,
-					tracedEvlContext);
-		}
-		ICheckTrace chkTrace = (ICheckTrace) ((TracedExecutableBlock<?, ?>)checkBlock).getCurrentTrace();
-		ICheckResult chkResult = tracedEvlContext.getTraceManager().getExecutionTraceRepository()
-				.findResultInCheck(chkTrace, ((TracedExecutableBlock<?, ?>)checkBlock).getCurrentContext());
-		if (chkResult == null) {
-			throw new EolRuntimeException("Result should have been previously created for the ckeck."
-					+ "See TraceContraintContext createContextTraces");
-		} else {
-			boolean oldResult = chkResult.getValue();
-			if (!oldResult && postResult) {
-				logger.debug("Removing unsatisfied constraint");
-				removeUnsatisfiedConstraint(context, self);
-			}
-		}
-		chkResult.setValue(postResult);
-		return postResult;
-
+		return result;
 	}
-
-	/**
-	 * @param self
-	 * @param context
-	 */
+	
 	@Override
-	protected void addToCache(Object self, IEvlContext context) {
-		if (!listeningToChagnes) {
-			logger.debug("Adding result to cache");
-			context.getConstraintTrace().addChecked(this, self, false);
+	public Optional<UnsatisfiedConstraint> check(Object self, IEvlContext context) throws EolRuntimeException {
+		logger.info("Check {} for {}", getName(), self);
+		UnsatisfiedConstraint unsatisfiedConstraint = preprocessCheck(self, context);
+		@SuppressWarnings("unchecked")
+		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> tracedEvlContext = (IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>>) context;
+		
+		boolean result = false;
+		ConstraintTrace trace;
+		
+		// Look for a result in the trace first if this constraint is a dependency, otherwise run the check block
+		if (checkTrace && (trace = context.getConstraintTrace()).isChecked(this, self)) {
+			assert context.getConstraintsDependedOn().contains(this);
+			result = trace.isSatisfied(this, self);
 		}
+		else {
+			result = checkBlock.execute(context, false);
+			if (!tracedEvlContext.isOnlineExecutionMode() && !context.optimizeConstraintsCache()) {
+				context.getConstraintTrace().addChecked(this, self, result);
+			}
+			ICheckTrace chkTrace = (ICheckTrace) ((TracedExecutableBlock<?, ?>)checkBlock).getModuleElementTrace();
+			ICheckResult chkResult = tracedEvlContext.getTraceManager().getExecutionTraceRepository()
+					.findResultInCheck(chkTrace, ((TracedExecutableBlock<?, ?>)checkBlock).getCurrentContext());
+			if (chkResult == null) {
+				throw new EolRuntimeException("Result should have been previously created for the ckeck."
+						+ "See TraceContraintContext createExecutionContext");
+			} else {
+				boolean oldResult = chkResult.getValue();
+				if (!oldResult && result) {
+					logger.debug("Removing unsatisfied constraint");
+					removeUnsatisfiedConstraint(context, self);
+				}
+			}
+			chkResult.setValue(result);
+		}
+		logger.info("Result: {}", result);
+		return !postprocessCheck(self, context, unsatisfiedConstraint, result)
+				? Optional.of(unsatisfiedConstraint) : Optional.empty();
+
 	}
 
 	/**
@@ -174,11 +148,11 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 		IGuardTrace guard = null;
 		if (guardBlock != null) {
 
-			guard = trace.guard().get();
+			guard = moduleElementTrace.guard().get();
 			if (guard == null) {
 				try {
-					guard = trace.getOrCreateGuardTrace();
-					((TracedExecutableBlock<IGuardTrace, Boolean>) guardBlock).setCurrentTrace(guard);
+					guard = moduleElementTrace.getOrCreateGuardTrace();
+					((TracedExecutableBlock<IGuardTrace, Boolean>) guardBlock).setModuleElementTrace(guard);
 					((TracedExecutableBlock<IGuardTrace, Boolean>) guardBlock).setCurrentContext(getCurrentContext());
 				} catch (EolIncrementalExecutionException e) {
 					throw new EolIncrementalExecutionException(
@@ -201,11 +175,11 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 	public ICheckTrace getOrCreateCheckTrace() throws EolIncrementalExecutionException {
 		ICheckTrace check = null;
 		if (checkBlock != null) {
-			check = trace.check().get();
+			check = moduleElementTrace.check().get();
 			if (check == null) {
 				try {
-					check = trace.getOrCreateCheckTrace();
-					((TracedExecutableBlock<ICheckTrace, Boolean>) checkBlock).setCurrentTrace(check);
+					check = moduleElementTrace.getOrCreateCheckTrace();
+					((TracedExecutableBlock<ICheckTrace, Boolean>) checkBlock).setModuleElementTrace(check);
 					((TracedExecutableBlock<IGuardTrace, Boolean>) checkBlock).setCurrentContext(getCurrentContext());
 				} catch (EolIncrementalExecutionException e) {
 					throw new EolIncrementalExecutionException(
@@ -227,11 +201,11 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 	public IMessageTrace getOrCreateMessageTrace() throws EolIncrementalExecutionException {
 		IMessageTrace message = null;
 		if (messageBlock != null) {
-			message = trace.message().get();
+			message = moduleElementTrace.message().get();
 			if (message == null) {
 				try {
-					message = trace.getOrCreateMessageTrace();
-					((TracedExecutableBlock<IMessageTrace, String>) messageBlock).setCurrentTrace(message);
+					message = moduleElementTrace.getOrCreateMessageTrace();
+					((TracedExecutableBlock<IMessageTrace, String>) messageBlock).setModuleElementTrace(message);
 					((TracedExecutableBlock<IMessageTrace, String>) messageBlock).setCurrentContext(getCurrentContext());
 				} catch (EolIncrementalExecutionException e) {
 					throw new EolIncrementalExecutionException(
@@ -262,26 +236,7 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 		return messageBlock != null;
 	}
 
-	private boolean _appliesTo(Object object,
-			IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> tracedEvlContext)
-			throws EolRuntimeException {
-
-		Boolean result = true;
-		if (guardBlock != null) {
-			// IncrementalEvlContext tracedEvlContext = (IncrementalEvlContext)context;
-			tracedEvlContext.getSatisfiesListener().aboutToExecute(this, tracedEvlContext);
-			tracedEvlContext.getPropertyAccessExecutionListener().aboutToExecute(guardBlock, tracedEvlContext);
-			tracedEvlContext.getAllInstancesInvocationExecutionListener().aboutToExecute(guardBlock, tracedEvlContext);
-			result = guardBlock.execute(tracedEvlContext, Variable.createReadOnlyVariable("self", object));
-			tracedEvlContext.getSatisfiesListener().finishedExecuting(this, result, tracedEvlContext);
-			tracedEvlContext.getPropertyAccessExecutionListener().finishedExecuting(guardBlock, result,
-					tracedEvlContext);
-			tracedEvlContext.getAllInstancesInvocationExecutionListener().finishedExecuting(guardBlock, result,
-					tracedEvlContext);
-			return result;
-		}
-		return result;
-	}
+	
 
 	private void removeUnsatisfiedConstraint(IEvlContext context, Object self) {
 		Iterator<UnsatisfiedConstraint> it = context.getUnsatisfiedConstraints().iterator();

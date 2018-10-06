@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-05.
+ * This file was automatically generated on: 2018-09-12.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -134,7 +134,7 @@ public class ModelElementTrace implements IModelElementTrace {
     	    if (propertyTrace != null) {
     	        return propertyTrace;
     	    }
-            Iterator<IPropertyTrace> it = this.properties.get();
+    		Iterator<IPropertyTrace> it = this.properties.get();
             while (it.hasNext()) {
             	IPropertyTrace item;
                 item = (IPropertyTrace) it.next();

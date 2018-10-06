@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-07.
+ * This file was automatically generated on: 2018-09-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,9 +11,11 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+
 import java.util.Arrays;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.tinkerpop.gremlin.process.traversal.P;
@@ -173,8 +175,10 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((from().get() == null) ? 0 : from().get().hashCode());
-        result = prime * result + ((element().get() == null) ? 0 : element().get().hashCode());
+        IModuleElementTrace from = from().get();
+        result = prime * result + ((from == null) ? 0 : from.hashCode());
+        IModelElementTrace element = element().get();
+        result = prime * result + ((element == null) ? 0 : element.hashCode());
         return result;
     }
     

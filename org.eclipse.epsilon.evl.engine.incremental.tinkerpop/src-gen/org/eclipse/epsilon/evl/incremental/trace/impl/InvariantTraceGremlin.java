@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-07.
+ * This file was automatically generated on: 2018-09-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,9 +11,11 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+
 import java.util.Arrays;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.tinkerpop.gremlin.process.traversal.P;
@@ -256,7 +258,7 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
     	    else {
     	        Vertex v = null;
     	        try {
-    	            v = g.addV("GuardTrace").next();
+                v = g.addV("GuardTrace").next();
     	            guardTrace = new GuardTraceGremlin(this, v, gts);
     	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
     	            g.V(v).as("v").properties().drop().select("v").drop();
@@ -283,7 +285,7 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
     	    else {
     	        Vertex v = null;
     	        try {
-    	            v = g.addV("CheckTrace").next();
+                v = g.addV("CheckTrace").next();
     	            checkTrace = new CheckTraceGremlin(this, v, gts);
     	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
     	            g.V(v).as("v").properties().drop().select("v").drop();
@@ -310,7 +312,7 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
     	    else {
     	        Vertex v = null;
     	        try {
-    	            v = g.addV("MessageTrace").next();
+                v = g.addV("MessageTrace").next();
     	            messageTrace = new MessageTraceGremlin(this, v, gts);
     	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
     	            g.V(v).as("v").properties().drop().select("v").drop();
@@ -337,7 +339,7 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
     	    else {
     	        Vertex v = null;
     	        try {
-    	            v = g.addV("SatisfiesTrace").next();
+                v = g.addV("SatisfiesTrace").next();
     	            satisfiesTrace = new SatisfiesTraceGremlin(this, v, gts);
     	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
     	            g.V(v).as("v").properties().drop().select("v").drop();
@@ -398,7 +400,8 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        result = prime * result + ((invariantContext().get() == null) ? 0 : invariantContext().get().hashCode());
+        IContextTrace invariantContext = invariantContext().get();
+        result = prime * result + ((invariantContext == null) ? 0 : invariantContext.hashCode());
         return result;
     }
     

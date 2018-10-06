@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-07.
+ * This file was automatically generated on: 2018-09-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,9 +11,11 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+
 import java.util.Arrays;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.tinkerpop.gremlin.process.traversal.P;
@@ -211,7 +213,7 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
     	    else {
     	        Vertex v = null;
     	        try {
-    	            v = g.addV("GuardTrace").next();
+                v = g.addV("GuardTrace").next();
     	            guardTrace = new GuardTraceGremlin(this, v, gts);
     	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
     	            g.V(v).as("v").properties().drop().select("v").drop();
@@ -257,7 +259,7 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
     	    else {
     	        Vertex v = null;
     	        try {
-    	            v = g.addV("InvariantTrace").next();
+                v = g.addV("InvariantTrace").property(T.id, GremlinUtils.identityToString(name, this)).next();
     	            invariantTrace = new InvariantTraceGremlin(name, this, v, gts);
     	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
     	            g.V(v).as("v").properties().drop().select("v").drop();
@@ -329,7 +331,8 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
         result = prime * result + ((getKind() == null) ? 0 : getKind().hashCode());
         Integer index = Integer.valueOf(getIndex());
         result = prime * result + ((index == null) ? 0 : index.hashCode());
-        result = prime * result + ((executionContext().get() == null) ? 0 : executionContext().get().hashCode());
+        Iterator<IExecutionContext> executionContext = executionContext().get();
+        result = prime * result + ((executionContext == null) ? 0 : executionContext.hashCode());
         return result;
     }
     

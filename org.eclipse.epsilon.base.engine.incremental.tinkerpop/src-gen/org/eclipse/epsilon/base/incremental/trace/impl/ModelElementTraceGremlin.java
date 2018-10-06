@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-07.
+ * This file was automatically generated on: 2018-09-13.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,9 +11,11 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+
 import java.util.Arrays;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.tinkerpop.gremlin.process.traversal.P;
@@ -215,7 +217,7 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
     	    else {
     	        Vertex v = null;
     	        try {
-    	            v = g.addV("PropertyTrace").next();
+                v = g.addV("PropertyTrace").property(T.id, GremlinUtils.identityToString(name, this)).next();
     	            propertyTrace = new PropertyTraceGremlin(name, this, v, gts);
     	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
     	            g.V(v).as("v").properties().drop().select("v").drop();
@@ -276,7 +278,8 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getUri() == null) ? 0 : getUri().hashCode());
-        result = prime * result + ((modelTrace().get() == null) ? 0 : modelTrace().get().hashCode());
+        IModelTrace modelTrace = modelTrace().get();
+        result = prime * result + ((modelTrace == null) ? 0 : modelTrace.hashCode());
         return result;
     }
     

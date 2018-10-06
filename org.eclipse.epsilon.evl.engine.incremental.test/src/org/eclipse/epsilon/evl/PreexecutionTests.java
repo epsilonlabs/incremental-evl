@@ -23,7 +23,6 @@ import org.eclipse.epsilon.eol.dom.ExecutableBlock;
 import org.eclipse.epsilon.evl.dom.Fix;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraintContext;
-import org.eclipse.epsilon.evl.incremental.dom.TracedGuardBlock;
 import org.eclipse.epsilon.evl.parse.EvlParser;
 import org.junit.Before;
 import org.junit.Test;
@@ -87,7 +86,7 @@ public class PreexecutionTests {
 		constraintContextME.getChildren().add(guardedSimpleME);
 		ModuleElement guardBlock1Me = module.adapt(AstUtil.getChild(guardedSimpleAST, EvlParser.GUARD),
 				guardedSimpleME);
-		assertThat(guardBlock1Me, instanceOf(TracedGuardBlock.class));
+		assertThat(guardBlock1Me, instanceOf(TracedExecutableBlock.class));
 		guardBlock1Me.setParent(guardedSimpleME);
 		guardedSimpleME.getChildren().add(guardBlock1Me);
 		ModuleElement checkBlock1ME = module.adapt(AstUtil.getChild(guardedSimpleAST, EvlParser.CHECK),
@@ -104,7 +103,7 @@ public class PreexecutionTests {
 		constraintContextME.getChildren().add(guardedWithMessageME);
 		ModuleElement guardBlock2Me = module.adapt(AstUtil.getChild(guardedWithMessageAST, EvlParser.GUARD),
 				guardedWithMessageME);
-		assertThat(guardBlock2Me, instanceOf(TracedGuardBlock.class));
+		assertThat(guardBlock2Me, instanceOf(TracedExecutableBlock.class));
 		guardBlock2Me.setParent(guardedWithMessageME);
 		guardedWithMessageME.getChildren().add(guardBlock2Me);
 		ModuleElement checkBlock2ME = module.adapt(AstUtil.getChild(guardedWithMessageAST, EvlParser.CHECK),

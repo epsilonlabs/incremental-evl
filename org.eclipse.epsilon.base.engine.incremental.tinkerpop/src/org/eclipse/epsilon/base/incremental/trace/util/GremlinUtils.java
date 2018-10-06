@@ -1,5 +1,6 @@
 package org.eclipse.epsilon.base.incremental.trace.util;
 
+import java.io.File;
 import java.util.Iterator;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
@@ -95,5 +96,58 @@ public class GremlinUtils {
 		}
 
 	}
-
+	
+	public static String identityToString(Object... idObjects) {
+		StringBuilder sb = new StringBuilder();
+    	String separator = "";
+    	for (Object o : idObjects) {
+    		sb.append(separator);
+    		separator = "!";
+    		objectToString(sb, o, true);
+    	}
+    	return sb.length() > 0 ? sb.toString() : null;
+	}
+	
+    public static String identityToStringFull(Object... idObjects) {
+    	StringBuilder sb = new StringBuilder();
+    	String separator = "";
+    	for (Object o : idObjects) {
+    		sb.append(separator);
+    		separator = "!";
+    		objectToString(sb, o, false);
+    	}
+    	return sb.length() > 0 ? sb.toString() : null;
+    }
+    
+	private static void objectToString(StringBuilder sb, Object o, boolean truncatePaths) {
+		if (o.getClass().isPrimitive() || isWrapperType(o.getClass())) {
+			sb.append(o);
+		}
+		else if (o instanceof String) {
+			// Only keep last part of paths which are either scripts or models (hopefully unique)
+			if (truncatePaths) {
+				String val = (String) o;
+				if (val.contains(File.separator)) {
+					val = val.substring(val.lastIndexOf(File.separator)+1);
+				}
+				sb.append(val.replaceAll(" ", "_"));
+			} else {
+				sb.append(o);
+			}
+		}
+		else {
+			sb.append(Integer.toHexString(o.hashCode()));
+		}
+	}
+	
+	public static boolean isWrapperType(Class<?> clazz) {
+	    return clazz.equals(Boolean.class) || 
+	        clazz.equals(Integer.class) ||
+	        clazz.equals(Character.class) ||
+	        clazz.equals(Byte.class) ||
+	        clazz.equals(Short.class) ||
+	        clazz.equals(Double.class) ||
+	        clazz.equals(Long.class) ||
+	        clazz.equals(Float.class);
+	}
 }

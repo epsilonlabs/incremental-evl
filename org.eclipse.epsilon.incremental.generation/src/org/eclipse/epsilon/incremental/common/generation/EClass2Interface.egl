@@ -63,10 +63,9 @@ for (er in ec.getEReferences()) {%]
 }%]
 [%
 for (op in ec.getEOperations()) {
-    op.getEType().name.println("op name ");
     var retType;
     if (op.getEType().name.startsWith("EMap")) {
-        var mapTypes = op.getMapTypes().println("types");
+        var mapTypes = op.getMapTypes();
         retType = "Map<" + mapTypes.at(0) + "," + mapTypes.at(1) + ">";
     } else {
         // FIXME Might need to import type

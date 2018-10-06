@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-05.
+ * This file was automatically generated on: 2018-09-12.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,8 +22,7 @@ public interface IModuleExecutionTraceRepository<E extends IModuleExecutionTrace
 
     IModuleExecutionTrace getModuleExecutionTraceByIdentity(String uri);
 
-    /** protected region IModuleExecutionTraceRepositry on begin **/
-	
+/** protected region IModuleExecutionTraceRepositry on begin **/
     /**
 	 * Remove all trace information related to the element. This should be called
 	 * when an element is deleted.

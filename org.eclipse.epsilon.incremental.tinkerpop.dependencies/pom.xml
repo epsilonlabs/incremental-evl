@@ -6,7 +6,7 @@
   <name>Incremental Tinkerpop Dependencies</name>
   <properties>
     <tinkerpop.version>3.3.3</tinkerpop.version>
-    <arango.provider.version>1.0.6-SNAPSHOT</arango.provider.version>
+    <arango.provider.version>2.0.0-SNAPSHOT</arango.provider.version>
   </properties>
   <dependencies>
     <dependency>
@@ -20,7 +20,7 @@
       <version>${tinkerpop.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.arangodb.community</groupId>
+      <groupId>org.arangodb</groupId>
       <artifactId>arangodb-tinkerpop-provider</artifactId>
       <version>${arango.provider.version}</version>
     </dependency>
@@ -33,7 +33,6 @@
 	          <groupId>org.codehaus.mojo</groupId>
 	          <artifactId>versions-maven-plugin</artifactId>
 	          <version>2.6</version>
-	          
 	        </plugin>
 	      </plugins>
 	    </pluginManagement>

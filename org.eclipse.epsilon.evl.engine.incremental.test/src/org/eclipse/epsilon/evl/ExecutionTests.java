@@ -91,8 +91,6 @@ public abstract class ExecutionTests<M extends Module> {
 				.getAllModuleTraces();
 		assertThat("One single EvlModuleTrace", moduleTraces.size(), is(1));
 		IEvlModuleTrace moduleTrace = moduleTraces.iterator().next();
-		
-		
 		List<IContextTrace> contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
 				.filter(t -> t instanceof IContextTrace)
 				.map(IContextTrace.class::cast).collect(Collectors.toList());

@@ -74,7 +74,7 @@ public class ExecutionListenerTests {
 			// 1. Trigger listener by executing a TracedExecutableBlock
 			TracedConstraint blockMock = new TracedConstraint();
 			IInvariantTrace executionTraceMock = mock(IInvariantTrace.class);
-			blockMock.setCurrentTrace(executionTraceMock);
+			blockMock.setModuleElementTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			// 2. Execute other expression
 			ModuleElement me = mock(ModuleElement.class);
@@ -88,7 +88,7 @@ public class ExecutionListenerTests {
 			// 1. Trigger listener by executing a TracedExecutableBlock
 			TracedConstraint blockMock = new TracedConstraint();
 			IInvariantTrace executionTraceMock = mock(IInvariantTrace.class);
-			blockMock.setCurrentTrace(executionTraceMock);
+			blockMock.setModuleElementTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 			// 2. Execute a non-satisfies operation
 			ast = ExecutionListenerTests.getOrCreateOperationCallExpression(targetExpression, "getOne",
@@ -107,7 +107,7 @@ public class ExecutionListenerTests {
 			// 1. Trigger listener by executing a TracedExecutableBlock
 			TracedConstraint blockMock = new TracedConstraint();
 			IInvariantTrace executionTraceMock = mock(IInvariantTrace.class);
-			blockMock.setCurrentTrace(executionTraceMock);
+			blockMock.setModuleElementTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 
 			// 2. Record invocations
@@ -140,7 +140,7 @@ public class ExecutionListenerTests {
 			// 1. Trigger listener by executing a TracedExecutableBlock
 			TracedConstraint blockMock = new TracedConstraint();
 			IInvariantTrace executionTraceMock = mock(IInvariantTrace.class);
-			blockMock.setCurrentTrace(executionTraceMock);
+			blockMock.setModuleElementTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 
 			// 2. Record invocations
@@ -175,7 +175,7 @@ public class ExecutionListenerTests {
 			// 1. Trigger listener by executing a TracedExecutableBlock
 			TracedConstraint blockMock = new TracedConstraint();
 			IInvariantTrace executionTraceMock = mock(IInvariantTrace.class);
-			blockMock.setCurrentTrace(executionTraceMock);
+			blockMock.setModuleElementTrace(executionTraceMock);
 			listener.aboutToExecute(blockMock, contextMock);
 
 			// 2. Record invocations

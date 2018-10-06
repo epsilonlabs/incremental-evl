@@ -13,8 +13,6 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElemen
 import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
-import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
-import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
@@ -28,6 +26,7 @@ import org.eclipse.epsilon.eol.dom.NameExpression;
 import org.eclipse.epsilon.eol.dom.OperationCallExpression;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelNotFoundException;
+import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.eol.models.IModel;
@@ -41,8 +40,11 @@ import org.slf4j.LoggerFactory;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<?>, M extends IExecutionTraceManager<?, ?, ?>>
-		implements IExecutionListener<IIncrementalBaseContext<T, R, M>> {
+public class AllInstancesInvocationExecutionListener<
+			T extends IModuleExecutionTrace,
+			R extends IModuleExecutionTraceRepository<T>,
+			M extends IExecutionTraceManager<T, R, ?>
+		> implements IExecutionListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(AllInstancesInvocationExecutionListener.class);
 
@@ -60,15 +62,16 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 	}
 
 	@Override
-	public void aboutToExecute(ModuleElement ast, IIncrementalBaseContext<T, R, M> context) {
+	public void aboutToExecute(ModuleElement ast, IEolContext context) {
 		logger.debug("aboutToExecute {}", ast);
 		if (ast instanceof TracedModuleElement) {
 			moduleElementStack.addLast((TracedModuleElement<?>) ast);
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void finishedExecuting(ModuleElement ast, Object result, IIncrementalBaseContext<T, R, M> context) {
+	public void finishedExecuting(ModuleElement ast, Object result, IEolContext context) {
 		logger.debug("finishedExecuting {} for {}", ast, result);
 		if (moduleElementStack.isEmpty()) {
 			return;
@@ -93,7 +96,7 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 				String typeName = typeVar.getName();
 				boolean ofKind = !"allOfType".equals(operationName);
 				try {
-					record(currentAst.getCurrentTrace(), currentAst.getCurrentContext(), ofKind, typeName, context);
+					record(currentAst.getModuleElementTrace(), currentAst.getCurrentContext(), ofKind, typeName, (IIncrementalBaseContext<T, R, M>) context);
 				} catch (EolIncrementalExecutionException e) {
 					logger.warn("Unable to create traces for the execution of {}", ast, e);
 				} catch (EolRuntimeException e) {
@@ -105,8 +108,15 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 
 	@Override
 	public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception,
-			IIncrementalBaseContext<T, R, M> context) {
+			IEolContext context) {
 		logger.debug("finishedExecutingWithException");
+		if (moduleElementStack.isEmpty()) {
+			return;
+		}
+		TracedModuleElement<?> currentAst = moduleElementStack.peekFirst();
+		if (currentAst.equals(ast)) {
+			moduleElementStack.pollFirst();
+		}
 	}
 
 	public boolean done() {
@@ -178,5 +188,7 @@ public class AllInstancesInvocationExecutionListener<T extends IModuleExecutionT
 		}
 		currentContext.getOrCreateAllInstancesAccess(ofKind, executionTrace, typeTrace);
 	}
+
+
 
 }

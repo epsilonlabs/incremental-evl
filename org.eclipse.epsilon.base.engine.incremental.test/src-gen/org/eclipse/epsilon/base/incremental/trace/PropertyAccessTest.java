@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-05.
+ * This file was automatically generated on: 2018-09-12.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -53,7 +53,7 @@ public class PropertyAccessTest {
         IPropertyTrace _property = mock(IPropertyTrace.class);
                 
         // protected region PropertyAccessInit_init on begin
-        classUnderTest = new PropertyAccess(_executionTrace, _property, containerMock);                    
+        classUnderTest = new PropertyAccess(_from, _property, containerMock);                    
         // protected region PropertyAccessInit_init end
         
         
@@ -104,7 +104,7 @@ public class PropertyAccessTest {
         IPropertyTrace _property = mock(IPropertyTrace.class);
                 
         // protected region PropertyAccessInit_PropertyReference on begin
-        classUnderTest = new PropertyAccess(_executionTrace, _property, containerMock);                    
+        classUnderTest = new PropertyAccess(_from, _property, containerMock);                    
         // protected region PropertyAccessInit_PropertyReference end
         IPropertyTrace ref = mock(IPropertyTrace.class);
         

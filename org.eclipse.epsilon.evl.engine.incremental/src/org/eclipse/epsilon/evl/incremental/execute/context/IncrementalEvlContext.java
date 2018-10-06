@@ -10,10 +10,15 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.execute.context;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.evl.execute.context.EvlContext;
 import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
@@ -37,7 +42,15 @@ public class IncrementalEvlContext<R extends IEvlModuleTraceRepository, F extend
 	private final PropertyAccessExecutionListener<IEvlModuleTrace, R, M> propertyAccessListener = new PropertyAccessExecutionListener<IEvlModuleTrace, R, M>();
 	private final AllInstancesInvocationExecutionListener<IEvlModuleTrace, R, M> allAccessListener = new AllInstancesInvocationExecutionListener<IEvlModuleTrace, R, M>();
 	private final SatisfiesInvocationExecutionListener<IEvlModuleTrace, R, M> satisfiesListener = new SatisfiesInvocationExecutionListener<IEvlModuleTrace, R, M>();
+	
+	private List<IExecutionListener> executionListeners;
+	
+	/**
+	 * Flag to indicate that we are on live mode, i.e. listening to model changes
+	 */
+	private boolean onlineExecution;
 
+	
 	/**
 	 * Gets the trace manager.
 	 *
@@ -62,18 +75,24 @@ public class IncrementalEvlContext<R extends IEvlModuleTraceRepository, F extend
 	}
 
 	@Override
-	public PropertyAccessExecutionListener<IEvlModuleTrace, R, M> getPropertyAccessExecutionListener() {
-		return propertyAccessListener;
+	public Collection<IExecutionListener> getIncrementalExecutionListeners() {
+		if (executionListeners == null) {
+			executionListeners = new ArrayList<>();
+			executionListeners.add(propertyAccessListener);
+			executionListeners.add(allAccessListener);
+			executionListeners.add(satisfiesListener);
+		}
+		return executionListeners;
 	}
 
 	@Override
-	public AllInstancesInvocationExecutionListener<IEvlModuleTrace, R, M> getAllInstancesInvocationExecutionListener() {
-		return allAccessListener;
+	public void setOnlineExecutionMode(boolean onlineExecution) {
+		this.onlineExecution = onlineExecution;
 	}
 
 	@Override
-	public SatisfiesInvocationExecutionListener<IEvlModuleTrace, R, M> getSatisfiesListener() {
-		return satisfiesListener;
+	public boolean isOnlineExecutionMode() {
+		return onlineExecution;
 	}
 
 }

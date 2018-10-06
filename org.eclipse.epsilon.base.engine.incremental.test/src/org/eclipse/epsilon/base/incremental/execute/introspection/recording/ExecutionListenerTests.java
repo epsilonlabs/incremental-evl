@@ -69,6 +69,7 @@ public class ExecutionListenerTests {
 			// mock? context.getModelRepository().getModelByName(modelName);
 		}
 
+		/* THESE ARE ACTUALLY INTEGRATION TESTS; NEED OTHER APPROACH
 		@Test
 		public void testFinishedNotAnOperationCallExpression() {
 			// 1. Trigger listener by executing a TracedExecutableBlock
@@ -193,13 +194,14 @@ public class ExecutionListenerTests {
 				IModuleElementTrace executionTraceMock) throws Exception {
 			// Setup mocks
 			IModuleElementTraceHasAccesses hasAccesses = mock(IModuleElementTraceHasAccesses.class);
-			when(executionTraceMock.accesses()).thenReturn(hasAccesses);
+			//when(executionTraceMock.accesses()).thenReturn(hasAccesses);
 			IIncrementalModel modelMock = mock(IIncrementalModel.class);
 			ModelRepository repositoryMock = mock(ModelRepository.class);
 			when(contextMock.getModelRepository()).thenReturn(repositoryMock);
 			when(repositoryMock.getModelByName("modelA")).thenReturn(modelMock);
 
 		}
+		*/
 	}
 
 	public static class PropertyAccessExecutionListenerTest {
@@ -213,7 +215,17 @@ public class ExecutionListenerTests {
 		private IIncrementalBaseContext<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IExecutionTraceManager<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IBaseRootElementsFactory>> contextMock;
 
 		private PropertyAccessExecutionListener<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IExecutionTraceManager<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IBaseRootElementsFactory>> listener;
-
+		
+		
+		@Test
+		public void whenAboutToExecuteTheAstMustBeAddedToTheStack() {
+			// Init the listener
+			listener = new PropertyAccessExecutionListener<>();
+			
+		}
+		
+/*		
+ * 		THESE ARE ACTUALLY INTEGRATION TESTS. MOVE THEM SOMEWHERE MORE APPROPRIATE
 		@Test
 		public void testRecordSingleExecution() throws Exception {
 			String elementId = "some/path/element";
@@ -251,7 +263,7 @@ public class ExecutionListenerTests {
 		}
 
 		@Test
-		public void testNoPropertyAccess() throws Exception {
+		public void testOperationIsNotPropertyAccess() throws Exception {
 			String result = "someValue";
 			String instance = "someObject";
 
@@ -377,14 +389,7 @@ public class ExecutionListenerTests {
 //			verifyAll();
 //		}
 
-		/**
-		 * @param elementId
-		 * @param instance
-		 * @param propertyName
-		 * @param executionTraceMock
-		 * @param propertyvalue
-		 * @throws EolIncrementalExecutionException
-		 */
+
 		private void recordExecutionTrace(String elementId, String instance, String propertyName,
 				IModuleElementTrace executionTraceMock) {
 
@@ -438,7 +443,7 @@ public class ExecutionListenerTests {
 //			// We need to create one
 //			EasyMock.expect(executionTraceMock.getOrCreatePropertyAccess(propertyTraceMock)).andReturn(pa);
 		}
-
+*/
 		/**
 		 * @return
 		 */

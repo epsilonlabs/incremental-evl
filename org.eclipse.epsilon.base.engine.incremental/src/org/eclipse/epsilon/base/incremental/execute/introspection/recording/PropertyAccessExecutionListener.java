@@ -6,23 +6,18 @@ import java.util.WeakHashMap;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
 import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
-import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.AssignmentStatement;
@@ -48,7 +43,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<?>, M extends IExecutionTraceManager<?, ?, ?>>
-		implements IExecutionListener<IIncrementalBaseContext<T, R, M>> {
+		implements IExecutionListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(PropertyAccessExecutionListener.class);
 
@@ -63,7 +58,7 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 	}
 
 	@Override
-	public void aboutToExecute(ModuleElement ast, IIncrementalBaseContext<T, R, M> context) {
+	public void aboutToExecute(ModuleElement ast, IEolContext context) {
 		logger.debug("aboutToExecute {}", ast);
 		if (ast instanceof TracedModuleElement) {
 			moduleElementStack.addLast((TracedModuleElement<?>) ast);
@@ -71,7 +66,7 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 	}
 
 	@Override
-	public void finishedExecuting(ModuleElement ast, Object result, IIncrementalBaseContext<T, R, M> context) {
+	public void finishedExecuting(ModuleElement ast, Object result, IEolContext context) {
 		logger.debug("finishedExecuting {} for {}", ast, result);
 		if (moduleElementStack.isEmpty()) {
 			return;
@@ -93,10 +88,10 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 			PropertyCallExpression propertyCallExpression = (PropertyCallExpression) ast;
 			final Object modelElement = cache.get(propertyCallExpression.getTargetExpression());
 			final String propertyName = propertyCallExpression.getPropertyNameExpression().getName();
-			final IIncrementalModel model = getModelThatKnowsAboutProperty(modelElement, propertyName, context);
+			final IIncrementalModel model = getModelThatKnowsAboutProperty(modelElement, propertyName,context);
 			if (model != null) {
 				try {
-					record(tracedModuleElement.getCurrentTrace(), tracedModuleElement.getCurrentContext(), model, modelElement, propertyName, result, context);
+					record(tracedModuleElement.getModuleElementTrace(), tracedModuleElement.getCurrentContext(), model, modelElement, propertyName, result, (IIncrementalBaseContext<T, R, M>) context);
 				} catch (EolIncrementalExecutionException e) {
 					logger.warn("Unable to create traces for the execution of {}", ast, e);
 				} catch (EolRuntimeException e) {
@@ -109,8 +104,15 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 
 	@Override
 	public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception,
-			IIncrementalBaseContext<T, R, M> context) {
+			IEolContext context) {
 		logger.debug("finishedExecutingWithException: ", exception);
+		if (moduleElementStack.isEmpty()) {
+			return;
+		}
+		TracedModuleElement<?> tracedModuleElement = moduleElementStack.peekFirst();
+		if (tracedModuleElement.equals(ast)) {
+			moduleElementStack.pollFirst();
+		}
 	}
 
 	public boolean done() {
@@ -146,6 +148,7 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 		IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager()
 				.getExecutionTraceRepository();
 		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
+		
 		String moduleUri = context.getModule().getUri().toString();
 		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository
 				.getModuleExecutionTraceByIdentity(moduleUri);
@@ -163,6 +166,22 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 		}
 		// FIXME A property access should also generate the matching element access.
 		IPropertyAccess pa = currentContext.getOrCreatePropertyAccess(executionTrace, propertyTrace);
+		setPropertyAccessValue(model, result, context, pa);
+	}
+	
+	/**
+	 * Set the property access value
+	 * @param model					The model that owns the target expression object
+	 * @param result				The result of the execution
+	 * @param context				The execution context
+	 * @param pa					The property access
+	 * @throws EolIncrementalExecutionException	If there is an error serializing the result value.
+	 */
+	private void setPropertyAccessValue(
+		IIncrementalModel model,
+		Object result,
+		IIncrementalBaseContext<T, R, M> context,
+		IPropertyAccess pa) throws EolIncrementalExecutionException {
 		String value = null;
 		if (model.owns(result)) {
 			try {
@@ -173,7 +192,6 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 						"Error getting serializable value of result" + e.getMessage());
 			}
 		} else {
-			// FIXME: Another model might own the result!
 			IModel resOwner = context.getModelRepository().getOwningModel(result);
 			if (resOwner != null && (resOwner instanceof IIncrementalModel)) {
 				try {

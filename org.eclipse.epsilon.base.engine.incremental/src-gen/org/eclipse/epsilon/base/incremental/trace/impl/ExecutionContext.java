@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-05.
+ * This file was automatically generated on: 2018-09-12.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -94,7 +94,7 @@ public class ExecutionContext implements IExecutionContext {
     	    if (modelElementVariable != null) {
     	        return modelElementVariable;
     	    }
-            Iterator<IModelElementVariable> it = this.contextVariables.get();
+    		Iterator<IModelElementVariable> it = this.contextVariables.get();
             while (it.hasNext()) {
             	IModelElementVariable item;
                 item = (IModelElementVariable) it.next();
@@ -123,7 +123,7 @@ public class ExecutionContext implements IExecutionContext {
     	    if (elementAccess != null) {
     	        return elementAccess;
     	    }
-            Iterator<IAccess> it = this.accesses.get();
+    		Iterator<IAccess> it = this.accesses.get();
             while (it.hasNext()) {
             	IElementAccess item;
                 IAccess t = it.next();
@@ -158,7 +158,7 @@ public class ExecutionContext implements IExecutionContext {
     	    if (allInstancesAccess != null) {
     	        return allInstancesAccess;
     	    }
-            Iterator<IAccess> it = this.accesses.get();
+    		Iterator<IAccess> it = this.accesses.get();
             while (it.hasNext()) {
             	IAllInstancesAccess item;
                 IAccess t = it.next();
@@ -194,7 +194,7 @@ public class ExecutionContext implements IExecutionContext {
     	    if (propertyAccess != null) {
     	        return propertyAccess;
     	    }
-            Iterator<IAccess> it = this.accesses.get();
+    		Iterator<IAccess> it = this.accesses.get();
             while (it.hasNext()) {
             	IPropertyAccess item;
                 IAccess t = it.next();

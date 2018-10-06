@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.epsilon.evl;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
@@ -27,7 +28,6 @@ import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
@@ -35,17 +35,18 @@ import org.eclipse.epsilon.eol.dom.ExecutableBlock;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelNotFoundException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
+import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.dom.Fix;
 import org.eclipse.epsilon.evl.execute.EvlOperationFactory;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
+import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraintContext;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
-import org.eclipse.epsilon.evl.incremental.execute.IEvlModuleIncremental;
 import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
@@ -55,7 +56,6 @@ import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
-import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
 import org.eclipse.epsilon.evl.parse.EvlParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,11 +76,6 @@ public class IncrementalEvlModule extends EvlModule implements
 	 * Flag to indicate incremental execution.
 	 */
 	private boolean incrementalMode = true;
-
-	/**
-	 * Flag to indicate that we are on live mode, i.e. listening to model changes
-	 */
-	private boolean onlineExecution;
 
 	/**
 	 * If onlineExecution, this flags signals when initial execution has finished
@@ -146,18 +141,10 @@ public class IncrementalEvlModule extends EvlModule implements
 	private TracedConstraintContext getOrCreateTracedConstraintContext() {
 		return new TracedConstraintContext();
 	}
-
-	@Override
-	public Object execute() throws EolRuntimeException {
-		if (!incrementalMode) {
-			logger.info("Invoked in non-incremental model. Delegating to normal EVL.");
-			return super.execute();
-		}
-		if (isLive()) {
-			logger.info("Execution is Live.");
-			return null;
-		}
-		prepareContext(getContext());
+	
+	protected void prepareExecution() throws EolRuntimeException {
+		logger.info("Executing pre{}");
+		super.prepareExecution();
 		getContext().setOperationFactory(new EvlOperationFactory());
 		getContext().getFrameStack().put(Variable.createReadOnlyVariable("thisModule", this));
 
@@ -206,30 +193,28 @@ public class IncrementalEvlModule extends EvlModule implements
 			}
 		}
 
-		logger.info("Adding execution listeners");
-		context.getExecutorFactory().addExecutionListener(context.getAllInstancesInvocationExecutionListener());
-		context.getExecutorFactory().addExecutionListener(context.getPropertyAccessExecutionListener());
-		context.getExecutorFactory().addExecutionListener(context.getSatisfiesListener());
-
-		// Perform evaluation
-		logger.info("Executing pre{}");
-		execute(getPre(), context);
-		logger.info("Executing contexts");
-		for (ConstraintContext conCtx : getConstraintContexts()) {
-			conCtx.checkAll(getContext());
+		logger.info("Adding incremental execution listeners");
+		for (IExecutionListener iel : context.getIncrementalExecutionListeners()) {
+			context.getExecutorFactory().addExecutionListener(iel);
 		}
-		for (UnsatisfiedConstraint uc : context.getUnsatisfiedConstraints()) {
-			logger.warn(uc.getMessage());
+	}
+	
+	
+	protected void checkConstraints() throws EolRuntimeException {
+		IEvlContext context = getContext();	
+		logger.info("Executing ConstraintContexts");
+		for (ConstraintContext constraintContext : getConstraintContexts()) {
+			constraintContext.execute(preProcessConstraintContext(constraintContext), context);
 		}
-		if (fixer != null) {
-			logger.info("Executing fixer");
-			fixer.fix(this);
-		}
-		logger.info("Executing post{}");
-		execute(getPost(), getContext());
+	}
+	
+	protected void postExecution() throws EolRuntimeException {
+		logger.info("Executing fixer");
+		super.postExecution();
 		logger.info("Persisting traces");
+		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = context.getTraceManager();
 		etManager.persistTraceInformation();
-		if (onlineExecution) {
+		if (getContext().isOnlineExecutionMode()) {
 			logger.info("Going to live execution.");
 //			for (ConstraintContext conCtx : getConstraintContexts()) { 
 //				((TracedConstraintContext)conCtx).goOnline();
@@ -239,7 +224,29 @@ public class IncrementalEvlModule extends EvlModule implements
 			listenToModelChanges(true);
 			live = true;
 		}
-		return null;
+	}
+	
+	
+	@Override
+	public final Set<UnsatisfiedConstraint> executeImpl() throws EolRuntimeException {
+		if (!incrementalMode) {
+			logger.info("Invoked in non-incremental model. Delegating to normal EVL.");
+			return super.execute();
+		}
+		if (isLive()) {
+			logger.info("Execution is Live.");
+			return Collections.emptySet();
+		}
+		
+		prepareExecution();
+		checkConstraints();
+		postExecution();
+		
+
+		for (UnsatisfiedConstraint uc : context.getUnsatisfiedConstraints()) {
+			logger.warn(uc.getMessage());
+		}
+		return context.getUnsatisfiedConstraints();
 	}
 
 	@Override
@@ -312,7 +319,7 @@ public class IncrementalEvlModule extends EvlModule implements
 			try {
 				if (conCtx.appliesTo(newElement, getContext())) {
 					logger.info("Found matching context, executing");
-					conCtx.checkAll(getContext());
+					conCtx.execute(preProcessConstraintContext(conCtx), context);
 				}
 			} catch (EolRuntimeException e) {
 				logger.error("Error executing contexts for new element", e);
@@ -375,11 +382,11 @@ public class IncrementalEvlModule extends EvlModule implements
 	}
 
 	public void setOnlineExecution(boolean onlineExecution) {
-		this.onlineExecution = onlineExecution;
+		getContext().setOnlineExecutionMode(onlineExecution);
 	}
 
 	public boolean isOnlineExecution() {
-		return onlineExecution;
+		return getContext().isOnlineExecutionMode();
 	}
 
 	private void executeContextTrace(IContextTrace contextT, IModelTrace modelTrace) {
@@ -392,13 +399,11 @@ public class IncrementalEvlModule extends EvlModule implements
 			ConstraintContext conCtx = getConstraintContextForTrace(contextT);
 			try {
 				String moduleUri = context.getModule().getUri().toString();
-				Object self = getSelf(moduleUri, modelTrace, modelElementTrace);
-				if (conCtx.appliesTo(self, getContext(), false)) {
+				Object modelElement = getSelf(moduleUri, modelTrace, modelElementTrace);
+				if (conCtx.appliesTo(modelElement, getContext(), false)) {
 					for (ModuleElement me : conCtx.getChildren()) {
 						Constraint constraint = (Constraint) me;
-						if (!constraint.isLazy(getContext()) && constraint.appliesTo(self, getContext(), false)) {
-							constraint.check(self, context, false);
-						}
+						constraint.execute(modelElement, context);
 					}
 				}
 			} catch (EolRuntimeException e) {
@@ -599,7 +604,7 @@ public class IncrementalEvlModule extends EvlModule implements
 			// FIXME Need to modify EVL so we can individually modify constraints
 			// (invariants)
 			logger.debug("Found ConstraintContext for invariant.");
-			Constraint inv = conCtx.getModuleElements().stream().map(Constraint.class::cast)
+			Constraint inv = conCtx.getConstraints().stream()
 					.filter(c -> c.getName().equals(invariantT.getName())).findFirst().get();
 			logger.debug("Found invariant for trace.");
 			inv.check(self, getContext());

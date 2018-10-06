@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-05.
+ * This file was automatically generated on: 2018-09-12.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -53,7 +53,7 @@ public class AllInstancesAccessTest {
         IModelTypeTrace _type = mock(IModelTypeTrace.class);
                 
         // protected region AllInstancesAccessInit_init on begin
-        classUnderTest = new AllInstancesAccess(false, _executionTrace, _type, containerMock);                    
+        classUnderTest = new AllInstancesAccess(false, _from, _type, containerMock);                    
         // protected region AllInstancesAccessInit_init end
         
         
@@ -104,7 +104,7 @@ public class AllInstancesAccessTest {
         IModelTypeTrace _type = mock(IModelTypeTrace.class);
                 
         // protected region AllInstancesAccessInit_TypeReference on begin
-        classUnderTest = new AllInstancesAccess(false, _executionTrace, _type, containerMock);                    
+        classUnderTest = new AllInstancesAccess(false, _from, _type, containerMock);                    
         // protected region AllInstancesAccessInit_TypeReference end
         IModelTypeTrace ref = mock(IModelTypeTrace.class);
         

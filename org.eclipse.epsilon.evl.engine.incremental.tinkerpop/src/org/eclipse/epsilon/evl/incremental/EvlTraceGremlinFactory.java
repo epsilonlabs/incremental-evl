@@ -6,6 +6,7 @@ import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex.Build
 import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertexProperty;
 import org.eclipse.epsilon.base.incremental.GremlinBaseFactoryImpl;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTraceGremlin;
 
@@ -17,12 +18,18 @@ public class EvlTraceGremlinFactory extends GremlinBaseFactoryImpl implements IE
 
 	@Override
 	public IEvlModuleTrace createModuleTrace(String uri) throws TraceModelDuplicateElement {
-		org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertexProperty.Builder uriP = DetachedVertexProperty.build();
-		uriP.setLabel("uri");
-		uriP.setValue(uri);
+		
 		Builder vertexBuilder = DetachedVertex.build();
 		vertexBuilder.setLabel("EvlModuleTrace");
-		vertexBuilder.addProperty(uriP.create());
+		// Properties
+		org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertexProperty.Builder pBuilder = DetachedVertexProperty.build();
+		pBuilder.setLabel("id");
+		pBuilder.setValue(GremlinUtils.identityToString(uri));
+		vertexBuilder.addProperty(pBuilder.create());
+		pBuilder = DetachedVertexProperty.build();
+		pBuilder.setLabel("uri");
+		pBuilder.setValue(uri);
+		vertexBuilder.addProperty(pBuilder.create());
 		Vertex m = vertexBuilder.create();
 		EvlModuleTraceGremlin result = new EvlModuleTraceGremlin();
 		result.delegate(m);
