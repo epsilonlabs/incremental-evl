@@ -17,6 +17,7 @@ import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
+import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
@@ -25,6 +26,7 @@ import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelNotFoundException;
+import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
@@ -44,9 +46,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A ConstraintContext that holds a reference to its tracing reference so it can
- * create ElementAccessTraces and that starts/stops the recording of the
- * guardBlock accesses.
+ * A ConstraintContext that holds a reference to its tracing reference so it can create 
+ * ElementAccessTraces and that starts/stops the recording of the guardBlock accesses.
  * 
  * @author Horacio Hoyos Rodriguez
  *
@@ -69,10 +70,12 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 		return moduleElementTrace;
 	}
 
+	@Override
 	public IExecutionContext getCurrentContext() {
 		return currentContext;
 	}
 
+	@Override
 	public void setCurrentContext(IExecutionContext currentContext) {
 		this.currentContext = currentContext;
 	}
@@ -90,9 +93,12 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 			return false;
 		}
 		@SuppressWarnings("unchecked")
-		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> tracedEvlContext = (IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>>) context;
-		createModuleElementTraces(tracedEvlContext);
-		createExecutionContext(object, tracedEvlContext, (IIncrementalModel) owningModel);
+		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> tracedEvlContext = 
+				(IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>>) context;
+		if (moduleElementTrace == null) {
+			createModuleElementTraces(tracedEvlContext);	
+		}
+		populateExecutionContext(object, tracedEvlContext, (IIncrementalModel) owningModel);
 		if (guardBlock != null) {
 			return guardBlock.execute(tracedEvlContext, Variable.createReadOnlyVariable("self", object));
 		} else {
@@ -100,7 +106,7 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 		}
 
 	}
-
+	
 	/**
 	 * Create the execution context for the current element and create result traces for the guard
 	 * and the check.
@@ -109,25 +115,25 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 	 * @param model
 	 * @throws EolRuntimeException
 	 */
-	private void createExecutionContext(Object modelElement,
+	private void populateExecutionContext(Object modelElement,
 		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> context,
-		final IIncrementalModel model) throws EolRuntimeException {
-		
+		final IIncrementalModel model) throws EolRuntimeException {		
 		logger.info("createExecutionContext for {}:{}  with element {}", getTypeName(), index,
 				modelElement);
 		IModelElementTrace elementTrace;
 		try {
+			currentContext = moduleElementTrace.getOrCreateExecutionContext();
+			assert this.currentContext != null;
 			elementTrace = IncrementalUtils.getOrCreateModelElementTrace(modelElement, context,
 					model);
-			currentContext = moduleElementTrace.getOrCreateExecutionContext();
 			if (guardBlock != null) {
 				((TracedExecutableBlock<?,?>) guardBlock).setCurrentContext(getCurrentContext());
 			}
-			currentContext.getOrCreateModelElementVariable("self", elementTrace);
-			currentContext.getOrCreateElementAccess(moduleElementTrace, elementTrace);
+			getCurrentContext().getOrCreateModelElementVariable("self", elementTrace);
+			getCurrentContext().getOrCreateAccess(IElementAccess.class, elementTrace);
 			for (Constraint c : constraints) {
 				TracedConstraint tc = (TracedConstraint) c;
-				tc.setCurrentContext(currentContext);
+				tc.setCurrentContext(getCurrentContext());
 				if (tc.hasGuard()) {
 					IGuardTrace gt = tc.getOrCreateGuardTrace();
 					gt.getOrCreateGuardResult(getCurrentContext());

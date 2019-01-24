@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-13.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -55,10 +55,7 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
     private IGuardedElementTraceHasGuard guard;
 
     /**
-     * * The execution context in which this module was executed. This is constitued
-       * by the variables that define the context of the module element. In EVL this would
-       * be ‘self’ (model element of the Context type) in ETL this would be the input (and 
-       * output variables). 
+     * * The execution context in which this module was executed. 
      */
     private IContextModuleElementTraceHasExecutionContext executionContext;
 
@@ -204,28 +201,28 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
         GraphTraversalSource g = startTraversal();
         GuardTraceGremlin guardTrace = null;
         try {
-    	    GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("guard");
-    	    if (gt.hasNext()) {
-    	        guardTrace = new GuardTraceGremlin();
-    	        guardTrace.delegate(gt.next());
-    	        guardTrace.graphTraversalSource(gts);
-    	    }
-    	    else {
-    	        Vertex v = null;
-    	        try {
+            GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("guard");
+            if (gt.hasNext()) {
+                guardTrace = new GuardTraceGremlin();
+                guardTrace.delegate(gt.next());
+                guardTrace.graphTraversalSource(gts);
+            }
+            else {
+                Vertex v = null;
+                try {
                 v = g.addV("GuardTrace").next();
-    	            guardTrace = new GuardTraceGremlin(this, v, gts);
-    	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-    	            g.V(v).as("v").properties().drop().select("v").drop();
-    	            throw new EolIncrementalExecutionException("Error creating requested GuardTrace", e);
-    	        }
-    	    }
-    	} finally {
+                    guardTrace = new GuardTraceGremlin(this, v, gts);
+                } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+                    g.V(v).as("v").properties().drop().select("v").drop();
+                    throw new EolIncrementalExecutionException("Error creating requested GuardTrace", e);
+                }
+            }
+        } finally {
             finishTraversal(g);
-        }    
+        }  
         return guardTrace;
     }      
-
+    
     @Override
     public IExecutionContext getOrCreateExecutionContext() throws EolIncrementalExecutionException {
         GraphTraversalSource g = startTraversal();
@@ -239,39 +236,39 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
                 g.V(v).as("v").properties().drop().select("v").drop();
                 throw new EolIncrementalExecutionException("Error creating requested ExecutionContext", e);
             }
-    	} finally {
+        } finally {
             finishTraversal(g);
-        }    
+        }  
         return executionContext;
     }      
-
+    
     @Override
     public IInvariantTrace getOrCreateInvariantTrace(String name) throws EolIncrementalExecutionException {
         GraphTraversalSource g = startTraversal();
         InvariantTraceGremlin invariantTrace = null;
         try {
-    	    GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("constraints").has("name", name);
-    	    if (gt.hasNext()) {
-    	        invariantTrace = new InvariantTraceGremlin();
-    	        invariantTrace.delegate(gt.next());
-    	        invariantTrace.graphTraversalSource(gts);
-    	    }
-    	    else {
-    	        Vertex v = null;
-    	        try {
-                v = g.addV("InvariantTrace").property(T.id, GremlinUtils.identityToString(name, this)).next();
-    	            invariantTrace = new InvariantTraceGremlin(name, this, v, gts);
-    	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-    	            g.V(v).as("v").properties().drop().select("v").drop();
-    	            throw new EolIncrementalExecutionException("Error creating requested InvariantTrace", e);
-    	        }
-    	    }
-    	} finally {
+            GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("constraints").has("name", name);
+            if (gt.hasNext()) {
+                invariantTrace = new InvariantTraceGremlin();
+                invariantTrace.delegate(gt.next());
+                invariantTrace.graphTraversalSource(gts);
+            }
+            else {
+                Vertex v = null;
+                try {
+                v = g.addV("InvariantTrace").property(T.id, GremlinUtils.identityToString(name, this, v, gts)).next();
+                    invariantTrace = new InvariantTraceGremlin(name, this, v, gts);
+                } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+                    g.V(v).as("v").properties().drop().select("v").drop();
+                    throw new EolIncrementalExecutionException("Error creating requested InvariantTrace", e);
+                }
+            }
+        } finally {
             finishTraversal(g);
-        }    
+        }  
         return invariantTrace;
     }      
-
+    
     public Map<String,Object> getIdProperties() {
         Map<String, Object> result = new HashMap<>();
         result.put("kind", getKind());
@@ -351,11 +348,11 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
         this.gts = gts;
     }
     
-    private GraphTraversalSource startTraversal() {
+    protected GraphTraversalSource startTraversal() {
         return this.gts.clone();
     }
     
-    private void finishTraversal(GraphTraversalSource g) {
+    protected void finishTraversal(GraphTraversalSource g) {
         try {
             g.close();
         } catch (Exception e) {

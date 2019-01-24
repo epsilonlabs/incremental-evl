@@ -4,7 +4,7 @@ pre {
 }
 
 context Row {
-    // Only appply to new account customers
+    // Only apply to new account customers
     guard : changeDate.before(sdf.parse(self.startDate))
     
     constraint isInOverdraft {

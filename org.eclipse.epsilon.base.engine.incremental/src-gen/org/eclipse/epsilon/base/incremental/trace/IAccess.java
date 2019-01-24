@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-12.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -17,8 +17,8 @@ import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
 /**
- * An Access is the super class of all possible types of accesses that can ocurr during
- * execution.
+ * An Access is the super class of all possible types of accesses that can ocurr
+ * during execution.
  */
 public interface IAccess extends IIdElement {
 

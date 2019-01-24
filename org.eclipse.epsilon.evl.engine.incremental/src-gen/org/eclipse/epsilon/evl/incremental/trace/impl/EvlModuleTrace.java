@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-05.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -128,7 +128,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
         }
         return contextTrace;
     }      
-
+        
                   
     @Override
     public IModelAccess getOrCreateModelAccess(String modelName, IModelTrace modelTrace) throws EolIncrementalExecutionException {

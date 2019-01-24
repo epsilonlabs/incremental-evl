@@ -35,12 +35,6 @@
         <details key="edge" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="satisfies" eType="#//SatisfiesTrace"
-        containment="true" eOpposite="#//SatisfiesTrace/invariant">
-      <eAnnotations source="https://eclipse.org/epsilon/incremental/Graph">
-        <details key="edge" value="true"/>
-      </eAnnotations>
-    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="invariantContext" lowerBound="1"
         eType="#//ContextTrace" eOpposite="#//ContextTrace/constraints"/>
   </eClassifiers>
@@ -77,12 +71,12 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="invariant" lowerBound="1"
         eType="#//InvariantTrace" eOpposite="#//InvariantTrace/message"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="SatisfiesTrace" eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//InContextModuleElementTrace">
-    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//SatisfiesTrace/invariant"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SatisfiesAccess" eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//Access">
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//SatisfiesAccess/modelElement"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="all" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
         defaultValueLiteral="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="invariant" lowerBound="1"
-        eType="#//InvariantTrace" eOpposite="#//InvariantTrace/satisfies"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="modelElement" lowerBound="1"
+        eType="ecore:EClass ../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//ModelElementTrace"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="satisfiedInvariants" lowerBound="1"
         upperBound="-1" eType="#//InvariantTrace" resolveProxies="false"/>
   </eClassifiers>

@@ -33,13 +33,7 @@ import org.eclipse.epsilon.emc.csv.CsvModel;
 import org.eclipse.epsilon.emc.csv.incremental.CsvModelIncremental;
 import org.eclipse.epsilon.eol.dom.XorOperatorExpression;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
-import org.eclipse.epsilon.evl.incremental.trace.ICheckResult;
-import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IGuardResult;
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
-import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
+import org.eclipse.epsilon.evl.incremental.trace.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -84,7 +78,7 @@ public abstract class ExecutionTests<M extends Module> {
 		});
 
 		module.parse(evlFile);
-		module.context.getModelRepository().addModel(model);
+		module.getContext().getModelRepository().addModel(model);
 		module.execute();
 
 		Set<IEvlModuleTrace> moduleTraces = module.getContext().getTraceManager().getExecutionTraceRepository()

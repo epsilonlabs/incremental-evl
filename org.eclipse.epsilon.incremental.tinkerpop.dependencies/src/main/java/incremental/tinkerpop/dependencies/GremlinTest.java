@@ -17,18 +17,18 @@ public class GremlinTest {
 	public static void main(String... args) {
 		System.out.println("running");
 		final Configuration conf = new BaseConfiguration();
-		conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + "." + ArangoDBGraph.CONFIG_DB_NAME, "epsilon");
-		conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + "." + ArangoDBGraph.CONFIG_GRAPH_NAME, "iEVL");
-		conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".arangodb.user", "epsilon");
-		conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".arangodb.password", "epsilon");
+		conf.addProperty(ArangoDBGraph.PROPERTY_KEY_PREFIX + "." + ArangoDBGraph.PROPERTY_KEY_DB_NAME, "epsilon");
+		conf.addProperty(ArangoDBGraph.PROPERTY_KEY_PREFIX + "." + ArangoDBGraph.PROPERTY_KEY_GRAPH_NAME, "iEVL");
+		conf.addProperty(ArangoDBGraph.PROPERTY_KEY_PREFIX + ".arangodb.user", "epsilon");
+		conf.addProperty(ArangoDBGraph.PROPERTY_KEY_PREFIX + ".arangodb.password", "epsilon");
 		// TODO Create an Ecore to ArangoDB graph schema
-		conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".graph.vertex", "EvlModuleTrace");
-		conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".graph.vertex", "ContextTrace");
-		conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".graph.vertex", "InvariantTrace");
-		conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".graph.edge", "elements");
-		conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".graph.edge", "invariantContext");
-		conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".graph.relation", "elements:EvlModulerace->ContextTrace");
-		conf.addProperty(ArangoDBGraph.ARANGODB_CONFIG_PREFIX + ".graph.relation", "invariantContext:ContextTrace->InvariantTrace");
+		conf.addProperty(ArangoDBGraph.PROPERTY_KEY_PREFIX + ".graph.vertex", "EvlModuleTrace");
+		conf.addProperty(ArangoDBGraph.PROPERTY_KEY_PREFIX + ".graph.vertex", "ContextTrace");
+		conf.addProperty(ArangoDBGraph.PROPERTY_KEY_PREFIX + ".graph.vertex", "InvariantTrace");
+		conf.addProperty(ArangoDBGraph.PROPERTY_KEY_PREFIX + ".graph.edge", "elements");
+		conf.addProperty(ArangoDBGraph.PROPERTY_KEY_PREFIX + ".graph.edge", "invariantContext");
+		conf.addProperty(ArangoDBGraph.PROPERTY_KEY_PREFIX + ".graph.relation", "elements:EvlModulerace->ContextTrace");
+		conf.addProperty(ArangoDBGraph.PROPERTY_KEY_PREFIX + ".graph.relation", "invariantContext:ContextTrace->InvariantTrace");
 		
 		ArangoDBGraph arangoG = null;
 		
@@ -73,10 +73,10 @@ public class GremlinTest {
 	public static void clear(Graph graph, Configuration configuration) throws Exception {
 		ArangoDBGraphClient client;
 		if (graph == null) {
-			Configuration arangoConfig = configuration.subset(ArangoDBGraph.ARANGODB_CONFIG_PREFIX);
+			Configuration arangoConfig = configuration.subset(ArangoDBGraph.PROPERTY_KEY_PREFIX);
 			Properties arangoProperties = ConfigurationConverter.getProperties(arangoConfig);
 			client = new ArangoDBGraphClient(arangoProperties, "tinkerpop", 0);
-			client.deleteGraph(arangoConfig.getString(ArangoDBGraph.CONFIG_GRAPH_NAME));
+			client.deleteGraph(arangoConfig.getString(ArangoDBGraph.PROPERTY_KEY_GRAPH_NAME));
 		}
 		else {
 			ArangoDBGraph agraph = (ArangoDBGraph) graph;

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-12.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,7 +14,7 @@ package org.eclipse.epsilon.base.incremental.trace;
 import java.util.Iterator;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 
 public interface IAccessHasFrom {
 
@@ -25,29 +25,29 @@ public interface IAccessHasFrom {
     /**
      * Get the value(s) for the reference
      */
-    public IModuleElementTrace get();
+    public IExecutionContext get();
 
     /**
      * Create a reference to the target element. Returns true if the relation was created or if the
      * relation already existed. 
-     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IModuleElementTrace)}).
+     * The relation is created if there are no conflicts (see {@link ExecutionHasAccesses#conflict(IExecutionContext)}).
      * If the reference has an opposite, that relation is also created.
      *
-     * @see ExecutionHasAccesses#conflict(IModuleElementTrace)
-     * @see ExecutionHasAccesses#related(IModuleElementTrace)
-     * @param target The IModuleElementTrace to create a relation with
-     * @throws TraceModelConflictRelation if a relation to another IModuleElementTrace exists
+     * @see ExecutionHasAccesses#conflict(IExecutionContext)
+     * @see ExecutionHasAccesses#related(IExecutionContext)
+     * @param target The IExecutionContext to create a relation with
+     * @throws TraceModelConflictRelation if a relation to another IExecutionContext exists
      */
-    boolean create(IModuleElementTrace target) throws TraceModelConflictRelation;
+    boolean create(IExecutionContext target) throws TraceModelConflictRelation;
     
     /**
      * Destroy a reference to the target element. Returns true, if the reference existed
      * and was properly destroyed. If the reference has an opposite, that relation
      * is also destroyed.
      *
-     * @see ExecutionHasAccesses#related(IModuleElementTrace)
+     * @see ExecutionHasAccesses#related(IExecutionContext)
      */    
-    boolean destroy(IModuleElementTrace target);
+    boolean destroy(IExecutionContext target);
     
     /**
      * Determines if there is a conflict with a possible target. Conflicts can only arise for if
@@ -71,12 +71,12 @@ public interface IAccessHasFrom {
      *      </ul>
      *  </li>
      */
-    boolean conflict(IModuleElementTrace target);
+    boolean conflict(IExecutionContext target);
     
     /**
      * Returns true if the target is already related via this reference.
      */
-    boolean related(IModuleElementTrace target);
+    boolean related(IExecutionContext target);
 
     // RESTRICTED API: This methods should only be called from create/destroy operations in the
     // implementing class or its opposite relation class. 
@@ -85,15 +85,15 @@ public interface IAccessHasFrom {
      * Set a new value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#create(IModuleElementTrace)
+     * @see ExecutionHasAccesses#create(IExecutionContext)
      */
-    void set(IModuleElementTrace target);
+    void set(IExecutionContext target);
 
     /**
      * Remove a value for the reference. This method should be only accessed by classes in the
      * relation.
      *
-     * @see ExecutionHasAccesses#destroy(IModuleElementTrace)
+     * @see ExecutionHasAccesses#destroy(IExecutionContext)
      */
-    void remove(IModuleElementTrace target);
+    void remove(IExecutionContext target);
 }

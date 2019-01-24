@@ -106,13 +106,13 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 		ConstraintTrace trace;
 		
 		// Look for a result in the trace first if this constraint is a dependency, otherwise run the check block
-		if (checkTrace && (trace = context.getConstraintTrace()).isChecked(this, self)) {
+		if (isDependedOn && (trace = context.getConstraintTrace()).isChecked(this, self)) {
 			assert context.getConstraintsDependedOn().contains(this);
 			result = trace.isSatisfied(this, self);
 		}
 		else {
 			result = checkBlock.execute(context, false);
-			if (!tracedEvlContext.isOnlineExecutionMode() && !context.optimizeConstraintsCache()) {
+			if (!tracedEvlContext.isOnlineExecutionMode() && !context.isOptimizeConstraintTrace()) {
 				context.getConstraintTrace().addChecked(this, self, result);
 			}
 			ICheckTrace chkTrace = (ICheckTrace) ((TracedExecutableBlock<?, ?>)checkBlock).getModuleElementTrace();
@@ -153,7 +153,6 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 				try {
 					guard = moduleElementTrace.getOrCreateGuardTrace();
 					((TracedExecutableBlock<IGuardTrace, Boolean>) guardBlock).setModuleElementTrace(guard);
-					((TracedExecutableBlock<IGuardTrace, Boolean>) guardBlock).setCurrentContext(getCurrentContext());
 				} catch (EolIncrementalExecutionException e) {
 					throw new EolIncrementalExecutionException(
 							"Can't create GuardTrace for Invariant " + getName() + ".");
@@ -180,7 +179,6 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 				try {
 					check = moduleElementTrace.getOrCreateCheckTrace();
 					((TracedExecutableBlock<ICheckTrace, Boolean>) checkBlock).setModuleElementTrace(check);
-					((TracedExecutableBlock<IGuardTrace, Boolean>) checkBlock).setCurrentContext(getCurrentContext());
 				} catch (EolIncrementalExecutionException e) {
 					throw new EolIncrementalExecutionException(
 							"Can't create GuardTrace for Invariant " + getName() + ".");
@@ -206,7 +204,6 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 				try {
 					message = moduleElementTrace.getOrCreateMessageTrace();
 					((TracedExecutableBlock<IMessageTrace, String>) messageBlock).setModuleElementTrace(message);
-					((TracedExecutableBlock<IMessageTrace, String>) messageBlock).setCurrentContext(getCurrentContext());
 				} catch (EolIncrementalExecutionException e) {
 					throw new EolIncrementalExecutionException(
 							"Can't create MessageTrace for Invariant " + getName() + ".");

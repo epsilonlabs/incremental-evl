@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-12.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,7 +18,12 @@ import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
 /**
- * The ExecutionContext Interface.
+ * An ExecutionContext is represented by the set of ModelElementVariables and
+ * Accesses that occured during execution.
+ * 
+ * For example, in EVL, the ModelElementVariables would contain the ‘self’ (model
+ * element of the Context type); in in ETL this would be the input (and output
+ * variables). 
  */
 public interface IExecutionContext extends IIdElement {
 
@@ -45,14 +50,9 @@ public interface IExecutionContext extends IIdElement {
     
     /** The ModelElementVariable Factory. */
     IModelElementVariable getOrCreateModelElementVariable(String name, IModelElementTrace value) throws EolIncrementalExecutionException;       
-    /** The ElementAccess Factory. */
-    IElementAccess getOrCreateElementAccess(IModuleElementTrace from, IModelElementTrace element) throws EolIncrementalExecutionException;       
-
-    /** The AllInstancesAccess Factory. */
-    IAllInstancesAccess getOrCreateAllInstancesAccess(Boolean ofKind, IModuleElementTrace from, IModelTypeTrace type) throws EolIncrementalExecutionException;       
-
-    /** The PropertyAccess Factory. */
-    IPropertyAccess getOrCreatePropertyAccess(IModuleElementTrace from, IPropertyTrace property) throws EolIncrementalExecutionException;       
-
+            
+    /** The Access Factory. */        
+    public <A extends IAccess> A getOrCreateAccess(Class<A> accessClass, Object... args) throws EolIncrementalExecutionException;
+          
 
 }

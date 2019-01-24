@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-05.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -107,22 +107,6 @@ public class InvariantTraceTest {
         List<Object> list = new ArrayList<>();
         IMessageTrace child1 = classUnderTest.getOrCreateMessageTrace();
         list.add(classUnderTest.message().get());
-        
-        assertThat(list, hasItem(child1));
-        list.clear();
-    }
-    
-    @Test
-    public void testSatisfiesFactory() throws Exception {
-        ContextTraceHasConstraints containerReference = new ContextTraceHasConstraints(containerMock);
-        when(containerMock.constraints()).thenReturn(containerReference);
-        // protected region InvariantTraceInit_SatisfiesFactory on begin
-        classUnderTest = new InvariantTrace("name1", containerMock);                    
-        // protected region InvariantTraceInit_SatisfiesFactory end
-        
-        List<Object> list = new ArrayList<>();
-        ISatisfiesTrace child1 = classUnderTest.getOrCreateSatisfiesTrace();
-        list.add(classUnderTest.satisfies().get());
         
         assertThat(list, hasItem(child1));
         list.clear();

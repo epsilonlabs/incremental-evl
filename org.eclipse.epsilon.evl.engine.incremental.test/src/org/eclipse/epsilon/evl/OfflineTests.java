@@ -11,11 +11,9 @@ import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.csv.CsvModel;
@@ -85,7 +83,7 @@ public abstract class OfflineTests<M extends Module> {
 				return relativePath;
 			}
 		});
-		module.context.getModelRepository().addModel(model);
+		module.getContext().getModelRepository().addModel(model);
 		module.execute();
 		// Save the previous state so we can compare changes
 		// ContextTraces
@@ -117,8 +115,8 @@ public abstract class OfflineTests<M extends Module> {
 				return relativePath;
 			}
 		});
-		module.context.getModelRepository().removeModel(model);
-		module.context.getModelRepository().addModel(model2);
+		module.getContext().getModelRepository().removeModel(model);
+		module.getContext().getModelRepository().addModel(model2);
 
 		CsvCompare compare = new CsvCompare();
 		CsvComparison comparison = compare.match(model, model2);
@@ -161,7 +159,7 @@ public abstract class OfflineTests<M extends Module> {
 				return relativePath;
 			}
 		});
-		module.context.getModelRepository().addModel(model);
+		module.getContext().getModelRepository().addModel(model);
 		module.execute();
 
 		// Save the previous state so we can compare changes
@@ -194,8 +192,8 @@ public abstract class OfflineTests<M extends Module> {
 				return relativePath;
 			}
 		});
-		module.context.getModelRepository().removeModel(model);
-		module.context.getModelRepository().addModel(model2);
+		module.getContext().getModelRepository().removeModel(model);
+		module.getContext().getModelRepository().addModel(model2);
 
 		CsvCompare compare = new CsvCompare();
 		CsvComparison comparison = compare.match(model, model2);
@@ -238,7 +236,7 @@ public abstract class OfflineTests<M extends Module> {
 				return relativePath;
 			}
 		});
-		module.context.getModelRepository().addModel(model);
+		module.getContext().getModelRepository().addModel(model);
 		module.execute();
 
 		// Save the previous state so we can compare changes
@@ -273,8 +271,8 @@ public abstract class OfflineTests<M extends Module> {
 				return relativePath;
 			}
 		});
-		module.context.getModelRepository().removeModel(model);
-		module.context.getModelRepository().addModel(model2);
+		module.getContext().getModelRepository().removeModel(model);
+		module.getContext().getModelRepository().addModel(model2);
 
 		CsvCompare compare = new CsvCompare();
 		CsvComparison comparison = compare.match(model, model2);

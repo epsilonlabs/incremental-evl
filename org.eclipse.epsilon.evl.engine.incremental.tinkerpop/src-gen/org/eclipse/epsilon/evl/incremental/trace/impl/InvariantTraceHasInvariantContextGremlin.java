@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-13.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -67,7 +67,7 @@ public class InvariantTraceHasInvariantContextGremlin extends Feature
         GraphTraversalSource g = startTraversal();
         IContextTrace result = null;
         try {
-            Vertex to = g.E(delegate).outV().next();
+            Vertex to = g.E(delegate).inV().next();
             result = (IContextTrace) factory.createTraceElement(to, gts);
         }
         finally {
@@ -105,7 +105,7 @@ public class InvariantTraceHasInvariantContextGremlin extends Feature
         boolean result = false;
         GraphTraversalSource g = startTraversal();
         try {
-            result |= delegate == null ? g.V(source.getId()).out("invariantContext").hasNext() : g.E(delegate).outV().hasId(target.getId()).hasNext();
+            result |= delegate == null ? g.V(source.getId()).out("invariantContext").hasNext() : g.E(delegate).inV().hasId(target.getId()).hasNext();
             GraphTraversalSource g2 = startTraversal();
             try {
                 result |= delegate == null ? false : (target.constraints().isUnique() &&
@@ -143,7 +143,7 @@ public class InvariantTraceHasInvariantContextGremlin extends Feature
         }
         g = startTraversal();
         try {
-		  result = g.E(delegate).outV().hasId(target.getId()).hasNext() && inTarget;
+		  result = g.E(delegate).inV().hasId(target.getId()).hasNext() && inTarget;
 		}
 		finally {
             finishTraversal(g);

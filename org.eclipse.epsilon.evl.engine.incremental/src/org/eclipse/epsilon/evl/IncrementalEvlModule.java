@@ -65,7 +65,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * AnIncrementalEvlModule.
+ * An IncrementalEvlModule.
  */
 public class IncrementalEvlModule extends EvlModule implements
 		IEvlModuleIncremental<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> {
@@ -89,7 +89,7 @@ public class IncrementalEvlModule extends EvlModule implements
 	Set<IIncrementalModel> targets;
 
 	/** The context. */
-	protected IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> context;
+	//protected IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> context;
 
 	public IncrementalEvlModule() {
 		super();
@@ -102,7 +102,7 @@ public class IncrementalEvlModule extends EvlModule implements
 		Injector injector = Guice.createInjector(incrementalGuiceModule);
 		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = injector
 				.getInstance(IEvlExecutionTraceManager.class);
-		this.context.setTraceManager(etManager);
+		this.getContext().setTraceManager(etManager);
 	}
 
 	@Override
@@ -148,7 +148,7 @@ public class IncrementalEvlModule extends EvlModule implements
 		getContext().setOperationFactory(new EvlOperationFactory());
 		getContext().getFrameStack().put(Variable.createReadOnlyVariable("thisModule", this));
 
-		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = context.getTraceManager();
+		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = getContext().getTraceManager();
 		IEvlRootElementsFactory factory = etManager.getTraceFactory();
 
 		String evlScripPath = "String"; // If the module is invoked with a string rather than a file
@@ -194,7 +194,7 @@ public class IncrementalEvlModule extends EvlModule implements
 		}
 
 		logger.info("Adding incremental execution listeners");
-		for (IExecutionListener iel : context.getIncrementalExecutionListeners()) {
+		for (IExecutionListener iel : getContext().getIncrementalExecutionListeners()) {
 			context.getExecutorFactory().addExecutionListener(iel);
 		}
 	}
@@ -212,7 +212,7 @@ public class IncrementalEvlModule extends EvlModule implements
 		logger.info("Executing fixer");
 		super.postExecution();
 		logger.info("Persisting traces");
-		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = context.getTraceManager();
+		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = getContext().getTraceManager();
 		etManager.persistTraceInformation();
 		if (getContext().isOnlineExecutionMode()) {
 			logger.info("Going to live execution.");
@@ -243,15 +243,15 @@ public class IncrementalEvlModule extends EvlModule implements
 		postExecution();
 		
 
-		for (UnsatisfiedConstraint uc : context.getUnsatisfiedConstraints()) {
+		for (UnsatisfiedConstraint uc : getContext().getUnsatisfiedConstraints()) {
 			logger.warn(uc.getMessage());
 		}
-		return context.getUnsatisfiedConstraints();
+		return getContext().getUnsatisfiedConstraints();
 	}
 
 	@Override
 	public IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> getContext() {
-		return context;
+		return (IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>>) context;
 	}
 
 	@Override
@@ -310,7 +310,7 @@ public class IncrementalEvlModule extends EvlModule implements
 	public void onCreate(IIncrementalModel model, Object newElement) throws EolRuntimeException {
 
 		logger.info("On Craete event for {}", newElement);
-		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = context.getTraceManager();
+		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = getContext().getTraceManager();
 		// Do we need to execute the pre blocks to restore context?
 		// logger.info("Executing pre{}");
 		// execute(getPre(), context);
@@ -319,7 +319,7 @@ public class IncrementalEvlModule extends EvlModule implements
 			try {
 				if (conCtx.appliesTo(newElement, getContext())) {
 					logger.info("Found matching context, executing");
-					conCtx.execute(preProcessConstraintContext(conCtx), context);
+					conCtx.execute(preProcessConstraintContext(conCtx), getContext());
 				}
 			} catch (EolRuntimeException e) {
 				logger.error("Error executing contexts for new element", e);
@@ -330,7 +330,7 @@ public class IncrementalEvlModule extends EvlModule implements
 		Set<IReexecutionTrace> traces = repo.findAllInstancesExecutionTraces(moduleUri,
 				model.getTypeNameOf(newElement));
 		executeTraces(moduleUri, model, traces, newElement);
-		for (UnsatisfiedConstraint uc : context.getUnsatisfiedConstraints()) {
+		for (UnsatisfiedConstraint uc : getContext().getUnsatisfiedConstraints()) {
 			logger.debug(uc.getMessage());
 		}
 		logger.info("Persisting traces");
@@ -403,7 +403,7 @@ public class IncrementalEvlModule extends EvlModule implements
 				if (conCtx.appliesTo(modelElement, getContext(), false)) {
 					for (ModuleElement me : conCtx.getChildren()) {
 						Constraint constraint = (Constraint) me;
-						constraint.execute(modelElement, context);
+						constraint.execute(modelElement, getContext());
 					}
 				}
 			} catch (EolRuntimeException e) {
@@ -447,10 +447,12 @@ public class IncrementalEvlModule extends EvlModule implements
 			try {
 				if (t instanceof ReexecutionGuardTrace) {
 					executeTrace(moduleUri, model, (ReexecutionGuardTrace) t, modelObject);
-				} else if (t instanceof ReexecutionSatisfiesTrace) {
-					System.err.println("SatisfiesTraces should not be picked by model changes!");
-					//executeTrace(moduleUri, model, (ReexecutionSatisfiesTrace) t, modelObject);
-				} else if (t instanceof ReexecutionCheckTrace) {
+				}
+//				else if (t instanceof ReexecutionSatisfiesTrace) {
+//					System.err.println("SatisfiesTraces should not be picked by model changes!");
+//					//executeTrace(moduleUri, model, (ReexecutionSatisfiesTrace) t, modelObject);
+//				} 
+				else if (t instanceof ReexecutionCheckTrace) {
 					executeTrace(moduleUri, model, (ReexecutionCheckTrace) t, modelObject);
 				} else if (t instanceof ReexecutionMessageTrace) {
 					executeTrace(moduleUri, model, (ReexecutionMessageTrace) t, modelObject);

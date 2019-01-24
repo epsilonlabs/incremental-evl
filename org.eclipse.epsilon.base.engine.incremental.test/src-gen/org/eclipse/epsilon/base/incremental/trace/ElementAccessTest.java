@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-12.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -48,8 +48,6 @@ public class ElementAccessTest {
         
         ExecutionContextHasAccesses containerReference = new ExecutionContextHasAccesses(containerMock);
         when(containerMock.accesses()).thenReturn(containerReference);
-        IModuleElementTrace _from = mock(IModuleElementTrace.class);
-                
         IModelElementTrace _element = mock(IModelElementTrace.class);
                 
         // protected region ElementAccessInit_init on begin
@@ -68,39 +66,9 @@ public class ElementAccessTest {
     
     
     @Test
-    public void testFromReference() throws Exception {
-        ExecutionContextHasAccesses containerReference = new ExecutionContextHasAccesses(containerMock);
-        when(containerMock.accesses()).thenReturn(containerReference);
-        IModuleElementTrace _from = mock(IModuleElementTrace.class);
-                
-        IModelElementTrace _element = mock(IModelElementTrace.class);
-                
-        // protected region ElementAccessInit_FromReference on begin
-        classUnderTest = new ElementAccess(_from, _element, containerMock);                    
-        // protected region ElementAccessInit_FromReference end
-        IModuleElementTrace ref = mock(IModuleElementTrace.class);
-        
-        boolean result = classUnderTest.from().create(ref);
-        assertFalse("A new reference can not be created before destroy", result);
-        assertThat(classUnderTest.from().get(), is(_from));
-        result = classUnderTest.from().destroy(ref);
-        assertFalse("Can't destroy unexisting reference", result);
-        result = classUnderTest.from().destroy(_from);
-        assertTrue("Exising references can be destroyed", result);
-        assertThat(classUnderTest.from().get(), is(nullValue()));
-        result = classUnderTest.from().create(ref);
-        assertTrue("New references can be craeted if was null", result);
-        assertThat(classUnderTest.from().get(), is(ref));
-    
-    }
-    
-    
-    @Test
     public void testElementReference() throws Exception {
         ExecutionContextHasAccesses containerReference = new ExecutionContextHasAccesses(containerMock);
         when(containerMock.accesses()).thenReturn(containerReference);
-        IModuleElementTrace _from = mock(IModuleElementTrace.class);
-                
         IModelElementTrace _element = mock(IModelElementTrace.class);
                 
         // protected region ElementAccessInit_ElementReference on begin

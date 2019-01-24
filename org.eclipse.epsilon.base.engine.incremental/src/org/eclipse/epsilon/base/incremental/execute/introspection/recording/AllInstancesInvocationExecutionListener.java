@@ -13,6 +13,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElemen
 import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
+import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
@@ -20,6 +21,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
+import org.eclipse.epsilon.base.incremental.trace.impl.AllInstancesAccess;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.NameExpression;
@@ -186,7 +188,8 @@ public class AllInstancesInvocationExecutionListener<
 			}
 			typeTrace = modelTrace.getOrCreateModelTypeTrace(typeName);
 		}
-		currentContext.getOrCreateAllInstancesAccess(ofKind, executionTrace, typeTrace);
+		// currentContext.getOrCreateAllInstancesAccess(ofKind, executionTrace, typeTrace);
+		currentContext.getOrCreateAccess(IAllInstancesAccess.class, ofKind, executionTrace, typeTrace);
 	}
 
 

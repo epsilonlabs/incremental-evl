@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-13.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -201,11 +201,11 @@ public class ModelAccessGremlin implements IModelAccess, GremlinWrapper<Vertex> 
         this.gts = gts;
     }
     
-    private GraphTraversalSource startTraversal() {
+    protected GraphTraversalSource startTraversal() {
         return this.gts.clone();
     }
     
-    private void finishTraversal(GraphTraversalSource g) {
+    protected void finishTraversal(GraphTraversalSource g) {
         try {
             g.close();
         } catch (Exception e) {

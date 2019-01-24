@@ -79,7 +79,7 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 		// object on
 		// which the point expression was invoked, so that we can pass it to any
 		// property access recorders
-		if (isLeftHandSideOfPointExpression(ast)) {
+		if (IncrementalUtils.isLeftHandSideOfPointExpression(ast)) {
 			cache.put(ast, result);
 		}
 
@@ -165,7 +165,8 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 			propertyTrace = elementTrace.getOrCreatePropertyTrace(propertyName);
 		}
 		// FIXME A property access should also generate the matching element access.
-		IPropertyAccess pa = currentContext.getOrCreatePropertyAccess(executionTrace, propertyTrace);
+		//IPropertyAccess pa = currentContext.getOrCreatePropertyAccess(executionTrace, propertyTrace);
+		IPropertyAccess pa = currentContext.getOrCreateAccess(IPropertyAccess.class, executionTrace, propertyTrace);
 		setPropertyAccessValue(model, result, context, pa);
 	}
 	
@@ -207,11 +208,6 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 			}
 		}
 		pa.setValue(value);
-	}
-
-	private boolean isLeftHandSideOfPointExpression(ModuleElement ast) {
-		return ast.getParent() instanceof PropertyCallExpression
-				&& ((PropertyCallExpression) ast.getParent()).getTargetExpression() == ast;
 	}
 
 	/**

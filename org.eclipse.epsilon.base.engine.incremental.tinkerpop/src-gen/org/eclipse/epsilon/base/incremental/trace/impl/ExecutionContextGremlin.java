@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-13.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -128,86 +128,89 @@ public class ExecutionContextGremlin implements IExecutionContext, GremlinWrappe
         GraphTraversalSource g = startTraversal();
         ModelElementVariableGremlin modelElementVariable = null;
         try {
-    	    GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("contextVariables").has("name", name);
-    	    if (gt.hasNext()) {
-    	        modelElementVariable = new ModelElementVariableGremlin();
-    	        modelElementVariable.delegate(gt.next());
-    	        modelElementVariable.graphTraversalSource(gts);
-    	    }
-    	    else {
-    	        Vertex v = null;
-    	        try {
-                v = g.addV("ModelElementVariable").property(T.id, GremlinUtils.identityToString(name, value, this)).next();
-    	            modelElementVariable = new ModelElementVariableGremlin(name, value, this, v, gts);
-    	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-    	            g.V(v).as("v").properties().drop().select("v").drop();
-    	            throw new EolIncrementalExecutionException("Error creating requested ModelElementVariable", e);
-    	        }
-    	    }
-    	} finally {
+            GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("contextVariables").has("name", name);
+            if (gt.hasNext()) {
+                modelElementVariable = new ModelElementVariableGremlin();
+                modelElementVariable.delegate(gt.next());
+                modelElementVariable.graphTraversalSource(gts);
+            }
+            else {
+                Vertex v = null;
+                try {
+                v = g.addV("ModelElementVariable").property(T.id, GremlinUtils.identityToString(name, value, this, v, gts)).next();
+                    modelElementVariable = new ModelElementVariableGremlin(name, value, this, v, gts);
+                } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+                    g.V(v).as("v").properties().drop().select("v").drop();
+                    throw new EolIncrementalExecutionException("Error creating requested ModelElementVariable", e);
+                }
+            }
+        } finally {
             finishTraversal(g);
-        }    
+        }  
         return modelElementVariable;
     }      
-
-    @Override
-    public IElementAccess getOrCreateElementAccess(IModuleElementTrace from, IModelElementTrace element) throws EolIncrementalExecutionException {
+    
+    @SuppressWarnings("unchecked")
+    public <A extends IAccess> A getOrCreateAccess(Class<A> accessClass, Object... args) throws EolIncrementalExecutionException {
         GraphTraversalSource g = startTraversal();
-        ElementAccessGremlin elementAccess = null;
-        try {
-            Vertex v = null;
-            try {
-                v = g.addV("ElementAccess").next();
-                elementAccess = new ElementAccessGremlin(from, element, this, v, gts);
-            } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                g.V(v).as("v").properties().drop().select("v").drop();
-                throw new EolIncrementalExecutionException("Error creating requested ElementAccess", e);
-            }
-    	} finally {
-            finishTraversal(g);
-        }    
-        return elementAccess;
-    }      
-
-    @Override
-    public IAllInstancesAccess getOrCreateAllInstancesAccess(Boolean ofKind, IModuleElementTrace from, IModelTypeTrace type) throws EolIncrementalExecutionException {
-        GraphTraversalSource g = startTraversal();
-        AllInstancesAccessGremlin allInstancesAccess = null;
-        try {
-            Vertex v = null;
-            try {
-                v = g.addV("AllInstancesAccess").property(T.id, GremlinUtils.identityToString(ofKind, from, type, this)).next();
-                allInstancesAccess = new AllInstancesAccessGremlin(ofKind, from, type, this, v, gts);
-            } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                g.V(v).as("v").properties().drop().select("v").drop();
-                throw new EolIncrementalExecutionException("Error creating requested AllInstancesAccess", e);
-            }
-    	} finally {
-            finishTraversal(g);
-        }    
-        return allInstancesAccess;
-    }      
-
-    @Override
-    public IPropertyAccess getOrCreatePropertyAccess(IModuleElementTrace from, IPropertyTrace property) throws EolIncrementalExecutionException {
-        GraphTraversalSource g = startTraversal();
-        PropertyAccessGremlin propertyAccess = null;
-        try {
-            Vertex v = null;
-            try {
-                v = g.addV("PropertyAccess").next();
-                propertyAccess = new PropertyAccessGremlin(from, property, this, v, gts);
-            } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                g.V(v).as("v").properties().drop().select("v").drop();
-                throw new EolIncrementalExecutionException("Error creating requested PropertyAccess", e);
-            }
-    	} finally {
-            finishTraversal(g);
-        }    
-        return propertyAccess;
-    }      
-
-
+        A result = null;
+        switch(accessClass.getName()) {
+            case "ElementAccess":
+                assert args[1] instanceof IModelElementTrace;
+                ElementAccessGremlin elementAccess = null;
+                result = (A) elementAccess;
+                try {
+                    Vertex v = null;
+                    try {
+                        v = g.addV("ElementAccess").next();
+                        elementAccess = new ElementAccessGremlin((IModelElementTrace) args[0], this, v, gts);
+                    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+                        g.V(v).as("v").properties().drop().select("v").drop();
+                        throw new EolIncrementalExecutionException("Error creating requested ElementAccess", e);
+                    }
+                } finally {
+                    finishTraversal(g);
+                }  
+                break;
+            case "AllInstancesAccess":
+                assert args[1] instanceof Boolean;
+                assert args[2] instanceof IModelTypeTrace;
+                AllInstancesAccessGremlin allInstancesAccess = null;
+                result = (A) allInstancesAccess;
+                try {
+                    Vertex v = null;
+                    try {
+                        v = g.addV("AllInstancesAccess").property(T.id, GremlinUtils.identityToString((Boolean) args[0], (IModelTypeTrace) args[1], this, v, gts)).next();
+                        allInstancesAccess = new AllInstancesAccessGremlin((Boolean) args[0], (IModelTypeTrace) args[1], this, v, gts);
+                    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+                        g.V(v).as("v").properties().drop().select("v").drop();
+                        throw new EolIncrementalExecutionException("Error creating requested AllInstancesAccess", e);
+                    }
+                } finally {
+                    finishTraversal(g);
+                }  
+                break;
+            case "PropertyAccess":
+                assert args[1] instanceof IPropertyTrace;
+                PropertyAccessGremlin propertyAccess = null;
+                result = (A) propertyAccess;
+                try {
+                    Vertex v = null;
+                    try {
+                        v = g.addV("PropertyAccess").next();
+                        propertyAccess = new PropertyAccessGremlin((IPropertyTrace) args[0], this, v, gts);
+                    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+                        g.V(v).as("v").properties().drop().select("v").drop();
+                        throw new EolIncrementalExecutionException("Error creating requested PropertyAccess", e);
+                    }
+                } finally {
+                    finishTraversal(g);
+                }  
+                break;
+        }
+        return result;
+    }
+    
     public Map<String,Object> getIdProperties() {
         Map<String, Object> result = new HashMap<>();
         return result;
@@ -266,11 +269,15 @@ public class ExecutionContextGremlin implements IExecutionContext, GremlinWrappe
         this.gts = gts;
     }
     
-    private GraphTraversalSource startTraversal() {
+    protected GraphTraversalSource graphTraversalSource() {
+	    return this.gts;
+    }
+    
+    protected GraphTraversalSource startTraversal() {
         return this.gts.clone();
     }
     
-    private void finishTraversal(GraphTraversalSource g) {
+    protected void finishTraversal(GraphTraversalSource g) {
         try {
             g.close();
         } catch (Exception e) {

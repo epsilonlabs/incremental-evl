@@ -116,7 +116,7 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
         GraphTraversalSource g = startTraversal();
         [%=targetType%] result = null;
         try {
-            Vertex to = g.E(delegate).outV().next();
+            Vertex to = g.E(delegate).inV().next();
             result = ([%=targetType%]) factory.createTraceElement(to, gts);
         }
         finally {
@@ -167,7 +167,7 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
                 result |= gt.hasNext();
             }
 [%} else {%]
-            result |= delegate == null ? g.V(source.getId()).out("[%=er.name%]").hasNext() : g.E(delegate).outV().hasId(target.getId()).hasNext();
+            result |= delegate == null ? g.V(source.getId()).out("[%=er.name%]").hasNext() : g.E(delegate).inV().hasId(target.getId()).hasNext();
 [%}
 if (opposite.isDefined()) {
     if (opp_many) {%]
@@ -209,7 +209,7 @@ if (opposite.isDefined()) {
 if (er.isMany()) {
     sourceRel = "g.V(source.getId()).out(\"" + er.name + "\").hasId(target.getId()).hasNext()";
 } else {
-    sourceRel = "g.E(delegate).outV().hasId(target.getId()).hasNext()";
+    sourceRel = "g.E(delegate).inV().hasId(target.getId()).hasNext()";
 }
 // If there is an opposite, need to check that too. The check depends on the
 // multiplicity of the opposite

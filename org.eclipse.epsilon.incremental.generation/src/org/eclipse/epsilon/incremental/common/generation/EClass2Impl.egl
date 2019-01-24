@@ -182,10 +182,15 @@ for (er in ec.getEAllReferences().select(er | er.isContainment())) {
                     (aller.getEReferenceType() == sc) and 
                     aller.isContainment)
                 );
-        for (sc in subClasses) {%]
+        if (not er.getAnnotations("https://eclipse.org/epsilon/incremental/factory").isEmpty()) {
+            // FIXME!
+        }
+        else {
+            for (sc in subClasses) {%]
     [%=sc.factoryMethod(er, true, interPrefix, interSufix, classPrefix, classSufix)%]
-
-[%      }%]
+        
+[%          }
+        }%]
 [%  }%]
                   
 [%}%]

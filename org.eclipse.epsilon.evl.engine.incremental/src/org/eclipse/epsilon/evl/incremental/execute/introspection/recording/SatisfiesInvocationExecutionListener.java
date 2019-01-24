@@ -8,6 +8,7 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Queue;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
@@ -28,7 +29,7 @@ import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
-import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
+import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +73,9 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 
 	/** The initial satisfies operation */
 	private OperationCallExpression waitingFor;
+	
+	/** For satisfies we need to save the value of the left side expression */
+	private final WeakHashMap<ModuleElement, Object> cache = new WeakHashMap<ModuleElement, Object>();
 
 	public SatisfiesInvocationExecutionListener() {
 		super();
@@ -115,10 +119,18 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 				listening = !parameters.isEmpty();
 			}
 		} else {
+//			if (IncrementalUtils.isLeftHandSideOfPointExpression(ast)) {
+//				cache.put(ast, result);
+//			}
 			TracedModuleElement<IInvariantTrace> currentInvariant = moduleElementStack.peekFirst();
 			if (ast.equals(waitingFor)) {
 				boolean all = EvlOperationFactory.SATISFIES_ALL_OPERATION.equals(waitingFor.getOperationName());
-				record(all, parameterValues, (IInvariantTrace) currentInvariant.getModuleElementTrace(), (IIncrementalBaseContext<T, R, M>) context);
+				
+				//final Object modelElement = cache.get(propertyCallExpression.getTargetExpression());
+				//final String propertyName = propertyCallExpression.getPropertyNameExpression().getName();
+				//final IIncrementalModel model = getModelThatKnowsAboutProperty(modelElement, propertyName,context);
+				
+				//record(all, parameterValues, currentInvariant, (IIncrementalBaseContext<T, R, M>) context);
 				parameters.clear();
 				parameterValues.clear();
 				listening = false;
@@ -167,13 +179,13 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 	private void record(
 		boolean all,
 		Collection<String> parameterValues,
-		IInvariantTrace invariantTrace,
+		TracedModuleElement<IInvariantTrace> invariantTrace,
 		IIncrementalBaseContext<T,R,M> context) {
-		logger.info("Creating SatisfiesTrace. invariant: {}, satisfied: {}, all: {}", invariantTrace.getName(),
+		logger.info("Creating SatisfiesTrace. invariant: {}, satisfied: {}, all: {}", invariantTrace.getModuleElementTrace().getName(),
 				parameterValues, all);
 
 		// Each parameter should be an Invariant name
-		IContextTrace contextTrace = invariantTrace.invariantContext().get();
+		IContextTrace contextTrace = invariantTrace.getModuleElementTrace().invariantContext().get();
 		Set<IInvariantTrace> invariants = new HashSet<>();
 		for (Object p : parameterValues) {
 			assert p instanceof String;
@@ -196,9 +208,9 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 			}
 			invariants.add(targetInvariant);
 		}
-		ISatisfiesTrace result = null;
+		ISatisfiesAccess result = null;
 		try {
-			result = invariantTrace.getOrCreateSatisfiesTrace();
+			result = invariantTrace.getCurrentContext().getOrCreateAccess(ISatisfiesAccess.class, null);
 		} catch (EolIncrementalExecutionException e) {
 			throw new IllegalStateException(e);
 		} finally {
@@ -212,7 +224,7 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 			result.setAll(all);
 		}
 	}
-
+	
 
 
 }

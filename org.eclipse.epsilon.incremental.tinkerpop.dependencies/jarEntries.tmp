@@ -1,5 +1,5 @@
-    <classpathentry exported="true" kind="lib" path="lib/arangodb-java-driver-4.6.0.jar" sourcepath="lib/arangodb-java-driver-4.6.0-sources.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/arangodb-tinkerpop-provider-2.0.0-SNAPSHOT.jar" sourcepath="lib/arangodb-tinkerpop-provider-2.0.0-SNAPSHOT-sources.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/arangodb-java-driver-5.0.0.jar" sourcepath="lib/arangodb-java-driver-5.0.0-sources.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/arangodb-tinkerpop-provider-2.0.1.jar" sourcepath="lib/arangodb-tinkerpop-provider-2.0.1-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/commons-collections-3.2.2.jar" sourcepath="lib/commons-collections-3.2.2-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/commons-collections4-4.1.jar" sourcepath="lib/commons-collections4-4.1-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/commons-configuration-1.10.jar" sourcepath="lib/commons-configuration-1.10-sources.jar"/>
@@ -16,7 +16,8 @@
     <classpathentry exported="true" kind="lib" path="lib/jcabi-log-0.14.jar" sourcepath="lib/jcabi-log-0.14-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/jcabi-manifests-1.1.jar" sourcepath="lib/jcabi-manifests-1.1-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/jcl-over-slf4j-1.7.21.jar" sourcepath="lib/jcl-over-slf4j-1.7.21-sources.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/netty-all-4.1.29.Final.jar" sourcepath="lib/netty-all-4.1.29.Final-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/slf4j-api-1.7.21.jar" sourcepath="lib/slf4j-api-1.7.21-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/snakeyaml-1.15.jar" sourcepath="lib/snakeyaml-1.15-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tinkergraph-gremlin-3.3.3.jar" sourcepath="lib/tinkergraph-gremlin-3.3.3-sources.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/velocypack-1.2.0.jar" sourcepath="lib/velocypack-1.2.0-sources.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/velocypack-1.4.1.jar" sourcepath="lib/velocypack-1.4.1-sources.jar"/>

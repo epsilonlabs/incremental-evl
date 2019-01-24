@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-12.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -56,19 +56,15 @@ public class PropertyAccess implements IPropertyAccess {
      * Instantiates a new PropertyAccess. The PropertyAccess is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public PropertyAccess(IModuleElementTrace from,
-                          IPropertyTrace property,
+    public PropertyAccess(IPropertyTrace property,
                           IExecutionContext container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
 
-        this.property = new PropertyAccessHasProperty(this);
         this.from = new AccessHasFrom(this);
+        this.property = new PropertyAccessHasProperty(this);
         if (!this.property.create(property)) {
-            throw new TraceModelDuplicateElement();
-        }
-        if (!this.from.create(from)) {
             throw new TraceModelDuplicateElement();
         }
 
@@ -130,18 +126,18 @@ public class PropertyAccess implements IPropertyAccess {
         PropertyAccess other = (PropertyAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (property.get() == null) {
-            if (other.property.get() != null)
-                return false;
-        }
-        if (!property.get().equals(other.property.get())) {
-            return false;
-        }
         if (from.get() == null) {
             if (other.from.get() != null)
                 return false;
         }
         if (!from.get().equals(other.from.get())) {
+            return false;
+        }
+        if (property.get() == null) {
+            if (other.property.get() != null)
+                return false;
+        }
+        if (!property.get().equals(other.property.get())) {
             return false;
         }
         return true; 
@@ -151,8 +147,8 @@ public class PropertyAccess implements IPropertyAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((property.get() == null) ? 0 : property.get().hashCode());
         result = prime * result + ((from.get() == null) ? 0 : from.get().hashCode());
+        result = prime * result + ((property.get() == null) ? 0 : property.get().hashCode());
         return result;
     }
 }

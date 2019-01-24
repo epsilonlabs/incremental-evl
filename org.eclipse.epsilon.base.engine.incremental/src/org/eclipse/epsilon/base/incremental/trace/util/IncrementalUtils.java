@@ -19,6 +19,8 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
+import org.eclipse.epsilon.common.module.ModuleElement;
+import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 
 public class IncrementalUtils {
@@ -141,6 +143,11 @@ public class IncrementalUtils {
 			}
 		}
 		return elementTrace;
+	}
+
+	public static boolean isLeftHandSideOfPointExpression(ModuleElement ast) {
+		return ast.getParent() instanceof PropertyCallExpression
+				&& ((PropertyCallExpression) ast.getParent()).getTargetExpression() == ast;
 	}
 
 }

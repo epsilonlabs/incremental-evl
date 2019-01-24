@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-05.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -14,37 +14,31 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.function.Function;
 
-import org.eclipse.epsilon.evl.incremental.trace.ICheckResult;
-import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+
+import org.eclipse.epsilon.evl.IReexecutionTrace;
+import org.eclipse.epsilon.evl.ReexecutionCheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
-import org.eclipse.epsilon.evl.incremental.trace.IGuardResult;
-import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ElementAccess;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceRepositoryImpl;
+
+
 /** protected region EvlModuleTraceRepositoryImplImports on begin **/
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.function.Function;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 import org.eclipse.epsilon.base.incremental.trace.*;
-import org.eclipse.epsilon.evl.IReexecutionTrace;
-import org.eclipse.epsilon.evl.ReexecutionCheckTrace;
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.evl.ReexecutionContextTrace;
 import org.eclipse.epsilon.evl.ReexecutionGuardTrace;
 import org.eclipse.epsilon.evl.ReexecutionInvariantTrace;
 import org.eclipse.epsilon.evl.ReexecutionMessageTrace;
 import org.eclipse.epsilon.evl.incremental.trace.*;
-import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 /** protected region EvlModuleTraceRepositoryImplImports end **/
 
 
@@ -95,7 +89,6 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
     }
     
     /** protected region IEvlModuleTraceRepositry on begin **/
-    
 	@Override
 	public Set<IEvlModuleTrace> getAllModuleTraces() {
 		return Collections.unmodifiableSet(extent);
@@ -357,37 +350,37 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 	@Override
 	public void removeTraceInformation(String moduleUri, String elementUri, String modellUri) {
 
-		IEvlModuleTrace moduleTrace = getEvlModuleTraceByIdentity(moduleUri);
-		IModelTrace modelTrace = getModelTraceForModule(modellUri, moduleUri);
-		IModelElementTrace modelElementTrace = getModelElementTraceFromModel(elementUri, modelTrace);
-
-		List<IElementAccess> elementAccessTraces = IncrementalUtils.asStream(moduleTrace.accesses().get())
-				.filter(IElementAccess.class::isInstance).map(IElementAccess.class::cast)
-				.filter(ea -> ea.element().get().equals(modelElementTrace)).collect(Collectors.toList());
-		for (IElementAccess ea : elementAccessTraces) {
-			IModuleElementTrace executionTrace = ea.executionTrace().get();
-			ea.executionTrace().destroy(executionTrace);
-			List<IAccess> list = new ArrayList<>();
-			executionTrace.accesses().get().forEachRemaining(list::add);
-			if (list.isEmpty()) {
-				moduleTrace.moduleElements().destroy(executionTrace);
-			}
-			moduleTrace.accesses().destroy(ea);
-		}
-		List<IPropertyAccess> propertyAccessTraces = IncrementalUtils.asStream(moduleTrace.accesses().get())
-				.filter(IPropertyAccess.class::isInstance).map(IPropertyAccess.class::cast)
-				.filter(pa -> pa.property().get().elementTrace().get().equals(modelElementTrace))
-				.collect(Collectors.toList());
-		for (IPropertyAccess pa : propertyAccessTraces) {
-			IModuleElementTrace executionTrace = pa.executionTrace().get();
-			pa.executionTrace().destroy(executionTrace);
-			List<IAccess> list = new ArrayList<>();
-			executionTrace.accesses().get().forEachRemaining(list::add);
-			if (list.isEmpty()) {
-				moduleTrace.moduleElements().destroy(executionTrace);
-			}
-			moduleTrace.accesses().destroy(pa);
-		}
+//		IEvlModuleTrace moduleTrace = getEvlModuleTraceByIdentity(moduleUri);
+//		IModelTrace modelTrace = getModelTraceForModule(modellUri, moduleUri);
+//		IModelElementTrace modelElementTrace = getModelElementTraceFromModel(elementUri, modelTrace);
+//
+//		List<IElementAccess> elementAccessTraces = IncrementalUtils.asStream(moduleTrace.accesses().get())
+//				.filter(IElementAccess.class::isInstance).map(IElementAccess.class::cast)
+//				.filter(ea -> ea.element().get().equals(modelElementTrace)).collect(Collectors.toList());
+//		for (IElementAccess ea : elementAccessTraces) {
+//			IModuleElementTrace executionTrace = ea.executionTrace().get();
+//			ea.executionTrace().destroy(executionTrace);
+//			List<IAccess> list = new ArrayList<>();
+//			executionTrace.accesses().get().forEachRemaining(list::add);
+//			if (list.isEmpty()) {
+//				moduleTrace.moduleElements().destroy(executionTrace);
+//			}
+//			moduleTrace.accesses().destroy(ea);
+//		}
+//		List<IPropertyAccess> propertyAccessTraces = IncrementalUtils.asStream(moduleTrace.accesses().get())
+//				.filter(IPropertyAccess.class::isInstance).map(IPropertyAccess.class::cast)
+//				.filter(pa -> pa.property().get().elementTrace().get().equals(modelElementTrace))
+//				.collect(Collectors.toList());
+//		for (IPropertyAccess pa : propertyAccessTraces) {
+//			IModuleElementTrace executionTrace = pa.executionTrace().get();
+//			pa.executionTrace().destroy(executionTrace);
+//			List<IAccess> list = new ArrayList<>();
+//			executionTrace.accesses().get().forEachRemaining(list::add);
+//			if (list.isEmpty()) {
+//				moduleTrace.moduleElements().destroy(executionTrace);
+//			}
+//			moduleTrace.accesses().destroy(pa);
+//		}
 
 		// modelTrace.elements().destroy(modelElementTrace);
 		// TODO We could delete allInstances access is no more elements of the type

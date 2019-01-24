@@ -5,6 +5,15 @@ operation EClass getJavaInterfaceName(interPrefix:String, interSufix:String) {
     return interPrefix + self.name + interSufix;
 }
 
+@cached
+operation EDataType getJavaInterfaceName(interPrefix:String, interSufix:String) {
+    
+    if (self.name.startsWith("E")) {
+        return self.name.substring(1);
+    }
+    return getJavaPrimitive(self.name);
+}
+
 /** Get the Name for the Java Class for the EClass */
 @cached
 operation EClass getJavaClassName(classPrefix:String, classSufix:String) {
@@ -402,6 +411,13 @@ operation EClass getAnnotations(annotationUri : String) : Sequence {
             .collect(st | st.getEAnnotation(annotationUri))
             .select(an | an.isDefined())
             .flatten());
+    return annot;
+}
+
+operation EReference getAnnotations(annotationUri : String) : Sequence {
+    var annot = Sequence{};
+    var an = self.getEAnnotation(annotationUri);
+    if (an.isDefined()) annot.add(an);
     return annot;
 }
 

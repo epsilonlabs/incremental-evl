@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-12.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -51,8 +51,7 @@ public class ElementAccess implements IElementAccess {
      * Instantiates a new ElementAccess. The ElementAccess is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public ElementAccess(IModuleElementTrace from,
-                         IModelElementTrace element,
+    public ElementAccess(IModelElementTrace element,
                          IExecutionContext container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
@@ -61,9 +60,6 @@ public class ElementAccess implements IElementAccess {
         this.element = new ElementAccessHasElement(this);
         this.from = new AccessHasFrom(this);
         if (!this.element.create(element)) {
-            throw new TraceModelDuplicateElement();
-        }
-        if (!this.from.create(from)) {
             throw new TraceModelDuplicateElement();
         }
 

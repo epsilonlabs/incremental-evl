@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-13.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -208,28 +208,28 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
         GraphTraversalSource g = startTraversal();
         PropertyTraceGremlin propertyTrace = null;
         try {
-    	    GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("properties").has("name", name);
-    	    if (gt.hasNext()) {
-    	        propertyTrace = new PropertyTraceGremlin();
-    	        propertyTrace.delegate(gt.next());
-    	        propertyTrace.graphTraversalSource(gts);
-    	    }
-    	    else {
-    	        Vertex v = null;
-    	        try {
-                v = g.addV("PropertyTrace").property(T.id, GremlinUtils.identityToString(name, this)).next();
-    	            propertyTrace = new PropertyTraceGremlin(name, this, v, gts);
-    	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-    	            g.V(v).as("v").properties().drop().select("v").drop();
-    	            throw new EolIncrementalExecutionException("Error creating requested PropertyTrace", e);
-    	        }
-    	    }
-    	} finally {
+            GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("properties").has("name", name);
+            if (gt.hasNext()) {
+                propertyTrace = new PropertyTraceGremlin();
+                propertyTrace.delegate(gt.next());
+                propertyTrace.graphTraversalSource(gts);
+            }
+            else {
+                Vertex v = null;
+                try {
+                v = g.addV("PropertyTrace").property(T.id, GremlinUtils.identityToString(name, this, v, gts)).next();
+                    propertyTrace = new PropertyTraceGremlin(name, this, v, gts);
+                } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+                    g.V(v).as("v").properties().drop().select("v").drop();
+                    throw new EolIncrementalExecutionException("Error creating requested PropertyTrace", e);
+                }
+            }
+        } finally {
             finishTraversal(g);
-        }    
+        }  
         return propertyTrace;
     }      
-
+    
     public Map<String,Object> getIdProperties() {
         Map<String, Object> result = new HashMap<>();
         result.put("uri", getUri());
@@ -298,11 +298,11 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
         this.gts = gts;
     }
     
-    private GraphTraversalSource startTraversal() {
+    protected GraphTraversalSource startTraversal() {
         return this.gts.clone();
     }
     
-    private void finishTraversal(GraphTraversalSource g) {
+    protected void finishTraversal(GraphTraversalSource g) {
         try {
             g.close();
         } catch (Exception e) {

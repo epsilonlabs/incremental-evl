@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-05.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,9 +20,8 @@ import org.eclipse.epsilon.evl.incremental.trace.*;
 import org.eclipse.epsilon.evl.incremental.trace.impl.*;    
 
 /**
- * A ModuleElementTrace represents the trace of the execution of a particular element of 
- * an Epsilon module (e.g. Eol, Etl, etc.). The ModuleElementTrace containts information
- * about the different types of accesses that occured during its execution.
+ * A ModuleElementTrace represents the trace of the execution of a particular
+ * element of an Epsilon module (e.g. Eol, Etl, etc.). 
  */
 public interface IInvariantTrace extends IGuardedElementTrace, IInContextModuleElementTrace {
     
@@ -63,18 +62,6 @@ public interface IInvariantTrace extends IGuardedElementTrace, IInContextModuleE
     IInvariantTraceHasMessage message();
                 
     /**
-     * Returns the value of the '<em><b>satisfies</b></em>' reference.
-     * <!-- protected region satisfies-getter-doc on begin -->
-     * <p>
-     * If the meaning of the '<em>satisfies</em>' attribute isn't clear,
-     * add it to the metamodel as a GenDoc or edit it here.
-     * </p>
-     * <!-- protected region satisfies-getter-doc end --> 
-     * @return the value of the '<em>satisfies</em>' reference.
-     */
-    IInvariantTraceHasSatisfies satisfies();
-                
-    /**
      * Returns the value of the '<em><b>Invariant Context</b></em>' reference.
      * <!-- protected region invariantContext-getter-doc on begin -->
      * <p>
@@ -99,7 +86,5 @@ public interface IInvariantTrace extends IGuardedElementTrace, IInContextModuleE
     ICheckTrace getOrCreateCheckTrace() throws EolIncrementalExecutionException;       
     /** The MessageTrace Factory. */
     IMessageTrace getOrCreateMessageTrace() throws EolIncrementalExecutionException;       
-    /** The SatisfiesTrace Factory. */
-    ISatisfiesTrace getOrCreateSatisfiesTrace() throws EolIncrementalExecutionException;       
 
 }

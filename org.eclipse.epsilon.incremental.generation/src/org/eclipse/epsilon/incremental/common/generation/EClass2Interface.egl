@@ -104,10 +104,19 @@ for (er in ec.getEAllReferences().select(er | er.isContainment())) {
                     (aller.getEReferenceType() == sc) and 
                     aller.isContainment)
                 );
-        for (sc in subClasses) {%]
+        if (not er.getAnnotations("https://eclipse.org/epsilon/incremental/factory").isEmpty()) {
+            var erType = er.getEReferenceType();%]
+            
+    /** The [%=erType.name%] Factory. */        
+    public <A extends [%=erType.getJavaInterfaceName(interPrefix, interSufix)%]> A getOrCreate[%=erType.name%](Class<A> [%=erType.name.firstToLowerCase()%]Class, Object... args) throws EolIncrementalExecutionException;
+          
+[%      }
+        else {
+            for (sc in subClasses) {%]
     [%=sc.factorySignature(interPrefix, interSufix)%]
 
-[%      }%]
+[%          }
+        }%]
 [%  }%]
 [%}%]
 

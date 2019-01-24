@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-05.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -56,10 +56,7 @@ public class ContextTrace implements IContextTrace {
     private final IGuardedElementTraceHasGuard guard;
 
     /**
-     * * The execution context in which this module was executed. This is constitued
-       * by the variables that define the context of the module element. In EVL this would
-       * be ‘self’ (model element of the Context type) in ETL this would be the input (and 
-       * output variables). 
+     * * The execution context in which this module was executed. 
      */
     private final IContextModuleElementTraceHasExecutionContext executionContext;
 

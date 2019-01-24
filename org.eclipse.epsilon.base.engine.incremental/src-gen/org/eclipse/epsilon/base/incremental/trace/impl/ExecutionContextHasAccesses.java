@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-12.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -58,6 +58,10 @@ public class ExecutionContextHasAccesses extends Feature implements IExecutionCo
         if (conflict(target)) {
             throw new TraceModelConflictRelation("Relation to previous IAccess exists");
         }
+        if (related(target)) {
+            return false;
+        }
+        target.from().set(source);
         set(target);
         return true;
     }
@@ -67,6 +71,7 @@ public class ExecutionContextHasAccesses extends Feature implements IExecutionCo
         if (!related(target)) {
             return false;
         }
+        target.from().remove(source);
         remove(target);
         return true;
     }
@@ -77,6 +82,7 @@ public class ExecutionContextHasAccesses extends Feature implements IExecutionCo
         if (isUnique) {
             result |= this.target.contains(target);
         }
+        result |= target.from().get() != null;
         return result;
     }
     
@@ -85,7 +91,7 @@ public class ExecutionContextHasAccesses extends Feature implements IExecutionCo
     	if (target == null) {
 			return false;
 		}
-		return this.target.contains(target);
+		return this.target.contains(target) && source.equals(target.from().get());
 	}
         
     

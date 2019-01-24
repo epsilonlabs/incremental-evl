@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-05.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -19,9 +19,8 @@ import org.eclipse.epsilon.evl.incremental.trace.*;
 import org.eclipse.epsilon.evl.incremental.trace.impl.*;    
 
 /**
- * A ModuleElementTrace represents the trace of the execution of a particular element of 
- * an Epsilon module (e.g. Eol, Etl, etc.). The ModuleElementTrace containts information
- * about the different types of accesses that occured during its execution.
+ * A ModuleElementTrace represents the trace of the execution of a particular
+ * element of an Epsilon module (e.g. Eol, Etl, etc.). 
  */
 public interface IMessageTrace extends IInContextModuleElementTrace {
 

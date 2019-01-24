@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-13.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -89,6 +89,7 @@ public class ExecutionContextHasAccessesGremlin extends Feature
             }
             throw new TraceModelConflictRelation("Relation to previous IAccess exists");
         }
+        target.from().set(source);
         set(target);
         return true;
     }
@@ -98,6 +99,7 @@ public class ExecutionContextHasAccessesGremlin extends Feature
         if (!related(target)) {
             return false;
         }
+        target.from().remove(source);
         remove(target);
         return true;
     }
@@ -114,6 +116,7 @@ public class ExecutionContextHasAccessesGremlin extends Feature
                 }
                 result |= gt.hasNext();
             }
+            result |= target.from().get() != null;
         }
         finally {
             finishTraversal(g);
@@ -129,7 +132,7 @@ public class ExecutionContextHasAccessesGremlin extends Feature
         boolean result = false;
         GraphTraversalSource g = startTraversal();
         try {
-		  result = g.V(source.getId()).out("accesses").hasId(target.getId()).hasNext();
+		  result = g.V(source.getId()).out("accesses").hasId(target.getId()).hasNext() && source.equals(target.from().get());
 		}
 		finally {
             finishTraversal(g);

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-13.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -67,7 +67,7 @@ public class InContextModuleElementTraceHasContextModuleElementGremlin extends F
         GraphTraversalSource g = startTraversal();
         IContextModuleElementTrace result = null;
         try {
-            Vertex to = g.E(delegate).outV().next();
+            Vertex to = g.E(delegate).inV().next();
             result = (IContextModuleElementTrace) factory.createTraceElement(to, gts);
         }
         finally {
@@ -103,7 +103,7 @@ public class InContextModuleElementTraceHasContextModuleElementGremlin extends F
         boolean result = false;
         GraphTraversalSource g = startTraversal();
         try {
-            result |= delegate == null ? g.V(source.getId()).out("contextModuleElement").hasNext() : g.E(delegate).outV().hasId(target.getId()).hasNext();
+            result |= delegate == null ? g.V(source.getId()).out("contextModuleElement").hasNext() : g.E(delegate).inV().hasId(target.getId()).hasNext();
         }
         finally {
             finishTraversal(g);
@@ -122,7 +122,7 @@ public class InContextModuleElementTraceHasContextModuleElementGremlin extends F
         boolean result = false;
         GraphTraversalSource g = startTraversal();
         try {
-		  result = g.E(delegate).outV().hasId(target.getId()).hasNext();
+		  result = g.E(delegate).inV().hasId(target.getId()).hasNext();
 		}
 		finally {
             finishTraversal(g);

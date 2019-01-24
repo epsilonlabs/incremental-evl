@@ -77,7 +77,7 @@ public abstract class OnlineTests<M extends Module> {
 		module.injectTraceManager(getEvlGuiceModule());
 		evlFile = new File(OnlineTests.class.getResource("testExecution.evl").toURI());
 		module.parse(evlFile);
-		module.context.getModelRepository().addModel(model);
+		module.getContext().getModelRepository().addModel(model);
 		// Make model copy
 		modelCopy = saveModelCopy(csvFilePath);
 
@@ -100,7 +100,7 @@ public abstract class OnlineTests<M extends Module> {
 		// Save the previous state so we can compare changes
 		// ContextTraces
 		Set<IModuleElementTrace> executionTraces = module.getContext().getTraceManager().getExecutionTraceRepository()
-				.getAllExecutionTraces();
+				.getAllModuleTraces();
 
 		long contextExecutionTraces = executionTraces.stream().filter(t -> t instanceof IContextTrace)
 				.map(IContextTrace.class::cast).count();
@@ -187,7 +187,7 @@ public abstract class OnlineTests<M extends Module> {
 		}
 		// Let Evl finish execute
 		Thread.sleep(100);
-		executionTraces = module.getContext().getTraceManager().getExecutionTraceRepository().getAllExecutionTraces();
+		executionTraces = module.getContext().getTraceManager().getExecutionTraceRepository().getAllModuleTraces();
 		long contextExecutionTracesNew = executionTraces.stream().filter(t -> t instanceof IContextTrace).count();
 		assertThat("A new row adss two new ContextTraces", contextExecutionTracesNew, is(contextExecutionTraces + 2));
 		int unsatisfiedNew = module.getContext().getUnsatisfiedConstraints().size();
@@ -203,7 +203,7 @@ public abstract class OnlineTests<M extends Module> {
 		// Save the previous state so we can compare changes
 		// ContextTraces
 		Set<IModuleElementTrace> executionTraces = module.getContext().getTraceManager().getExecutionTraceRepository()
-				.getAllExecutionTraces();
+				.getAllModuleTraces();
 		long contextExecutionTraces = executionTraces.stream().filter(t -> t instanceof IContextTrace)
 				.map(IContextTrace.class::cast).count();
 		// Unsatisfied constraints
@@ -260,7 +260,7 @@ public abstract class OnlineTests<M extends Module> {
 		}
 		// Let Evl execute
 		Thread.sleep(100);
-		executionTraces = module.getContext().getTraceManager().getExecutionTraceRepository().getAllExecutionTraces();
+		executionTraces = module.getContext().getTraceManager().getExecutionTraceRepository().getAllModuleTraces();
 
 		long contextExecutionTracesNew = executionTraces.stream().filter(t -> t instanceof IContextTrace)
 				.map(IContextTrace.class::cast).count();

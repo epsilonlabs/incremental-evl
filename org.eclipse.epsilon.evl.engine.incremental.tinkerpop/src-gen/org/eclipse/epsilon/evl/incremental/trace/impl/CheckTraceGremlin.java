@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-13.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -160,12 +160,12 @@ public class CheckTraceGremlin implements ICheckTrace, GremlinWrapper<Vertex> {
                 g.V(v).as("v").properties().drop().select("v").drop();
                 throw new EolIncrementalExecutionException("Error creating requested CheckResult", e);
             }
-    	} finally {
+        } finally {
             finishTraversal(g);
-        }    
+        }  
         return checkResult;
     }      
-
+    
     public Map<String,Object> getIdProperties() {
         Map<String, Object> result = new HashMap<>();
         return result;
@@ -224,11 +224,11 @@ public class CheckTraceGremlin implements ICheckTrace, GremlinWrapper<Vertex> {
         this.gts = gts;
     }
     
-    private GraphTraversalSource startTraversal() {
+    protected GraphTraversalSource startTraversal() {
         return this.gts.clone();
     }
     
-    private void finishTraversal(GraphTraversalSource g) {
+    protected void finishTraversal(GraphTraversalSource g) {
         try {
             g.close();
         } catch (Exception e) {

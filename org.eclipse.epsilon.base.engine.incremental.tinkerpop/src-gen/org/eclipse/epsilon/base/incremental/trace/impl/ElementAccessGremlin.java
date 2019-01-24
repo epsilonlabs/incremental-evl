@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-13.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -66,7 +66,7 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
      * container and any attributes identified as indexes.
      */    
     public ElementAccessGremlin(
-        IModuleElementTrace from, IModelElementTrace element, IExecutionContext container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        IModelElementTrace element, IExecutionContext container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
         if (!container.accesses().create(this)) {
@@ -75,10 +75,8 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
         this.from = new AccessHasFromGremlin(this, gts, BaseTraceFactory.getFactory());
         this.element = new ElementAccessHasElementGremlin(this, gts, BaseTraceFactory.getFactory());
         try {
-	        this.from.create(from);
 	        this.element.create(element);
         } catch (TraceModelConflictRelation ex) {
-            ((AccessHasFromGremlin)this.from).delegate().remove();
             ((ElementAccessHasElementGremlin)this.element).delegate().remove();
             throw ex;
         }
@@ -175,7 +173,7 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        IModuleElementTrace from = from().get();
+        IExecutionContext from = from().get();
         result = prime * result + ((from == null) ? 0 : from.hashCode());
         IModelElementTrace element = element().get();
         result = prime * result + ((element == null) ? 0 : element.hashCode());
@@ -197,11 +195,11 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
         this.gts = gts;
     }
     
-    private GraphTraversalSource startTraversal() {
+    protected GraphTraversalSource startTraversal() {
         return this.gts.clone();
     }
     
-    private void finishTraversal(GraphTraversalSource g) {
+    protected void finishTraversal(GraphTraversalSource g) {
         try {
             g.close();
         } catch (Exception e) {

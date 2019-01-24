@@ -51,31 +51,35 @@
   <eClassifiers xsi:type="ecore:EClass" name="ModuleElementTrace" abstract="true"
       eSuperTypes="#//IdElement">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="A ModuleElementTrace represents the trace of the execution of a particular element of &#xA;an Epsilon module (e.g. Eol, Etl, etc.). The ModuleElementTrace containts information&#xA;about the different types of accesses that occured during its execution."/>
+      <details key="documentation" value="A ModuleElementTrace represents the trace of the execution of a particular&#xA;element of an Epsilon module (e.g. Eol, Etl, etc.). "/>
     </eAnnotations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ContextModuleElementTrace" abstract="true"
       eSuperTypes="#//ModuleElementTrace">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="A module element that is executed in a context (e.g. contex operation, Etl rule, &#xA;etc.)."/>
+      <details key="documentation" value="A ModuleElementTrace that defines the context of its child module elements, e.g.&#xA;an operaion, rule, etc. There is one ModuleElementTrace for each module element&#xA;present in a module (e.g. one trace per rule), that is, a ModuleElementTrace &#xA;represents the static component of a module element.&#xA;&#xA;During execution (dynamic component), an ExecutionContext is created for each&#xA;invocation of the module element. This ExecutionContext contains the&#xA;ModelElements that define the context and all of the Accesses that ocurred&#xA;during execution of the module element and its children. "/>
     </eAnnotations>
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ContextModuleElementTrace/executionContext"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="executionContext" ordered="false"
         unique="false" upperBound="-1" eType="#//ExecutionContext" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="The execution context in which this module was executed. This is constitued&#xA;by the variables that define the context of the module element. In EVL this would&#xA;be ‘self’ (model element of the Context type) in ETL this would be the input (and &#xA;output variables). "/>
+        <details key="documentation" value="The execution context in which this module was executed. "/>
       </eAnnotations>
+      <eAnnotations source="https://eclipse.org/epsilon/incremental/dynamic"/>
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="InContextModuleElementTrace" abstract="true"
       eSuperTypes="#//ModuleElementTrace">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="A module element that is not executed in a context, but that is nested in one that&#xA;is (e.g. guard, check, etc.)"/>
+      <details key="documentation" value="A ModuleElementTrace that inherits its context from its parent module element.&#xA;There is one InContextModuleElementTrace for each child module element&#xA;present in a module element (e.g. one trace per guard of a rule), that is, an&#xA;InContextModuleElementTrace represents the static component of a child &#xA;module element.&#xA;&#xA;During execution (dynamic component), the InContextModuleElemetTrace&#xA;populates de Accesss of its parent module element."/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="contextModuleElement" lowerBound="1"
         eType="#//ContextModuleElementTrace" derived="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ExecutionContext" eSuperTypes="#//IdElement">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="An ExecutionContext is represented by the set of ModelElementVariables and&#xA;Accesses that occured during execution.&#xA;&#xA;For example, in EVL, the ModelElementVariables would contain the ‘self’ (model&#xA;element of the Context type); in in ETL this would be the input (and output&#xA;variables). "/>
+    </eAnnotations>
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//ExecutionContext/contextVariables"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="contextVariables" ordered="false"
         upperBound="-1" eType="#//ModelElementVariable" containment="true">
@@ -84,10 +88,12 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="accesses" ordered="false"
-        unique="false" upperBound="-1" eType="#//Access" containment="true" resolveProxies="false">
+        unique="false" upperBound="-1" eType="#//Access" containment="true" resolveProxies="false"
+        eOpposite="#//Access/from">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="The different accesses that where recorded during execution."/>
       </eAnnotations>
+      <eAnnotations source="https://eclipse.org/epsilon/incremental/factory"/>
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelElementVariable" eSuperTypes="#//IdElement">
@@ -101,10 +107,11 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Access" abstract="true" eSuperTypes="#//IdElement">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="An Access is the super class of all possible types of accesses that can ocurr during&#xA;execution."/>
+      <details key="documentation" value="An Access is the super class of all possible types of accesses that can ocurr&#xA;during execution."/>
     </eAnnotations>
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//Access/from"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="from" lowerBound="1" eType="#//ModuleElementTrace"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="from" lowerBound="1" eType="#//ExecutionContext"
+        eOpposite="#//ExecutionContext/accesses"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ElementAccess" eSuperTypes="#//Access">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

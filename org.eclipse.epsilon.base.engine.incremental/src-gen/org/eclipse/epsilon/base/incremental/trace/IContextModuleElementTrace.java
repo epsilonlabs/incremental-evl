@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-12.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,17 +18,21 @@ import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
 /**
- * A module element that is executed in a context (e.g. contex operation, Etl rule, 
- * etc.).
+ * A ModuleElementTrace that defines the context of its child module elements, e.g.
+ * an operaion, rule, etc. There is one ModuleElementTrace for each module element
+ * present in a module (e.g. one trace per rule), that is, a ModuleElementTrace 
+ * represents the static component of a module element.
+ * 
+ * During execution (dynamic component), an ExecutionContext is created for each
+ * invocation of the module element. This ExecutionContext contains the
+ * ModelElements that define the context and all of the Accesses that ocurred
+ * during execution of the module element and its children. 
  */
 public interface IContextModuleElementTrace extends IModuleElementTrace {
 
     /**
      * Returns the value of the '<em><b>Execution Context</b></em>' reference.
-     * The execution context in which this module was executed. This is constitued
-     * by the variables that define the context of the module element. In EVL this would
-     * be ‘self’ (model element of the Context type) in ETL this would be the input (and 
-     * output variables). 
+     * The execution context in which this module was executed. 
      * @return the value of the '<em>Execution Context</em>' reference.
      */
     IContextModuleElementTraceHasExecutionContext executionContext();

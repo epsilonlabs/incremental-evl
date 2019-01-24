@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-13.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -155,57 +155,57 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
         GraphTraversalSource g = startTraversal();
         ContextTraceGremlin contextTrace = null;
         try {
-    	    GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("moduleElements").has("kind", kind)
-    	                                        .has("index", index);
-    	    if (gt.hasNext()) {
-    	        contextTrace = new ContextTraceGremlin();
-    	        contextTrace.delegate(gt.next());
-    	        contextTrace.graphTraversalSource(gts);
-    	    }
-    	    else {
-    	        Vertex v = null;
-    	        try {
-                v = g.addV("ContextTrace").property(T.id, GremlinUtils.identityToString(kind, index, this)).next();
-    	            contextTrace = new ContextTraceGremlin(kind, index, this, v, gts);
-    	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-    	            g.V(v).as("v").properties().drop().select("v").drop();
-    	            throw new EolIncrementalExecutionException("Error creating requested ContextTrace", e);
-    	        }
-    	    }
-    	} finally {
+            GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("moduleElements").has("kind", kind)
+                                                .has("index", index);
+            if (gt.hasNext()) {
+                contextTrace = new ContextTraceGremlin();
+                contextTrace.delegate(gt.next());
+                contextTrace.graphTraversalSource(gts);
+            }
+            else {
+                Vertex v = null;
+                try {
+                v = g.addV("ContextTrace").property(T.id, GremlinUtils.identityToString(kind, index, this, v, gts)).next();
+                    contextTrace = new ContextTraceGremlin(kind, index, this, v, gts);
+                } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+                    g.V(v).as("v").properties().drop().select("v").drop();
+                    throw new EolIncrementalExecutionException("Error creating requested ContextTrace", e);
+                }
+            }
+        } finally {
             finishTraversal(g);
-        }    
+        }  
         return contextTrace;
     }      
 
-
+    
     @Override
     public IModelAccess getOrCreateModelAccess(String modelName, IModelTrace modelTrace) throws EolIncrementalExecutionException {
         GraphTraversalSource g = startTraversal();
         ModelAccessGremlin modelAccess = null;
         try {
-    	    GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("models").has("modelName", modelName);
-    	    if (gt.hasNext()) {
-    	        modelAccess = new ModelAccessGremlin();
-    	        modelAccess.delegate(gt.next());
-    	        modelAccess.graphTraversalSource(gts);
-    	    }
-    	    else {
-    	        Vertex v = null;
-    	        try {
-                v = g.addV("ModelAccess").property(T.id, GremlinUtils.identityToString(modelName, modelTrace, this)).next();
-    	            modelAccess = new ModelAccessGremlin(modelName, modelTrace, this, v, gts);
-    	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-    	            g.V(v).as("v").properties().drop().select("v").drop();
-    	            throw new EolIncrementalExecutionException("Error creating requested ModelAccess", e);
-    	        }
-    	    }
-    	} finally {
+            GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("models").has("modelName", modelName);
+            if (gt.hasNext()) {
+                modelAccess = new ModelAccessGremlin();
+                modelAccess.delegate(gt.next());
+                modelAccess.graphTraversalSource(gts);
+            }
+            else {
+                Vertex v = null;
+                try {
+                v = g.addV("ModelAccess").property(T.id, GremlinUtils.identityToString(modelName, modelTrace, this, v, gts)).next();
+                    modelAccess = new ModelAccessGremlin(modelName, modelTrace, this, v, gts);
+                } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+                    g.V(v).as("v").properties().drop().select("v").drop();
+                    throw new EolIncrementalExecutionException("Error creating requested ModelAccess", e);
+                }
+            }
+        } finally {
             finishTraversal(g);
-        }    
+        }  
         return modelAccess;
     }      
-
+    
     public Map<String,Object> getIdProperties() {
         Map<String, Object> result = new HashMap<>();
         result.put("uri", getUri());
@@ -265,11 +265,11 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
         this.gts = gts;
     }
     
-    private GraphTraversalSource startTraversal() {
+    protected GraphTraversalSource startTraversal() {
         return this.gts.clone();
     }
     
-    private void finishTraversal(GraphTraversalSource g) {
+    protected void finishTraversal(GraphTraversalSource g) {
         try {
             g.close();
         } catch (Exception e) {

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-05.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -66,11 +66,6 @@ public class InvariantTrace implements IInvariantTrace {
     private final IInvariantTraceHasMessage message;
 
     /**
-     * The satisfies.
-     */
-    private final IInvariantTraceHasSatisfies satisfies;
-
-    /**
      * The invariantContext.
      */
     private final IInvariantTraceHasInvariantContext invariantContext;
@@ -91,7 +86,6 @@ public class InvariantTrace implements IInvariantTrace {
         this.contextModuleElement = new InContextModuleElementTraceHasContextModuleElement(this);
         this.check = new InvariantTraceHasCheck(this);
         this.message = new InvariantTraceHasMessage(this);
-        this.satisfies = new InvariantTraceHasSatisfies(this);
 
     }
     
@@ -129,11 +123,6 @@ public class InvariantTrace implements IInvariantTrace {
     @Override
     public IInvariantTraceHasMessage message() {
         return message;
-    }
-
-    @Override
-    public IInvariantTraceHasSatisfies satisfies() {
-        return satisfies;
     }
 
     @Override
@@ -205,28 +194,6 @@ public class InvariantTrace implements IInvariantTrace {
             }
         }
         return messageTrace;
-    }      
-                  
-    @Override
-    public ISatisfiesTrace getOrCreateSatisfiesTrace() throws EolIncrementalExecutionException {
-        ISatisfiesTrace satisfiesTrace = null;
-        try {
-            satisfiesTrace = new SatisfiesTrace(this);
-            
-            this.satisfies().create(satisfiesTrace);
-        } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
-            // Pass
-        } finally {
-    	    if (satisfiesTrace != null) {
-    	        return satisfiesTrace;
-    	    }
-            satisfiesTrace = this.satisfies.get();
-            if (satisfiesTrace  == null) {
-                throw new EolIncrementalExecutionException("Error creating trace model element. Requested SatisfiesTrace was "
-                        + "duplicate but previous one was not found.");
-            }
-        }
-        return satisfiesTrace;
     }      
                   
     public Map<String,Object> getIdProperties() {

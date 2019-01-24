@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-05.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.evl.incremental.trace.impl.SatisfiesTrace;
-// import org.eclipse.epsilon.evl.incremental.trace.impl.InvariantTraceHasSatisfies;
+// import org.eclipse.epsilon.evl.incremental.trace.impl.ExecutionContextHasAccesses;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -41,21 +41,25 @@ public class SatisfiesTraceTest {
 
     /** Mock the container. */
     @Mock
-    private IInvariantTrace containerMock;
+    private IExecutionContext containerMock;
     
     private SatisfiesTrace classUnderTest;
 
     @Test
     public void testInit() throws Exception {
         
-        InvariantTraceHasSatisfies containerReference = new InvariantTraceHasSatisfies(containerMock);
-        when(containerMock.satisfies()).thenReturn(containerReference);
+        ExecutionContextHasAccesses containerReference = new ExecutionContextHasAccesses(containerMock);
+        when(containerMock.accesses()).thenReturn(containerReference);
+        IModuleElementTrace _modelElement = mock(IModuleElementTrace.class);
+                
         // protected region SatisfiesTraceInit_init on begin
         classUnderTest = new SatisfiesTrace(containerMock);                    
         // protected region SatisfiesTraceInit_init end
         
-
-        assertThat(containerReference.get(), is(classUnderTest));
+        
+        List<Object> list = new ArrayList<>();
+        containerReference.get().forEachRemaining(list::add);
+        assertThat(list, contains(classUnderTest));
         
         // protected region SatisfiesTraceAttributes on begin
         // TODO Add test code for parameters (to hard to generate correct code for any/all types).                    
@@ -64,9 +68,37 @@ public class SatisfiesTraceTest {
     
     
     @Test
+    public void testModelElementReference() throws Exception {
+        ExecutionContextHasAccesses containerReference = new ExecutionContextHasAccesses(containerMock);
+        when(containerMock.accesses()).thenReturn(containerReference);
+        IModuleElementTrace _modelElement = mock(IModuleElementTrace.class);
+                
+        // protected region SatisfiesTraceInit_ModelElementReference on begin
+        classUnderTest = new SatisfiesTrace(_modelElement, containerMock);                    
+        // protected region SatisfiesTraceInit_ModelElementReference end
+        IModuleElementTrace ref = mock(IModuleElementTrace.class);
+        
+        boolean result = classUnderTest.modelElement().create(ref);
+        assertFalse("A new reference can not be created before destroy", result);
+        assertThat(classUnderTest.modelElement().get(), is(_modelElement));
+        result = classUnderTest.modelElement().destroy(ref);
+        assertFalse("Can't destroy unexisting reference", result);
+        result = classUnderTest.modelElement().destroy(_modelElement);
+        assertTrue("Exising references can be destroyed", result);
+        assertThat(classUnderTest.modelElement().get(), is(nullValue()));
+        result = classUnderTest.modelElement().create(ref);
+        assertTrue("New references can be craeted if was null", result);
+        assertThat(classUnderTest.modelElement().get(), is(ref));
+    
+    }
+    
+    
+    @Test
     public void testSatisfiedInvariantsReference() throws Exception {
-        InvariantTraceHasSatisfies containerReference = new InvariantTraceHasSatisfies(containerMock);
-        when(containerMock.satisfies()).thenReturn(containerReference);
+        ExecutionContextHasAccesses containerReference = new ExecutionContextHasAccesses(containerMock);
+        when(containerMock.accesses()).thenReturn(containerReference);
+        IModuleElementTrace _modelElement = mock(IModuleElementTrace.class);
+                
         // protected region SatisfiesTraceInit_SatisfiedInvariantsReference on begin
         classUnderTest = new SatisfiesTrace(containerMock);                    
         // protected region SatisfiesTraceInit_SatisfiedInvariantsReference end

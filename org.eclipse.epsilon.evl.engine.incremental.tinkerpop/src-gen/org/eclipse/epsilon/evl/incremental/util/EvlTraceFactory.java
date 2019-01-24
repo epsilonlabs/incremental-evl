@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-13.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -89,11 +89,11 @@ public class EvlTraceFactory implements TraceFactory {
             messageTrace.graphTraversalSource(gts);
             return messageTrace;
   
-        case "SatisfiesTrace":
-            SatisfiesTraceGremlin satisfiesTrace = new SatisfiesTraceGremlin();
-            satisfiesTrace.delegate((Vertex) delegate);
-            satisfiesTrace.graphTraversalSource(gts);
-            return satisfiesTrace;
+        case "SatisfiesAccess":
+            SatisfiesAccessGremlin satisfiesAccess = new SatisfiesAccessGremlin();
+            satisfiesAccess.delegate((Vertex) delegate);
+            satisfiesAccess.graphTraversalSource(gts);
+            return satisfiesAccess;
         default:
             TraceFactory sf = BaseTraceFactory.getFactory();
             return sf.createTraceElement(delegate, gts);

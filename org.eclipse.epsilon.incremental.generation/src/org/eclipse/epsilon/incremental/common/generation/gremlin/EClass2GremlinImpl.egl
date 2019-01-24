@@ -242,12 +242,41 @@ for (er in ec.getEAllReferences().select(er | er.isContainment())) {
                     (aller.getEReferenceType() == sc) and 
                     aller.isContainment)
                 );
-        for (sc in subClasses) {%]
+        if (not er.getAnnotations("https://eclipse.org/epsilon/incremental/factory").isEmpty()) {
+            var erType = er.getEReferenceType();%]
+    @SuppressWarnings("unchecked")
+    public <A extends [%=erType.getJavaInterfaceName(interPrefix, interSufix)%]> A getOrCreate[%=erType.name%](Class<A> [%=erType.name.firstToLowerCase()%]Class, Object... args) throws EolIncrementalExecutionException {
+        GraphTraversalSource g = startTraversal();
+        A result = null;
+        switch([%=erType.name.firstToLowerCase()%]Class.getName()) {
+[%          for (sc in subClasses) {
+                var instanceName = sc.name.firstToLowerCase();%]
+            case "[%=sc.name%]":
+[%              var types = sc.getIndexAttributes().includingAll(sc.getRequiredFeatures()).collect(a | a.eType);
+                for (t in types) {%]
+                assert args[[%=loopCount%]] instanceof [%=t.getJavaInterfaceName(interPrefix, interSufix)%];
+[%              }%]
+                [%=sc.getJavaClassName(classPrefix, classSufix)%] [%=instanceName%] = null;
+                result = (A) [%=instanceName%];
+                [%=sc.createReferenceInstance(er, true, interPrefix, interSufix, classPrefix, classSufix, true)%]
+                break;
+[%          }
+            if (not ec.getEAllSuperTypes().select(c | not c.isAbstract()).isEmpty()) {%]
+                default:
+                result = super.getOrCreateAccess([%=erType.name.firstToLowerCase()%]Class, args);
+[%          }%]
+        }
+        return result;
+    }
+[%      }
+        else {
+            for (sc in subClasses) {%]
     [%=sc.factoryMethod(er, true, interPrefix, interSufix, classPrefix, classSufix)%]
 
-[%      }%]
+[%          }
+        }%]
 [%  }%]
-
+    
 [%}%]
 [%
 for (op in ec.getEAllOperations()) {
@@ -391,11 +420,11 @@ for (er in ec.getEqualsReferences()) {
         this.gts = gts;
     }
     
-    private GraphTraversalSource startTraversal() {
+    protected GraphTraversalSource startTraversal() {
         return this.gts.clone();
     }
     
-    private void finishTraversal(GraphTraversalSource g) {
+    protected void finishTraversal(GraphTraversalSource g) {
         try {
             g.close();
         } catch (Exception e) {
@@ -409,78 +438,96 @@ operation EClass factoryMethod(ref : EReference, subClass : Boolean, interPrefix
                                interSufix:String, classPrefix:String, classSufix:String) {
     var instanceName = self.name.firstToLowerCase();
     var params = self.getEAttributeParameters().includingAll(self.getRequiredFeatureParameters(interPrefix, interSufix));
-    var vars = self.getIndexAttributes().includingAll(self.getRequiredFeatures()).collect(a | a.name);
-    var ids = self.getIndexAttributes().includingAll(self.getRequiredFeatures()).collect(a | a.name);
-    var indexAttr = self.getIndexAttributes();
-    var container = self.getContainerReference().at(2);
-    var containment = self.getContainerReference().at(0);
-    if (container.isDefined()) {
-        vars.add("this");
-        ids.add("this");
-    }
-    vars.add("v");
-    vars.add("gts");
     var retType = self.getJavaInterfaceName(interPrefix, interSufix);%]
 @Override
 public [%=retType%] getOrCreate[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException {
     GraphTraversalSource g = startTraversal();
     [%=self.getJavaClassName(classPrefix, classSufix)%] [%=instanceName%] = null;
-    try {
+    [%=self.createReferenceInstance(ref, subClass, interPrefix, interSufix, classPrefix, classSufix, false)%]
+    return [%=instanceName%];
+}      
+[%}
+@template
+operation EClass createReferenceInstance(ref : EReference, subClass : Boolean, interPrefix:String,
+                               interSufix:String, classPrefix:String, classSufix:String, generic:Boolean) {
+    var instanceName = self.name.firstToLowerCase();
+    var params = self.getEAttributeParameters().includingAll(self.getRequiredFeatureParameters(interPrefix, interSufix));
+    var vars;
+    var types;
+    if (generic) {
+        types = self.getIndexAttributes().includingAll(self.getRequiredFeatures()).collect(a | a.eType.getJavaInterfaceName(interPrefix, interSufix));
+        vars = 1.iota(self.getIndexAttributes().includingAll(self.getRequiredFeatures()).size(),1).collect(a | "(" +  types.at(a-1) + ")" + " args[" + (a-1) + "]");
+    }
+    else {
+        vars = self.getIndexAttributes().includingAll(self.getRequiredFeatures()).collect(a | a.name);
+    }
+    var indexAttr = self.getIndexAttributes();
+    var container = self.getContainerReference().at(2);
+    var containment = self.getContainerReference().at(0);
+    if (container.isDefined()) {
+        vars.add("this");
+    }
+    vars.add("v");
+    vars.add("gts");
+    var retType = self.getJavaInterfaceName(interPrefix, interSufix);
+    %]
+try {
 [%  var traversal = "g.V(delegate).out(\"" + ref.name + "\")";
     if (ref.isMany()) {    
         if (ref.isUnique()) {
-	        for (param in indexAttr) {
-		        traversal += ".has(\"" + param.name + "\", "+ param.name+ ")";
-		        if (hasMore) {
-		          traversal += "\n";
-		        }
-		    }
+            for (param in indexAttr) {
+                traversal += ".has(\"" + param.name + "\", "+ param.name+ ")";
+                if (hasMore) {
+                  traversal += "\n";
+                }
+            }
         }
         else {
             traversal = "";
         }
     }
     if (traversal.length() == 0) {%]
+    Vertex v = null;
+    try {
+[%  if (indexAttr.size() > 0) {%]
+        v = g.addV("[%=self.name%]").property(T.id, GremlinUtils.identityToString([%=vars.concat(", ")%])).next();
+[%  } else {%]
+        v = g.addV("[%=self.name%]").next();
+[%  }%]
+        [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=vars.concat(", ")%]);
+    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+        g.V(v).as("v").properties().drop().select("v").drop();
+        throw new EolIncrementalExecutionException("Error creating requested [%=self.name%]", e);
+    }
+[%  } else {%]
+    GraphTraversal<Vertex, Vertex> gt = [%=traversal%];
+    if (gt.hasNext()) {
+        [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]();
+        [%=instanceName%].delegate(gt.next());
+        [%=instanceName%].graphTraversalSource(gts);
+    }
+    else {
         Vertex v = null;
         try {
 [%  if (indexAttr.size() > 0) {%]
-            v = g.addV("[%=self.name%]").property(T.id, GremlinUtils.identityToString([%=ids.concat(", ")%])).next();
+        v = g.addV("[%=self.name%]").property(T.id, GremlinUtils.identityToString([%=vars.concat(", ")%])).next();
 [%  } else {%]
-            v = g.addV("[%=self.name%]").next();
+        v = g.addV("[%=self.name%]").next();
 [%  }%]
             [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=vars.concat(", ")%]);
         } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
             g.V(v).as("v").properties().drop().select("v").drop();
             throw new EolIncrementalExecutionException("Error creating requested [%=self.name%]", e);
         }
-[%  } else {%]
-	    GraphTraversal<Vertex, Vertex> gt = [%=traversal%];
-	    if (gt.hasNext()) {
-	        [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]();
-	        [%=instanceName%].delegate(gt.next());
-	        [%=instanceName%].graphTraversalSource(gts);
-	    }
-	    else {
-	        Vertex v = null;
-	        try {
-[%  if (indexAttr.size() > 0) {%]
-            v = g.addV("[%=self.name%]").property(T.id, GremlinUtils.identityToString([%=ids.concat(", ")%])).next();
-[%  } else {%]
-            v = g.addV("[%=self.name%]").next();
+    }
 [%  }%]
-	            [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=vars.concat(", ")%]);
-	        } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-	            g.V(v).as("v").properties().drop().select("v").drop();
-	            throw new EolIncrementalExecutionException("Error creating requested [%=self.name%]", e);
-	        }
-	    }
-[%  }%]
-	} finally {
-        finishTraversal(g);
-    }    
-    return [%=instanceName%];
-}      
+} finally {
+    finishTraversal(g);
+}  
 [%}
+
+
+
 /**
  * Get the required parameters for initialization of objects of this EClass. The required parameters
  * are the attributes that are indices, an instance of the container (if conatined),  ant ant 

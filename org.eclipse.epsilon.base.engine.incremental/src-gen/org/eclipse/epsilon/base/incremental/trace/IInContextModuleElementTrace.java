@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-09-12.
+ * This file was automatically generated on: 2019-01-23.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -17,8 +17,14 @@ import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
 /**
- * A module element that is not executed in a context, but that is nested in one that
- * is (e.g. guard, check, etc.)
+ * A ModuleElementTrace that inherits its context from its parent module element.
+ * There is one InContextModuleElementTrace for each child module element
+ * present in a module element (e.g. one trace per guard of a rule), that is, an
+ * InContextModuleElementTrace represents the static component of a child 
+ * module element.
+ * 
+ * During execution (dynamic component), the InContextModuleElemetTrace
+ * populates de Accesss of its parent module element.
  */
 public interface IInContextModuleElementTrace extends IModuleElementTrace {
 

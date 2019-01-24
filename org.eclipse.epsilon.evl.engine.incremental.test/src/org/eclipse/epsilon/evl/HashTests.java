@@ -60,9 +60,9 @@ public abstract class HashTests<M extends Module> {
 			}
 		});
 		// module.parse(evlFile);
-		// module.context.getModelRepository().addModel(model);
+		// module.getContext().getModelRepository().addModel(model);
 
-		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = module.context
+		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = module.getContext()
 				.getTraceManager();
 		IEvlRootElementsFactory factory = etManager.getTraceFactory();
 
