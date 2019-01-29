@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-24.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -97,33 +97,33 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     @Override
     public IContextTrace getOrCreateContextTrace(String kind, Integer index) throws EolIncrementalExecutionException {
         IContextTrace contextTrace = null;
+        
         try {
             contextTrace = new ContextTrace(kind, index, this);
         } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
-    	    if (contextTrace != null) {
-    	        return contextTrace;
-    	    }
-    		Iterator<IModuleElementTrace> it = this.moduleElements.get();
-            while (it.hasNext()) {
-            	IContextTrace item;
-                IModuleElementTrace t = it.next();
-                if (t instanceof IContextTrace) {
-                    item = (IContextTrace) t;
+            if (contextTrace == null) {
+                Iterator<IModuleElementTrace> it = this.moduleElements.get();
+                while (it.hasNext()) {
+                    IContextTrace item;
+                    IModuleElementTrace t = it.next();
+                    if (t instanceof IContextTrace) {
+                        item = (IContextTrace) t;
+                    }
+                    else {
+                        continue;
+                    }
+        	        if (item.getKind().equals(kind) &&
+        	            item.getIndex() == index) {
+        	            contextTrace = item;
+        	            break;
+        	        }
                 }
-                else {
-                    continue;
-                }
-    			if (item.getKind().equals(kind) &&
-    			    item.getIndex() == index) {
-    				contextTrace = item;
-    				break;
-    			}
-    		}
-    		if (contextTrace == null) {
-               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested ContextTrace was "
-                		+ "duplicate but previous one was not found.");
+            }
+            if (contextTrace == null) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ContextTrace was "
+                        + "duplicate but previous one was not found.");
             }
         }
         return contextTrace;
@@ -133,27 +133,27 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     @Override
     public IModelAccess getOrCreateModelAccess(String modelName, IModelTrace modelTrace) throws EolIncrementalExecutionException {
         IModelAccess modelAccess = null;
+        
         try {
             modelAccess = new ModelAccess(modelName, modelTrace, this);
         } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
-    	    if (modelAccess != null) {
-    	        return modelAccess;
-    	    }
-    		Iterator<IModelAccess> it = this.models.get();
-            while (it.hasNext()) {
-            	IModelAccess item;
-                item = (IModelAccess) it.next();
-    			if (item.getModelName().equals(modelName) &&
-    			    item.modelTrace().get().equals(modelTrace)) {
-    				modelAccess = item;
-    				break;
-    			}
-    		}
-    		if (modelAccess == null) {
-               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelAccess was "
-                		+ "duplicate but previous one was not found.");
+            if (modelAccess == null) {
+                Iterator<IModelAccess> it = this.models.get();
+                while (it.hasNext()) {
+                    IModelAccess item;
+                    item = (IModelAccess) it.next();
+        	        if (item.getModelName().equals(modelName) &&
+        	            item.modelTrace().get().equals(modelTrace)) {
+        	            modelAccess = item;
+        	            break;
+        	        }
+                }
+            }
+            if (modelAccess == null) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelAccess was "
+                        + "duplicate but previous one was not found.");
             }
         }
         return modelAccess;

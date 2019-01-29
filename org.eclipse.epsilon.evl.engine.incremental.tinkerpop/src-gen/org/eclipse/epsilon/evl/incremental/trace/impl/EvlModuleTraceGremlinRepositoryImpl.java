@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -349,15 +349,16 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 		GraphTraversal<Vertex, Path> find_gt = getEvlModuleTraceByIdentity_gt(moduleUri)
 				.out("moduleElements")
 				.as("me")
-				.out("context")
+				.out("executionContext")
 				.as("c")
 				.out("access")
 				.hasLabel("PropertyAccess")
 				.as("a")
+				.out("property")
+				.has("name", propertyName)
 				.out("elementTrace")
 				.has("uri", elementUri)
 				.select("a")
-				.has("name", propertyName)
 				.path();
 		Set<IReexecutionTrace> result = new HashSet<>();
 		while (find_gt.hasNext()) {

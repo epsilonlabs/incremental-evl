@@ -165,19 +165,20 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 			propertyTrace = elementTrace.getOrCreatePropertyTrace(propertyName);
 		}
 		// FIXME A property access should also generate the matching element access.
-		//IPropertyAccess pa = currentContext.getOrCreatePropertyAccess(executionTrace, propertyTrace);
-		IPropertyAccess pa = currentContext.getOrCreateAccess(IPropertyAccess.class, executionTrace, propertyTrace);
+		IPropertyAccess pa = currentContext.getOrCreateAccess(IPropertyAccess.class, propertyTrace);
 		setPropertyAccessValue(model, result, context, pa);
 	}
 	
 	/**
-	 * Set the property access value
+	 * Set the property access value. The result can be a model element or an arbitrary value. For
+	 * model elements, we want to store the result via the model's convertToString method.
 	 * @param model					The model that owns the target expression object
 	 * @param result				The result of the execution
 	 * @param context				The execution context
 	 * @param pa					The property access
 	 * @throws EolIncrementalExecutionException	If there is an error serializing the result value.
 	 */
+	 // FIXME WE need to deal with collection values
 	private void setPropertyAccessValue(
 		IIncrementalModel model,
 		Object result,

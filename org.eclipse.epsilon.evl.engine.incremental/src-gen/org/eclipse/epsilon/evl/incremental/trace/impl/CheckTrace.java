@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-24.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -99,26 +99,26 @@ public class CheckTrace implements ICheckTrace {
     @Override
     public ICheckResult getOrCreateCheckResult(IExecutionContext context) throws EolIncrementalExecutionException {
         ICheckResult checkResult = null;
+        
         try {
             checkResult = new CheckResult(context, this);
         } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
-    	    if (checkResult != null) {
-    	        return checkResult;
-    	    }
-    		Iterator<ICheckResult> it = this.result.get();
-            while (it.hasNext()) {
-            	ICheckResult item;
-                item = (ICheckResult) it.next();
-    			if (item.context().get().equals(context)) {
-    				checkResult = item;
-    				break;
-    			}
-    		}
-    		if (checkResult == null) {
-               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested CheckResult was "
-                		+ "duplicate but previous one was not found.");
+            if (checkResult == null) {
+                Iterator<ICheckResult> it = this.result.get();
+                while (it.hasNext()) {
+                    ICheckResult item;
+                    item = (ICheckResult) it.next();
+        	        if (item.context().get().equals(context)) {
+        	            checkResult = item;
+        	            break;
+        	        }
+                }
+            }
+            if (checkResult == null) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested CheckResult was "
+                        + "duplicate but previous one was not found.");
             }
         }
         return checkResult;

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -76,7 +76,6 @@ public class PropertyTraceGremlin implements IPropertyTrace, GremlinWrapper<Vert
         if (!container.properties().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.elementTrace = new PropertyTraceHasElementTraceGremlin(this, gts, BaseTraceFactory.getFactory());
     }
     
     @Override
@@ -193,6 +192,10 @@ public class PropertyTraceGremlin implements IPropertyTrace, GremlinWrapper<Vert
     @Override
     public void graphTraversalSource(GraphTraversalSource gts) {
         this.gts = gts;
+    }
+    
+    protected GraphTraversalSource graphTraversalSource() {
+        return this.gts;
     }
     
     protected GraphTraversalSource startTraversal() {

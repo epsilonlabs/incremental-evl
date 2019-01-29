@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-24.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -123,18 +123,17 @@ public class ContextTrace implements IContextTrace {
     @Override
     public IGuardTrace getOrCreateGuardTrace() throws EolIncrementalExecutionException {
         IGuardTrace guardTrace = null;
+        
         try {
             guardTrace = new GuardTrace(this);
-            
             this.guard().create(guardTrace);
         } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
-    	    if (guardTrace != null) {
-    	        return guardTrace;
-    	    }
-            guardTrace = this.guard.get();
-            if (guardTrace  == null) {
+            if (guardTrace == null) {
+                guardTrace = this.guard.get();
+            }
+            if (guardTrace == null) {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested GuardTrace was "
                         + "duplicate but previous one was not found.");
             }
@@ -145,17 +144,17 @@ public class ContextTrace implements IContextTrace {
     @Override
     public IExecutionContext getOrCreateExecutionContext() throws EolIncrementalExecutionException {
         IExecutionContext executionContext = null;
+        
         try {
             executionContext = new ExecutionContext(this);
         } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
-    	    if (executionContext != null) {
-    	        return executionContext;
-    	    }
-    		if (executionContext == null) {
-               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested ExecutionContext was "
-                		+ "duplicate but previous one was not found.");
+            if (executionContext == null) {
+            }
+            if (executionContext == null) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ExecutionContext was "
+                        + "duplicate but previous one was not found.");
             }
         }
         return executionContext;
@@ -164,28 +163,27 @@ public class ContextTrace implements IContextTrace {
     @Override
     public IInvariantTrace getOrCreateInvariantTrace(String name) throws EolIncrementalExecutionException {
         IInvariantTrace invariantTrace = null;
+        
         try {
             invariantTrace = new InvariantTrace(name, this);
-            
             this.constraints().create(invariantTrace);
         } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
-    	    if (invariantTrace != null) {
-    	        return invariantTrace;
-    	    }
-    		Iterator<IInvariantTrace> it = this.constraints.get();
-            while (it.hasNext()) {
-            	IInvariantTrace item;
-                item = (IInvariantTrace) it.next();
-    			if (item.getName().equals(name)) {
-    				invariantTrace = item;
-    				break;
-    			}
-    		}
-    		if (invariantTrace == null) {
-               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested InvariantTrace was "
-                		+ "duplicate but previous one was not found.");
+            if (invariantTrace == null) {
+                Iterator<IInvariantTrace> it = this.constraints.get();
+                while (it.hasNext()) {
+                    IInvariantTrace item;
+                    item = (IInvariantTrace) it.next();
+        	        if (item.getName().equals(name)) {
+        	            invariantTrace = item;
+        	            break;
+        	        }
+                }
+            }
+            if (invariantTrace == null) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested InvariantTrace was "
+                        + "duplicate but previous one was not found.");
             }
         }
         return invariantTrace;

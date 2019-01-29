@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -80,7 +80,7 @@ public class CheckTraceGremlin implements ICheckTrace, GremlinWrapper<Vertex> {
         if (!container.check().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.invariant = new CheckTraceHasInvariantGremlin(this, gts, EvlTraceFactory.getFactory());
+        // Derived Features
         this.result = new CheckTraceHasResultGremlin(this, gts, EvlTraceFactory.getFactory());
     }
     
@@ -155,7 +155,9 @@ public class CheckTraceGremlin implements ICheckTrace, GremlinWrapper<Vertex> {
             Vertex v = null;
             try {
                 v = g.addV("CheckResult").next();
+                /* protected region checkResultTypeOverride on begin */
                 checkResult = new CheckResultGremlin(context, this, v, gts);
+                /* protected region checkResultTypeOverride end */
             } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
                 g.V(v).as("v").properties().drop().select("v").drop();
                 throw new EolIncrementalExecutionException("Error creating requested CheckResult", e);
@@ -222,6 +224,10 @@ public class CheckTraceGremlin implements ICheckTrace, GremlinWrapper<Vertex> {
     @Override
     public void graphTraversalSource(GraphTraversalSource gts) {
         this.gts = gts;
+    }
+    
+    protected GraphTraversalSource graphTraversalSource() {
+        return this.gts;
     }
     
     protected GraphTraversalSource startTraversal() {

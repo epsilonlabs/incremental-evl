@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-24.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -133,18 +133,17 @@ public class InvariantTrace implements IInvariantTrace {
     @Override
     public IGuardTrace getOrCreateGuardTrace() throws EolIncrementalExecutionException {
         IGuardTrace guardTrace = null;
+        
         try {
             guardTrace = new GuardTrace(this);
-            
             this.guard().create(guardTrace);
         } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
-    	    if (guardTrace != null) {
-    	        return guardTrace;
-    	    }
-            guardTrace = this.guard.get();
-            if (guardTrace  == null) {
+            if (guardTrace == null) {
+                guardTrace = this.guard.get();
+            }
+            if (guardTrace == null) {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested GuardTrace was "
                         + "duplicate but previous one was not found.");
             }
@@ -155,18 +154,17 @@ public class InvariantTrace implements IInvariantTrace {
     @Override
     public ICheckTrace getOrCreateCheckTrace() throws EolIncrementalExecutionException {
         ICheckTrace checkTrace = null;
+        
         try {
             checkTrace = new CheckTrace(this);
-            
             this.check().create(checkTrace);
         } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
-    	    if (checkTrace != null) {
-    	        return checkTrace;
-    	    }
-            checkTrace = this.check.get();
-            if (checkTrace  == null) {
+            if (checkTrace == null) {
+                checkTrace = this.check.get();
+            }
+            if (checkTrace == null) {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested CheckTrace was "
                         + "duplicate but previous one was not found.");
             }
@@ -177,18 +175,17 @@ public class InvariantTrace implements IInvariantTrace {
     @Override
     public IMessageTrace getOrCreateMessageTrace() throws EolIncrementalExecutionException {
         IMessageTrace messageTrace = null;
+        
         try {
             messageTrace = new MessageTrace(this);
-            
             this.message().create(messageTrace);
         } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
-    	    if (messageTrace != null) {
-    	        return messageTrace;
-    	    }
-            messageTrace = this.message.get();
-            if (messageTrace  == null) {
+            if (messageTrace == null) {
+                messageTrace = this.message.get();
+            }
+            if (messageTrace == null) {
                 throw new EolIncrementalExecutionException("Error creating trace model element. Requested MessageTrace was "
                         + "duplicate but previous one was not found.");
             }

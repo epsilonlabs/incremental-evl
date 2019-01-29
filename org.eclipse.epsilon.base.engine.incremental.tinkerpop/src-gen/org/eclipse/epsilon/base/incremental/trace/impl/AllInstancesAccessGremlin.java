@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -81,8 +81,8 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, GremlinWr
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
+        // Equals References
         this.type = new AllInstancesAccessHasTypeGremlin(this, gts, BaseTraceFactory.getFactory());
-        this.from = new AccessHasFromGremlin(this, gts, BaseTraceFactory.getFactory());
         try {
 	        this.type.create(type);
         } catch (TraceModelConflictRelation ex) {
@@ -232,6 +232,10 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, GremlinWr
     @Override
     public void graphTraversalSource(GraphTraversalSource gts) {
         this.gts = gts;
+    }
+    
+    protected GraphTraversalSource graphTraversalSource() {
+        return this.gts;
     }
     
     protected GraphTraversalSource startTraversal() {

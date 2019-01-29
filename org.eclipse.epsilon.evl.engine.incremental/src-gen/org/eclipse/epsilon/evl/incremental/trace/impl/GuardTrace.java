@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-24.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -99,26 +99,26 @@ public class GuardTrace implements IGuardTrace {
     @Override
     public IGuardResult getOrCreateGuardResult(IExecutionContext context) throws EolIncrementalExecutionException {
         IGuardResult guardResult = null;
+        
         try {
             guardResult = new GuardResult(context, this);
         } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
-    	    if (guardResult != null) {
-    	        return guardResult;
-    	    }
-    		Iterator<IGuardResult> it = this.result.get();
-            while (it.hasNext()) {
-            	IGuardResult item;
-                item = (IGuardResult) it.next();
-    			if (item.context().get().equals(context)) {
-    				guardResult = item;
-    				break;
-    			}
-    		}
-    		if (guardResult == null) {
-               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested GuardResult was "
-                		+ "duplicate but previous one was not found.");
+            if (guardResult == null) {
+                Iterator<IGuardResult> it = this.result.get();
+                while (it.hasNext()) {
+                    IGuardResult item;
+                    item = (IGuardResult) it.next();
+        	        if (item.context().get().equals(context)) {
+        	            guardResult = item;
+        	            break;
+        	        }
+                }
+            }
+            if (guardResult == null) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested GuardResult was "
+                        + "duplicate but previous one was not found.");
             }
         }
         return guardResult;

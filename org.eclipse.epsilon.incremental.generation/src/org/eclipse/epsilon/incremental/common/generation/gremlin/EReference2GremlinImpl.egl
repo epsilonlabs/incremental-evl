@@ -160,7 +160,7 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
         try {
 [%if (er.isMany()) {%]
 	        if (isUnique()) {
-	           GraphTraversal<Vertex, Vertex> gt =  g.V(source.getId()).out("[%=er.name%]");
+	            GraphTraversal<Vertex, Vertex> gt =  g.V(source.getId()).out("[%=er.name%]");
                 for (Entry<String, Object> id : target.getIdProperties().entrySet()) {
                     gt.has(id.getKey(), id.getValue());
                 }

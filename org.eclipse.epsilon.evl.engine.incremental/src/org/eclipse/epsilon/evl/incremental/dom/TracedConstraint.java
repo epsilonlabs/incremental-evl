@@ -69,6 +69,15 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 	@Override
 	public void setCurrentContext(IExecutionContext currentContext) {
 		this.currentContext = currentContext;
+		if (this.hasGuard()) {
+			((TracedExecutableBlock<?, ?>) guardBlock).setCurrentContext(currentContext);
+		}
+		if (this.hasCheck()) {
+			((TracedExecutableBlock<?, ?>) checkBlock).setCurrentContext(currentContext);
+		}
+		if (this.hasMessage()) {
+			((TracedExecutableBlock<?, ?>) messageBlock).setCurrentContext(currentContext);
+		}
 	}
 
 	@Override
@@ -147,17 +156,16 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 	public IGuardTrace getOrCreateGuardTrace() throws EolIncrementalExecutionException {
 		IGuardTrace guard = null;
 		if (guardBlock != null) {
-
 			guard = moduleElementTrace.guard().get();
 			if (guard == null) {
 				try {
 					guard = moduleElementTrace.getOrCreateGuardTrace();
-					((TracedExecutableBlock<IGuardTrace, Boolean>) guardBlock).setModuleElementTrace(guard);
 				} catch (EolIncrementalExecutionException e) {
 					throw new EolIncrementalExecutionException(
 							"Can't create GuardTrace for Invariant " + getName() + ".");
 				}
 			}
+			((TracedExecutableBlock<IGuardTrace, Boolean>) guardBlock).setModuleElementTrace(guard);
 		}
 		return guard;
 	}
@@ -178,12 +186,12 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 			if (check == null) {
 				try {
 					check = moduleElementTrace.getOrCreateCheckTrace();
-					((TracedExecutableBlock<ICheckTrace, Boolean>) checkBlock).setModuleElementTrace(check);
 				} catch (EolIncrementalExecutionException e) {
 					throw new EolIncrementalExecutionException(
 							"Can't create GuardTrace for Invariant " + getName() + ".");
 				}
 			}
+			((TracedExecutableBlock<ICheckTrace, Boolean>) checkBlock).setModuleElementTrace(check);
 		}
 		return check;
 	}
@@ -203,12 +211,12 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 			if (message == null) {
 				try {
 					message = moduleElementTrace.getOrCreateMessageTrace();
-					((TracedExecutableBlock<IMessageTrace, String>) messageBlock).setModuleElementTrace(message);
 				} catch (EolIncrementalExecutionException e) {
 					throw new EolIncrementalExecutionException(
 							"Can't create MessageTrace for Invariant " + getName() + ".");
 				}
 			}
+			((TracedExecutableBlock<IMessageTrace, String>) messageBlock).setModuleElementTrace(message);
 		}
 		return message;
 	}

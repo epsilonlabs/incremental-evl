@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -94,6 +94,14 @@ public class EvlTraceFactory implements TraceFactory {
             satisfiesAccess.delegate((Vertex) delegate);
             satisfiesAccess.graphTraversalSource(gts);
             return satisfiesAccess;
+        /* protected region EvlTraceFactory on begin */
+        // Add special factory overrides
+        case "ExecutionContext":
+        	EvlExecutionContextGremlin executionContext = new EvlExecutionContextGremlin();
+            executionContext.delegate((Vertex) delegate);
+            executionContext.graphTraversalSource(gts);
+            return executionContext;
+        /* protected region EvlTraceFactory end */
         default:
             TraceFactory sf = BaseTraceFactory.getFactory();
             return sf.createTraceElement(delegate, gts);

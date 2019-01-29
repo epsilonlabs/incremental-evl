@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -27,7 +27,6 @@ import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region SatisfiesAccessImports on begin **/
-
 /** protected region SatisfiesAccessImports end **/
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
@@ -80,8 +79,9 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, GremlinWrapper<
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.from = new AccessHasFromGremlin(this, gts, EvlTraceFactory.getFactory());
+        // Equals References
         this.modelElement = new SatisfiesAccessHasModelElementGremlin(this, gts, EvlTraceFactory.getFactory());
+        // Derived Features
         this.satisfiedInvariants = new SatisfiesAccessHasSatisfiedInvariantsGremlin(this, gts, EvlTraceFactory.getFactory());
         try {
 	        this.modelElement.create(modelElement);
@@ -250,6 +250,10 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, GremlinWrapper<
     @Override
     public void graphTraversalSource(GraphTraversalSource gts) {
         this.gts = gts;
+    }
+    
+    protected GraphTraversalSource graphTraversalSource() {
+        return this.gts;
     }
     
     protected GraphTraversalSource startTraversal() {

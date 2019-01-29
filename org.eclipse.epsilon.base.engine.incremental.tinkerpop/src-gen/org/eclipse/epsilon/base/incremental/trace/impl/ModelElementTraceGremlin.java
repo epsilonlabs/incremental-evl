@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -92,9 +92,11 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
         if (!container.elements().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.modelTrace = new ModelElementTraceHasModelTraceGremlin(this, gts, BaseTraceFactory.getFactory());
+        // Derived Features
         this.properties = new ModelElementTraceHasPropertiesGremlin(this, gts, BaseTraceFactory.getFactory());
+        // Derived Features
         this.type = new ModelElementTraceHasTypeGremlin(this, gts, BaseTraceFactory.getFactory());
+        // Derived Features
         this.kind = new ModelElementTraceHasKindGremlin(this, gts, BaseTraceFactory.getFactory());
         try {
 	        this.type.create(type);
@@ -217,8 +219,10 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
             else {
                 Vertex v = null;
                 try {
-                v = g.addV("PropertyTrace").property(T.id, GremlinUtils.identityToString(name, this, v, gts)).next();
-                    propertyTrace = new PropertyTraceGremlin(name, this, v, gts);
+                    v = g.addV("PropertyTrace").property(T.id, GremlinUtils.identityToString(name, this)).next();
+                    /* protected region propertyTraceTypeOverride on begin */
+                    propertyTrace = new PropertyTraceGremlin(name, this, v, gts); 
+                    /* protected region propertyTraceTypeOverride end */
                 } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
                     g.V(v).as("v").properties().drop().select("v").drop();
                     throw new EolIncrementalExecutionException("Error creating requested PropertyTrace", e);
@@ -296,6 +300,10 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
     @Override
     public void graphTraversalSource(GraphTraversalSource gts) {
         this.gts = gts;
+    }
+    
+    protected GraphTraversalSource graphTraversalSource() {
+        return this.gts;
     }
     
     protected GraphTraversalSource startTraversal() {

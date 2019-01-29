@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -69,6 +69,7 @@ public class CheckResultGremlin implements ICheckResult, GremlinWrapper<Vertex> 
         if (!container.result().create(this)) {
             throw new TraceModelDuplicateElement();
         };
+        // Derived Features
         this.context = new CheckResultHasContextGremlin(this, gts, EvlTraceFactory.getFactory());
         try {
 	        this.context.create(context);
@@ -184,6 +185,10 @@ public class CheckResultGremlin implements ICheckResult, GremlinWrapper<Vertex> 
     @Override
     public void graphTraversalSource(GraphTraversalSource gts) {
         this.gts = gts;
+    }
+    
+    protected GraphTraversalSource graphTraversalSource() {
+        return this.gts;
     }
     
     protected GraphTraversalSource startTraversal() {

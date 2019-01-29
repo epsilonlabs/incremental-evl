@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-24.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -124,28 +124,27 @@ public class ModelElementTrace implements IModelElementTrace {
     @Override
     public IPropertyTrace getOrCreatePropertyTrace(String name) throws EolIncrementalExecutionException {
         IPropertyTrace propertyTrace = null;
+        
         try {
             propertyTrace = new PropertyTrace(name, this);
-            
             this.properties().create(propertyTrace);
         } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
-    	    if (propertyTrace != null) {
-    	        return propertyTrace;
-    	    }
-    		Iterator<IPropertyTrace> it = this.properties.get();
-            while (it.hasNext()) {
-            	IPropertyTrace item;
-                item = (IPropertyTrace) it.next();
-    			if (item.getName().equals(name)) {
-    				propertyTrace = item;
-    				break;
-    			}
-    		}
-    		if (propertyTrace == null) {
-               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested PropertyTrace was "
-                		+ "duplicate but previous one was not found.");
+            if (propertyTrace == null) {
+                Iterator<IPropertyTrace> it = this.properties.get();
+                while (it.hasNext()) {
+                    IPropertyTrace item;
+                    item = (IPropertyTrace) it.next();
+        	        if (item.getName().equals(name)) {
+        	            propertyTrace = item;
+        	            break;
+        	        }
+                }
+            }
+            if (propertyTrace == null) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested PropertyTrace was "
+                        + "duplicate but previous one was not found.");
             }
         }
         return propertyTrace;

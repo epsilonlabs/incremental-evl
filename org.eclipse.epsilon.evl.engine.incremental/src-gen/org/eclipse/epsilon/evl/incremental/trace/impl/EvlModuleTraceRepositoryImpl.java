@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-24.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,14 +15,9 @@ import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-
-import org.eclipse.epsilon.evl.IReexecutionTrace;
-import org.eclipse.epsilon.evl.ReexecutionCheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceRepositoryImpl;
-
-
 /** protected region EvlModuleTraceRepositoryImplImports on begin **/
 import java.util.Collections;
 import java.util.function.Function;
@@ -34,6 +29,8 @@ import java.util.stream.Collectors;
 
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
+import org.eclipse.epsilon.evl.IReexecutionTrace;
+import org.eclipse.epsilon.evl.ReexecutionCheckTrace;
 import org.eclipse.epsilon.evl.ReexecutionContextTrace;
 import org.eclipse.epsilon.evl.ReexecutionGuardTrace;
 import org.eclipse.epsilon.evl.ReexecutionInvariantTrace;

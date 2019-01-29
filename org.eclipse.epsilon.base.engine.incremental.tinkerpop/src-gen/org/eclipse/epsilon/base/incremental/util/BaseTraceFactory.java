@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -99,6 +99,9 @@ public class BaseTraceFactory implements TraceFactory {
             propertyTrace.delegate((Vertex) delegate);
             propertyTrace.graphTraversalSource(gts);
             return propertyTrace;
+        /* protected region BaseTraceFactory on begin */
+        // Add special factory overrides 
+        /* protected region BaseTraceFactory end */
         
         }
         throw new IllegalArgumentException("Trace Class unkown. If you changed the metamodel make sure "

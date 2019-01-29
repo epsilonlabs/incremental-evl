@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -99,9 +99,11 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
         if (!container.constraints().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        this.invariantContext = new InvariantTraceHasInvariantContextGremlin(this, gts, EvlTraceFactory.getFactory());
+        // Derived Features
         this.guard = new GuardedElementTraceHasGuardGremlin(this, gts, EvlTraceFactory.getFactory());
+        // Derived Features
         this.check = new InvariantTraceHasCheckGremlin(this, gts, EvlTraceFactory.getFactory());
+        // Derived Features
         this.message = new InvariantTraceHasMessageGremlin(this, gts, EvlTraceFactory.getFactory());
     }
     
@@ -235,8 +237,10 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
             else {
                 Vertex v = null;
                 try {
-                v = g.addV("GuardTrace").next();
-                    guardTrace = new GuardTraceGremlin(this, v, gts);
+                    v = g.addV("GuardTrace").next();
+                    /* protected region guardTraceTypeOverride on begin */
+                    guardTrace = new GuardTraceGremlin(this, v, gts); 
+                    /* protected region guardTraceTypeOverride end */
                 } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
                     g.V(v).as("v").properties().drop().select("v").drop();
                     throw new EolIncrementalExecutionException("Error creating requested GuardTrace", e);
@@ -262,8 +266,10 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
             else {
                 Vertex v = null;
                 try {
-                v = g.addV("CheckTrace").next();
-                    checkTrace = new CheckTraceGremlin(this, v, gts);
+                    v = g.addV("CheckTrace").next();
+                    /* protected region checkTraceTypeOverride on begin */
+                    checkTrace = new CheckTraceGremlin(this, v, gts); 
+                    /* protected region checkTraceTypeOverride end */
                 } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
                     g.V(v).as("v").properties().drop().select("v").drop();
                     throw new EolIncrementalExecutionException("Error creating requested CheckTrace", e);
@@ -289,8 +295,10 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
             else {
                 Vertex v = null;
                 try {
-                v = g.addV("MessageTrace").next();
-                    messageTrace = new MessageTraceGremlin(this, v, gts);
+                    v = g.addV("MessageTrace").next();
+                    /* protected region messageTraceTypeOverride on begin */
+                    messageTrace = new MessageTraceGremlin(this, v, gts); 
+                    /* protected region messageTraceTypeOverride end */
                 } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
                     g.V(v).as("v").properties().drop().select("v").drop();
                     throw new EolIncrementalExecutionException("Error creating requested MessageTrace", e);
@@ -368,6 +376,10 @@ public class InvariantTraceGremlin implements IInvariantTrace, GremlinWrapper<Ve
     @Override
     public void graphTraversalSource(GraphTraversalSource gts) {
         this.gts = gts;
+    }
+    
+    protected GraphTraversalSource graphTraversalSource() {
+        return this.gts;
     }
     
     protected GraphTraversalSource startTraversal() {

@@ -6,19 +6,29 @@ import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionEx
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
+import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionContextGremlin;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesAccess;
 
 // FIXME Need an EGX rule for this so we generate it?
 public class EvlExecutionContextGremlin extends ExecutionContextGremlin {
-	
+
+	public EvlExecutionContextGremlin(IContextModuleElementTrace container, Vertex vertex, GraphTraversalSource gts)
+			throws TraceModelDuplicateElement, TraceModelConflictRelation {
+		super(container, vertex, gts);
+	}
+
+	public EvlExecutionContextGremlin() {
+		super();
+	}
+
 	@SuppressWarnings("unchecked")
 	public <A extends IAccess> A getOrCreateAccess(Class<A> accessClass, Object... args) throws EolIncrementalExecutionException {
         GraphTraversalSource g = startTraversal();
         A result = null;
-        switch(accessClass.getName()) {
-        case "SatisfiesAccess":
+        switch(accessClass.getSimpleName()) {
+        case "ISatisfiesAccess":
         	assert args[0] instanceof IModelElementTrace;
         	ISatisfiesAccess satisfiesAccess = null;
             try {

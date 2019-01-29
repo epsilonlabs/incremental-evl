@@ -58,7 +58,16 @@ for (ec in ep.getEClassifiers().select(ec |
             [%=ec.name.firstToLowerCase()%].delegate((Vertex) delegate);
             [%=ec.name.firstToLowerCase()%].graphTraversalSource(gts);
             return [%=ec.name.firstToLowerCase()%];
-[%}%]
+[%}
+/* If there is a Class that inherits from a class in another package, and non of the classes
+in this package have a local reference to that super class, we need a particular entry
+Problem is, we also need to do this in the base class when you want to create a new
+instance to represent an element in the DB... this might be hard
+*/
+%]
+        [%=out.startPreserve("/*", "*/", ep.getName().firstToUpperCase()+"TraceFactory", true)%]
+        // Add special factory overrides 
+        [%=out.stopPreserve()%]
 [%if(baseLanguage.length() > 0) {%]
         default:
             TraceFactory sf = [%=baseLanguage.firstToUpperCase()%]TraceFactory.getFactory();

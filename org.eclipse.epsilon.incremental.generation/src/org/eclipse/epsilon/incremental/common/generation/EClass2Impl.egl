@@ -183,8 +183,31 @@ for (er in ec.getEAllReferences().select(er | er.isContainment())) {
                     aller.isContainment)
                 );
         if (not er.getAnnotations("https://eclipse.org/epsilon/incremental/factory").isEmpty()) {
-            // FIXME!
+            var erType = er.getEReferenceType();%]
+    @SuppressWarnings("unchecked")
+    public <A extends [%=erType.getJavaInterfaceName(interPrefix, interSufix)%]> A getOrCreate[%=erType.name%](Class<A> [%=erType.name.firstToLowerCase()%]Class, Object... args) throws EolIncrementalExecutionException {
+        A result = null;
+        switch([%=erType.name.firstToLowerCase()%]Class.getName()) {
+[%          for (sc in subClasses) {
+                var instanceName = sc.name.firstToLowerCase();%]
+            case "[%=sc.name%]":
+[%              var types = sc.getIndexAttributes().includingAll(sc.getRequiredFeatures()).collect(a | a.eType);
+                for (t in types) {%]
+                assert args[[%=loopCount%]] instanceof [%=t.getJavaInterfaceName(interPrefix, interSufix)%];
+[%              }%]
+                [%=sc.getJavaInterfaceName(interPrefix, interSufix)%] [%=instanceName%] = null;
+                [%=sc.createReferenceInstance(er, true, interPrefix, interSufix, classPrefix, classSufix, true)%]
+                result = (A) [%=instanceName%];
+                break;
+[%          }
+            if (not ec.getEAllSuperTypes().select(c | not c.isAbstract()).isEmpty()) {%]
+                default:
+                result = super.getOrCreateAccess([%=erType.name.firstToLowerCase()%]Class, args);
+[%          }%]
         }
+        return result;
+    }
+[%      }
         else {
             for (sc in subClasses) {%]
     [%=sc.factoryMethod(er, true, interPrefix, interSufix, classPrefix, classSufix)%]
@@ -338,43 +361,74 @@ for (er in ec.getEqualsReferences()) {
 operation EClass factoryMethod(ref : EReference, subClass : Boolean, interPrefix:String,
                                interSufix:String, classPrefix:String, classSufix:String) {
     var instanceName = self.name.firstToLowerCase();
+    var params = self.getEAttributeParameters().includingAll(self.getRequiredFeatureParameters(interPrefix, interSufix));%]
+@Override
+public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] getOrCreate[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException {
+    [%=self.getJavaInterfaceName(interPrefix, interSufix)%] [%=instanceName%] = null;
+    [%=self.createReferenceInstance(ref, subClass, interPrefix, interSufix, classPrefix, classSufix, false)%]
+    return [%=instanceName%];
+}      
+[%}
+
+@template
+operation EClass createReferenceInstance(ref : EReference, subClass : Boolean, interPrefix:String,
+                               interSufix:String, classPrefix:String, classSufix:String, generic:Boolean) {
+    var instanceName = self.name.firstToLowerCase();
     var params = self.getEAttributeParameters().includingAll(self.getRequiredFeatureParameters(interPrefix, interSufix));
-    var vars = self.getIndexAttributes().includingAll(self.getRequiredFeatures()).collect(a | a.name);
+    var vars;
+    if (generic) {
+        var types = self.getIndexAttributes().includingAll(self.getRequiredFeatures()).collect(a | a.eType.getJavaInterfaceName(interPrefix, interSufix));
+        vars = 1.iota(self.getIndexAttributes().includingAll(self.getRequiredFeatures()).size(),1).collect(a | "(" +  types.at(a-1) + ")" + " args[" + (a-1) + "]");
+    }
+    else {
+        vars = self.getIndexAttributes().includingAll(self.getRequiredFeatures()).collect(a | a.name);
+    }
     var container = self.getContainerReference().at(2);
     var containment = self.getContainerReference().at(0);
     if (container.isDefined()) {
         vars.add("this");
     }%]
-@Override
-public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] getOrCreate[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException {
-    [%=self.getJavaInterfaceName(interPrefix, interSufix)%] [%=instanceName%] = null;
-    try {
-        [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=vars.concat(", ")%]);
-[% if (containment.isDefined()) {%]        
-        this.[%=container.name%]().create([%=instanceName%]);
+
+try {
+    [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=vars.concat(", ")%]);
+[% if (containment.isDefined()) {%]
+    this.[%=container.name%]().create([%=instanceName%]);
 [%  }%]
-    } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
-        // Pass
-    } finally {
-	    if ([%=instanceName%] != null) {
-	        return [%=instanceName%];
-	    }
+} catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
+    // Pass
+} finally {
+    if ([%=instanceName%] == null) {
 [%  if (ref.isMany()) {
         var conds: Sequence;
-		for (param in self.getIndexAttributes()) {
+        for (param in self.getIndexAttributes()) {
+            var paramname;
+            if (generic) {
+                paramname = "args[" + loopCount +  "]"; 
+            }
+            else {
+                paramname = param.name;
+            }
             if (isJavaPrimitiveType(param.getEAttributeType().name)) {
-                conds.add("item.get" + param.name.firstToUpperCase() + "() == " + param.name);
+                conds.add("item.get" + param.name.firstToUpperCase() + "() == " + paramname);
             } else {
-                conds.add("item.get" + param.name.firstToUpperCase() + "().equals(" + param.name + ")");
+                conds.add("item.get" + param.name.firstToUpperCase() + "().equals(" + paramname + ")");
             }
         }
         for (param in self.getRequiredFeatures()) {
-            conds.add("item." + param.name + "().get().equals(" + param.name + ")");
+            var paramname;
+            if (generic) {
+                paramname = "args[" + (loopCount + self.getIndexAttributes().size()) + "]"; 
+            }
+            else {
+                paramname = param.name;
+            }
+            conds.add("item." + param.name + "().get().equals(" + paramname + ")");
         }
         if (not conds.isEmpty()) {%]
-		Iterator<[%=ref.getEType().getJavaInterfaceName(interPrefix, interSufix)%]> it = this.[%=ref.name%].get();
+        // Find the matching element
+        Iterator<[%=ref.getEType().getJavaInterfaceName(interPrefix, interSufix)%]> it = this.[%=ref.name%].get();
         while (it.hasNext()) {
-        	[%=self.getJavaInterfaceName(interPrefix, interSufix)%] item;
+            [%=self.getJavaInterfaceName(interPrefix, interSufix)%] item;
 [%// Need to filter and cast for subclasses
         if (subClass) {%]
             [%=ref.getEType().getJavaInterfaceName(interPrefix, interSufix)%] t = it.next();
@@ -387,25 +441,20 @@ public [%=self.getJavaInterfaceName(interPrefix, interSufix)%] getOrCreate[%=sel
 [%      } else {%]
             item = ([%=self.getJavaInterfaceName(interPrefix, interSufix)%]) it.next();
 [%      }%]
-			if ([%=conds.concat(" &&\n")%]) {
-				[%=instanceName%] = item;
-				break;
-			}
-		}
-[%      }%]
-		if ([%=instanceName%] == null) {
-           	throw new EolIncrementalExecutionException("Error creating trace model element. Requested [%=self.name%] was "
-            		+ "duplicate but previous one was not found.");
+	        if ([%=conds.concat(" &&\n")%]) {
+	            [%=instanceName%] = item;
+	            break;
+	        }
         }
+[%      }%]
 [%  } else {%]
         [%=instanceName%] = [%if (subClass) {%]([%=self.name%]) [%}%]this.[%=ref.name%].get();
-        if ([%=instanceName%]  == null) {
-            throw new EolIncrementalExecutionException("Error creating trace model element. Requested [%=self.name%] was "
-                    + "duplicate but previous one was not found.");
-        }
 [%  }%]
     }
-    return [%=self.name.firstToLowerCase()%];
-}      
-[%}
-%]
+    if ([%=instanceName%] == null) {
+        throw new EolIncrementalExecutionException("Error creating trace model element. Requested [%=self.name%] was "
+                + "duplicate but previous one was not found.");
+    }
+}
+[%
+}%]

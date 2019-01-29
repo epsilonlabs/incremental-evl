@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-24.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -94,29 +94,28 @@ public class ModelTrace implements IModelTrace {
     @Override
     public IModelElementTrace getOrCreateModelElementTrace(String uri, IModelTypeTrace type) throws EolIncrementalExecutionException {
         IModelElementTrace modelElementTrace = null;
+        
         try {
             modelElementTrace = new ModelElementTrace(uri, type, this);
-            
             this.elements().create(modelElementTrace);
         } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
-    	    if (modelElementTrace != null) {
-    	        return modelElementTrace;
-    	    }
-    		Iterator<IModelElementTrace> it = this.elements.get();
-            while (it.hasNext()) {
-            	IModelElementTrace item;
-                item = (IModelElementTrace) it.next();
-    			if (item.getUri() == uri &&
-    			    item.type().get().equals(type)) {
-    				modelElementTrace = item;
-    				break;
-    			}
-    		}
-    		if (modelElementTrace == null) {
-               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelElementTrace was "
-                		+ "duplicate but previous one was not found.");
+            if (modelElementTrace == null) {
+                Iterator<IModelElementTrace> it = this.elements.get();
+                while (it.hasNext()) {
+                    IModelElementTrace item;
+                    item = (IModelElementTrace) it.next();
+        	        if (item.getUri() == uri &&
+        	            item.type().get().equals(type)) {
+        	            modelElementTrace = item;
+        	            break;
+        	        }
+                }
+            }
+            if (modelElementTrace == null) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelElementTrace was "
+                        + "duplicate but previous one was not found.");
             }
         }
         return modelElementTrace;
@@ -125,28 +124,27 @@ public class ModelTrace implements IModelTrace {
     @Override
     public IModelTypeTrace getOrCreateModelTypeTrace(String name) throws EolIncrementalExecutionException {
         IModelTypeTrace modelTypeTrace = null;
+        
         try {
             modelTypeTrace = new ModelTypeTrace(name, this);
-            
             this.types().create(modelTypeTrace);
         } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
             // Pass
         } finally {
-    	    if (modelTypeTrace != null) {
-    	        return modelTypeTrace;
-    	    }
-    		Iterator<IModelTypeTrace> it = this.types.get();
-            while (it.hasNext()) {
-            	IModelTypeTrace item;
-                item = (IModelTypeTrace) it.next();
-    			if (item.getName().equals(name)) {
-    				modelTypeTrace = item;
-    				break;
-    			}
-    		}
-    		if (modelTypeTrace == null) {
-               	throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelTypeTrace was "
-                		+ "duplicate but previous one was not found.");
+            if (modelTypeTrace == null) {
+                Iterator<IModelTypeTrace> it = this.types.get();
+                while (it.hasNext()) {
+                    IModelTypeTrace item;
+                    item = (IModelTypeTrace) it.next();
+        	        if (item.getName().equals(name)) {
+        	            modelTypeTrace = item;
+        	            break;
+        	        }
+                }
+            }
+            if (modelTypeTrace == null) {
+                throw new EolIncrementalExecutionException("Error creating trace model element. Requested ModelTypeTrace was "
+                        + "duplicate but previous one was not found.");
             }
         }
         return modelTypeTrace;

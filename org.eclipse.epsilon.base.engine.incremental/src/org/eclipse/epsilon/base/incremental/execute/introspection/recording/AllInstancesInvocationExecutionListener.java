@@ -188,8 +188,7 @@ public class AllInstancesInvocationExecutionListener<
 			}
 			typeTrace = modelTrace.getOrCreateModelTypeTrace(typeName);
 		}
-		// currentContext.getOrCreateAllInstancesAccess(ofKind, executionTrace, typeTrace);
-		currentContext.getOrCreateAccess(IAllInstancesAccess.class, ofKind, executionTrace, typeTrace);
+		currentContext.getOrCreateAccess(IAllInstancesAccess.class, ofKind, typeTrace);
 	}
 
 

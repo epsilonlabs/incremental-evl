@@ -137,6 +137,7 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 				if (tc.hasGuard()) {
 					IGuardTrace gt = tc.getOrCreateGuardTrace();
 					gt.getOrCreateGuardResult(getCurrentContext());
+					
 				}
 				if (tc.hasCheck()) {
 					ICheckTrace ct = tc.getOrCreateCheckTrace();

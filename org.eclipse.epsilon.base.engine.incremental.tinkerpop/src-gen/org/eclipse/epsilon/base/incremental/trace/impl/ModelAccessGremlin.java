@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -76,6 +76,7 @@ public class ModelAccessGremlin implements IModelAccess, GremlinWrapper<Vertex> 
         if (!container.models().create(this)) {
             throw new TraceModelDuplicateElement();
         };
+        // Equals References
         this.modelTrace = new ModelAccessHasModelTraceGremlin(this, gts, BaseTraceFactory.getFactory());
         try {
 	        this.modelTrace.create(modelTrace);
@@ -199,6 +200,10 @@ public class ModelAccessGremlin implements IModelAccess, GremlinWrapper<Vertex> 
     @Override
     public void graphTraversalSource(GraphTraversalSource gts) {
         this.gts = gts;
+    }
+    
+    protected GraphTraversalSource graphTraversalSource() {
+        return this.gts;
     }
     
     protected GraphTraversalSource startTraversal() {

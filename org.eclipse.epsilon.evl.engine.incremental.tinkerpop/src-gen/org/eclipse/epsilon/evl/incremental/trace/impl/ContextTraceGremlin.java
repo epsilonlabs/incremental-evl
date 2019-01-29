@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-23.
+ * This file was automatically generated on: 2019-01-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -90,8 +90,11 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
         if (!container.moduleElements().create(this)) {
             throw new TraceModelDuplicateElement();
         };
+        // Equals References
         this.executionContext = new ContextModuleElementTraceHasExecutionContextGremlin(this, gts, EvlTraceFactory.getFactory());
+        // Derived Features
         this.guard = new GuardedElementTraceHasGuardGremlin(this, gts, EvlTraceFactory.getFactory());
+        // Derived Features
         this.constraints = new ContextTraceHasConstraintsGremlin(this, gts, EvlTraceFactory.getFactory());
     }
     
@@ -210,8 +213,10 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
             else {
                 Vertex v = null;
                 try {
-                v = g.addV("GuardTrace").next();
-                    guardTrace = new GuardTraceGremlin(this, v, gts);
+                    v = g.addV("GuardTrace").next();
+                    /* protected region guardTraceTypeOverride on begin */
+                    guardTrace = new GuardTraceGremlin(this, v, gts); 
+                    /* protected region guardTraceTypeOverride end */
                 } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
                     g.V(v).as("v").properties().drop().select("v").drop();
                     throw new EolIncrementalExecutionException("Error creating requested GuardTrace", e);
@@ -231,7 +236,9 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
             Vertex v = null;
             try {
                 v = g.addV("ExecutionContext").next();
-                executionContext = new ExecutionContextGremlin(this, v, gts);
+                /* protected region executionContextTypeOverride on begin */
+                executionContext = new EvlExecutionContextGremlin(this, v, gts);
+                /* protected region executionContextTypeOverride end */
             } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
                 g.V(v).as("v").properties().drop().select("v").drop();
                 throw new EolIncrementalExecutionException("Error creating requested ExecutionContext", e);
@@ -256,8 +263,10 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
             else {
                 Vertex v = null;
                 try {
-                v = g.addV("InvariantTrace").property(T.id, GremlinUtils.identityToString(name, this, v, gts)).next();
-                    invariantTrace = new InvariantTraceGremlin(name, this, v, gts);
+                    v = g.addV("InvariantTrace").property(T.id, GremlinUtils.identityToString(name, this)).next();
+                    /* protected region invariantTraceTypeOverride on begin */
+                    invariantTrace = new InvariantTraceGremlin(name, this, v, gts); 
+                    /* protected region invariantTraceTypeOverride end */
                 } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
                     g.V(v).as("v").properties().drop().select("v").drop();
                     throw new EolIncrementalExecutionException("Error creating requested InvariantTrace", e);
@@ -346,6 +355,10 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
     @Override
     public void graphTraversalSource(GraphTraversalSource gts) {
         this.gts = gts;
+    }
+    
+    protected GraphTraversalSource graphTraversalSource() {
+        return this.gts;
     }
     
     protected GraphTraversalSource startTraversal() {
