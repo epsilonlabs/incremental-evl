@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -59,7 +59,6 @@ public class ModelTrace implements IModelTrace {
      */    
     public ModelTrace(String uri) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.uri = uri;
-
         this.elements = new ModelTraceHasElements(this);
         this.types = new ModelTraceHasTypes(this);
 
@@ -102,6 +101,7 @@ public class ModelTrace implements IModelTrace {
             // Pass
         } finally {
             if (modelElementTrace == null) {
+                // Find the matching element
                 Iterator<IModelElementTrace> it = this.elements.get();
                 while (it.hasNext()) {
                     IModelElementTrace item;
@@ -132,6 +132,7 @@ public class ModelTrace implements IModelTrace {
             // Pass
         } finally {
             if (modelTypeTrace == null) {
+                // Find the matching element
                 Iterator<IModelTypeTrace> it = this.types.get();
                 while (it.hasNext()) {
                     IModelTypeTrace item;

@@ -8,11 +8,14 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 public interface IReexecutionTrace {
 
 	IModuleElementTrace getModuleElementTrace();
-
+	
+	/**
+	 * This is derived from the module element trace
+	 */
 	IExecutionContext getExexutionContext();
 	
 	/**
-	 * This is read only, to add a dependent trace set its parent
+	 * This is derived, to add a dependent trace set its parent
 	 * 
 	 * @see #setParentTrace(IReexecutionTrace)
 	 * @return

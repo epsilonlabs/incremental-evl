@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-25.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -219,7 +219,7 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
             else {
                 Vertex v = null;
                 try {
-                    v = g.addV("PropertyTrace").property(T.id, GremlinUtils.identityToString(name, this)).next();
+                    v = g.addV("PropertyTrace").property("tag", GremlinUtils.identityToString(name, this)).next();
                     /* protected region propertyTraceTypeOverride on begin */
                     propertyTrace = new PropertyTraceGremlin(name, this, v, gts); 
                     /* protected region propertyTraceTypeOverride end */

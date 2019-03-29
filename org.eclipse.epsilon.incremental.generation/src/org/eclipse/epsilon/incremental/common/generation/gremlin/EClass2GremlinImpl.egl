@@ -496,7 +496,7 @@ try {
     Vertex v = null;
     try {
 [%  if (indexAttr.size() > 0) {%]
-        v = g.addV("[%=self.name%]").property(T.id, GremlinUtils.identityToString([%=ids.concat(", ")%])).next();
+        v = g.addV("[%=self.name%]").property("tag", GremlinUtils.identityToString([%=ids.concat(", ")%])).next();
 [%  } else {%]
         v = g.addV("[%=self.name%]").next();
 [%  }%]
@@ -518,7 +518,7 @@ try {
         Vertex v = null;
         try {
 [%  if (indexAttr.size() > 0) {%]
-            v = g.addV("[%=self.name%]").property(T.id, GremlinUtils.identityToString([%=ids.concat(", ")%])).next();
+            v = g.addV("[%=self.name%]").property("tag", GremlinUtils.identityToString([%=ids.concat(", ")%])).next();
 [%  } else {%]
             v = g.addV("[%=self.name%]").next();
 [%  }%]

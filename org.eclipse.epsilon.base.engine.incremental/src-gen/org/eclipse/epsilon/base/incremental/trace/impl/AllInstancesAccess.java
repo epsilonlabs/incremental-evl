@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -43,9 +43,19 @@ public class AllInstancesAccess implements IAllInstancesAccess {
     private Boolean ofKind;
 
     /**
+     * The module.
+     */
+    private final IAccessHasModule module;
+
+    /**
      * The from.
      */
     private final IAccessHasFrom from;
+
+    /**
+     * The in.
+     */
+    private final IAccessHasIn in;
 
     /**
      * The type.
@@ -57,16 +67,26 @@ public class AllInstancesAccess implements IAllInstancesAccess {
      * container and any attributes identified as indexes.
      */    
     public AllInstancesAccess(Boolean ofKind,
+                              IModuleElementTrace from,
+                              IExecutionContext in,
                               IModelTypeTrace type,
-                              IExecutionContext container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+                              IModuleExecutionTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.ofKind = ofKind;
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
 
         this.type = new AllInstancesAccessHasType(this);
-        this.from = new AccessHasFrom(this);
+        this.module = new AccessHasModule(this);
         if (!this.type.create(type)) {
+            throw new TraceModelDuplicateElement();
+        }
+        this.from = new AccessHasFrom(this);
+        if (!this.from.create(from)) {
+            throw new TraceModelDuplicateElement();
+        }
+        this.in = new AccessHasIn(this);
+        if (!this.in.create(in)) {
             throw new TraceModelDuplicateElement();
         }
 
@@ -89,8 +109,18 @@ public class AllInstancesAccess implements IAllInstancesAccess {
     }
     
     @Override
+    public IAccessHasModule module() {
+        return module;
+    }
+
+    @Override
     public IAccessHasFrom from() {
         return from;
+    }
+
+    @Override
+    public IAccessHasIn in() {
+        return in;
     }
 
     @Override
@@ -138,11 +168,11 @@ public class AllInstancesAccess implements IAllInstancesAccess {
         if (!type.get().equals(other.type.get())) {
             return false;
         }
-        if (from.get() == null) {
-            if (other.from.get() != null)
+        if (module.get() == null) {
+            if (other.module.get() != null)
                 return false;
         }
-        if (!from.get().equals(other.from.get())) {
+        if (!module.get().equals(other.module.get())) {
             return false;
         }
         return true; 
@@ -155,7 +185,7 @@ public class AllInstancesAccess implements IAllInstancesAccess {
         Boolean ofKind = Boolean.valueOf(getOfKind());
         result = prime * result + ((ofKind == null) ? 0 : ofKind.hashCode());
         result = prime * result + ((type.get() == null) ? 0 : type.get().hashCode());
-        result = prime * result + ((from.get() == null) ? 0 : from.get().hashCode());
+        result = prime * result + ((module.get() == null) ? 0 : module.get().hashCode());
         return result;
     }
 }

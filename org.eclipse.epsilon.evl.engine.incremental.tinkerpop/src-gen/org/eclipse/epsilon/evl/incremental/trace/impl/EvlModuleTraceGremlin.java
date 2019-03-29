@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-25.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -61,6 +61,11 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
     private IModuleExecutionTraceHasModels models;
 
     /**
+     * * The different accesses that where recorded during execution.
+     */
+    private IModuleExecutionTraceHasAccesses accesses;
+
+    /**
      * Empty constructor for deserialization.
      */    
     public EvlModuleTraceGremlin() { }
@@ -86,6 +91,8 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
         this.moduleElements = new ModuleExecutionTraceHasModuleElementsGremlin(this, gts, EvlTraceFactory.getFactory());
         // Derived Features
         this.models = new ModuleExecutionTraceHasModelsGremlin(this, gts, EvlTraceFactory.getFactory());
+        // Derived Features
+        this.accesses = new ModuleExecutionTraceHasAccessesGremlin(this, gts, EvlTraceFactory.getFactory());
     }
     
     @Override
@@ -153,6 +160,23 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
     }
 
     @Override
+    public IModuleExecutionTraceHasAccesses accesses() {
+        if (accesses == null) {
+            accesses = new ModuleExecutionTraceHasAccessesGremlin(this, this.gts, EvlTraceFactory.getFactory());
+            GraphTraversalSource g = startTraversal();
+            try {
+                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("accesses");
+                if (gt.hasNext()) {
+                    ((ModuleExecutionTraceHasAccessesGremlin)accesses).delegate(gt.next());
+                }
+            } finally {
+                finishTraversal(g);
+            }
+        }
+        return accesses;
+    }
+
+    @Override
     public IContextTrace getOrCreateContextTrace(String kind, Integer index) throws EolIncrementalExecutionException {
         GraphTraversalSource g = startTraversal();
         ContextTraceGremlin contextTrace = null;
@@ -167,7 +191,7 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
             else {
                 Vertex v = null;
                 try {
-                    v = g.addV("ContextTrace").property(T.id, GremlinUtils.identityToString(kind, index, this)).next();
+                    v = g.addV("ContextTrace").property("tag", GremlinUtils.identityToString(kind, index, this)).next();
                     /* protected region contextTraceTypeOverride on begin */
                     contextTrace = new ContextTraceGremlin(kind, index, this, v, gts); 
                     /* protected region contextTraceTypeOverride end */
@@ -197,7 +221,7 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
             else {
                 Vertex v = null;
                 try {
-                    v = g.addV("ModelAccess").property(T.id, GremlinUtils.identityToString(modelName, modelTrace, this)).next();
+                    v = g.addV("ModelAccess").property("tag", GremlinUtils.identityToString(modelName, modelTrace, this)).next();
                     /* protected region modelAccessTypeOverride on begin */
                     modelAccess = new ModelAccessGremlin(modelName, modelTrace, this, v, gts); 
                     /* protected region modelAccessTypeOverride end */
@@ -211,6 +235,113 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
         }  
         return modelAccess;
     }      
+    
+    @SuppressWarnings("unchecked")
+    public <A extends IAccess> A getOrCreateAccess(Class<A> accessClass, Object... args) throws EolIncrementalExecutionException {
+        GraphTraversalSource g = startTraversal();
+        A result = null;
+        switch(accessClass.getSimpleName()) {
+            case "ISatisfiesAccess":
+                assert args[0] instanceof IModuleElementTrace;
+                assert args[1] instanceof IExecutionContext;
+                assert args[2] instanceof IModelElementTrace;
+                ISatisfiesAccess satisfiesAccess = null;
+                try {
+                    Vertex v = null;
+                    try {
+                        v = g.addV("SatisfiesAccess").next();
+                        /* protected region satisfiesAccessTypeOverride on begin */
+                        satisfiesAccess = new SatisfiesAccessGremlin(
+                        	(IModuleElementTrace) args[0],
+                        	(IExecutionContext) args[1],
+                        	(IModelElementTrace) args[2], this, v, gts);
+                        /* protected region satisfiesAccessTypeOverride end */
+                    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+                        g.V(v).as("v").properties().drop().select("v").drop();
+                        throw new EolIncrementalExecutionException("Error creating requested SatisfiesAccess", e);
+                    }
+                } finally {
+                    finishTraversal(g);
+                }  
+                result = (A) satisfiesAccess;
+                break;
+            case "IElementAccess":
+                assert args[0] instanceof IModuleElementTrace;
+                assert args[1] instanceof IExecutionContext;
+                assert args[2] instanceof IModelElementTrace;
+                IElementAccess elementAccess = null;
+                try {
+                    Vertex v = null;
+                    try {
+                        v = g.addV("ElementAccess").next();
+                        /* protected region elementAccessTypeOverride on begin */
+                        elementAccess = new ElementAccessGremlin(
+                        		(IModuleElementTrace) args[0],
+                            	(IExecutionContext) args[1],
+                            	(IModelElementTrace) args[2], this, v, gts);
+                        /* protected region elementAccessTypeOverride end */
+                    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+                        g.V(v).as("v").properties().drop().select("v").drop();
+                        throw new EolIncrementalExecutionException("Error creating requested ElementAccess", e);
+                    }
+                } finally {
+                    finishTraversal(g);
+                }  
+                result = (A) elementAccess;
+                break;
+            case "IAllInstancesAccess":
+                assert args[0] instanceof Boolean;
+                assert args[1] instanceof IModuleElementTrace;
+                assert args[2] instanceof IExecutionContext;
+                assert args[3] instanceof IModelTypeTrace;
+                IAllInstancesAccess allInstancesAccess = null;
+                try {
+                    Vertex v = null;
+                    try {
+                        v = g.addV("AllInstancesAccess").property("tag", GremlinUtils.identityToString((Boolean) args[0], (IModuleElementTrace) args[1], (IExecutionContext) args[2], (IModelTypeTrace) args[3], this)).next();
+                        /* protected region allInstancesAccessTypeOverride on begin */
+                        allInstancesAccess = new AllInstancesAccessGremlin(
+                        		(Boolean) args[0],
+                        		(IModuleElementTrace) args[1],
+                        		(IExecutionContext) args[2],
+                            	(IModelTypeTrace) args[3], this, v, gts);
+                        /* protected region allInstancesAccessTypeOverride end */
+                    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+                        g.V(v).as("v").properties().drop().select("v").drop();
+                        throw new EolIncrementalExecutionException("Error creating requested AllInstancesAccess", e);
+                    }
+                } finally {
+                    finishTraversal(g);
+                }  
+                result = (A) allInstancesAccess;
+                break;
+            case "IPropertyAccess":
+                assert args[0] instanceof IModuleElementTrace;
+                assert args[1] instanceof IExecutionContext;
+                assert args[2] instanceof IPropertyTrace;
+                IPropertyAccess propertyAccess = null;
+                try {
+                    Vertex v = null;
+                    try {
+                        v = g.addV("PropertyAccess").next();
+                        /* protected region propertyAccessTypeOverride on begin */
+                        propertyAccess = new PropertyAccessGremlin(
+                        		(IModuleElementTrace) args[0],
+                            	(IExecutionContext) args[1],
+                            	(IPropertyTrace) args[2], this, v, gts);
+                        /* protected region propertyAccessTypeOverride end */
+                    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+                        g.V(v).as("v").properties().drop().select("v").drop();
+                        throw new EolIncrementalExecutionException("Error creating requested PropertyAccess", e);
+                    }
+                } finally {
+                    finishTraversal(g);
+                }  
+                result = (A) propertyAccess;
+                break;
+        }
+        return result;
+    }
     
     public Map<String,Object> getIdProperties() {
         Map<String, Object> result = new HashMap<>();

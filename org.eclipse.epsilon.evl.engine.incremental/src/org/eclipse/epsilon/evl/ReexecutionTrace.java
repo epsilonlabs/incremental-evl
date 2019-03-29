@@ -9,7 +9,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 
 /**
  * A class that represents a ModuleElementTrace-ExecutionContext pair that should be re-executed
- * @author horacio
+ * @author Horacio Hoyos
  *
  */
 public abstract class ReexecutionTrace<T extends IModuleElementTrace> implements IReexecutionTrace {
@@ -33,10 +33,7 @@ public abstract class ReexecutionTrace<T extends IModuleElementTrace> implements
 		return moduleTrace;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.epsilon.evl.IReexecutionTrace#getExexutionContext()
-	 */
-	@Override
+
 	public IExecutionContext getExexutionContext() {
 		return exexutionContext;
 	}
@@ -80,7 +77,7 @@ public abstract class ReexecutionTrace<T extends IModuleElementTrace> implements
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ReexecutionTrace other = (ReexecutionTrace) obj;
+		ReexecutionTrace<? extends IModuleElementTrace> other = (ReexecutionTrace<?>) obj;
 		if (exexutionContext == null) {
 			if (other.exexutionContext != null)
 				return false;

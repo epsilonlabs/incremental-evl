@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -144,35 +144,26 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 //	}
 	
 	@Override
-	public Set<IReexecutionTrace> findAllInstancesExecutionTraces(String moduleUri, String typeName) {
+	public Set<IReexecutionTrace> findAllInstancesExecutionTraces(String moduleUri, String modelUri, String typeName) {
 		
-		return findAllInstancesExecutionTraces(moduleUri, typeName, false);
+		return findAllInstancesExecutionTraces(moduleUri, null, typeName, false);
 	}
 	
 	@Override
-	public Set<IReexecutionTrace> findAllInstancesExecutionTraces(String moduleUri, String typeName, boolean ofType) {
+	public Set<IReexecutionTrace> findAllInstancesExecutionTraces(String moduleUri, String modelUri, String typeName, boolean ofKind) {
 		Set<IReexecutionTrace> result = new HashSet<>();
 		IEvlModuleTrace moduleTrace = getEvlModuleTraceByIdentity(moduleUri);
-		Iterator<IModuleElementTrace> it = moduleTrace.moduleElements().get();
+		Iterator<IAccess> it = moduleTrace.accesses().get();
 		while (it.hasNext()) {
-			IModuleElementTrace met = it.next();
-			Iterator<IExecutionContext> exContextIt;
-			if (met instanceof IContextModuleElementTrace) {
-				exContextIt = ((IContextModuleElementTrace) met).executionContext().get();
-			} else {
-				exContextIt = ((IInContextModuleElementTrace)met).contextModuleElement().get().executionContext().get();
-			}
-			while (exContextIt.hasNext()) {
-				IExecutionContext exContext = exContextIt.next();
-				Optional<IReexecutionTrace> filtered = filterExecutionContexts(exContext, met, (x) -> {
-						return IncrementalUtils.asStream(x.accesses().get())
-								.filter(IAllInstancesAccess.class::isInstance)
-								.map(IAllInstancesAccess.class::cast)
-								.anyMatch(aia -> aia.type().get().getName().equals(typeName)
-										&& (ofType && !aia.getOfKind()));
-					});
-				if (filtered.isPresent()) {
-					result.add(filtered.get());
+			IAccess access = it.next();
+			if (access instanceof IAllInstancesAccess) {
+				IAllInstancesAccess allInstAcc = (IAllInstancesAccess) access;
+				if (allInstAcc.type().get().getName().equals(typeName)
+						&& (allInstAcc.getOfKind() == ofKind)) {
+					Optional<IReexecutionTrace> rext = createReexecutionTrace(allInstAcc.in().get(), allInstAcc.from().get()); 
+					if (rext.isPresent()) {
+						result.add(rext.get());
+					}
 				}
 			}
 		}
@@ -183,44 +174,35 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 	public Set<IReexecutionTrace> findIndirectExecutionTraces(String moduleUri, String elementUri, String modelUri) {
 		Set<IReexecutionTrace> result = new HashSet<>();
 		IEvlModuleTrace moduleTrace = getEvlModuleTraceByIdentity(moduleUri);
-		Iterator<IModuleElementTrace> it = moduleTrace.moduleElements().get();
-		
 		IModelTrace modelTrace = getModelTraceForModule(modelUri, moduleTrace);
 		IModelElementTrace modelElementTrace = getModelElementTraceFromModel(elementUri, modelTrace);
 		Set<String> allElementTypes = IncrementalUtils.asStream(modelElementTrace.kind().get())
 				.map(IModelTypeTrace::getName).collect(Collectors.toSet());
 		
+		Iterator<IAccess> it = moduleTrace.accesses().get();
 		while (it.hasNext()) {
-			IModuleElementTrace met = it.next();
-			Iterator<IExecutionContext> exContextIt;
-			if (met instanceof IContextModuleElementTrace) {
-				exContextIt = ((IContextModuleElementTrace) met).executionContext().get();
-			} else {
-				exContextIt = ((IInContextModuleElementTrace)met).contextModuleElement().get().executionContext().get();
+			IAccess a = it.next();
+			boolean elementIsAccessed = false;
+			if (a instanceof IElementAccess) {
+				elementIsAccessed = ((IElementAccess)a).element().get().equals(modelElementTrace);
 			}
-			while (exContextIt.hasNext()) {
-				IExecutionContext exContext = exContextIt.next();
-				Optional<IReexecutionTrace> filtered = filterExecutionContexts(exContext, met, (x) -> {
-					return !IncrementalUtils.asStream(x.contextVariables().get())
-							.anyMatch(v -> v.getName().equals("self") 
-									&& v.value().get().equals(modelElementTrace))
-							&& IncrementalUtils.asStream(x.accesses().get())
-								.anyMatch(a -> {
-									if (a instanceof IElementAccess) {
-										return ((IElementAccess)a).element().get().equals(modelElementTrace);
-									}
-									if (a instanceof IPropertyAccess) {
-										return ((IPropertyAccess)a).property().get().elementTrace().get().equals(modelElementTrace);
-									}
-									if (a instanceof IAllInstancesAccess) {
-										return allElementTypes.contains(((IAllInstancesAccess)a).type().get().getName());
-									}
-									return false;
-								});
-				});
-				if (filtered.isPresent()) {
-					result.add(filtered.get());
-				}
+			else if (a instanceof IPropertyAccess) {
+				elementIsAccessed = ((IPropertyAccess)a).property().get().elementTrace().get().equals(modelElementTrace);
+			}
+			else if (a instanceof IAllInstancesAccess) {
+				elementIsAccessed = allElementTypes.contains(((IAllInstancesAccess)a).type().get().getName());
+			}
+			if (elementIsAccessed) {
+				IExecutionContext exContext = a.in().get();
+				if (IncrementalUtils.asStream(exContext.contextVariables().get())
+								.anyMatch(v -> v.getName().equals("self") 
+											&& !v.value().get().equals(modelElementTrace))) {
+					
+					Optional<IReexecutionTrace> rext = createReexecutionTrace(exContext, a.from().get());
+					if (rext.isPresent()) {
+						result.add(rext.get());
+					}
+				}								
 			}
 		}
 		return result;	
@@ -230,44 +212,33 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 	public Set<IReexecutionTrace> findModelElementExecutionTraces(String moduleUri, String elementUri, String modelUri) {
 		Set<IReexecutionTrace> result = new HashSet<>();
 		IEvlModuleTrace moduleTrace = getEvlModuleTraceByIdentity(moduleUri);
-		Iterator<IModuleElementTrace> it = moduleTrace.moduleElements().get();
-		
 		IModelTrace modelTrace = getModelTraceForModule(modelUri, moduleTrace);
 		IModelElementTrace modelElementTrace = getModelElementTraceFromModel(elementUri, modelTrace);
 		Set<String> allElementTypes = IncrementalUtils.asStream(modelElementTrace.kind().get())
 				.map(IModelTypeTrace::getName).collect(Collectors.toSet());
 		
+		Iterator<IAccess> it = moduleTrace.accesses().get();
 		while (it.hasNext()) {
-			IModuleElementTrace met = it.next();
-			Iterator<IExecutionContext> exContextIt;
-			if (met instanceof IContextModuleElementTrace) {
-				exContextIt = ((IContextModuleElementTrace) met).executionContext().get();
-			} else {
-				exContextIt = ((IInContextModuleElementTrace)met).contextModuleElement().get().executionContext().get();
+			IAccess a = it.next();
+			boolean elementIsAccessed = false;
+			if (a instanceof IElementAccess) {
+				elementIsAccessed = ((IElementAccess)a).element().get().equals(modelElementTrace);
 			}
-			while (exContextIt.hasNext()) {
-				IExecutionContext exContext = exContextIt.next();
-				Optional<IReexecutionTrace> filtered = filterExecutionContexts(exContext, met, (x) -> {
-					return IncrementalUtils.asStream(x.accesses().get())
-							.anyMatch(a -> {
-								if (a instanceof IElementAccess) {
-									return ((IElementAccess)a).element().get().equals(modelElementTrace);
-								}
-								if (a instanceof IPropertyAccess) {
-									return ((IPropertyAccess)a).property().get().elementTrace().get().equals(modelElementTrace);
-								}
-								if (a instanceof IAllInstancesAccess) {
-									return allElementTypes.contains(((IAllInstancesAccess)a).type().get().getName());
-								}
-								return false;
-							});
-				});
-				if (filtered.isPresent()) {
-					result.add(filtered.get());
+			else if (a instanceof IPropertyAccess) {
+				elementIsAccessed = ((IPropertyAccess)a).property().get().elementTrace().get().equals(modelElementTrace);
+			}
+			else if (a instanceof IAllInstancesAccess) {
+				elementIsAccessed = allElementTypes.contains(((IAllInstancesAccess)a).type().get().getName());
+			}
+			if (elementIsAccessed) {
+				IExecutionContext exContext = a.in().get();
+				Optional<IReexecutionTrace> rext = createReexecutionTrace(exContext, a.from().get());
+				if (rext.isPresent()) {
+					result.add(rext.get());
 				}
 			}
 		}
-		return result;
+		return result;	
 	}
 	
 	
@@ -298,30 +269,16 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 			// Element does not have property by that name
 			return Collections.emptySet();
 		}
-		IPropertyTrace pt2 = pt;
 		Set<IReexecutionTrace> result = new HashSet<>();
-		Iterator<IModuleElementTrace> it = moduleTrace.moduleElements().get();
-		while (it.hasNext()) {
-			IModuleElementTrace met = it.next();
-			Iterator<IExecutionContext> exContextIt;
-			if (met instanceof IContextModuleElementTrace) {
-				exContextIt = ((IContextModuleElementTrace) met).executionContext().get();
-			} else {
-				exContextIt = ((IInContextModuleElementTrace)met).contextModuleElement().get().executionContext().get();
-			}
-			while (exContextIt.hasNext()) {
-				IExecutionContext exContext = exContextIt.next();
-				Optional<IReexecutionTrace> filtered = filterExecutionContexts(exContext, met, (x) -> {
-					return IncrementalUtils.asStream(x.accesses().get())
-							.filter(IPropertyAccess.class::isInstance)
-							.map(IPropertyAccess.class::cast)
-							.anyMatch(pa -> pa.property().get().equals(pt2));
-				});
-				if (filtered.isPresent()) {
-					result.add(filtered.get());
-				}	
-			}
-		}
+		
+		IncrementalUtils.asStream(moduleTrace.accesses().get())
+				.filter(IPropertyAccess.class::isInstance)
+				.map(IPropertyAccess.class::cast)
+				.filter(pa -> pa.property().get().getName().equals(propertyName))
+				.filter(pa -> pa.property().get().elementTrace().get().equals(elementTrace))
+				.map(pa -> createReexecutionTrace(pa.in().get(), pa.from().get()))
+				.filter(Optional::isPresent)
+				.forEach(et -> result.add(et.get()));
 		return result;
 
 	}
@@ -383,6 +340,32 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 		// TODO We could delete allInstances access is no more elements of the type
 		// exist in the model?
 	}
+	
+	private Optional<IReexecutionTrace> createReexecutionTrace(
+			IExecutionContext exContext,
+			IModuleElementTrace met) {
+			
+			IReexecutionTrace rt = null;
+			// This could be a factory method in the IxxxTrace
+			// IxxxTrace.createRexecutionTrace(IExecutionContext exContext)
+			if (met instanceof IContextTrace) {
+				rt = new ReexecutionContextTrace((IContextTrace) met, exContext);
+			}
+			else if (met instanceof IInvariantTrace) {
+				rt = new ReexecutionInvariantTrace((IInvariantTrace) met, exContext);
+			}
+			else if (met instanceof IGuardTrace) {
+				rt = new ReexecutionGuardTrace((IGuardTrace) met, exContext);
+			}
+			else if (met instanceof ICheckTrace) {
+				rt = new ReexecutionCheckTrace((ICheckTrace) met, exContext);
+			}
+			else if (met instanceof IMessageTrace) {
+				rt = new ReexecutionMessageTrace((IMessageTrace) met, exContext);
+			}
+			return Optional.of(rt);
+			
+		}
 
 	/**
 	 * Filter the IExecutionContext based on the provided filter and if matched, return a

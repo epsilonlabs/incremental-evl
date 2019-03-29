@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -76,19 +76,19 @@ public class CheckResultTest {
         // protected region CheckResultInit_ContextReference on begin
         classUnderTest = new CheckResult(_context, containerMock);                    
         // protected region CheckResultInit_ContextReference end
-        IExecutionContext ref = mock(IExecutionContext.class);
+        IExecutionContext ref_context = mock(IExecutionContext.class);
         
-        boolean result = classUnderTest.context().create(ref);
+        boolean result = classUnderTest.context().create(ref_context);
         assertFalse("A new reference can not be created before destroy", result);
-        assertThat(classUnderTest.context().get(), is(_context));
-        result = classUnderTest.context().destroy(ref);
+        assertThat(classUnderTest.context().get(), is(ref_context));
+        result = classUnderTest.context().destroy(ref_context);
         assertFalse("Can't destroy unexisting reference", result);
-        result = classUnderTest.context().destroy(_context);
+        result = classUnderTest.context().destroy(ref_context);
         assertTrue("Exising references can be destroyed", result);
         assertThat(classUnderTest.context().get(), is(nullValue()));
-        result = classUnderTest.context().create(ref);
+        result = classUnderTest.context().create(ref_context);
         assertTrue("New references can be craeted if was null", result);
-        assertThat(classUnderTest.context().get(), is(ref));
+        assertThat(classUnderTest.context().get(), is(ref_context));
     
     }
     

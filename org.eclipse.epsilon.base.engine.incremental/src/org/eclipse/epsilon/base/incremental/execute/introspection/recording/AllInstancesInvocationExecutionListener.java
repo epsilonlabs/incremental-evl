@@ -21,7 +21,6 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
-import org.eclipse.epsilon.base.incremental.trace.impl.AllInstancesAccess;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.NameExpression;
@@ -188,7 +187,7 @@ public class AllInstancesInvocationExecutionListener<
 			}
 			typeTrace = modelTrace.getOrCreateModelTypeTrace(typeName);
 		}
-		currentContext.getOrCreateAccess(IAllInstancesAccess.class, ofKind, typeTrace);
+		moduleExecutionTrace.getOrCreateAccess(IAllInstancesAccess.class, ofKind, executionTrace, currentContext, typeTrace);
 	}
 
 

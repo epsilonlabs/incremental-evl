@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IAccessHasFrom;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 
@@ -30,7 +30,7 @@ public class AccessHasFrom extends Feature implements IAccessHasFrom {
     protected IAccess source;
     
     /** The target(s) of the reference */
-    protected IExecutionContext target;
+    protected IModuleElementTrace target;
     
     /**
      * Instantiates a new IAccessHasFrom.
@@ -45,66 +45,54 @@ public class AccessHasFrom extends Feature implements IAccessHasFrom {
     // PUBLIC API
         
     @Override
-    public IExecutionContext get() {
+    public IModuleElementTrace get() {
         return target;
     }
     
 
     @Override
-    public boolean create(IExecutionContext target) throws TraceModelConflictRelation {
+    public boolean create(IModuleElementTrace target) throws TraceModelConflictRelation {
         if (conflict(target)) {
-            throw new TraceModelConflictRelation("Relation to previous IExecutionContext exists");
+            throw new TraceModelConflictRelation("Relation to previous IModuleElementTrace exists");
         }
-        if (related(target)) {
-            return false;
-        }
-        target.accesses().set(source);
         set(target);
         return true;
     }
 
     @Override
-    public boolean destroy(IExecutionContext target) {
+    public boolean destroy(IModuleElementTrace target) {
         if (!related(target)) {
             return false;
         }
-        target.accesses().remove(source);
         remove(target);
         return true;
     }
     
     @Override
-    public boolean conflict(IExecutionContext target) {
+    public boolean conflict(IModuleElementTrace target) {
         boolean result = false;
         result |= this.target != null;
-		Iterable<IAccess> iterable = () -> target.accesses().get();
-		Stream<IAccess> targetStream = StreamSupport.stream(iterable.spliterator(), false);
-        result |= target.accesses().isUnique() &&
-        	targetStream.anyMatch(source::equals);
         return result;
     }
     
     @Override
-    public boolean related(IExecutionContext target) {
+    public boolean related(IModuleElementTrace target) {
     	if (target == null) {
 			return false;
 		}
-        
-		Iterable<IAccess> iterable = () -> target.accesses().get();
-		Stream<IAccess> targetStream = StreamSupport.stream(iterable.spliterator(), false);
-		return target.equals(this.target) && targetStream.anyMatch(source::equals);
+		return target.equals(this.target);
 	}
         
     
     // PRIVATE API
     
     @Override
-    public void set(IExecutionContext target) {
+    public void set(IModuleElementTrace target) {
         this.target = target;
     }
     
     @Override
-    public void remove(IExecutionContext target) {
+    public void remove(IModuleElementTrace target) {
         this.target = null;
     }
 

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -43,9 +43,19 @@ public class PropertyAccess implements IPropertyAccess {
     private String value;
 
     /**
+     * The module.
+     */
+    private final IAccessHasModule module;
+
+    /**
      * The from.
      */
     private final IAccessHasFrom from;
+
+    /**
+     * The in.
+     */
+    private final IAccessHasIn in;
 
     /**
      * The property.
@@ -56,15 +66,25 @@ public class PropertyAccess implements IPropertyAccess {
      * Instantiates a new PropertyAccess. The PropertyAccess is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public PropertyAccess(IPropertyTrace property,
-                          IExecutionContext container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+    public PropertyAccess(IModuleElementTrace from,
+                          IExecutionContext in,
+                          IPropertyTrace property,
+                          IModuleExecutionTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
 
+        this.module = new AccessHasModule(this);
         this.property = new PropertyAccessHasProperty(this);
-        this.from = new AccessHasFrom(this);
         if (!this.property.create(property)) {
+            throw new TraceModelDuplicateElement();
+        }
+        this.from = new AccessHasFrom(this);
+        if (!this.from.create(from)) {
+            throw new TraceModelDuplicateElement();
+        }
+        this.in = new AccessHasIn(this);
+        if (!this.in.create(in)) {
             throw new TraceModelDuplicateElement();
         }
 
@@ -93,8 +113,18 @@ public class PropertyAccess implements IPropertyAccess {
     }   
      
     @Override
+    public IAccessHasModule module() {
+        return module;
+    }
+
+    @Override
     public IAccessHasFrom from() {
         return from;
+    }
+
+    @Override
+    public IAccessHasIn in() {
+        return in;
     }
 
     @Override
@@ -126,18 +156,18 @@ public class PropertyAccess implements IPropertyAccess {
         PropertyAccess other = (PropertyAccess) obj;
         if (!sameIdentityAs(other))
             return false;
+        if (module.get() == null) {
+            if (other.module.get() != null)
+                return false;
+        }
+        if (!module.get().equals(other.module.get())) {
+            return false;
+        }
         if (property.get() == null) {
             if (other.property.get() != null)
                 return false;
         }
         if (!property.get().equals(other.property.get())) {
-            return false;
-        }
-        if (from.get() == null) {
-            if (other.from.get() != null)
-                return false;
-        }
-        if (!from.get().equals(other.from.get())) {
             return false;
         }
         return true; 
@@ -147,8 +177,8 @@ public class PropertyAccess implements IPropertyAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((module.get() == null) ? 0 : module.get().hashCode());
         result = prime * result + ((property.get() == null) ? 0 : property.get().hashCode());
-        result = prime * result + ((from.get() == null) ? 0 : from.get().hashCode());
         return result;
     }
 }

@@ -20,6 +20,8 @@ import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.common.module.IModule;
 import org.eclipse.epsilon.common.parse.AST;
@@ -130,7 +132,18 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 				((TracedExecutableBlock<?,?>) guardBlock).setCurrentContext(getCurrentContext());
 			}
 			getCurrentContext().getOrCreateModelElementVariable("self", elementTrace);
-			getCurrentContext().getOrCreateAccess(IElementAccess.class, elementTrace);
+			
+			IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager()
+					.getExecutionTraceRepository();
+			String moduleUri = context.getModule().getUri().toString();
+			IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository
+					.getModuleExecutionTraceByIdentity(moduleUri);
+			if (moduleExecutionTrace == null) {
+				throw new EolIncrementalExecutionException(
+						"A moduleExecutionTrace was not found for the module under execution. "
+								+ "The module execution trace must be created at the begining of the execution of the module.");
+			}
+			moduleExecutionTrace.getOrCreateAccess(IElementAccess.class, moduleElementTrace, getCurrentContext(), elementTrace);
 			for (Constraint c : constraints) {
 				TracedConstraint tc = (TracedConstraint) c;
 				tc.setCurrentContext(getCurrentContext());

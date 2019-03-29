@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -102,19 +102,19 @@ public class ModelElementTraceTest {
         // protected region ModelElementTraceInit_TypeReference on begin
         classUnderTest = new ModelElementTrace("url://path/in/model/to/uri/1", _type, containerMock);                    
         // protected region ModelElementTraceInit_TypeReference end
-        IModelTypeTrace ref = mock(IModelTypeTrace.class);
+        IModelTypeTrace ref_type = mock(IModelTypeTrace.class);
         
-        boolean result = classUnderTest.type().create(ref);
+        boolean result = classUnderTest.type().create(ref_type);
         assertFalse("A new reference can not be created before destroy", result);
-        assertThat(classUnderTest.type().get(), is(_type));
-        result = classUnderTest.type().destroy(ref);
+        assertThat(classUnderTest.type().get(), is(ref_type));
+        result = classUnderTest.type().destroy(ref_type);
         assertFalse("Can't destroy unexisting reference", result);
-        result = classUnderTest.type().destroy(_type);
+        result = classUnderTest.type().destroy(ref_type);
         assertTrue("Exising references can be destroyed", result);
         assertThat(classUnderTest.type().get(), is(nullValue()));
-        result = classUnderTest.type().create(ref);
+        result = classUnderTest.type().create(ref_type);
         assertTrue("New references can be craeted if was null", result);
-        assertThat(classUnderTest.type().get(), is(ref));
+        assertThat(classUnderTest.type().get(), is(ref_type));
     
     }
     

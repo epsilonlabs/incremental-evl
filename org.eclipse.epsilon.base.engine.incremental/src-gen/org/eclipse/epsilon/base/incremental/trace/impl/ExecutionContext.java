@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -44,11 +44,6 @@ public class ExecutionContext implements IExecutionContext {
     private final IExecutionContextHasContextVariables contextVariables;
 
     /**
-     * * The different accesses that where recorded during execution.
-     */
-    private final IExecutionContextHasAccesses accesses;
-
-    /**
      * Instantiates a new ExecutionContext. The ExecutionContext is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
@@ -58,7 +53,6 @@ public class ExecutionContext implements IExecutionContext {
         };
 
         this.contextVariables = new ExecutionContextHasContextVariables(this);
-        this.accesses = new ExecutionContextHasAccesses(this);
 
     }
     
@@ -79,11 +73,6 @@ public class ExecutionContext implements IExecutionContext {
     }
 
     @Override
-    public IExecutionContextHasAccesses accesses() {
-        return accesses;
-    }
-
-    @Override
     public IModelElementVariable getOrCreateModelElementVariable(String name, IModelElementTrace value) throws EolIncrementalExecutionException {
         IModelElementVariable modelElementVariable = null;
         
@@ -93,6 +82,7 @@ public class ExecutionContext implements IExecutionContext {
             // Pass
         } finally {
             if (modelElementVariable == null) {
+                // Find the matching element
                 Iterator<IModelElementVariable> it = this.contextVariables.get();
                 while (it.hasNext()) {
                     IModelElementVariable item;
@@ -111,118 +101,6 @@ public class ExecutionContext implements IExecutionContext {
         }
         return modelElementVariable;
     }      
-                  
-    @SuppressWarnings("unchecked")
-    public <A extends IAccess> A getOrCreateAccess(Class<A> accessClass, Object... args) throws EolIncrementalExecutionException {
-        A result = null;
-        switch(accessClass.getName()) {
-            case "ElementAccess":
-                assert args[1] instanceof IModelElementTrace;
-                IElementAccess elementAccess = null;
-                
-                try {
-                    elementAccess = new ElementAccess((IModelElementTrace) args[0], this);
-                    this.accesses().create(elementAccess);
-                } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
-                    // Pass
-                } finally {
-                    if (elementAccess == null) {
-                        Iterator<IAccess> it = this.accesses.get();
-                        while (it.hasNext()) {
-                            IElementAccess item;
-                            IAccess t = it.next();
-                            if (t instanceof IElementAccess) {
-                                item = (IElementAccess) t;
-                            }
-                            else {
-                                continue;
-                            }
-                	        if (item.element().get().equals(args[1])) {
-                	            elementAccess = item;
-                	            break;
-                	        }
-                        }
-                    }
-                    if (elementAccess == null) {
-                        throw new EolIncrementalExecutionException("Error creating trace model element. Requested ElementAccess was "
-                                + "duplicate but previous one was not found.");
-                    }
-                }
-                result = (A) elementAccess;
-                break;
-            case "AllInstancesAccess":
-                assert args[1] instanceof Boolean;
-                assert args[2] instanceof IModelTypeTrace;
-                IAllInstancesAccess allInstancesAccess = null;
-                
-                try {
-                    allInstancesAccess = new AllInstancesAccess((Boolean) args[0], (IModelTypeTrace) args[1], this);
-                    this.accesses().create(allInstancesAccess);
-                } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
-                    // Pass
-                } finally {
-                    if (allInstancesAccess == null) {
-                        Iterator<IAccess> it = this.accesses.get();
-                        while (it.hasNext()) {
-                            IAllInstancesAccess item;
-                            IAccess t = it.next();
-                            if (t instanceof IAllInstancesAccess) {
-                                item = (IAllInstancesAccess) t;
-                            }
-                            else {
-                                continue;
-                            }
-                	        if (item.getOfKind() == args[1] &&
-                	            item.type().get().equals(args[2])) {
-                	            allInstancesAccess = item;
-                	            break;
-                	        }
-                        }
-                    }
-                    if (allInstancesAccess == null) {
-                        throw new EolIncrementalExecutionException("Error creating trace model element. Requested AllInstancesAccess was "
-                                + "duplicate but previous one was not found.");
-                    }
-                }
-                result = (A) allInstancesAccess;
-                break;
-            case "PropertyAccess":
-                assert args[1] instanceof IPropertyTrace;
-                IPropertyAccess propertyAccess = null;
-                
-                try {
-                    propertyAccess = new PropertyAccess((IPropertyTrace) args[0], this);
-                    this.accesses().create(propertyAccess);
-                } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
-                    // Pass
-                } finally {
-                    if (propertyAccess == null) {
-                        Iterator<IAccess> it = this.accesses.get();
-                        while (it.hasNext()) {
-                            IPropertyAccess item;
-                            IAccess t = it.next();
-                            if (t instanceof IPropertyAccess) {
-                                item = (IPropertyAccess) t;
-                            }
-                            else {
-                                continue;
-                            }
-                	        if (item.property().get().equals(args[1])) {
-                	            propertyAccess = item;
-                	            break;
-                	        }
-                        }
-                    }
-                    if (propertyAccess == null) {
-                        throw new EolIncrementalExecutionException("Error creating trace model element. Requested PropertyAccess was "
-                                + "duplicate but previous one was not found.");
-                    }
-                }
-                result = (A) propertyAccess;
-                break;
-        }
-        return result;
-    }
                   
     public Map<String,Object> getIdProperties() {
         Map<String, Object> result = new HashMap<>();

@@ -8,7 +8,6 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Queue;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
@@ -23,7 +22,6 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.Expression;
-import org.eclipse.epsilon.eol.dom.NameExpression;
 import org.eclipse.epsilon.eol.dom.OperationCallExpression;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
@@ -78,9 +76,6 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 
 	/** The initial satisfies operation */
 	private OperationCallExpression waitingFor;
-	
-	/** For satisfies we need to save the value of the left side expression */
-	private final WeakHashMap<ModuleElement, Object> cache = new WeakHashMap<ModuleElement, Object>();
 
 	private Expression elementAst;
 
@@ -192,20 +187,21 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 		logger.info("Creating SatisfiesTrace. invariant: {}, satisfied: {}, all: {}", invariantTrace.getModuleElementTrace().getName(),
 				parameterValues, all);
 
+		IEvlModuleTraceRepository executionTraceRepository = null;
+		try {
+			executionTraceRepository = (IEvlModuleTraceRepository) context.getTraceManager().getExecutionTraceRepository();
+		} catch (EolRuntimeException e1) {
+			logger.error("Error getting trace manager", e1);
+			throw new IllegalStateException("Error getting trace manager", e1);
+		}
+		
 		// Each parameter should be an Invariant name
 		IContextTrace contextTrace = invariantTrace.getModuleElementTrace().invariantContext().get();
 		Set<IInvariantTrace> invariants = new HashSet<>();
 		for (Object p : parameterValues) {
 			assert p instanceof String;
 			String invariantName = (String) p;
-			IEvlModuleTraceRepository repo = null;
-			try {
-				repo = (IEvlModuleTraceRepository) context.getTraceManager().getExecutionTraceRepository();
-			} catch (EolRuntimeException e1) {
-				logger.error("Error getting trace manager", e1);
-				throw new IllegalStateException("Error getting trace manager", e1);
-			}
-			IInvariantTrace targetInvariant = repo.findInvariantTraceinContext(contextTrace, invariantName);
+			IInvariantTrace targetInvariant = executionTraceRepository.findInvariantTraceinContext(contextTrace, invariantName);
 			if (targetInvariant == null) {
 				try {
 					targetInvariant = contextTrace.getOrCreateInvariantTrace((String) p);
@@ -225,9 +221,17 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 			throw new IllegalStateException("Error retreiving ModelTraceRepository", e1);
 		}
 		IModelElementTrace modelElementTrace = modelTraceRepository.getModelElementTraceFor(model.getModelUri(), (String) modelElementUri);
+		
+		
+		String moduleUri = context.getModule().getUri().toString();
+		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository
+				.getModuleExecutionTraceByIdentity(moduleUri);
+		
+		
+				
 		ISatisfiesAccess result = null;
 		try {
-			result = invariantTrace.getCurrentContext().getOrCreateAccess(ISatisfiesAccess.class, modelElementTrace);
+			result = moduleExecutionTrace.getOrCreateAccess(ISatisfiesAccess.class, invariantTrace.getModuleElementTrace(), invariantTrace.getCurrentContext(), modelElementTrace);
 		} catch (EolIncrementalExecutionException e) {
 			throw new IllegalStateException(e);
 		} finally {

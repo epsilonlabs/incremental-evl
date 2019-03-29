@@ -24,6 +24,7 @@ import org.eclipse.epsilon.emc.csv.incremental.CsvCompare.DifferenceKind;
 import org.eclipse.epsilon.emc.csv.incremental.CsvCompare.DifferenceSource;
 import org.eclipse.epsilon.emc.csv.incremental.CsvModelIncremental;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
+import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.junit.After;
@@ -49,14 +50,8 @@ public abstract class OfflineTests<M extends Module> {
 	private File evlFile;
 	private File tempModel;
 
-	public abstract M getEvlGuiceModule();
-
 	@Before
 	public void setup() throws Exception {
-		Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-		root.setLevel(Level.INFO);
-		module = new IncrementalEvlModule();
-		module.injectTraceManager(getEvlGuiceModule());
 		evlFile = new File(OfflineTests.class.getResource("testExecution.evl").toURI());
 		module.parse(evlFile);
 		tempModel = createTempFile();
@@ -209,15 +204,21 @@ public abstract class OfflineTests<M extends Module> {
 				module.onCreate(model2, object);
 			}
 		}
+		for (UnsatisfiedConstraint uc : module.getContext().getUnsatisfiedConstraints()) {
+			System.out.println(uc);
+		}
+		
 		contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
 				.filter(t -> t instanceof IContextTrace)
 				.map(IContextTrace.class::cast).collect(Collectors.toList());
 		long contextExecutionTracesCntNew = contextExecutionTraces.size();
-		assertThat("A new row adss two new ContextTraces", contextExecutionTracesCntNew,
-				is(contextExecutionTracesCnt + 2));
+		assertThat("A new row does not add new ContextTraces", contextExecutionTracesCntNew,
+				is(contextExecutionTracesCnt));
 		int unsatisfiedNew = module.getContext().getUnsatisfiedConstraints().size();
 		System.out.println("New Unsatisfied constraints " + unsatisfiedNew);
-		assertThat("Added row should not break any constraints", unsatisfiedNew - unsatisfied, is(0L));
+		assertThat("Added row should break \"Is in Overdraft\"", unsatisfiedNew - unsatisfied, is(1L));
+		// New row should add 1 new model element access
+		
 	}
 
 	@Test
@@ -288,14 +289,18 @@ public abstract class OfflineTests<M extends Module> {
 				module.onDelete(model2, object);
 			}
 		}
-
+		for (UnsatisfiedConstraint uc : module.getContext().getUnsatisfiedConstraints()) {
+			System.out.println(uc);
+		}
+		
 		contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
 				.filter(t -> t instanceof IContextTrace)
 				.map(IContextTrace.class::cast).collect(Collectors.toList());
 		long contextExecutionTracesCntNew = contextExecutionTraces.size();
+		// FIXME We need to assert accesses because now the tree is unique
 		assertThat("Deleted rows removes four ContextTraces", contextExecutionTracesCntNew,
-				is(contextExecutionTracesCnt - 4));
-		// TODO Make sure invariants, etc disappeared too?
+				is(contextExecutionTracesCnt));
+		
 		
 		int unsatisfiedNew = module.getContext().getUnsatisfiedConstraints().size();
 		System.out.println("New Unsatisfied constraints " + unsatisfiedNew);

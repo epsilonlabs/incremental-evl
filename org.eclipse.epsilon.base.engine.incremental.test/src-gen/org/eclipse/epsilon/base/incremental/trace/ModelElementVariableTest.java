@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -74,19 +74,19 @@ public class ModelElementVariableTest {
         // protected region ModelElementVariableInit_ValueReference on begin
         classUnderTest = new ModelElementVariable("name1", _value, containerMock);                    
         // protected region ModelElementVariableInit_ValueReference end
-        IModelElementTrace ref = mock(IModelElementTrace.class);
+        IModelElementTrace ref_value = mock(IModelElementTrace.class);
         
-        boolean result = classUnderTest.value().create(ref);
+        boolean result = classUnderTest.value().create(ref_value);
         assertFalse("A new reference can not be created before destroy", result);
-        assertThat(classUnderTest.value().get(), is(_value));
-        result = classUnderTest.value().destroy(ref);
+        assertThat(classUnderTest.value().get(), is(ref_value));
+        result = classUnderTest.value().destroy(ref_value);
         assertFalse("Can't destroy unexisting reference", result);
-        result = classUnderTest.value().destroy(_value);
+        result = classUnderTest.value().destroy(ref_value);
         assertTrue("Exising references can be destroyed", result);
         assertThat(classUnderTest.value().get(), is(nullValue()));
-        result = classUnderTest.value().create(ref);
+        result = classUnderTest.value().create(ref_value);
         assertTrue("New references can be craeted if was null", result);
-        assertThat(classUnderTest.value().get(), is(ref));
+        assertThat(classUnderTest.value().get(), is(ref_value));
     
     }
     

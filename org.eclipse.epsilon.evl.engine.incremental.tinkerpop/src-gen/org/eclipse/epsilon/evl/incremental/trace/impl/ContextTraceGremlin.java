@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-25.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -237,7 +237,7 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
             try {
                 v = g.addV("ExecutionContext").next();
                 /* protected region executionContextTypeOverride on begin */
-                executionContext = new EvlExecutionContextGremlin(this, v, gts);
+                executionContext = new ExecutionContextGremlin(this, v, gts);
                 /* protected region executionContextTypeOverride end */
             } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
                 g.V(v).as("v").properties().drop().select("v").drop();
@@ -263,7 +263,7 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
             else {
                 Vertex v = null;
                 try {
-                    v = g.addV("InvariantTrace").property(T.id, GremlinUtils.identityToString(name, this)).next();
+                    v = g.addV("InvariantTrace").property("tag", GremlinUtils.identityToString(name, this)).next();
                     /* protected region invariantTraceTypeOverride on begin */
                     invariantTrace = new InvariantTraceGremlin(name, this, v, gts); 
                     /* protected region invariantTraceTypeOverride end */

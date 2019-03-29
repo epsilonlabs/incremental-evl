@@ -160,7 +160,7 @@ for (er in ec.getEAllReferences().excluding(containerRef).select(er | not er.isC
 [%  if (er.isMany) {%]
         // TODO Implement multivalue ref test
 [%} else {%]
-        [%=erClass.getJavaInterfaceName(interPrefix, interSufix)%] ref = mock([%=erClass.getJavaInterfaceName(interPrefix, interSufix)%].class);
+        [%=erClass.getJavaInterfaceName(interPrefix, interSufix)%] ref_[%=er.name%] = mock([%=erClass.getJavaInterfaceName(interPrefix, interSufix)%].class);
 [%      if (er.getEOpposite().isDefined()) {
             var opp = er.getEOpposite();
             var oppClass = opp.getRelationJavaInterfaceName(interPrefix, interSufix);
@@ -169,17 +169,17 @@ for (er in ec.getEAllReferences().excluding(containerRef).select(er | not er.isC
         when(_[%=oppVar%]2 .get()).thenReturn(new HashSet<[%=opp.getEReferenceType().getJavaInterfaceName(interPrefix, interSufix)%]>().iterator());
         when(ref.[%=er.getEOpposite().name%]()).thenReturn(_[%=oppVar%]2);
 [%      }%]        
-        boolean result = classUnderTest.[%=er.name%]().create(ref);
+        boolean result = classUnderTest.[%=er.name%]().create(ref_[%=er.name%]);
         assertFalse("A new reference can not be created before destroy", result);
-        assertThat(classUnderTest.[%=er.name%]().get(), is(_[%=er.name%]));
-        result = classUnderTest.[%=er.name%]().destroy(ref);
+        assertThat(classUnderTest.[%=er.name%]().get(), is(ref_[%=er.name%]));
+        result = classUnderTest.[%=er.name%]().destroy(ref_[%=er.name%]);
         assertFalse("Can't destroy unexisting reference", result);
-        result = classUnderTest.[%=er.name%]().destroy(_[%=er.name%]);
+        result = classUnderTest.[%=er.name%]().destroy(ref_[%=er.name%]);
         assertTrue("Exising references can be destroyed", result);
         assertThat(classUnderTest.[%=er.name%]().get(), is(nullValue()));
-        result = classUnderTest.[%=er.name%]().create(ref);
+        result = classUnderTest.[%=er.name%]().create(ref_[%=er.name%]);
         assertTrue("New references can be craeted if was null", result);
-        assertThat(classUnderTest.[%=er.name%]().get(), is(ref));
+        assertThat(classUnderTest.[%=er.name%]().get(), is(ref_[%=er.name%]));
 [%}%]    
     }
     
@@ -212,7 +212,7 @@ when(_[%=rf.name%].[%=rf.getEOpposite().name%]()).thenReturn(_[%=oppVar%]);
 [%  
     var params = self.getIndexAttributes().collect(a | a.getInitValue(1));
     // We need a mock for the Required EReferences used in the constructor
-    params.addAll(self.getRequiredFeatures().collect(a | "_" + a.name));
+    params.addAll(self.getRequiredFeatures().excluding(containmentRef).collect(a | "_" + a.name));
     if (containerClass.isDefined()) {
         params.add(mockContainer);
     }

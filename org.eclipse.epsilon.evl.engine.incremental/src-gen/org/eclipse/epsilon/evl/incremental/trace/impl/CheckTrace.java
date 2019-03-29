@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -106,6 +106,7 @@ public class CheckTrace implements ICheckTrace {
             // Pass
         } finally {
             if (checkResult == null) {
+                // Find the matching element
                 Iterator<ICheckResult> it = this.result.get();
                 while (it.hasNext()) {
                     ICheckResult item;

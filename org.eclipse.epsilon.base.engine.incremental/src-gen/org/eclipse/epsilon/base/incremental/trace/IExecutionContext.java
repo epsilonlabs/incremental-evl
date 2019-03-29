@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -34,13 +34,6 @@ public interface IExecutionContext extends IIdElement {
      */
     IExecutionContextHasContextVariables contextVariables();
                 
-    /**
-     * Returns the value of the '<em><b>accesses</b></em>' reference.
-     * The different accesses that where recorded during execution.
-     * @return the value of the '<em>accesses</em>' reference.
-     */
-    IExecutionContextHasAccesses accesses();
-                
 
  
     /**
@@ -50,9 +43,5 @@ public interface IExecutionContext extends IIdElement {
     
     /** The ModelElementVariable Factory. */
     IModelElementVariable getOrCreateModelElementVariable(String name, IModelElementTrace value) throws EolIncrementalExecutionException;       
-            
-    /** The Access Factory. */        
-    public <A extends IAccess> A getOrCreateAccess(Class<A> accessClass, Object... args) throws EolIncrementalExecutionException;
-          
 
 }

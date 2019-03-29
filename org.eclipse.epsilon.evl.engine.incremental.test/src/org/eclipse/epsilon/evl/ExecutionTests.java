@@ -98,9 +98,8 @@ public abstract class ExecutionTests<M extends Module> {
 			assertThat("One ExecutionContext per Row", excts.size(), is(modelRows.size()));
 		}
 		// Find the model element access of the ContextTraces
-		Stream<IElementAccess> elementAccesses = contextExecutionTraces.stream()
-				.flatMap(ct -> IncrementalUtils.asStream(ct.executionContext().get()))
-				.flatMap(ec -> IncrementalUtils.asStream(ec.accesses().get())).filter(a -> a instanceof IElementAccess)
+		Stream<IElementAccess> elementAccesses = IncrementalUtils.asStream(moduleTrace.accesses().get())
+				.filter(IElementAccess.class::isInstance)
 				.map(IElementAccess.class::cast);
 		assertThat("One ElementAccess per Context-ModelElement pair", elementAccesses.count(),
 				is(2L * modelRows.size()));
@@ -109,48 +108,37 @@ public abstract class ExecutionTests<M extends Module> {
 		Date changeDate = sdf.parse("6/4/2017");
 		for (IContextTrace ct : contextExecutionTraces) {
 			// Get a random element access
-			IExecutionContext context = IncrementalUtils.asStream(ct.executionContext().get()).findAny().get();
-			IElementAccess elementAccess = IncrementalUtils.asStream(context.accesses().get())
+			IElementAccess elementAccess = IncrementalUtils.asStream(moduleTrace.accesses().get())
 					.filter(a -> a instanceof IElementAccess)
 					.map(IElementAccess.class::cast)
-					.findFirst()
+					.filter(ea -> ea.from().get().equals(ct))
+					.findAny()
 					.get();
 			Map<String, Object> currentRow = (Map<String, Object>) model
-					.getElementById(elementAccess.element().get().getUri());
+					.getElementById(elementAccess.element().get().getUri());		
 			if (ct.getIndex() == 1) {
 				assertThat("ContextTrace should have a guard", ct.guard().get(), is(notNullValue()));
 				if (changeDate.before(sdf.parse((String) currentRow.get("startDate")))) {
 					Iterator<IInvariantTrace> invariants = ct.constraints().get();
 					IInvariantTrace overDraftIt = invariants.next();
 					ICheckTrace checkTrace = overDraftIt.check().get();
-
-					IPropertyAccess pa = IncrementalUtils.asStream(context.accesses().get())
+					// One property access for the check
+					IPropertyAccess pa = IncrementalUtils.asStream(moduleTrace.accesses().get())
 							.filter(IPropertyAccess.class::isInstance)
 							.map(IPropertyAccess.class::cast)
+							.filter(a -> a.property().get().elementTrace().get().equals(elementAccesses)
+									&& a.from().get().equals(checkTrace))
 							.findFirst()
 							.get();
 					assertThat("Check should access 'balance' property", pa.property().get().getName(), is("balance"));
-
+					// All childs
 					IInvariantTrace chargesIt = invariants.next();
-					ISatisfiesTrace satisfiesTrace = chargesIt.satisfies().get();
-					assertThat("Satisfies trace should not be for 'all'", satisfiesTrace.getAll(), is(false));
-					Set<IInvariantTrace> satInvariants = IncrementalUtils
-							.asSet(satisfiesTrace.satisfiedInvariants().get());
-					assertThat("Satisfies trace should not be for 'all'", satInvariants.size(), is(1));
-					assertThat("Satisfies trace should not be for 'isInOverdraft'",
-							satInvariants.iterator().next().getName(), is("isInOverdraft"));
 					ICheckResult overDraftResult = IncrementalUtils.asStream(overDraftIt.check().get().result().get())
-							.filter(r -> r.context().get().equals(context))
+							.filter(r -> r.context().get().equals(ct.executionContext().get()))
 							.findFirst()
 							.get();
 					if (!overDraftResult.getValue()) {
-						ICheckTrace checkTrace2 = chargesIt.check().get();
-						IncrementalUtils.asStream(context.accesses().get())
-							.filter(a -> a.from().get().equals(checkTrace2) && (a instanceof IPropertyAccess))
-							.map(IPropertyAccess.class::cast)
-							.collect(Collectors.toSet());
-						// FIMXE Move this complex queries to the repository so we can exploit gremlin!
-						Set<IPropertyAccess> checkAccessesSet = IncrementalUtils.asStream(context.accesses().get())
+						Set<IPropertyAccess> checkAccessesSet = IncrementalUtils.asStream(moduleTrace.accesses().get())
 								.filter(a -> a.from().get().equals(checkTrace) && (a instanceof IPropertyAccess))
 								.map(IPropertyAccess.class::cast)
 								.collect(Collectors.toSet());

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-25.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -47,9 +47,19 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
     private Vertex delegate;
     
     /**
+     * The module.
+     */
+    private IAccessHasModule module;
+
+    /**
      * The from.
      */
     private IAccessHasFrom from;
+
+    /**
+     * The in.
+     */
+    private IAccessHasIn in;
 
     /**
      * The property.
@@ -66,7 +76,7 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
      * container and any attributes identified as indexes.
      */    
     public PropertyAccessGremlin(
-        IPropertyTrace property, IExecutionContext container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        IModuleElementTrace from, IExecutionContext in, IPropertyTrace property, IModuleExecutionTrace container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
         if (!container.accesses().create(this)) {
@@ -74,10 +84,18 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
         };
         // Equals References
         this.property = new PropertyAccessHasPropertyGremlin(this, gts, BaseTraceFactory.getFactory());
+        // Derived Features
+        this.from = new AccessHasFromGremlin(this, gts, BaseTraceFactory.getFactory());
+        // Derived Features
+        this.in = new AccessHasInGremlin(this, gts, BaseTraceFactory.getFactory());
         try {
+	        this.in.create(in);
 	        this.property.create(property);
+	        this.from.create(from);
         } catch (TraceModelConflictRelation ex) {
+            ((AccessHasInGremlin)this.in).delegate().remove();
             ((PropertyAccessHasPropertyGremlin)this.property).delegate().remove();
+            ((AccessHasFromGremlin)this.from).delegate().remove();
             throw ex;
         }
     }
@@ -126,6 +144,23 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
     }   
      
     @Override
+    public IAccessHasModule module() {
+        if (module == null) {
+            module = new AccessHasModuleGremlin(this, this.gts, BaseTraceFactory.getFactory());
+            GraphTraversalSource g = startTraversal();
+            try {
+                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("module");
+                if (gt.hasNext()) {
+                    ((AccessHasModuleGremlin)module).delegate(gt.next());
+                }
+            } finally {
+                finishTraversal(g);
+            }
+        }
+        return module;
+    }
+
+    @Override
     public IAccessHasFrom from() {
         if (from == null) {
             from = new AccessHasFromGremlin(this, this.gts, BaseTraceFactory.getFactory());
@@ -140,6 +175,23 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
             }
         }
         return from;
+    }
+
+    @Override
+    public IAccessHasIn in() {
+        if (in == null) {
+            in = new AccessHasInGremlin(this, this.gts, BaseTraceFactory.getFactory());
+            GraphTraversalSource g = startTraversal();
+            try {
+                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("in");
+                if (gt.hasNext()) {
+                    ((AccessHasInGremlin)in).delegate(gt.next());
+                }
+            } finally {
+                finishTraversal(g);
+            }
+        }
+        return in;
     }
 
     @Override
@@ -183,18 +235,18 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
         PropertyAccessGremlin other = (PropertyAccessGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-    if (from == null) {
-        if (other.from != null)
-            return false;
-    }
-        if (!from().get().equals(other.from().get())) {
-            return false;
-        }
     if (property == null) {
         if (other.property != null)
             return false;
     }
         if (!property().get().equals(other.property().get())) {
+            return false;
+        }
+    if (module == null) {
+        if (other.module != null)
+            return false;
+    }
+        if (!module().get().equals(other.module().get())) {
             return false;
         }
         return true; 
@@ -204,10 +256,10 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        IExecutionContext from = from().get();
-        result = prime * result + ((from == null) ? 0 : from.hashCode());
         IPropertyTrace property = property().get();
         result = prime * result + ((property == null) ? 0 : property.hashCode());
+        IModuleExecutionTrace module = module().get();
+        result = prime * result + ((module == null) ? 0 : module.hashCode());
         return result;
     }
     

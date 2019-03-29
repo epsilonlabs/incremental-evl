@@ -10,9 +10,9 @@ import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTraceGremlin;
 
-public class EvlTraceGremlinFactory extends GremlinBaseFactoryImpl implements IEvlRootElementsFactory {
+public class EvlTraceTinkerpopFactory extends GremlinBaseFactoryImpl implements IEvlRootElementsFactory {
 
-	public EvlTraceGremlinFactory() {
+	public EvlTraceTinkerpopFactory() {
 		super();
 	}
 
@@ -21,12 +21,9 @@ public class EvlTraceGremlinFactory extends GremlinBaseFactoryImpl implements IE
 		
 		Builder vertexBuilder = DetachedVertex.build();
 		vertexBuilder.setLabel("EvlModuleTrace");
+		vertexBuilder.setId(GremlinUtils.identityToString(uri));
 		// Properties
-		org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertexProperty.Builder pBuilder = DetachedVertexProperty.build();
-		pBuilder.setLabel("id");
-		pBuilder.setValue(GremlinUtils.identityToString(uri));
-		vertexBuilder.addProperty(pBuilder.create());
-		pBuilder = DetachedVertexProperty.build();
+		org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertexProperty.Builder pBuilder = DetachedVertexProperty.build();		
 		pBuilder.setLabel("uri");
 		pBuilder.setValue(uri);
 		vertexBuilder.addProperty(pBuilder.create());

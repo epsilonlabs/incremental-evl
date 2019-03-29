@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -171,6 +171,7 @@ public class ContextTrace implements IContextTrace {
             // Pass
         } finally {
             if (invariantTrace == null) {
+                // Find the matching element
                 Iterator<IInvariantTrace> it = this.constraints.get();
                 while (it.hasNext()) {
                     IInvariantTrace item;

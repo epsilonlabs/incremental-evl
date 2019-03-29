@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -74,19 +74,19 @@ public class ModelAccessTest {
         // protected region ModelAccessInit_ModelTraceReference on begin
         classUnderTest = new ModelAccess("modelName1", _modelTrace, containerMock);                    
         // protected region ModelAccessInit_ModelTraceReference end
-        IModelTrace ref = mock(IModelTrace.class);
+        IModelTrace ref_modelTrace = mock(IModelTrace.class);
         
-        boolean result = classUnderTest.modelTrace().create(ref);
+        boolean result = classUnderTest.modelTrace().create(ref_modelTrace);
         assertFalse("A new reference can not be created before destroy", result);
-        assertThat(classUnderTest.modelTrace().get(), is(_modelTrace));
-        result = classUnderTest.modelTrace().destroy(ref);
+        assertThat(classUnderTest.modelTrace().get(), is(ref_modelTrace));
+        result = classUnderTest.modelTrace().destroy(ref_modelTrace);
         assertFalse("Can't destroy unexisting reference", result);
-        result = classUnderTest.modelTrace().destroy(_modelTrace);
+        result = classUnderTest.modelTrace().destroy(ref_modelTrace);
         assertTrue("Exising references can be destroyed", result);
         assertThat(classUnderTest.modelTrace().get(), is(nullValue()));
-        result = classUnderTest.modelTrace().create(ref);
+        result = classUnderTest.modelTrace().create(ref_modelTrace);
         assertTrue("New references can be craeted if was null", result);
-        assertThat(classUnderTest.modelTrace().get(), is(ref));
+        assertThat(classUnderTest.modelTrace().get(), is(ref_modelTrace));
     
     }
     

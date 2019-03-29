@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2018-08-31.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -58,6 +58,10 @@ public class ModuleExecutionTraceHasAccesses extends Feature implements IModuleE
         if (conflict(target)) {
             throw new TraceModelConflictRelation("Relation to previous IAccess exists");
         }
+        if (related(target)) {
+            return false;
+        }
+        target.module().set(source);
         set(target);
         return true;
     }
@@ -67,6 +71,7 @@ public class ModuleExecutionTraceHasAccesses extends Feature implements IModuleE
         if (!related(target)) {
             return false;
         }
+        target.module().remove(source);
         remove(target);
         return true;
     }
@@ -77,6 +82,7 @@ public class ModuleExecutionTraceHasAccesses extends Feature implements IModuleE
         if (isUnique) {
             result |= this.target.contains(target);
         }
+        result |= target.module().get() != null;
         return result;
     }
     
@@ -85,7 +91,7 @@ public class ModuleExecutionTraceHasAccesses extends Feature implements IModuleE
     	if (target == null) {
 			return false;
 		}
-		return this.target.contains(target);
+		return this.target.contains(target) && source.equals(target.module().get());
 	}
         
     

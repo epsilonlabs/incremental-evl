@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -45,9 +45,19 @@ public class SatisfiesAccess implements ISatisfiesAccess {
     private Boolean all;
 
     /**
+     * The module.
+     */
+    private final IAccessHasModule module;
+
+    /**
      * The from.
      */
     private final IAccessHasFrom from;
+
+    /**
+     * The in.
+     */
+    private final IAccessHasIn in;
 
     /**
      * The modelElement.
@@ -63,15 +73,25 @@ public class SatisfiesAccess implements ISatisfiesAccess {
      * Instantiates a new SatisfiesAccess. The SatisfiesAccess is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
-    public SatisfiesAccess(IModelElementTrace modelElement,
-                           IExecutionContext container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+    public SatisfiesAccess(IModuleElementTrace from,
+                           IExecutionContext in,
+                           IModelElementTrace modelElement,
+                           IModuleExecutionTrace container) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
 
-        this.from = new AccessHasFrom(this);
         this.modelElement = new SatisfiesAccessHasModelElement(this);
+        this.module = new AccessHasModule(this);
         if (!this.modelElement.create(modelElement)) {
+            throw new TraceModelDuplicateElement();
+        }
+        this.from = new AccessHasFrom(this);
+        if (!this.from.create(from)) {
+            throw new TraceModelDuplicateElement();
+        }
+        this.in = new AccessHasIn(this);
+        if (!this.in.create(in)) {
             throw new TraceModelDuplicateElement();
         }
         this.satisfiedInvariants = new SatisfiesAccessHasSatisfiedInvariants(this);
@@ -101,8 +121,18 @@ public class SatisfiesAccess implements ISatisfiesAccess {
     }   
      
     @Override
+    public IAccessHasModule module() {
+        return module;
+    }
+
+    @Override
     public IAccessHasFrom from() {
         return from;
+    }
+
+    @Override
+    public IAccessHasIn in() {
+        return in;
     }
 
     @Override
@@ -139,18 +169,18 @@ public class SatisfiesAccess implements ISatisfiesAccess {
         SatisfiesAccess other = (SatisfiesAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (from.get() == null) {
-            if (other.from.get() != null)
-                return false;
-        }
-        if (!from.get().equals(other.from.get())) {
-            return false;
-        }
         if (modelElement.get() == null) {
             if (other.modelElement.get() != null)
                 return false;
         }
         if (!modelElement.get().equals(other.modelElement.get())) {
+            return false;
+        }
+        if (module.get() == null) {
+            if (other.module.get() != null)
+                return false;
+        }
+        if (!module.get().equals(other.module.get())) {
             return false;
         }
         return true; 
@@ -160,8 +190,8 @@ public class SatisfiesAccess implements ISatisfiesAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((from.get() == null) ? 0 : from.get().hashCode());
         result = prime * result + ((modelElement.get() == null) ? 0 : modelElement.get().hashCode());
+        result = prime * result + ((module.get() == null) ? 0 : module.get().hashCode());
         return result;
     }
 }

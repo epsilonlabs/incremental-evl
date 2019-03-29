@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <!--extension-point id="org.eclipse.epsilon.common.incremental.dt.executionTraceManager" name="Execution Trace Manager" schema="schema/executionTraceManager.exsd"/-->
+   <extension-point id="org.eclipse.epsilon.evl.incremental.module" name="Incremental Module" schema="schema/org.eclipse.epsilon.evl.incremental.module.exsd"/>
+
+</plugin>

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-25.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -53,11 +53,6 @@ public class ExecutionContextGremlin implements IExecutionContext, GremlinWrappe
     private IExecutionContextHasContextVariables contextVariables;
 
     /**
-     * * The different accesses that where recorded during execution.
-     */
-    private IExecutionContextHasAccesses accesses;
-
-    /**
      * Empty constructor for deserialization.
      */    
     public ExecutionContextGremlin() { }
@@ -75,8 +70,6 @@ public class ExecutionContextGremlin implements IExecutionContext, GremlinWrappe
         };
         // Equals References
         this.contextVariables = new ExecutionContextHasContextVariablesGremlin(this, gts, BaseTraceFactory.getFactory());
-        // Derived Features
-        this.accesses = new ExecutionContextHasAccessesGremlin(this, gts, BaseTraceFactory.getFactory());
     }
     
     @Override
@@ -109,23 +102,6 @@ public class ExecutionContextGremlin implements IExecutionContext, GremlinWrappe
     }
 
     @Override
-    public IExecutionContextHasAccesses accesses() {
-        if (accesses == null) {
-            accesses = new ExecutionContextHasAccessesGremlin(this, this.gts, BaseTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("accesses");
-                if (gt.hasNext()) {
-                    ((ExecutionContextHasAccessesGremlin)accesses).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
-        return accesses;
-    }
-
-    @Override
     public IModelElementVariable getOrCreateModelElementVariable(String name, IModelElementTrace value) throws EolIncrementalExecutionException {
         GraphTraversalSource g = startTraversal();
         ModelElementVariableGremlin modelElementVariable = null;
@@ -139,7 +115,7 @@ public class ExecutionContextGremlin implements IExecutionContext, GremlinWrappe
             else {
                 Vertex v = null;
                 try {
-                    v = g.addV("ModelElementVariable").property(T.id, GremlinUtils.identityToString(name, value, this)).next();
+                    v = g.addV("ModelElementVariable").property("tag", GremlinUtils.identityToString(name, value, this)).next();
                     /* protected region modelElementVariableTypeOverride on begin */
                     modelElementVariable = new ModelElementVariableGremlin(name, value, this, v, gts); 
                     /* protected region modelElementVariableTypeOverride end */
@@ -153,73 +129,6 @@ public class ExecutionContextGremlin implements IExecutionContext, GremlinWrappe
         }  
         return modelElementVariable;
     }      
-    
-    @SuppressWarnings("unchecked")
-    public <A extends IAccess> A getOrCreateAccess(Class<A> accessClass, Object... args) throws EolIncrementalExecutionException {
-        GraphTraversalSource g = startTraversal();
-        A result = null;
-        switch(accessClass.getSimpleName()) {
-            case "IElementAccess":
-                assert args[0] instanceof IModelElementTrace;
-                IElementAccess elementAccess = null;
-                try {
-                    Vertex v = null;
-                    try {
-                        v = g.addV("ElementAccess").next();
-                        /* protected region elementAccessTypeOverride on begin */
-                        elementAccess = new ElementAccessGremlin((IModelElementTrace) args[0], this, v, gts);
-                        /* protected region elementAccessTypeOverride end */
-                    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                        g.V(v).as("v").properties().drop().select("v").drop();
-                        throw new EolIncrementalExecutionException("Error creating requested ElementAccess", e);
-                    }
-                } finally {
-                    finishTraversal(g);
-                }  
-                result = (A) elementAccess;
-                break;
-            case "IAllInstancesAccess":
-                assert args[0] instanceof Boolean;
-                assert args[1] instanceof IModelTypeTrace;
-                IAllInstancesAccess allInstancesAccess = null;
-                try {
-                    Vertex v = null;
-                    try {
-                        v = g.addV("AllInstancesAccess").property(T.id, GremlinUtils.identityToString((Boolean) args[0], (IModelTypeTrace) args[1], this)).next();
-                        /* protected region allInstancesAccessTypeOverride on begin */
-                        allInstancesAccess = new AllInstancesAccessGremlin((Boolean) args[0], (IModelTypeTrace) args[1], this, v, gts);
-                        /* protected region allInstancesAccessTypeOverride end */
-                    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                        g.V(v).as("v").properties().drop().select("v").drop();
-                        throw new EolIncrementalExecutionException("Error creating requested AllInstancesAccess", e);
-                    }
-                } finally {
-                    finishTraversal(g);
-                }  
-                result = (A) allInstancesAccess;
-                break;
-            case "IPropertyAccess":
-                assert args[0] instanceof IPropertyTrace;
-                IPropertyAccess propertyAccess = null;
-                try {
-                    Vertex v = null;
-                    try {
-                        v = g.addV("PropertyAccess").next();
-                        /* protected region propertyAccessTypeOverride on begin */
-                        propertyAccess = new PropertyAccessGremlin((IPropertyTrace) args[0], this, v, gts);
-                        /* protected region propertyAccessTypeOverride end */
-                    } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                        g.V(v).as("v").properties().drop().select("v").drop();
-                        throw new EolIncrementalExecutionException("Error creating requested PropertyAccess", e);
-                    }
-                } finally {
-                    finishTraversal(g);
-                }  
-                result = (A) propertyAccess;
-                break;
-        }
-        return result;
-    }
     
     public Map<String,Object> getIdProperties() {
         Map<String, Object> result = new HashMap<>();

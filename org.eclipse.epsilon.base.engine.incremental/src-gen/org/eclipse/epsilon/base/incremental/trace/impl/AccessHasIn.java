@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -15,96 +15,85 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContextHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
+import org.eclipse.epsilon.base.incremental.trace.IAccessHasIn;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 
 
 /**
- * Implementation of IExecutionContextHasAccesses reference. 
+ * Implementation of IAccessHasIn reference. 
  */
-public class ExecutionContextHasAccesses extends Feature implements IExecutionContextHasAccesses {
+public class AccessHasIn extends Feature implements IAccessHasIn {
     
     /** The source(s) of the reference */
-    protected IExecutionContext source;
+    protected IAccess source;
     
     /** The target(s) of the reference */
-    protected Queue<IAccess> target =  new ConcurrentLinkedQueue<IAccess>();
+    protected IExecutionContext target;
     
     /**
-     * Instantiates a new IExecutionContextHasAccesses.
+     * Instantiates a new IAccessHasIn.
      *
      * @param source the source of the reference
      */
-    public ExecutionContextHasAccesses (IExecutionContext source) {
-        super(false);
+    public AccessHasIn (IAccess source) {
+        super(true);
         this.source = source;
     }
     
     // PUBLIC API
         
     @Override
-    
-    public Iterator<IAccess> get() {
-    	return target.iterator();
+    public IExecutionContext get() {
+        return target;
     }
     
 
     @Override
-    public boolean create(IAccess target) throws TraceModelConflictRelation {
+    public boolean create(IExecutionContext target) throws TraceModelConflictRelation {
         if (conflict(target)) {
-            throw new TraceModelConflictRelation("Relation to previous IAccess exists");
+            throw new TraceModelConflictRelation("Relation to previous IExecutionContext exists");
         }
-        if (related(target)) {
-            return false;
-        }
-        target.from().set(source);
         set(target);
         return true;
     }
 
     @Override
-    public boolean destroy(IAccess target) {
+    public boolean destroy(IExecutionContext target) {
         if (!related(target)) {
             return false;
         }
-        target.from().remove(source);
         remove(target);
         return true;
     }
     
     @Override
-    public boolean conflict(IAccess target) {
+    public boolean conflict(IExecutionContext target) {
         boolean result = false;
-        if (isUnique) {
-            result |= this.target.contains(target);
-        }
-        result |= target.from().get() != null;
+        result |= this.target != null;
         return result;
     }
     
     @Override
-    public boolean related(IAccess target) {
+    public boolean related(IExecutionContext target) {
     	if (target == null) {
 			return false;
 		}
-		return this.target.contains(target) && source.equals(target.from().get());
+		return target.equals(this.target);
 	}
         
     
     // PRIVATE API
     
     @Override
-    public void set(IAccess target) {
-        this.target.add(target);
+    public void set(IExecutionContext target) {
+        this.target = target;
     }
     
     @Override
-    public void remove(IAccess target) {
-        this.target.remove(target);
+    public void remove(IExecutionContext target) {
+        this.target = null;
     }
 
 }

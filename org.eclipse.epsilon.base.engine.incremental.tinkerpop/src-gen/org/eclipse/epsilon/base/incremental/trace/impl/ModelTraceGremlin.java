@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-25.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -164,7 +164,7 @@ public class ModelTraceGremlin implements IModelTrace, GremlinWrapper<Vertex> {
             else {
                 Vertex v = null;
                 try {
-                    v = g.addV("ModelElementTrace").property(T.id, GremlinUtils.identityToString(uri, type, this)).next();
+                    v = g.addV("ModelElementTrace").property("tag", GremlinUtils.identityToString(uri, type, this)).next();
                     /* protected region modelElementTraceTypeOverride on begin */
                     modelElementTrace = new ModelElementTraceGremlin(uri, type, this, v, gts); 
                     /* protected region modelElementTraceTypeOverride end */
@@ -193,7 +193,7 @@ public class ModelTraceGremlin implements IModelTrace, GremlinWrapper<Vertex> {
             else {
                 Vertex v = null;
                 try {
-                    v = g.addV("ModelTypeTrace").property(T.id, GremlinUtils.identityToString(name, this)).next();
+                    v = g.addV("ModelTypeTrace").property("tag", GremlinUtils.identityToString(name, this)).next();
                     /* protected region modelTypeTraceTypeOverride on begin */
                     modelTypeTrace = new ModelTypeTraceGremlin(name, this, v, gts); 
                     /* protected region modelTypeTraceTypeOverride end */

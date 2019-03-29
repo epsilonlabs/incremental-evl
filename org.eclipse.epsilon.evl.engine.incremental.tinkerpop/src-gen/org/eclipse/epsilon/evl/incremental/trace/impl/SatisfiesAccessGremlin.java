@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-25.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -49,9 +49,19 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, GremlinWrapper<
     private Vertex delegate;
     
     /**
+     * The module.
+     */
+    private IAccessHasModule module;
+
+    /**
      * The from.
      */
     private IAccessHasFrom from;
+
+    /**
+     * The in.
+     */
+    private IAccessHasIn in;
 
     /**
      * The modelElement.
@@ -73,7 +83,7 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, GremlinWrapper<
      * container and any attributes identified as indexes.
      */    
     public SatisfiesAccessGremlin(
-        IModelElementTrace modelElement, IExecutionContext container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        IModuleElementTrace from, IExecutionContext in, IModelElementTrace modelElement, IModuleExecutionTrace container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
         if (!container.accesses().create(this)) {
@@ -82,11 +92,19 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, GremlinWrapper<
         // Equals References
         this.modelElement = new SatisfiesAccessHasModelElementGremlin(this, gts, EvlTraceFactory.getFactory());
         // Derived Features
+        this.from = new AccessHasFromGremlin(this, gts, EvlTraceFactory.getFactory());
+        // Derived Features
+        this.in = new AccessHasInGremlin(this, gts, EvlTraceFactory.getFactory());
+        // Derived Features
         this.satisfiedInvariants = new SatisfiesAccessHasSatisfiedInvariantsGremlin(this, gts, EvlTraceFactory.getFactory());
         try {
+	        this.from.create(from);
 	        this.modelElement.create(modelElement);
+	        this.in.create(in);
         } catch (TraceModelConflictRelation ex) {
+            ((AccessHasFromGremlin)this.from).delegate().remove();
             ((SatisfiesAccessHasModelElementGremlin)this.modelElement).delegate().remove();
+            ((AccessHasInGremlin)this.in).delegate().remove();
             throw ex;
         }
     }
@@ -135,6 +153,23 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, GremlinWrapper<
     }   
      
     @Override
+    public IAccessHasModule module() {
+        if (module == null) {
+            module = new AccessHasModuleGremlin(this, this.gts, EvlTraceFactory.getFactory());
+            GraphTraversalSource g = startTraversal();
+            try {
+                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("module");
+                if (gt.hasNext()) {
+                    ((AccessHasModuleGremlin)module).delegate(gt.next());
+                }
+            } finally {
+                finishTraversal(g);
+            }
+        }
+        return module;
+    }
+
+    @Override
     public IAccessHasFrom from() {
         if (from == null) {
             from = new AccessHasFromGremlin(this, this.gts, EvlTraceFactory.getFactory());
@@ -149,6 +184,23 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, GremlinWrapper<
             }
         }
         return from;
+    }
+
+    @Override
+    public IAccessHasIn in() {
+        if (in == null) {
+            in = new AccessHasInGremlin(this, this.gts, EvlTraceFactory.getFactory());
+            GraphTraversalSource g = startTraversal();
+            try {
+                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("in");
+                if (gt.hasNext()) {
+                    ((AccessHasInGremlin)in).delegate(gt.next());
+                }
+            } finally {
+                finishTraversal(g);
+            }
+        }
+        return in;
     }
 
     @Override
@@ -209,18 +261,18 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, GremlinWrapper<
         SatisfiesAccessGremlin other = (SatisfiesAccessGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-    if (from == null) {
-        if (other.from != null)
-            return false;
-    }
-        if (!from().get().equals(other.from().get())) {
-            return false;
-        }
     if (modelElement == null) {
         if (other.modelElement != null)
             return false;
     }
         if (!modelElement().get().equals(other.modelElement().get())) {
+            return false;
+        }
+    if (module == null) {
+        if (other.module != null)
+            return false;
+    }
+        if (!module().get().equals(other.module().get())) {
             return false;
         }
         return true; 
@@ -230,10 +282,10 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, GremlinWrapper<
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        IExecutionContext from = from().get();
-        result = prime * result + ((from == null) ? 0 : from.hashCode());
         IModelElementTrace modelElement = modelElement().get();
         result = prime * result + ((modelElement == null) ? 0 : modelElement.hashCode());
+        IModuleExecutionTrace module = module().get();
+        result = prime * result + ((module == null) ? 0 : module.hashCode());
         return result;
     }
     

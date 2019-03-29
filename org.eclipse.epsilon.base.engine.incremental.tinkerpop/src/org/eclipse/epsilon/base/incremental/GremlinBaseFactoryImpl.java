@@ -21,12 +21,9 @@ public abstract class GremlinBaseFactoryImpl implements IBaseRootElementsFactory
 	public IModelTrace createModelTrace(String uri) throws TraceModelDuplicateElement {
 		Builder vertexBuilder = DetachedVertex.build();
 		vertexBuilder.setLabel("ModelTrace");
+		vertexBuilder.setId(GremlinUtils.identityToString(uri));
 		// Properties
 		org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertexProperty.Builder pBuilder = DetachedVertexProperty.build();
-		pBuilder.setLabel("id");
-		pBuilder.setValue(GremlinUtils.identityToString(uri));
-		vertexBuilder.addProperty(pBuilder.create());
-		pBuilder = DetachedVertexProperty.build();
 		pBuilder.setLabel("uri");
 		pBuilder.setValue(uri);
 		vertexBuilder.addProperty(pBuilder.create());

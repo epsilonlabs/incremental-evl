@@ -31,6 +31,7 @@ import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -99,7 +100,7 @@ public abstract class OnlineTests<M extends Module> {
 		module.execute();
 		// Save the previous state so we can compare changes
 		// ContextTraces
-		Set<IModuleElementTrace> executionTraces = module.getContext().getTraceManager().getExecutionTraceRepository()
+		Set<IEvlModuleTrace> executionTraces = module.getContext().getTraceManager().getExecutionTraceRepository()
 				.getAllModuleTraces();
 
 		long contextExecutionTraces = executionTraces.stream().filter(t -> t instanceof IContextTrace)
@@ -109,7 +110,7 @@ public abstract class OnlineTests<M extends Module> {
 		System.out.println("Unsatisfied constraints " + unsatisfied);
 		// Add a listener so we can synchronise the execution.
 		BlockingQueue<ExecutionResult> results = new SynchronousQueue<ExecutionResult>();
-		IExecutionListener<IEolContext> assertExecutionListener = new IExecutionListener<IEolContext>() {
+		IExecutionListener assertExecutionListener = new IExecutionListener() {
 
 			@Override
 			public void finishedExecutingWithException(ModuleElement ast, EolRuntimeException exception,

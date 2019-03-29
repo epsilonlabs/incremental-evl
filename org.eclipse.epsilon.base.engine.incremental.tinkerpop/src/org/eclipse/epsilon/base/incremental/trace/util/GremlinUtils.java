@@ -97,12 +97,24 @@ public class GremlinUtils {
 
 	}
 	
+	/**
+	 * Generate a String to represent an Object identity based on its required fields (i.e. from
+	 * its constructor).
+	 * <p>
+	 * Primitive values are appended via their <i>toString</i> method. Strings are truncated to
+	 * some meaningful length (e.g. only keep a path's last segment). For other objects, the its 
+	 * hash value (as hex) is used.
+	 * The individual values are concatenated using a dash.
+	 * 
+	 * @param idObjects				an array of the objects that constitute the object's identity
+	 * @return 						a String with the representation of its identity
+	 */
 	public static String identityToString(Object... idObjects) {
 		StringBuilder sb = new StringBuilder();
     	String separator = "";
     	for (Object o : idObjects) {
     		sb.append(separator);
-    		separator = "!";
+    		separator = "-";
     		objectToString(sb, o, true);
     	}
     	return sb.length() > 0 ? sb.toString() : null;

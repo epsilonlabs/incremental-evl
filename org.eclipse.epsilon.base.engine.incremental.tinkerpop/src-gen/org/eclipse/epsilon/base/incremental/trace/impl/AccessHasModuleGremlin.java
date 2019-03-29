@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-25.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,42 +16,42 @@ import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContextHasAccesses;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.IAccessHasModule;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 
 /**
- * Implementation of IExecutionContextHasAccesses reference. 
+ * Implementation of IAccessHasModule reference. 
  */
-public class ExecutionContextHasAccessesGremlin extends Feature
-        implements IExecutionContextHasAccesses, GremlinWrapper<Edge> {
+public class AccessHasModuleGremlin extends Feature
+        implements IAccessHasModule, GremlinWrapper<Edge> {
     
     /** The graph traversal source for all navigations */
     private GraphTraversalSource gts;
     
     /** The source(s) of the reference */
-    protected IExecutionContext source;
+    protected IAccess source;
     
     /** Factory used to wrap referenced elements */
     protected final TraceFactory factory;
     
+    /** Fast access for single-valued references */
+    private Edge delegate;
     
     /**
-     * Instantiates a new IExecutionContextHasAccesses.
+     * Instantiates a new IAccessHasModule.
      *
      * @param source the source of the reference
      */
-    public ExecutionContextHasAccessesGremlin (
-        IExecutionContext source,
+    public AccessHasModuleGremlin (
+        IAccess source,
         GraphTraversalSource gts, 
         TraceFactory factory) {
-        super(false);
+        super(true);
         this.source = source;
         this.gts = gts;
         this.factory = factory; 
@@ -60,19 +60,15 @@ public class ExecutionContextHasAccessesGremlin extends Feature
     // PUBLIC API
         
     @Override
-    public Iterator<IAccess> get() {
-        return new GremlinUtils.IncrementalFactoryIterator<IAccess, Vertex>(getRaw(),
-                gts, factory);
-    }
-    
-    /**
-     * Get the Tinkerpop GraphTraversal iterator of the vertices that are part of the relation.
-     */
-    public  GraphTraversal<Vertex, Vertex> getRaw() {
+    public IModuleExecutionTrace get() {
+        if (delegate == null) {
+            return null;
+        }
         GraphTraversalSource g = startTraversal();
-        GraphTraversal<Vertex, Vertex> result = null;
+        IModuleExecutionTrace result = null;
         try {
-            result = g.V(source.getId()).out("accesses");
+            Vertex to = g.E(delegate).inV().next();
+            result = (IModuleExecutionTrace) factory.createTraceElement(to, gts);
         }
         finally {
             finishTraversal(g);
@@ -82,41 +78,45 @@ public class ExecutionContextHasAccessesGremlin extends Feature
     
 
     @Override
-    public boolean create(IAccess target) throws TraceModelConflictRelation {
+    public boolean create(IModuleExecutionTrace target) throws TraceModelConflictRelation {
         if (conflict(target)) {
             if (related(target)) {
                 return true;
             }
-            throw new TraceModelConflictRelation("Relation to previous IAccess exists");
+            throw new TraceModelConflictRelation("Relation to previous IModuleExecutionTrace exists");
         }
-        target.from().set(source);
+        target.accesses().set(source);
         set(target);
         return true;
     }
 
     @Override
-    public boolean destroy(IAccess target) {
+    public boolean destroy(IModuleExecutionTrace target) {
         if (!related(target)) {
             return false;
         }
-        target.from().remove(source);
+        target.accesses().remove(source);
         remove(target);
         return true;
     }
     
     @Override
-    public boolean conflict(IAccess target) {
+    public boolean conflict(IModuleExecutionTrace target) {
         boolean result = false;
         GraphTraversalSource g = startTraversal();
         try {
-	        if (isUnique()) {
-	           GraphTraversal<Vertex, Vertex> gt =  g.V(source.getId()).out("accesses");
-                for (Entry<String, Object> id : target.getIdProperties().entrySet()) {
-                    gt.has(id.getKey(), id.getValue());
-                }
-                result |= gt.hasNext();
+            result |= delegate == null ? g.V(source.getId()).out("module").hasNext() : g.E(delegate).inV().hasId(target.getId()).hasNext();
+            GraphTraversalSource g2 = startTraversal();
+            try {
+                result |= delegate == null ? false : (target.accesses().isUnique() &&
+                        g.V(target.getId()).out("accesses").hasId(source.getId()).hasNext());
             }
-            result |= target.from().get() != null;
+            catch (Exception ex) {
+                result = false;
+            }
+            finally {
+                finishTraversal(g2);
+            }
         }
         finally {
             finishTraversal(g);
@@ -125,14 +125,25 @@ public class ExecutionContextHasAccessesGremlin extends Feature
     }
     
     @Override
-    public boolean related(IAccess target) {
+    public boolean related(IModuleExecutionTrace target) {
     	if (target == null) {
 			return false;
 		}
+        if (delegate == null) {
+            return false;
+        }
         boolean result = false;
         GraphTraversalSource g = startTraversal();
+        boolean inTarget = false;
         try {
-		  result = g.V(source.getId()).out("accesses").hasId(target.getId()).hasNext() && source.equals(target.from().get());
+            inTarget = g.V(target.getId()).out("accesses").hasId(source.getId()).hasNext();
+        }
+        finally {
+            finishTraversal(g);
+        }
+        g = startTraversal();
+        try {
+		  result = g.E(delegate).inV().hasId(target.getId()).hasNext() && inTarget;
 		}
 		finally {
             finishTraversal(g);
@@ -142,11 +153,12 @@ public class ExecutionContextHasAccessesGremlin extends Feature
 	
 	@Override
     public Edge delegate() {
-        return null;
+        return delegate;
     }
 
     @Override
     public void delegate(Edge delegate) {
+        this.delegate = delegate;
     }
     
     @Override
@@ -158,10 +170,10 @@ public class ExecutionContextHasAccessesGremlin extends Feature
     // PRIVATE API
     
     @Override
-    public void set(IAccess target) {
+    public void set(IModuleExecutionTrace target) {
         GraphTraversalSource g = startTraversal();
         try {
-            g.V(source.getId()).addE("accesses").to(g.V(target.getId())).iterate();
+            delegate = g.V(source.getId()).addE("module").to(g.V(target.getId())).next();
         } catch (Exception ex) {
             throw ex;
         } finally {
@@ -171,10 +183,11 @@ public class ExecutionContextHasAccessesGremlin extends Feature
     }
     
     @Override
-    public void remove(IAccess target) {
+    public void remove(IModuleExecutionTrace target) {
         GraphTraversalSource g = startTraversal();
         try {
-            g.V(source.getId()).outE("accesses").as("e").inV().hasId(target.getId()).select("e").drop().iterate();
+            g.E(delegate).drop();
+            delegate = null;
         } catch (Exception ex) {
             throw ex;
         } finally {

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -132,6 +132,7 @@ public class ModelElementTrace implements IModelElementTrace {
             // Pass
         } finally {
             if (propertyTrace == null) {
+                // Find the matching element
                 Iterator<IPropertyTrace> it = this.properties.get();
                 while (it.hasNext()) {
                     IPropertyTrace item;

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-25.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -17,7 +17,7 @@ import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.trace.IAccess;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
+import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IAccessHasFrom;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 import java.util.stream.Stream;
@@ -60,15 +60,15 @@ public class AccessHasFromGremlin extends Feature
     // PUBLIC API
         
     @Override
-    public IExecutionContext get() {
+    public IModuleElementTrace get() {
         if (delegate == null) {
             return null;
         }
         GraphTraversalSource g = startTraversal();
-        IExecutionContext result = null;
+        IModuleElementTrace result = null;
         try {
             Vertex to = g.E(delegate).inV().next();
-            result = (IExecutionContext) factory.createTraceElement(to, gts);
+            result = (IModuleElementTrace) factory.createTraceElement(to, gts);
         }
         finally {
             finishTraversal(g);
@@ -78,45 +78,32 @@ public class AccessHasFromGremlin extends Feature
     
 
     @Override
-    public boolean create(IExecutionContext target) throws TraceModelConflictRelation {
+    public boolean create(IModuleElementTrace target) throws TraceModelConflictRelation {
         if (conflict(target)) {
             if (related(target)) {
                 return true;
             }
-            throw new TraceModelConflictRelation("Relation to previous IExecutionContext exists");
+            throw new TraceModelConflictRelation("Relation to previous IModuleElementTrace exists");
         }
-        target.accesses().set(source);
         set(target);
         return true;
     }
 
     @Override
-    public boolean destroy(IExecutionContext target) {
+    public boolean destroy(IModuleElementTrace target) {
         if (!related(target)) {
             return false;
         }
-        target.accesses().remove(source);
         remove(target);
         return true;
     }
     
     @Override
-    public boolean conflict(IExecutionContext target) {
+    public boolean conflict(IModuleElementTrace target) {
         boolean result = false;
         GraphTraversalSource g = startTraversal();
         try {
             result |= delegate == null ? g.V(source.getId()).out("from").hasNext() : g.E(delegate).inV().hasId(target.getId()).hasNext();
-            GraphTraversalSource g2 = startTraversal();
-            try {
-                result |= delegate == null ? false : (target.accesses().isUnique() &&
-                        g.V(target.getId()).out("accesses").hasId(source.getId()).hasNext());
-            }
-            catch (Exception ex) {
-                result = false;
-            }
-            finally {
-                finishTraversal(g2);
-            }
         }
         finally {
             finishTraversal(g);
@@ -125,7 +112,7 @@ public class AccessHasFromGremlin extends Feature
     }
     
     @Override
-    public boolean related(IExecutionContext target) {
+    public boolean related(IModuleElementTrace target) {
     	if (target == null) {
 			return false;
 		}
@@ -134,16 +121,8 @@ public class AccessHasFromGremlin extends Feature
         }
         boolean result = false;
         GraphTraversalSource g = startTraversal();
-        boolean inTarget = false;
         try {
-            inTarget = g.V(target.getId()).out("accesses").hasId(source.getId()).hasNext();
-        }
-        finally {
-            finishTraversal(g);
-        }
-        g = startTraversal();
-        try {
-		  result = g.E(delegate).inV().hasId(target.getId()).hasNext() && inTarget;
+		  result = g.E(delegate).inV().hasId(target.getId()).hasNext();
 		}
 		finally {
             finishTraversal(g);
@@ -170,7 +149,7 @@ public class AccessHasFromGremlin extends Feature
     // PRIVATE API
     
     @Override
-    public void set(IExecutionContext target) {
+    public void set(IModuleElementTrace target) {
         GraphTraversalSource g = startTraversal();
         try {
             delegate = g.V(source.getId()).addE("from").to(g.V(target.getId())).next();
@@ -183,7 +162,7 @@ public class AccessHasFromGremlin extends Feature
     }
     
     @Override
-    public void remove(IExecutionContext target) {
+    public void remove(IModuleElementTrace target) {
         GraphTraversalSource g = startTraversal();
         try {
             g.E(delegate).drop();

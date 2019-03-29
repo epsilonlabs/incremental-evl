@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -57,6 +57,11 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     private final IModuleExecutionTraceHasModels models;
 
     /**
+     * * The different accesses that where recorded during execution.
+     */
+    private final IModuleExecutionTraceHasAccesses accesses;
+
+    /**
      * Instantiates a new EvlModuleTrace. The EvlModuleTrace is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
@@ -65,6 +70,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
 
         this.moduleElements = new ModuleExecutionTraceHasModuleElements(this);
         this.models = new ModuleExecutionTraceHasModels(this);
+        this.accesses = new ModuleExecutionTraceHasAccesses(this);
 
     }
     
@@ -95,6 +101,11 @@ public class EvlModuleTrace implements IEvlModuleTrace {
     }
 
     @Override
+    public IModuleExecutionTraceHasAccesses accesses() {
+        return accesses;
+    }
+
+    @Override
     public IContextTrace getOrCreateContextTrace(String kind, Integer index) throws EolIncrementalExecutionException {
         IContextTrace contextTrace = null;
         
@@ -104,6 +115,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
             // Pass
         } finally {
             if (contextTrace == null) {
+                // Find the matching element
                 Iterator<IModuleElementTrace> it = this.moduleElements.get();
                 while (it.hasNext()) {
                     IContextTrace item;
@@ -140,6 +152,7 @@ public class EvlModuleTrace implements IEvlModuleTrace {
             // Pass
         } finally {
             if (modelAccess == null) {
+                // Find the matching element
                 Iterator<IModelAccess> it = this.models.get();
                 while (it.hasNext()) {
                     IModelAccess item;
@@ -158,6 +171,172 @@ public class EvlModuleTrace implements IEvlModuleTrace {
         }
         return modelAccess;
     }      
+                  
+    @SuppressWarnings("unchecked")
+    public <A extends IAccess> A getOrCreateAccess(Class<A> accessClass, Object... args) throws EolIncrementalExecutionException {
+        A result = null;
+        switch(accessClass.getName()) {
+            case "SatisfiesAccess":
+                assert args[1] instanceof IModuleElementTrace;
+                assert args[2] instanceof IExecutionContext;
+                assert args[3] instanceof IModelElementTrace;
+                ISatisfiesAccess satisfiesAccess = null;
+                
+                try {
+                    satisfiesAccess = new SatisfiesAccess((IModuleElementTrace) args[0], (IExecutionContext) args[1], (IModelElementTrace) args[2], this);
+                    this.accesses().create(satisfiesAccess);
+                } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
+                    // Pass
+                } finally {
+                    if (satisfiesAccess == null) {
+                        // Find the matching element
+                        Iterator<IAccess> it = this.accesses.get();
+                        while (it.hasNext()) {
+                            ISatisfiesAccess item;
+                            IAccess t = it.next();
+                            if (t instanceof ISatisfiesAccess) {
+                                item = (ISatisfiesAccess) t;
+                            }
+                            else {
+                                continue;
+                            }
+                	        if (item.from().get().equals(args[1]) &&
+                	            item.in().get().equals(args[2]) &&
+                	            item.modelElement().get().equals(args[3])) {
+                	            satisfiesAccess = item;
+                	            break;
+                	        }
+                        }
+                    }
+                    if (satisfiesAccess == null) {
+                        throw new EolIncrementalExecutionException("Error creating trace model element. Requested SatisfiesAccess was "
+                                + "duplicate but previous one was not found.");
+                    }
+                }
+                result = (A) satisfiesAccess;
+                break;
+            case "ElementAccess":
+                assert args[1] instanceof IModuleElementTrace;
+                assert args[2] instanceof IExecutionContext;
+                assert args[3] instanceof IModelElementTrace;
+                IElementAccess elementAccess = null;
+                
+                try {
+                    elementAccess = new ElementAccess((IModuleElementTrace) args[0], (IExecutionContext) args[1], (IModelElementTrace) args[2], this);
+                    this.accesses().create(elementAccess);
+                } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
+                    // Pass
+                } finally {
+                    if (elementAccess == null) {
+                        // Find the matching element
+                        Iterator<IAccess> it = this.accesses.get();
+                        while (it.hasNext()) {
+                            IElementAccess item;
+                            IAccess t = it.next();
+                            if (t instanceof IElementAccess) {
+                                item = (IElementAccess) t;
+                            }
+                            else {
+                                continue;
+                            }
+                	        if (item.from().get().equals(args[1]) &&
+                	            item.in().get().equals(args[2]) &&
+                	            item.element().get().equals(args[3])) {
+                	            elementAccess = item;
+                	            break;
+                	        }
+                        }
+                    }
+                    if (elementAccess == null) {
+                        throw new EolIncrementalExecutionException("Error creating trace model element. Requested ElementAccess was "
+                                + "duplicate but previous one was not found.");
+                    }
+                }
+                result = (A) elementAccess;
+                break;
+            case "AllInstancesAccess":
+                assert args[1] instanceof Boolean;
+                assert args[2] instanceof IModuleElementTrace;
+                assert args[3] instanceof IExecutionContext;
+                assert args[4] instanceof IModelTypeTrace;
+                IAllInstancesAccess allInstancesAccess = null;
+                
+                try {
+                    allInstancesAccess = new AllInstancesAccess((Boolean) args[0], (IModuleElementTrace) args[1], (IExecutionContext) args[2], (IModelTypeTrace) args[3], this);
+                    this.accesses().create(allInstancesAccess);
+                } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
+                    // Pass
+                } finally {
+                    if (allInstancesAccess == null) {
+                        // Find the matching element
+                        Iterator<IAccess> it = this.accesses.get();
+                        while (it.hasNext()) {
+                            IAllInstancesAccess item;
+                            IAccess t = it.next();
+                            if (t instanceof IAllInstancesAccess) {
+                                item = (IAllInstancesAccess) t;
+                            }
+                            else {
+                                continue;
+                            }
+                	        if (item.getOfKind() == args[1] &&
+                	            item.from().get().equals(args[2]) &&
+                	            item.in().get().equals(args[3]) &&
+                	            item.type().get().equals(args[4])) {
+                	            allInstancesAccess = item;
+                	            break;
+                	        }
+                        }
+                    }
+                    if (allInstancesAccess == null) {
+                        throw new EolIncrementalExecutionException("Error creating trace model element. Requested AllInstancesAccess was "
+                                + "duplicate but previous one was not found.");
+                    }
+                }
+                result = (A) allInstancesAccess;
+                break;
+            case "PropertyAccess":
+                assert args[1] instanceof IModuleElementTrace;
+                assert args[2] instanceof IExecutionContext;
+                assert args[3] instanceof IPropertyTrace;
+                IPropertyAccess propertyAccess = null;
+                
+                try {
+                    propertyAccess = new PropertyAccess((IModuleElementTrace) args[0], (IExecutionContext) args[1], (IPropertyTrace) args[2], this);
+                    this.accesses().create(propertyAccess);
+                } catch (TraceModelDuplicateElement | TraceModelConflictRelation  e) {
+                    // Pass
+                } finally {
+                    if (propertyAccess == null) {
+                        // Find the matching element
+                        Iterator<IAccess> it = this.accesses.get();
+                        while (it.hasNext()) {
+                            IPropertyAccess item;
+                            IAccess t = it.next();
+                            if (t instanceof IPropertyAccess) {
+                                item = (IPropertyAccess) t;
+                            }
+                            else {
+                                continue;
+                            }
+                	        if (item.from().get().equals(args[1]) &&
+                	            item.in().get().equals(args[2]) &&
+                	            item.property().get().equals(args[3])) {
+                	            propertyAccess = item;
+                	            break;
+                	        }
+                        }
+                    }
+                    if (propertyAccess == null) {
+                        throw new EolIncrementalExecutionException("Error creating trace model element. Requested PropertyAccess was "
+                                + "duplicate but previous one was not found.");
+                    }
+                }
+                result = (A) propertyAccess;
+                break;
+        }
+        return result;
+    }
                   
     public Map<String,Object> getIdProperties() {
         Map<String, Object> result = new HashMap<>();

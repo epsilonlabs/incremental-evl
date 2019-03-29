@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.epsilon.base.incremental.trace.impl.ElementAccess;
-// import org.eclipse.epsilon.base.incremental.trace.impl.ExecutionContextHasAccesses;
+// import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceHasAccesses;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -39,19 +39,23 @@ public class ElementAccessTest {
 
     /** Mock the container. */
     @Mock
-    private IExecutionContext containerMock;
+    private IModuleExecutionTrace containerMock;
     
     private ElementAccess classUnderTest;
 
     @Test
     public void testInit() throws Exception {
         
-        ExecutionContextHasAccesses containerReference = new ExecutionContextHasAccesses(containerMock);
+        ModuleExecutionTraceHasAccesses containerReference = new ModuleExecutionTraceHasAccesses(containerMock);
         when(containerMock.accesses()).thenReturn(containerReference);
+        IModuleElementTrace _from = mock(IModuleElementTrace.class);
+                
+        IExecutionContext _in = mock(IExecutionContext.class);
+                
         IModelElementTrace _element = mock(IModelElementTrace.class);
                 
         // protected region ElementAccessInit_init on begin
-        classUnderTest = new ElementAccess(_from, _element, containerMock);                    
+        classUnderTest = new ElementAccess(_from, _in, _element, containerMock);                    
         // protected region ElementAccessInit_init end
         
         
@@ -66,27 +70,91 @@ public class ElementAccessTest {
     
     
     @Test
-    public void testElementReference() throws Exception {
-        ExecutionContextHasAccesses containerReference = new ExecutionContextHasAccesses(containerMock);
+    public void testFromReference() throws Exception {
+        ModuleExecutionTraceHasAccesses containerReference = new ModuleExecutionTraceHasAccesses(containerMock);
         when(containerMock.accesses()).thenReturn(containerReference);
+        IModuleElementTrace _from = mock(IModuleElementTrace.class);
+                
+        IExecutionContext _in = mock(IExecutionContext.class);
+                
+        IModelElementTrace _element = mock(IModelElementTrace.class);
+                
+        // protected region ElementAccessInit_FromReference on begin
+        classUnderTest = new ElementAccess(_from, _in, _element, containerMock);                 
+        // protected region ElementAccessInit_FromReference end
+        IModuleElementTrace ref_from = mock(IModuleElementTrace.class);
+        
+        boolean result = classUnderTest.from().create(ref_from);
+        assertFalse("A new reference can not be created before destroy", result);
+        assertThat(classUnderTest.from().get(), is(ref_from));
+        result = classUnderTest.from().destroy(ref_from);
+        assertFalse("Can't destroy unexisting reference", result);
+        result = classUnderTest.from().destroy(ref_from);
+        assertTrue("Exising references can be destroyed", result);
+        assertThat(classUnderTest.from().get(), is(nullValue()));
+        result = classUnderTest.from().create(ref_from);
+        assertTrue("New references can be craeted if was null", result);
+        assertThat(classUnderTest.from().get(), is(ref_from));
+    
+    }
+    
+    
+    @Test
+    public void testInReference() throws Exception {
+        ModuleExecutionTraceHasAccesses containerReference = new ModuleExecutionTraceHasAccesses(containerMock);
+        when(containerMock.accesses()).thenReturn(containerReference);
+        IModuleElementTrace _from = mock(IModuleElementTrace.class);
+                
+        IExecutionContext _in = mock(IExecutionContext.class);
+                
+        IModelElementTrace _element = mock(IModelElementTrace.class);
+                
+        // protected region ElementAccessInit_InReference on begin
+        classUnderTest = new ElementAccess(_from, _in, _element, containerMock);                    
+        // protected region ElementAccessInit_InReference end
+        IExecutionContext ref_in = mock(IExecutionContext.class);
+        
+        boolean result = classUnderTest.in().create(ref_in);
+        assertFalse("A new reference can not be created before destroy", result);
+        assertThat(classUnderTest.in().get(), is(ref_in));
+        result = classUnderTest.in().destroy(ref_in);
+        assertFalse("Can't destroy unexisting reference", result);
+        result = classUnderTest.in().destroy(ref_in);
+        assertTrue("Exising references can be destroyed", result);
+        assertThat(classUnderTest.in().get(), is(nullValue()));
+        result = classUnderTest.in().create(ref_in);
+        assertTrue("New references can be craeted if was null", result);
+        assertThat(classUnderTest.in().get(), is(ref_in));
+    
+    }
+    
+    
+    @Test
+    public void testElementReference() throws Exception {
+        ModuleExecutionTraceHasAccesses containerReference = new ModuleExecutionTraceHasAccesses(containerMock);
+        when(containerMock.accesses()).thenReturn(containerReference);
+        IModuleElementTrace _from = mock(IModuleElementTrace.class);
+                
+        IExecutionContext _in = mock(IExecutionContext.class);
+                
         IModelElementTrace _element = mock(IModelElementTrace.class);
                 
         // protected region ElementAccessInit_ElementReference on begin
-        classUnderTest = new ElementAccess(_from, _element, containerMock);                    
+        classUnderTest = new ElementAccess(_from, _in, _element, containerMock);                   
         // protected region ElementAccessInit_ElementReference end
-        IModelElementTrace ref = mock(IModelElementTrace.class);
+        IModelElementTrace ref_element = mock(IModelElementTrace.class);
         
-        boolean result = classUnderTest.element().create(ref);
+        boolean result = classUnderTest.element().create(ref_element);
         assertFalse("A new reference can not be created before destroy", result);
-        assertThat(classUnderTest.element().get(), is(_element));
-        result = classUnderTest.element().destroy(ref);
+        assertThat(classUnderTest.element().get(), is(ref_element));
+        result = classUnderTest.element().destroy(ref_element);
         assertFalse("Can't destroy unexisting reference", result);
-        result = classUnderTest.element().destroy(_element);
+        result = classUnderTest.element().destroy(ref_element);
         assertTrue("Exising references can be destroyed", result);
         assertThat(classUnderTest.element().get(), is(nullValue()));
-        result = classUnderTest.element().create(ref);
+        result = classUnderTest.element().create(ref_element);
         assertTrue("New references can be craeted if was null", result);
-        assertThat(classUnderTest.element().get(), is(ref));
+        assertThat(classUnderTest.element().get(), is(ref_element));
     
     }
     

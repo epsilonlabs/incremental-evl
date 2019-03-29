@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-24.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -36,20 +36,22 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 	 * Find all ExecutionTraces related to an AllInstanceAccess (either by kind or by type) for the
 	 * given type name
 	 * @param moduleUri		The URI of the module
-	 * @param typeName		The type name
+     * @param modelUri TODO
+     * @param typeName		The type name
 	 * @return
 	 */
-	Set<IReexecutionTrace> findAllInstancesExecutionTraces(String moduleUri, String typeName);
+	Set<IReexecutionTrace> findAllInstancesExecutionTraces(String moduleUri, String modelUri, String typeName);
 	
 	/**
 	 * Find all ExecutionTraces related to an AllInstanceAccess for the given type name
 	 * @param moduleUri		The URI of the module
+	 * @param modelUri TODO
 	 * @param typeName		The type name
 	 * @param ofKind		If true, then only type accesses are considered. If false, type and kind
 	 * 						accesses are considered
 	 * @return
 	 */
-	Set<IReexecutionTrace> findAllInstancesExecutionTraces(String moduleUri, String typeName, boolean ofType);
+	Set<IReexecutionTrace> findAllInstancesExecutionTraces(String moduleUri, String modelUri, String typeName, boolean ofType);
 	
 	/**
 	 * Find all indirect execution traces for the element. The indirectExecutionTraces are the

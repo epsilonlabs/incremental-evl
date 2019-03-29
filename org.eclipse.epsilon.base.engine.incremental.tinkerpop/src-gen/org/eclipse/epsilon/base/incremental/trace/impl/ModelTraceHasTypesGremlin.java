@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-01-25.
+ * This file was automatically generated on: 2019-02-07.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -110,7 +110,7 @@ public class ModelTraceHasTypesGremlin extends Feature
         GraphTraversalSource g = startTraversal();
         try {
 	        if (isUnique()) {
-	           GraphTraversal<Vertex, Vertex> gt =  g.V(source.getId()).out("types");
+	            GraphTraversal<Vertex, Vertex> gt =  g.V(source.getId()).out("types");
                 for (Entry<String, Object> id : target.getIdProperties().entrySet()) {
                     gt.has(id.getKey(), id.getValue());
                 }
