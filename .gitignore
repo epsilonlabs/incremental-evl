@@ -15,3 +15,5 @@
 org\.eclipse\.epsilon\.incremental\.tinkerpop\.dependencies/\.settings/
 
 org\.eclipse\.epsilon\.incremental\.tinkerpop\.dependencies/lib/
+
+org\.eclipse\.epsilon\.incremental\.tinkerpop\.dependencies\.arangodb/lib/

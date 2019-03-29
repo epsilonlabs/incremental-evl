@@ -4,28 +4,30 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eclipse.epsilon</groupId>
-	<artifactId>incremental.tinkerpop.dependencies</artifactId>
+	<artifactId>incremental.tinkerpop.dependencies.arangodb</artifactId>
 	<version>0.0.1</version>
-	<name>Incremental Tinkerpop Dependencies</name>
+	<name>Incremental Tinkerpop ArangoDB Dependencies</name>
 	<properties>
 		<tinkerpop.version>3.3.3</tinkerpop.version>
-		<bitsy.version>3.1.0</bitsy.version>
+		<arangodbprovider.version>2.0.1</arangodbprovider.version>
 	</properties>
+	<repositories>
+		<repository>
+			<id>central</id>
+			<url>http://central</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.tinkerpop</groupId>
-			<artifactId>gremlin-core</artifactId>
-			<version>${tinkerpop.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tinkerpop</groupId>
-			<artifactId>tinkergraph-gremlin</artifactId>
-			<version>${tinkerpop.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.lambdazen.bitsy</groupId>
-			<artifactId>bitsy</artifactId>
-			<version>${bitsy.version}</version>
+			<groupId>org.arangodb</groupId>
+			<artifactId>arangodb-tinkerpop-provider</artifactId>
+			<version>${arangodbprovider.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

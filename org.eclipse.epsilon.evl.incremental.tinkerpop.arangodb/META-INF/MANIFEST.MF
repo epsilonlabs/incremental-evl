@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Arangodb
+Bundle-SymbolicName: org.eclipse.epsilon.evl.incremental.tinkerpop.arangodb
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: org.eclipse.epsilon.evl.incremental.trace.arangodb
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.epsilon.incremental.tinkerpop.dependencies,
+ org.eclipse.epsilon.incremental.tinkerpop.dependencies.arangodb;bundle-version="1.0.0",
+ org.eclipse.epsilon.evl.engine.incremental,
+ org.eclipse.epsilon.evl.engine.incremental.tinkerpop

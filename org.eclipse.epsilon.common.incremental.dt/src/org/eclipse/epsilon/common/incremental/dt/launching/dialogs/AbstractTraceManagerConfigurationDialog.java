@@ -44,9 +44,9 @@ public abstract class AbstractTraceManagerConfigurationDialog extends TitleAreaD
 	}
 	
 	@Override
-	protected Control getOrCreateDialogArea(Composite parent) {
+	protected Control createDialogArea(Composite parent) {
 		
-		Composite superControl = (Composite) super.getOrCreateDialogArea(parent);
+		Composite superControl = (Composite) super.createDialogArea(parent);
 		
 		this.setTitle(getExecutionTraceManagerName() + " Configuration");
 		this.setMessage("Configure the details of the " + getExecutionTraceManagerName());

@@ -34,7 +34,7 @@ public class ExecutionTraceManagerExtension {
 	
 	public static final String TRACE_MANAGER_STABLE = "stable";
 
-	public static final String EXTENSION_POINT = "org.eclipse.epsilon.common.incremental.dt.executionTraceManager";
+	public static final String EXTENSION_POINT = "org.eclipse.epsilon.common.incremental.trace";
 
 	public static final String TRACE_MANAGER_CLASS = "class";
 	
@@ -106,7 +106,7 @@ public class ExecutionTraceManagerExtension {
 		traceManagerType.label = configurationElement.getAttribute(TRACE_MANAGER_LABEL);
 		traceManagerType.stable = Boolean.parseBoolean(configurationElement.getAttribute(TRACE_MANAGER_STABLE));
 		String contributingPlugin = configurationElement.getDeclaringExtension().getNamespaceIdentifier();
-		Image image = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPlugin,configurationElement.getAttribute(TRACE_MANAGER_IMAGE)).getOrCreateImage();
+		Image image = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPlugin,configurationElement.getAttribute(TRACE_MANAGER_IMAGE)).createImage();
 		traceManagerType.image = image;
 		return traceManagerType;
 	}
@@ -151,11 +151,11 @@ public class ExecutionTraceManagerExtension {
 	
 	
 	public AbstractTraceManagerConfigurationDialog getOrCreateConfigurationDialog() throws CoreException {
-		return (AbstractTraceManagerConfigurationDialog) configurationElement.getOrCreateExecutableExtension(TRACE_MANAGER_DIALOG);
+		return (AbstractTraceManagerConfigurationDialog) configurationElement.createExecutableExtension(TRACE_MANAGER_DIALOG);
 	}
 	
 	public IExecutionTraceManager getOrCreateTraceManager() throws CoreException {
-		return (IExecutionTraceManager) configurationElement.getOrCreateExecutableExtension(TRACE_MANAGER_CLASS);
+		return (IExecutionTraceManager) configurationElement.createExecutableExtension(TRACE_MANAGER_CLASS);
 	}
 	
 	public IConfigurationElement getConfigurationElement() {

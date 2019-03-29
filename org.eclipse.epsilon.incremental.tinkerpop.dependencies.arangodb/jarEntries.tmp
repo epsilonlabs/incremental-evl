@@ -1,23 +1,22 @@
-    <classpathentry exported="true" kind="lib" path="lib/bitsy-3.1.0.jar" sourcepath="lib/bitsy-3.1.0-sources.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/arangodb-java-driver-5.0.0.jar" sourcepath="lib/arangodb-java-driver-5.0.0-sources.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/arangodb-tinkerpop-provider-2.0.1.jar" sourcepath="lib/arangodb-tinkerpop-provider-2.0.1-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/commons-collections-3.2.2.jar" sourcepath="lib/commons-collections-3.2.2-sources.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/commons-collections4-4.1.jar" sourcepath="lib/commons-collections4-4.1-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/commons-configuration-1.10.jar" sourcepath="lib/commons-configuration-1.10-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/commons-lang-2.6.jar" sourcepath="lib/commons-lang-2.6-sources.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/commons-lang3-3.3.1.jar" sourcepath="lib/commons-lang3-3.3.1-sources.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/commons-lang3-3.4.jar" sourcepath="lib/commons-lang3-3.4-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/exp4j-0.4.8.jar" sourcepath="lib/exp4j-0.4.8-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/gremlin-core-3.3.3.jar" sourcepath="lib/gremlin-core-3.3.3-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/gremlin-shaded-3.3.3.jar" sourcepath="lib/gremlin-shaded-3.3.3-sources.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/guava-13.0.jar" sourcepath="lib/guava-13.0-sources.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/gson-2.8.5.jar" sourcepath="lib/gson-2.8.5-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/hppc-0.7.1.jar" sourcepath="lib/hppc-0.7.1-sources.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/jackson-annotations-2.9.7.jar" sourcepath="lib/jackson-annotations-2.9.7-sources.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/jackson-core-2.9.7.jar" sourcepath="lib/jackson-core-2.9.7-sources.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/jackson-databind-2.9.7.jar" sourcepath="lib/jackson-databind-2.9.7-sources.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/jackson-core-2.9.5.jar" sourcepath="lib/jackson-core-2.9.5-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/javapoet-1.8.0.jar" sourcepath="lib/javapoet-1.8.0-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/javatuples-1.2.jar" sourcepath="lib/javatuples-1.2-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/jcabi-log-0.14.jar" sourcepath="lib/jcabi-log-0.14-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/jcabi-manifests-1.1.jar" sourcepath="lib/jcabi-manifests-1.1-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/jcl-over-slf4j-1.7.21.jar" sourcepath="lib/jcl-over-slf4j-1.7.21-sources.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/jsr305-2.0.1.jar" />
-    <classpathentry exported="true" kind="lib" path="lib/ness-core-1.9.1.jar" sourcepath="lib/ness-core-1.9.1-sources.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/slf4j-api-1.7.21.jar" sourcepath="lib/slf4j-api-1.7.21-sources.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/netty-all-4.1.29.Final.jar" sourcepath="lib/netty-all-4.1.29.Final-sources.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/slf4j-api-1.7.13.jar" sourcepath="lib/slf4j-api-1.7.13-sources.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/snakeyaml-1.15.jar" sourcepath="lib/snakeyaml-1.15-sources.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/tinkergraph-gremlin-3.3.3.jar" sourcepath="lib/tinkergraph-gremlin-3.3.3-sources.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/velocypack-1.4.1.jar" sourcepath="lib/velocypack-1.4.1-sources.jar"/>

@@ -15,9 +15,11 @@ import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.eclipse.epsilon.evl.incremental.TinkerpopGraphProvider;
+
 import com.arangodb.tinkerpop.gremlin.structure.ArangoDBGraph;
 
-public class ArangoDBEvlUtil {
+public class ArangoDBGraphProvider implements TinkerpopGraphProvider {
 
     private static final String GRAPH_NAME = "IncrementalEvl";
 
@@ -26,7 +28,7 @@ public class ArangoDBEvlUtil {
      * augmented with the user specific information: uri, user:passwrd, etc. 
      * @return The base Apache Configuration
      */
-    public static Configuration getBaseConfiguration() {
+    public Configuration getBaseConfiguration() {
         final Configuration conf = new BaseConfiguration();
         // Respect the commas in relations
         ((AbstractConfiguration) conf).setListDelimiter('/');
