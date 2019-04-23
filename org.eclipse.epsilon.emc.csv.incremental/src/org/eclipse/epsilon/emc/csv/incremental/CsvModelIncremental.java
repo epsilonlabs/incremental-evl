@@ -273,6 +273,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 	}
 
 	private boolean deliver;
+	
 	private Collection<IIncrementalModule<?, ?, ?, ?>> modules = new HashSet<IIncrementalModule<?, ?, ?, ?>>();
 
 	private CsvFileWatcher watcher;
@@ -363,7 +364,6 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 
 	@Override
 	public Set<String> getAllTypeNamesOf(Object instance) {
-		// TODO Auto-generated method stub
 		return super.getAllTypeNamesOf(instance);
 	}
 
@@ -451,6 +451,11 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 	@Override
 	public boolean unregisterModule(IIncrementalModule<?, ?, ?, ?> module) {
 		return modules.remove(module);
+	}
+
+	@Override
+	public Iterator<? extends Object> getAllElements() {
+		return rows.iterator();
 	}
 
 }

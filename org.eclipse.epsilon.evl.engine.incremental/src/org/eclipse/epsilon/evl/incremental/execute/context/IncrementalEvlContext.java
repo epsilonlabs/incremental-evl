@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.execute.ExecutionMode;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -48,7 +49,7 @@ public class IncrementalEvlContext<R extends IEvlModuleTraceRepository, F extend
 	/**
 	 * Flag to indicate that we are on live mode, i.e. listening to model changes
 	 */
-	private boolean onlineExecution;
+	private ExecutionMode mode;
 
 	
 	/**
@@ -86,13 +87,13 @@ public class IncrementalEvlContext<R extends IEvlModuleTraceRepository, F extend
 	}
 
 	@Override
-	public void setOnlineExecutionMode(boolean onlineExecution) {
-		this.onlineExecution = onlineExecution;
+	public void setMode(ExecutionMode mode) {
+		this.mode = mode;
 	}
 
 	@Override
 	public boolean isOnlineExecutionMode() {
-		return onlineExecution;
+		return ExecutionMode.online.equals(mode);
 	}
 
 }

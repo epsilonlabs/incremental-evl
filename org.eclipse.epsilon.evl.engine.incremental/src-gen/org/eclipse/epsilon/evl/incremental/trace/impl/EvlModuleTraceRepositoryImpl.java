@@ -18,6 +18,8 @@ import java.util.Set;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceRepositoryImpl;
+
+import java.util.Collection;
 /** protected region EvlModuleTraceRepositoryImplImports on begin **/
 import java.util.Collections;
 import java.util.function.Function;
@@ -29,12 +31,12 @@ import java.util.stream.Collectors;
 
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
-import org.eclipse.epsilon.evl.IReexecutionTrace;
-import org.eclipse.epsilon.evl.ReexecutionCheckTrace;
-import org.eclipse.epsilon.evl.ReexecutionContextTrace;
-import org.eclipse.epsilon.evl.ReexecutionGuardTrace;
-import org.eclipse.epsilon.evl.ReexecutionInvariantTrace;
-import org.eclipse.epsilon.evl.ReexecutionMessageTrace;
+import org.eclipse.epsilon.evl.incremental.IReexecutionTrace;
+import org.eclipse.epsilon.evl.incremental.ReexecutionCheckTrace;
+import org.eclipse.epsilon.evl.incremental.ReexecutionContextTrace;
+import org.eclipse.epsilon.evl.incremental.ReexecutionGuardTrace;
+import org.eclipse.epsilon.evl.incremental.ReexecutionInvariantTrace;
+import org.eclipse.epsilon.evl.incremental.ReexecutionMessageTrace;
 import org.eclipse.epsilon.evl.incremental.trace.*;
 /** protected region EvlModuleTraceRepositoryImplImports end **/
 
@@ -402,6 +404,27 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 			return Optional.of(rt);
 		}
 		return Optional.empty();
+	}
+
+	@Override
+	public Collection<IPropertyAccess> getPropertyAccessesForElement(
+			String elementUri,
+			String modelUri,
+			String moduleUri) {
+		IModelTrace modelTrace = getModelTraceForModule(modelUri, moduleUri);
+		IModuleExecutionTrace moduleTrace = getModuleExecutionTraceByIdentity(moduleUri);
+ 		IModelElementTrace modelElementTrace = getModelElementTraceFromModel(elementUri, modelTrace);
+		return IncrementalUtils.asStream(moduleTrace.accesses().get())
+				.filter(IPropertyAccess.class::isInstance).map(IPropertyAccess.class::cast)
+				.filter(pa -> pa.property().get().elementTrace().get().equals(modelElementTrace))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public Collection<IModelElementTrace> getModelElementTraces(String moduleUri, String modelUri,
+			Set<String> filteredIds) {
+		// TODO Implement IEvlModuleTraceRepository.getModelElementTraces
+		throw new RuntimeException("Unimplemented Method IEvlModuleTraceRepository.getModelElementTraces invoked.");
 	}
 	
 	

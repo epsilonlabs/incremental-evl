@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.execute.context;
 
+import org.eclipse.epsilon.base.incremental.execute.ExecutionMode;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
@@ -39,7 +40,7 @@ public interface IIncrementalEvlContext<
 	 *
 	 * @param onlineExecution the new online execution
 	 */
-	public void setOnlineExecutionMode(boolean onlineExecution);
+	public void setMode(ExecutionMode mode);
 
 	/**
 	 * Checks if is online execution mode is on.

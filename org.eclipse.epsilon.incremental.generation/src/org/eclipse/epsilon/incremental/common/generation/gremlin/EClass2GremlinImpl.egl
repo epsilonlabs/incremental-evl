@@ -50,6 +50,7 @@ import [%=imp%];
 /**
  * Implementation of [%=ec.getJavaInterfaceName(interPrefix, interSufix)%]. 
  */
+@SuppressWarnings("unused") 
 public class [%=ec.getJavaClassName(classPrefix, classSufix)%] implements [%=ec.getJavaInterfaceName(interPrefix, interSufix)%], GremlinWrapper<Vertex> {
     
 

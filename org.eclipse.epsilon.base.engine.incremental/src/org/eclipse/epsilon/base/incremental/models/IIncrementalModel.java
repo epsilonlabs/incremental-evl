@@ -122,6 +122,6 @@ public interface IIncrementalModel extends IModel {
 	 */
 	Collection<String> getAllTypeNamesOf(Object instance) throws IllegalArgumentException;
 	
-	Iterator<Object> getAllElements();
+	Iterator<? extends Object> getAllElements();
 	
 }

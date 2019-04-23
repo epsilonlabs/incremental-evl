@@ -11,15 +11,20 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
+
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
-/** protected region IEvlModuleTraceRepositoryImports on begin **/
-import org.eclipse.epsilon.evl.IReexecutionTrace;
+import org.eclipse.epsilon.evl.incremental.IReexecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+
+/** protected region IEvlModuleTraceRepositoryImports on begin **/
+import java.util.Collection;
+import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 /** protected region IEvlModuleTraceRepositoryImports end **/
 
 public interface IEvlModuleTraceRepository extends IModuleExecutionTraceRepository<IEvlModuleTrace> {
@@ -92,6 +97,26 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 	ICheckResult findResultInCheck(ICheckTrace checkTrace, IExecutionContext currentContext);
 	
 	IGuardResult findResultInGuard(IGuardTrace guardTrace, IExecutionContext currentContext);
+
+	Collection<IPropertyAccess> getPropertyAccessesForElement(
+		String elementUri,
+		String modelUri,
+		String moduleUri);
+	
+	
+	
+	// Collection<IModelElementTrace> getAllModelElementTraces(String modelUri);
+	
+	/**
+	 * Get all model element traces from the model. Elements with id included the filteredIds set
+	 * will be excluded.
+	 *
+	 * @param moduleUri 			the module uri
+	 * @param modelUri 				the model uri
+	 * @param filteredIds 			the set of ids to be filtered (excluded)
+	 * @return the model element traces
+	 */
+	Collection<IModelElementTrace> getModelElementTraces(String moduleUri, String modelUri, Set<String> filteredIds);
 
 	/** protected region IEvlModuleTraceRepositry end **/
 

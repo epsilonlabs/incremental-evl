@@ -3,19 +3,15 @@ package org.eclipse.epsilon.evl.incremental.arangodb;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceGremlinRepositoryImpl;
 import org.eclipse.epsilon.common.util.StringProperties;
-import org.eclipse.epsilon.evl.IEvlModuleIncremental;
-import org.eclipse.epsilon.evl.IncrementalEvlModule;
 import org.eclipse.epsilon.evl.OfflineTests;
-import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
+import org.eclipse.epsilon.evl.incremental.IEvlModuleIncremental;
+import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
 import org.eclipse.epsilon.evl.incremental.IncrementalEvlTinkerpopGuiceModule;
 import org.eclipse.epsilon.evl.incremental.TinkerpopGraphProvider;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
@@ -28,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.lambdazen.bitsy.BitsyGraph;
 
 import ch.qos.logback.classic.Level;

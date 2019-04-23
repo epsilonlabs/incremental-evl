@@ -1,9 +1,7 @@
-package org.eclipse.epsilon.evl;
+package org.eclipse.epsilon.evl.incremental;
 
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceRepositoryImpl;
-import org.eclipse.epsilon.evl.incremental.EvlRootElementsFactory;
-import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
 import org.eclipse.epsilon.evl.incremental.execute.InMemoryEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;

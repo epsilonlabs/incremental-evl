@@ -1,4 +1,4 @@
-package org.eclipse.epsilon.evl;
+package org.eclipse.epsilon.evl.incremental;
 
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;

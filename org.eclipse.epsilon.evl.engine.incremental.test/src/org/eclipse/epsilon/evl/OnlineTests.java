@@ -30,6 +30,8 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
+import org.eclipse.epsilon.evl.incremental.EvlIncrementalGuiceModule;
+import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.junit.After;
@@ -96,7 +98,7 @@ public abstract class OnlineTests<M extends Module> {
 	@Test
 	public void testOnCreate() throws Exception {
 
-		module.setOnlineExecution(true);
+		module.setMode(true);
 		module.execute();
 		// Save the previous state so we can compare changes
 		// ContextTraces
@@ -199,7 +201,7 @@ public abstract class OnlineTests<M extends Module> {
 	@Ignore
 	@Test
 	public void testOnChange() throws Exception {
-		module.setOnlineExecution(true);
+		module.setMode(true);
 		module.execute();
 		// Save the previous state so we can compare changes
 		// ContextTraces

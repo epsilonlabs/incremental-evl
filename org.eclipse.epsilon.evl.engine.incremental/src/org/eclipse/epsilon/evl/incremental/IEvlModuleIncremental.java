@@ -1,7 +1,7 @@
-package org.eclipse.epsilon.evl;
+package org.eclipse.epsilon.evl.incremental;
 
 import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
-import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
+import org.eclipse.epsilon.evl.IEvlModule;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.context.IIncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;

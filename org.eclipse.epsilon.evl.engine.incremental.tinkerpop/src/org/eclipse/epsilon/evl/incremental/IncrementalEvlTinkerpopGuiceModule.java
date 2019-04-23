@@ -2,8 +2,6 @@ package org.eclipse.epsilon.evl.incremental;
 
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceGremlinRepositoryImpl;
-import org.eclipse.epsilon.evl.IEvlModuleIncremental;
-import org.eclipse.epsilon.evl.IncrementalEvlModule;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.TinkerPopEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;

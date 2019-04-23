@@ -1,7 +1,7 @@
 package org.eclipse.epsilon.evl.inmemory;
 
-import org.eclipse.epsilon.evl.EvlIncrementalGuiceModule;
 import org.eclipse.epsilon.evl.OnlineTests;
+import org.eclipse.epsilon.evl.incremental.EvlIncrementalGuiceModule;
 
 public class InMemoryOnlineTests extends OnlineTests<EvlIncrementalGuiceModule> {
 
