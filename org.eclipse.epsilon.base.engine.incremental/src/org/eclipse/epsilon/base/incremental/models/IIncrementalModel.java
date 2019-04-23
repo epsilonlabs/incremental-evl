@@ -11,7 +11,7 @@
 package org.eclipse.epsilon.base.incremental.models;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.Iterator;
 
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotInstantiableModelElementValueException;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
@@ -47,7 +47,7 @@ public interface IIncrementalModel extends IModel {
 	 * notifications are usually enabled after the initial traces have been executed
 	 * (e.g. first execution of the ExL script). For models where listening to all
 	 * model changes can be expensive, the set of element ids can be used to just
-	 * listen to chenges in the elements of interest
+	 * listen to changes in the elements of interest
 	 *
 	 * @param deliver    the new deliver
 	 * @param elementIds the element ids
@@ -62,13 +62,35 @@ public interface IIncrementalModel extends IModel {
 	boolean isDelivering();
 
 	/**
-	 * Returns list of the modules associated with this model. The associated
-	 * modules will receive notifications of changes in the model.
+	 * Register the module to receive notifications of changes in the model.
 	 *
-	 * @return the modules
+	 * @return true if this collection changed as a result of the call
 	 */
-	<M extends IIncrementalModule<?, ?, ?, ?>> Collection<M> getModules();
-
+	boolean registerModule(IIncrementalModule<?, ?, ?, ?> module);
+	
+	/**
+	 * Determine if the module is registered with this model to receive notifications
+	 * @param module
+	 */
+	boolean isRegistered(IIncrementalModule<?, ?, ?, ?> module);
+	
+	/**
+	 * Unregister the module. The module will stop receiving notifications from changes in this
+	 * model
+	 * @param element
+	 * @param propertyName
+	 */
+	 boolean unregisterModule(IIncrementalModule<?, ?, ?, ?> module);
+	
+	// FIXME The incremental model should really do the comparing, notifying itself about its own 
+	// elements seems silly 
+	void notifyChange(Object element, String propertyName);
+	
+	void notifyDeletion(Object element);
+	
+	void notifyCreation(Object element);
+	
+	
 	/**
 	 * Return a String representation of the object. If the object belongs to the
 	 * model, it will return a serializable version of the object.
@@ -81,7 +103,7 @@ public interface IIncrementalModel extends IModel {
 	String convertToString(Object instance) throws NotSerializableModelException;
 
 	/**
-	 * Craete an object from its string representation.
+	 * Create an object from its string representation.
 	 *
 	 * @param value the value
 	 * @return the object
@@ -98,6 +120,8 @@ public interface IIncrementalModel extends IModel {
 	 * @return A collection of the names of the types
 	 * @throws IllegalArgumentException If the instance is not owned by the model
 	 */
-	Set<String> getAllTypeNamesOf(Object instance) throws IllegalArgumentException;
-
+	Collection<String> getAllTypeNamesOf(Object instance) throws IllegalArgumentException;
+	
+	Iterator<Object> getAllElements();
+	
 }

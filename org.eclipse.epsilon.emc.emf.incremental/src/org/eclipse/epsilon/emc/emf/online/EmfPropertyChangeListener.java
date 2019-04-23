@@ -39,21 +39,18 @@ public class EmfPropertyChangeListener extends EContentAdapter {
 	
 	private IIncrementalModel model;
 	
-	private IIncrementalModule module;
-	
 	private final Set<String> elementsOfInterest;
 	
 	
-	public EmfPropertyChangeListener(IIncrementalModel model, IIncrementalModule module,
+	public EmfPropertyChangeListener(IIncrementalModel model,
 			Set<String> elementIds) {
 		this.model = model;
-		this.module = module;
 		this.elementsOfInterest = elementIds;
 	}
 
 	public void onCreate(EObject notifier) {
 		logger.debug("onCreate {}", notifier);
-		module.onCreate(model, notifier);	
+		model.notifyCreation(notifier);	
 	}
 	
 	public void onChange(EObject notifier, EStructuralFeature feature) {
@@ -62,7 +59,7 @@ public class EmfPropertyChangeListener extends EContentAdapter {
 			return;
 		}
 		String propertyName = feature.getName();
-		module.onChange(model, notifier, propertyName);
+		model.notifyChange(notifier, propertyName);
 	}
 
 	public void onDelete(EObject notifier, EStructuralFeature feature) {
@@ -70,8 +67,7 @@ public class EmfPropertyChangeListener extends EContentAdapter {
 		if (notifier == null || feature == null) {
 			return;
 		}
-		module.onDelete(model, notifier);
-		model.getModelTraceFactory().removeModelElement(model.getElementId(notifier));
+		model.notifyDeletion(notifier);
 	}
 
 	@Override

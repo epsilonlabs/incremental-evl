@@ -191,14 +191,8 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 								logger.info("Change detected");
 								if (model.isDelivering()) {
 									logger.info("Notifying listening modules");
-									for (IIncrementalModule<?, ?, ?, ?> m : model.getModules()) {
-										try {
-											m.onChange(model, newRow, k);
-										} catch (EolRuntimeException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
-									}
+									model.notifyChange(newRow, k);
+									
 								}
 							}
 						}
@@ -210,14 +204,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 							logger.info("Change detected");
 							if (model.isDelivering()) {
 								logger.info("Notifying listening modules");
-								for (IIncrementalModule<?, ?, ?, ?> m : model.getModules()) {
-									try {
-										m.onChange(model, newRow, CsvModel.HEADERLESS_FIELD_NAME);
-									} catch (EolRuntimeException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-								}
+								model.notifyChange(newRow, CsvModel.HEADERLESS_FIELD_NAME);
 							}
 						}
 					}
@@ -227,28 +214,14 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 					// The old row is not in the new rows, signal a deletion
 					if (model.isDelivering()) {
 						logger.info("Notifying listening modules");
-						for (IIncrementalModule<?, ?, ?, ?> m : model.getModules()) {
-							try {
-								m.onDelete(model, oldRow);
-							} catch (EolRuntimeException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
+						model.notifyDeletion(oldRow);
 					}
 				} else {
 					logger.info("Row was added: {}", newRow);
 					// The new row is not in the old rows, signal an instantiation
 					if (model.isDelivering()) {
 						logger.info("Notifying listening modules");
-						for (IIncrementalModule<?, ?, ?, ?> m : model.getModules()) {
-							try {
-								m.onCreate(model, newRow);
-							} catch (EolRuntimeException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
+						model.notifyCreation(newRow);
 					}
 				}
 			}
@@ -259,14 +232,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 				// Signal instantiation
 				if (model.isDelivering()) {
 					logger.info("Notifying listening modules");
-					for (IIncrementalModule<?, ?, ?, ?> m : model.getModules()) {
-						try {
-							m.onCreate(model, newRow);
-						} catch (EolRuntimeException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
+					model.notifyCreation(newRow);
 				}
 			}
 			while (oldIterator.hasNext()) {
@@ -275,14 +241,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 				// The old row is not in the new rows, signal a deletion
 				if (model.isDelivering()) {
 					logger.info("Notifying listening modules");
-					for (IIncrementalModule<?, ?, ?, ?> m : model.getModules()) {
-						try {
-							m.onDelete(model, oldRow);
-						} catch (EolRuntimeException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
+					model.notifyDeletion(oldRow);
 				}
 			}
 		}
@@ -381,10 +340,15 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 	public boolean isDelivering() {
 		return deliver;
 	}
+	
+	@Override
+	public boolean registerModule(IIncrementalModule<?, ?, ?, ?> module) {
+		return modules.add(module);
+	}
 
 	@Override
-	public Collection<IIncrementalModule<?, ?, ?, ?>> getModules() {
-		return modules;
+	public boolean isRegistered(IIncrementalModule<?, ?, ?, ?> module) {
+		return modules.contains(module);
 	}
 
 	@Override
@@ -446,6 +410,47 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 			throw new NotInstantiableModelElementValueException("Craeted instance does noe belong to this model.", row);
 		}
 		return row;
+	}
+
+	@Override
+	public void notifyChange(Object element, String propertyName) {
+		for (IIncrementalModule<?, ?, ?, ?> m : modules) {
+			try {
+				m.onChange(this, element, propertyName);
+			} catch (EolRuntimeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public void notifyDeletion(Object element) {
+		for (IIncrementalModule<?, ?, ?, ?> m : modules) {
+			try {
+				m.onDelete(this, element);
+			} catch (EolRuntimeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public void notifyCreation(Object element) {
+		for (IIncrementalModule<?, ?, ?, ?> m : modules) {
+			try {
+				m.onCreate(this, element);
+			} catch (EolRuntimeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public boolean unregisterModule(IIncrementalModule<?, ?, ?, ?> module) {
+		return modules.remove(module);
 	}
 
 }
