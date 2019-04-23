@@ -161,7 +161,7 @@ public class CsvModelIncrementalTests {
 		
 		BlockingQueue<EventResult> drop = new SynchronousQueue<EventResult> ();
 		IIncrementalModule moduleMock = new LightModule(drop);
-		model.getModules().add(moduleMock );
+		model.registerModule(moduleMock );
 		model.setDeliver(true);
 		ExecutorService executor = Executors.newSingleThreadExecutor();
         future = executor.submit(changeInjector);

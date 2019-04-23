@@ -25,18 +25,12 @@ import org.eclipse.epsilon.emc.csv.incremental.CsvCompare.DifferenceSource;
 import org.eclipse.epsilon.emc.csv.incremental.CsvModelIncremental;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
-import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
+import org.eclipse.epsilon.evl.incremental.IEvlModuleIncremental;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Module;
-
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 
 /**
  * Test that the correct access traces are retrieved and the corresponding EVL
@@ -47,31 +41,27 @@ import ch.qos.logback.classic.Logger;
  */
 public abstract class OfflineTests<M extends Module> {
 
-	protected IncrementalEvlModule module;
-	private File evlFile;
-	private File tempModel;
+	protected abstract IEvlModuleIncremental module();
+	protected abstract File evlFile();
+	protected abstract File tempModel();
 
-	@Before
-	public void setup() throws Exception {
-		evlFile = new File(OfflineTests.class.getResource("testExecution.evl").toURI());
-		module.parse(evlFile);
-		tempModel = createTempFile();
-	}
+//	@Before
+//	public void setup() throws Exception {
+//		evlFile = new File(OfflineTests.class.getResource("testExecution.evl").toURI());
+//		module.parse(evlFile);
+//		tempModel() = createTempFile();
+//	}
 
-	@After
-	public void teardown() throws Exception {
-			
-	}
 
 	@Test
-	public void testOnChange() throws Exception {
+	public final void testOnChange() throws Exception {
 		StringProperties properties = new StringProperties();
 		properties.put(CsvModel.PROPERTY_NAME, "bank");
 		properties.put(CsvModel.PROPERTY_HAS_KNOWN_HEADERS, "true");
 		properties.put(CsvModel.PROPERTY_ID_FIELD, "iban");
 		String csvFilePath = OfflineTests.class.getResource("bankSmall.csv").getPath();
-		copyModelToTempFile(csvFilePath, tempModel);
-		properties.put(CsvModel.PROPERTY_FILE, tempModel.getAbsolutePath());
+		copyModelToTempFile(csvFilePath, tempModel());
+		properties.put(CsvModel.PROPERTY_FILE, tempModel().getAbsolutePath());
 		CsvModelIncremental model = new CsvModelIncremental();
 		model.load(properties, new IRelativePathResolver() {
 			@Override
@@ -79,11 +69,11 @@ public abstract class OfflineTests<M extends Module> {
 				return relativePath;
 			}
 		});
-		module.getContext().getModelRepository().addModel(model);
-		module.execute();
+		module().getContext().getModelRepository().addModel(model);
+		module().execute();
 		// Save the previous state so we can compare changes
 		// ContextTraces
-		IEvlModuleTrace moduleTrace = module.getContext().getTraceManager().getExecutionTraceRepository()
+		IEvlModuleTrace moduleTrace = module().getContext().getTraceManager().getExecutionTraceRepository()
 				.getAllModuleTraces().iterator().next();
 		List<IContextTrace> contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
 				.filter(t -> t instanceof IContextTrace)
@@ -99,11 +89,11 @@ public abstract class OfflineTests<M extends Module> {
 			assertThat("One ExecutionContext per Row", excts.size(), is(modelRows.size()));
 		}
 		// Unsatisfied constraints
-		long unsatisfied = module.getContext().getUnsatisfiedConstraints().size();
+		long unsatisfied = module().getContext().getUnsatisfiedConstraints().size();
 
 		csvFilePath = OfflineTests.class.getResource("bankSmallChange.csv").getPath();
-		copyModelToTempFile(csvFilePath, tempModel);
-		properties.put(CsvModel.PROPERTY_FILE, tempModel.getAbsolutePath());
+		copyModelToTempFile(csvFilePath, tempModel());
+		properties.put(CsvModel.PROPERTY_FILE, tempModel().getAbsolutePath());
 		CsvModelIncremental model2 = new CsvModelIncremental();
 		model2.load(properties, new IRelativePathResolver() {
 			@Override
@@ -111,8 +101,8 @@ public abstract class OfflineTests<M extends Module> {
 				return relativePath;
 			}
 		});
-		module.getContext().getModelRepository().removeModel(model);
-		module.getContext().getModelRepository().addModel(model2);
+		module().getContext().getModelRepository().removeModel(model);
+		module().getContext().getModelRepository().addModel(model2);
 
 		CsvCompare compare = new CsvCompare();
 		CsvComparison comparison = compare.match(model, model2);
@@ -125,7 +115,7 @@ public abstract class OfflineTests<M extends Module> {
 				} else {
 					object = d.getMatch().getRight();
 				}
-				module.onChange(model2, object, d.getFieldName());
+				module().onChange(model2, object, d.getFieldName());
 			}
 		}
 		contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
@@ -134,7 +124,7 @@ public abstract class OfflineTests<M extends Module> {
 		long contextExecutionTracesCntNew = contextExecutionTraces.size();
 		assertThat("Change should not create new traces", contextExecutionTracesCntNew - contextExecutionTracesCnt,
 				is(0L));
-		long unsatisfiedNew = module.getContext().getUnsatisfiedConstraints().size();
+		long unsatisfiedNew = module().getContext().getUnsatisfiedConstraints().size();
 		assertThat("Change breaks one constraint", unsatisfiedNew - unsatisfied, is(1L));
 	}
 
@@ -146,8 +136,8 @@ public abstract class OfflineTests<M extends Module> {
 		properties.put(CsvModel.PROPERTY_HAS_KNOWN_HEADERS, "true");
 		properties.put(CsvModel.PROPERTY_ID_FIELD, "iban");
 		String csvFilePath = OfflineTests.class.getResource("bankSmall.csv").getPath();
-		copyModelToTempFile(csvFilePath, tempModel);
-		properties.put(CsvModel.PROPERTY_FILE, tempModel.getAbsolutePath());
+		copyModelToTempFile(csvFilePath, tempModel());
+		properties.put(CsvModel.PROPERTY_FILE, tempModel().getAbsolutePath());
 		CsvModelIncremental model = new CsvModelIncremental();
 		model.load(properties, new IRelativePathResolver() {
 			@Override
@@ -155,12 +145,12 @@ public abstract class OfflineTests<M extends Module> {
 				return relativePath;
 			}
 		});
-		module.getContext().getModelRepository().addModel(model);
-		module.execute();
+		module().getContext().getModelRepository().addModel(model);
+		module().execute();
 
 		// Save the previous state so we can compare changes
 		// ContextTraces
-		IEvlModuleTrace moduleTrace = module.getContext().getTraceManager().getExecutionTraceRepository()
+		IEvlModuleTrace moduleTrace = module().getContext().getTraceManager().getExecutionTraceRepository()
 				.getAllModuleTraces().iterator().next();
 		List<IContextTrace> contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
 				.filter(t -> t instanceof IContextTrace)
@@ -176,11 +166,11 @@ public abstract class OfflineTests<M extends Module> {
 			assertThat("One ExecutionContext per Row", excts.size(), is(modelRows.size()));
 		}
 		// Unsatisfied constraints
-		long unsatisfied = module.getContext().getUnsatisfiedConstraints().size();
+		long unsatisfied = module().getContext().getUnsatisfiedConstraints().size();
 
 		csvFilePath = OfflineTests.class.getResource("bankSmallInjectA.csv").getPath();
-		copyModelToTempFile(csvFilePath, tempModel);
-		properties.put(CsvModel.PROPERTY_FILE, tempModel.getAbsolutePath());
+		copyModelToTempFile(csvFilePath, tempModel());
+		properties.put(CsvModel.PROPERTY_FILE, tempModel().getAbsolutePath());
 		CsvModelIncremental model2 = new CsvModelIncremental();
 		model2.load(properties, new IRelativePathResolver() {
 			@Override
@@ -188,8 +178,8 @@ public abstract class OfflineTests<M extends Module> {
 				return relativePath;
 			}
 		});
-		module.getContext().getModelRepository().removeModel(model);
-		module.getContext().getModelRepository().addModel(model2);
+		module().getContext().getModelRepository().removeModel(model);
+		module().getContext().getModelRepository().addModel(model2);
 
 		CsvCompare compare = new CsvCompare();
 		CsvComparison comparison = compare.match(model, model2);
@@ -202,10 +192,10 @@ public abstract class OfflineTests<M extends Module> {
 				} else {
 					object = d.getMatch().getRight();
 				}
-				module.onCreate(model2, object);
+				module().onCreate(model2, object);
 			}
 		}
-		for (UnsatisfiedConstraint uc : module.getContext().getUnsatisfiedConstraints()) {
+		for (UnsatisfiedConstraint uc : module().getContext().getUnsatisfiedConstraints()) {
 			System.out.println(uc);
 		}
 		
@@ -215,7 +205,7 @@ public abstract class OfflineTests<M extends Module> {
 		long contextExecutionTracesCntNew = contextExecutionTraces.size();
 		assertThat("A new row does not add new ContextTraces", contextExecutionTracesCntNew,
 				is(contextExecutionTracesCnt));
-		int unsatisfiedNew = module.getContext().getUnsatisfiedConstraints().size();
+		int unsatisfiedNew = module().getContext().getUnsatisfiedConstraints().size();
 		System.out.println("New Unsatisfied constraints " + unsatisfiedNew);
 		assertThat("Added row should break \"Is in Overdraft\"", unsatisfiedNew - unsatisfied, is(1L));
 		// New row should add 1 new model element access
@@ -229,8 +219,8 @@ public abstract class OfflineTests<M extends Module> {
 		properties.put(CsvModel.PROPERTY_HAS_KNOWN_HEADERS, "true");
 		properties.put(CsvModel.PROPERTY_ID_FIELD, "iban");
 		String csvFilePath = OfflineTests.class.getResource("bankSmallInjectB.csv").getPath();
-		copyModelToTempFile(csvFilePath, tempModel);
-		properties.put(CsvModel.PROPERTY_FILE, tempModel.getAbsolutePath());
+		copyModelToTempFile(csvFilePath, tempModel());
+		properties.put(CsvModel.PROPERTY_FILE, tempModel().getAbsolutePath());
 		CsvModelIncremental model = new CsvModelIncremental();
 		model.load(properties, new IRelativePathResolver() {
 			@Override
@@ -238,12 +228,12 @@ public abstract class OfflineTests<M extends Module> {
 				return relativePath;
 			}
 		});
-		module.getContext().getModelRepository().addModel(model);
-		module.execute();
+		module().getContext().getModelRepository().addModel(model);
+		module().execute();
 
 		// Save the previous state so we can compare changes
 		// ContextTraces
-		IEvlModuleTrace moduleTrace = module.getContext().getTraceManager().getExecutionTraceRepository()
+		IEvlModuleTrace moduleTrace = module().getContext().getTraceManager().getExecutionTraceRepository()
 				.getAllModuleTraces().iterator().next();
 		List<IContextTrace> contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
 				.filter(t -> t instanceof IContextTrace)
@@ -261,11 +251,11 @@ public abstract class OfflineTests<M extends Module> {
 		}
 		
 		// Unsatisfied constraints
-		long unsatisfied = module.getContext().getUnsatisfiedConstraints().size();
+		long unsatisfied = module().getContext().getUnsatisfiedConstraints().size();
 
 		csvFilePath = OfflineTests.class.getResource("bankSmallDelete.csv").getPath();
-		copyModelToTempFile(csvFilePath, tempModel);
-		properties.put(CsvModel.PROPERTY_FILE, tempModel.getAbsolutePath());
+		copyModelToTempFile(csvFilePath, tempModel());
+		properties.put(CsvModel.PROPERTY_FILE, tempModel().getAbsolutePath());
 		CsvModelIncremental model2 = new CsvModelIncremental();
 		model2.load(properties, new IRelativePathResolver() {
 			@Override
@@ -273,8 +263,8 @@ public abstract class OfflineTests<M extends Module> {
 				return relativePath;
 			}
 		});
-		module.getContext().getModelRepository().removeModel(model);
-		module.getContext().getModelRepository().addModel(model2);
+		module().getContext().getModelRepository().removeModel(model);
+		module().getContext().getModelRepository().addModel(model2);
 
 		CsvCompare compare = new CsvCompare();
 		CsvComparison comparison = compare.match(model, model2);
@@ -287,10 +277,10 @@ public abstract class OfflineTests<M extends Module> {
 				} else {
 					object = d.getMatch().getRight();
 				}
-				module.onDelete(model2, object);
+				module().onDelete(model2, object);
 			}
 		}
-		for (UnsatisfiedConstraint uc : module.getContext().getUnsatisfiedConstraints()) {
+		for (UnsatisfiedConstraint uc : module().getContext().getUnsatisfiedConstraints()) {
 			System.out.println(uc);
 		}
 		
@@ -303,14 +293,9 @@ public abstract class OfflineTests<M extends Module> {
 				is(contextExecutionTracesCnt));
 		
 		
-		int unsatisfiedNew = module.getContext().getUnsatisfiedConstraints().size();
+		int unsatisfiedNew = module().getContext().getUnsatisfiedConstraints().size();
 		System.out.println("New Unsatisfied constraints " + unsatisfiedNew);
 		assertThat("Deleted rows remove two unsaisfied contraints", unsatisfiedNew - unsatisfied, is(-2L));
-	}
-
-	private File createTempFile() throws IOException {
-		File temp = File.createTempFile("temp-model", ".tmp");
-		return temp;
 	}
 
 	private void copyModelToTempFile(String modelPath, File tempFile) throws IOException {

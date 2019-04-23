@@ -2,19 +2,17 @@ package org.eclipse.epsilon.evl.incremental;
 
 import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
 import org.eclipse.epsilon.evl.IEvlModule;
-import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
-import org.eclipse.epsilon.evl.incremental.execute.context.IIncrementalEvlContext;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
+import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
 
-public interface IEvlModuleIncremental<R extends IEvlModuleTraceRepository, F extends IEvlRootElementsFactory, T extends IEvlExecutionTraceManager<R, F>>
-		extends IIncrementalModule<IEvlModuleTrace, R, F, T>, IEvlModule {
+public interface IEvlModuleIncremental extends IIncrementalModule, IEvlModule {
 	
+	/**
+	 * We use a checksum as a form of ID so we can recognise the same file/code executed from different
+	 * locations.
+	 * @return The checksum (MD5) for the code/file being executed
+	 */
+	String getChksum();
 	
-	@Override
-	IIncrementalEvlContext<IEvlModuleTrace,
-			IEvlModuleTraceRepository,
-			IEvlRootElementsFactory,
-			IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> getContext();
+	IncrementalEvlContext getContext();
 
 }

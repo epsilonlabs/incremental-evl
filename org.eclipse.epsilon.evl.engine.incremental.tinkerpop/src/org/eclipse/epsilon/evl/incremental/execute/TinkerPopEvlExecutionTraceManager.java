@@ -3,23 +3,22 @@ package org.eclipse.epsilon.evl.incremental.execute;
 import org.eclipse.epsilon.base.incremental.execute.AbstractExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 
 import com.google.inject.Inject;
 
-public class TinkerPopEvlExecutionTraceManager 
-	extends AbstractExecutionTraceManager<IEvlModuleTrace, IEvlModuleTraceRepository, IEvlRootElementsFactory>
-	implements IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> {
+public class TinkerPopEvlExecutionTraceManager extends AbstractExecutionTraceManager implements IEvlExecutionTraceManager {
 
-	private IEvlRootElementsFactory evlTraceFactory;
+	private final IEvlRootElementsFactory evlTraceFactory;
+	private final IEvlModuleTraceRepository executionTraceRepository;
 	
 	@Inject
-	protected TinkerPopEvlExecutionTraceManager(IEvlModuleTraceRepository executionTraceRepository,
-			IModelTraceRepository modelTraceRepository,
-			IEvlRootElementsFactory evlTraceFactory) {
-		super(executionTraceRepository, modelTraceRepository);
-		this.evlTraceFactory = evlTraceFactory;
+	protected TinkerPopEvlExecutionTraceManager(IEvlModuleTraceRepository exctnTrcRpstry,
+			IModelTraceRepository mdlTrcRpstry,
+			IEvlRootElementsFactory evlTrcFctry) {
+		super(mdlTrcRpstry);
+		evlTraceFactory = evlTrcFctry;
+		executionTraceRepository = exctnTrcRpstry;
 	}
 
 	@Override
@@ -31,6 +30,11 @@ public class TinkerPopEvlExecutionTraceManager
 	@Override
 	public IEvlRootElementsFactory getTraceFactory() {
 		return evlTraceFactory;
+	}
+
+	@Override
+	public IEvlModuleTraceRepository getExecutionTraceRepository() {
+		return executionTraceRepository;
 	}
 
 }

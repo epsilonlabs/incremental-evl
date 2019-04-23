@@ -22,16 +22,16 @@ import org.eclipse.epsilon.executors.evl.SimpleEvlExecutor;
 public class IncrementalEvlExecutor implements EvlExecutor {
 
 	private final SimpleEvlExecutor delegate;
-	private final IncrementalEvlModule module;
+	private final IEvlModuleIncremental module;
 	
 	
-	public IncrementalEvlExecutor(IncrementalEvlModule mdl) {
+	public IncrementalEvlExecutor(IEvlModuleIncremental mdl) {
 		module = mdl;
 		delegate = new SimpleEvlExecutor(module);
 	}
 	
 	// FIXME Getting the module is not the right thing
-	public IncrementalEvlModule module() {
+	public IEvlModuleIncremental module() {
 		return module;
 	}
 	

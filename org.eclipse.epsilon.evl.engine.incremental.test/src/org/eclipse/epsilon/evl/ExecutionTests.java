@@ -11,7 +11,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -22,23 +21,21 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.eclipse.epsilon.base.incremental.trace.IAccess;
 import org.eclipse.epsilon.base.incremental.trace.IElementAccess;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.csv.CsvModel;
 import org.eclipse.epsilon.emc.csv.incremental.CsvModelIncremental;
-import org.eclipse.epsilon.eol.dom.XorOperatorExpression;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
-import org.eclipse.epsilon.evl.incremental.trace.*;
-import org.junit.Before;
+import org.eclipse.epsilon.evl.incremental.trace.ICheckResult;
+import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.junit.Test;
-
-import com.google.inject.Module;
 
 /**
  * Test that the correct access traces are created
@@ -47,23 +44,15 @@ import com.google.inject.Module;
  *
  */
 
-public abstract class ExecutionTests<M extends Module> {
+public abstract class ExecutionTests {
 
-	protected IncrementalEvlModule module;
-	private File evlFile;
+	public abstract File evlFile();
+	public abstract IncrementalEvlModule module();
 
-	public abstract M getEvlGuiceModule();
-
-	@Before
-	public void setup() throws Exception {
-		module = new IncrementalEvlModule();
-		module.injectTraceManager(getEvlGuiceModule());
-		evlFile = new File(ExecutionTests.class.getResource("testExecution.evl").toURI());
-	}
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testAccessCreation() throws Exception {
+	final public void testAccessCreation() throws Exception {
 		StringProperties properties = new StringProperties();
 		properties.put(CsvModel.PROPERTY_NAME, "bank");
 		properties.put(CsvModel.PROPERTY_HAS_KNOWN_HEADERS, "true");
@@ -78,11 +67,11 @@ public abstract class ExecutionTests<M extends Module> {
 			}
 		});
 
-		module.parse(evlFile);
-		module.getContext().getModelRepository().addModel(model);
-		module.execute();
+		module().parse(evlFile());
+		module().getContext().getModelRepository().addModel(model);
+		module().execute();
 
-		Set<IEvlModuleTrace> moduleTraces = module.getContext().getTraceManager().getExecutionTraceRepository()
+		Set<IEvlModuleTrace> moduleTraces = module().getContext().getTraceManager().getExecutionTraceRepository()
 				.getAllModuleTraces();
 		assertThat("One single EvlModuleTrace", moduleTraces.size(), is(1));
 		IEvlModuleTrace moduleTrace = moduleTraces.iterator().next();
@@ -133,7 +122,7 @@ public abstract class ExecutionTests<M extends Module> {
 							.get();
 					assertThat("Check should access 'balance' property", pa.property().get().getName(), is("balance"));
 					// All childs
-					IInvariantTrace chargesIt = invariants.next();
+					//IInvariantTrace chargesIt = invariants.next();
 					ICheckResult overDraftResult = IncrementalUtils.asStream(overDraftIt.check().get().result().get())
 							.filter(r -> r.context().get().equals(ct.executionContext().get()))
 							.findFirst()

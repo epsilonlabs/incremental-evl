@@ -1,21 +1,19 @@
 package org.eclipse.epsilon.evl.incremental.arangodb;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
-import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceGremlinRepositoryImpl;
 import org.eclipse.epsilon.common.util.StringProperties;
+import org.eclipse.epsilon.evl.ExecutionTests;
 import org.eclipse.epsilon.evl.OfflineTests;
 import org.eclipse.epsilon.evl.incremental.IEvlModuleIncremental;
 import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
 import org.eclipse.epsilon.evl.incremental.IncrementalEvlTinkerpopGuiceModule;
 import org.eclipse.epsilon.evl.incremental.TinkerpopGraphProvider;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
-import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTraceGremlinRepositoryImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,19 +34,30 @@ public class TinkerpopOfflineTests extends OfflineTests<IncrementalEvlTinkerpopG
 	
 	private BitsyGraph graph;
 
+	private IncrementalEvlModule module;
+
+	private File evlFile;
+
+	private File tempModel;
 	
+
 	@Before
 	public void setup() throws Exception {
-		Injector injector = Guice.createInjector(new IncrementalEvlTinkerpopGuiceModule());
-		module = (IncrementalEvlModule) injector.getInstance(IEvlModuleIncremental.class);
-		
-		super.setup();
-		
 		Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 		root.setLevel(Level.INFO);
+		Injector injector = Guice.createInjector(new IncrementalEvlTinkerpopGuiceModule());		
+		IncrementalEvlTinkerpopGuiceModule gModule = new IncrementalEvlTinkerpopGuiceModule();
 		
-		IEvlModuleTraceRepository tr = module.getContext().getTraceManager().getExecutionTraceRepository();
-		
+		graph = configureGraph(injector);
+		GraphTraversalSource gts = new GraphTraversalSource(graph);
+		gModule.bindGraphTraversalSourceInstance(gts);
+		injector = Guice.createInjector(new IncrementalEvlTinkerpopGuiceModule());
+		module = injector.getInstance(IncrementalEvlModule.class);
+		evlFile = new File(ExecutionTests.class.getResource("testExecution.evl").toURI());
+		tempModel = File.createTempFile("temp-model", ".tmp");
+	}
+
+	private <Graph> Graph configureGraph(Injector injector) {
 		Path dbPath = Paths.get("/Users/horacio/bitsy/", testName.getMethodName(), "/");
 		if (dbPath.toFile().exists()) {
 			// Delete previous graph if exists
@@ -62,18 +71,11 @@ public class TinkerpopOfflineTests extends OfflineTests<IncrementalEvlTinkerpopG
 		properties.setProperty(BitsyGraph.DB_PATH_KEY, dbPath.toString());
 		Configuration config = gProvider.getBaseConfiguration();
 		gProvider.mergeSettings(config, properties);
-		//graph = new BitsyGraph(dbPath);
-		graph = gProvider.openGraph(config);
-        
-		GraphTraversalSource gts = new GraphTraversalSource(graph);
-		((EvlModuleTraceGremlinRepositoryImpl)tr).setGraphTraversalSource(gts);
-		IModelTraceRepository mtr = module.getContext().getTraceManager().getModelTraceRepository();
-		((ModelTraceGremlinRepositoryImpl)mtr).setGraphTraversalSource(gts);
+		return gProvider.openGraph(config);
 	}
 	
 	@After
 	public void teardown() throws Exception {
-		super.teardown();
 		graph.shutdown();
 		
 //		ArangoDB driver = null;
@@ -123,6 +125,21 @@ public class TinkerpopOfflineTests extends OfflineTests<IncrementalEvlTinkerpopG
 	}
 	// Export Graph
 	// arangoexport --type xgmml --graph-name IncrementalEvl --server.username gremlin --server.password gremlin --server.database tinkerpop
+
+	@Override
+	protected IEvlModuleIncremental module() {
+		return module;
+	}
+
+	@Override
+	protected File evlFile() {
+		return evlFile;
+	}
+
+	@Override
+	protected File tempModel() {
+		return tempModel;
+	}
 	
 
 

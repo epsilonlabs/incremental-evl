@@ -21,12 +21,16 @@ import org.eclipse.epsilon.common.parse.EpsilonTreeAdaptor;
 import org.eclipse.epsilon.common.util.AstUtil;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
 import org.eclipse.epsilon.evl.dom.Fix;
+import org.eclipse.epsilon.evl.incremental.EvlIncrementalGuiceModule;
 import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraintContext;
 import org.eclipse.epsilon.evl.parse.EvlParser;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * Test that the correct EVL model elements are created in the trace model
@@ -42,8 +46,9 @@ public class PreexecutionTests {
 
 	@Before
 	public void setup() throws URISyntaxException {
-		module = new IncrementalEvlModule();
-		evlFile = new File(PreexecutionTests.class.getResource("testPreExecution.evl").toURI());
+		Injector injector = Guice.createInjector(new EvlIncrementalGuiceModule());
+		evlFile = new File(ExecutionTests.class.getResource("testPreExecution.evl").toURI());
+		module = injector.getInstance(IncrementalEvlModule.class);
 	}
 
 	@Test

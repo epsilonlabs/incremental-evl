@@ -44,30 +44,33 @@ import org.eclipse.epsilon.evl.incremental.trace.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepositoryImpl<IEvlModuleTrace> implements IEvlModuleTraceRepository {
+public class EvlModuleTraceRepositoryImpl implements IEvlModuleTraceRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(EvlModuleTraceRepositoryImpl.class);
  
+    protected final Set<IEvlModuleTrace> extent;    
     
     public EvlModuleTraceRepositoryImpl() {
         super();
+        extent = new LinkedHashSet<>();
     }
     
     @Override
-    public boolean add(IEvlModuleTrace item) {
+    public boolean add(IModuleExecutionTrace item) {
         logger.info("Adding {} to repository", item);
-        return extent.add(item);
+        assert item instanceof IModuleExecutionTrace;
+        return extent.add((IEvlModuleTrace) item);
     }
 
     @Override
-    public boolean remove(IEvlModuleTrace item) {
+    public boolean remove(IModuleExecutionTrace item) {
         logger.info("Removing {} from repository", item);
         return extent.remove(item);
     }
     
     @Override
     public void dispose() {
-        super.dispose();
+    	extent.clear();
     }
     
     

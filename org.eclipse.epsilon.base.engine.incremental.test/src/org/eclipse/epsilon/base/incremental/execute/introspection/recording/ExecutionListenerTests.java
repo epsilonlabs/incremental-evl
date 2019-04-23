@@ -9,7 +9,7 @@ import static org.mockito.Mockito.*;
 import org.eclipse.epsilon.base.incremental.IBaseRootElementsFactory;
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
+import org.eclipse.epsilon.base.incremental.execute.IExecutionTrace;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
@@ -52,9 +52,9 @@ public class ExecutionListenerTests {
 		public MockitoRule mockitoRule = MockitoJUnit.rule();
 
 		@Mock
-		private IIncrementalBaseContext<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IExecutionTraceManager<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IBaseRootElementsFactory>> contextMock;
+		private IIncrementalBaseContext contextMock;
 
-		private AllInstancesInvocationExecutionListener<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IExecutionTraceManager<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IBaseRootElementsFactory>> listener;
+		private AllInstancesInvocationExecutionListener listener;
 
 		private OperationCallExpression ast;
 
@@ -62,7 +62,7 @@ public class ExecutionListenerTests {
 
 		@Before
 		public void setup() {
-			listener = new AllInstancesInvocationExecutionListener<>();
+			listener = new AllInstancesInvocationExecutionListener();
 			targetExpression = new NameExpression(typeName);
 			EolCompilationContext contextMock = new EolCompilationContext();
 			targetExpression.compile(contextMock);
@@ -212,15 +212,15 @@ public class ExecutionListenerTests {
 		public MockitoRule mockitoRule = MockitoJUnit.rule();
 
 		@Mock
-		private IIncrementalBaseContext<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IExecutionTraceManager<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IBaseRootElementsFactory>> contextMock;
+		private IIncrementalBaseContext contextMock;
 
-		private PropertyAccessExecutionListener<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IExecutionTraceManager<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IBaseRootElementsFactory>> listener;
+		private PropertyAccessExecutionListener listener;
 		
 		
 		@Test
 		public void whenAboutToExecuteTheAstMustBeAddedToTheStack() {
 			// Init the listener
-			listener = new PropertyAccessExecutionListener<>();
+			listener = new PropertyAccessExecutionListener();
 			
 		}
 		

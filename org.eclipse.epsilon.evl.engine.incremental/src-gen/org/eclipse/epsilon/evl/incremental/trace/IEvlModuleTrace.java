@@ -26,7 +26,6 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.*;
 public interface IEvlModuleTrace extends IModuleExecutionTrace {
 
 
- 
     /**
      * EvlModuleTrace has same identity in the aggregate.
      */

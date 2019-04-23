@@ -80,8 +80,7 @@ import com.google.inject.Module;
 /**
  * An IncrementalEvlModule.
  */
-public class IncrementalEvlModule extends EvlModule implements
-		IEvlModuleIncremental<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> {
+public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncremental {
 
 	private static final Logger logger = LoggerFactory.getLogger(IncrementalEvlModule.class);
 
@@ -100,11 +99,8 @@ public class IncrementalEvlModule extends EvlModule implements
 	 * The set of models from which the module receives notification.
 	 */
 	Set<IIncrementalModel> targets;
-	
-	/**
-	 * Checksum digest for the source file or code being executed
-	 */
-	private byte[] digest;
+
+	private String chksum;
 	
 	/**
 	 * Create a new IncrementalEvlModule using the provided trace manager. The Trace Manager can
@@ -112,11 +108,14 @@ public class IncrementalEvlModule extends EvlModule implements
 	 * @param traceManager
 	 */
 	@Inject
-	public IncrementalEvlModule(IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> traceManager) {
+	public IncrementalEvlModule(IEvlExecutionTraceManager traceManager) {
 		super();
-		this.context = new IncrementalEvlContext<>();
-		this.getContext().setTraceManager(traceManager);
-
+		this.context = new IncrementalEvlContext(traceManager);
+	}
+	
+	@Override
+	public IncrementalEvlContext getContext() {
+		return (IncrementalEvlContext) super.getContext();
 	}
 	
 	@Override
@@ -160,23 +159,13 @@ public class IncrementalEvlModule extends EvlModule implements
 			return Collections.emptySet();
 		}
 		prepareExecution();
-		boolean incremental = determineIncremental();
-		
-		String sourceChksum;
-		try {
-			sourceChksum = getSourceChecksum();
-		} catch (Exception e1) {
-			throw new EolRuntimeException("Unable to get the source check sum.", e1);
-		}
-		
-		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = getContext().getTraceManager();
-		IEvlModuleTrace evlModuleTrace = etManager.getExecutionTraceRepository().getEvlModuleTraceByIdentity(sourceChksum);
-		
+		IEvlExecutionTraceManager etManager = getContext().getTraceManager();
+		boolean incremental = determineIncremental(etManager, getChksum());		
 		if (incremental) {
-			executeIncremental(etManager, evlModuleTrace, sourceChksum);
+			executeIncremental(etManager, getChksum());
 		}
 		else {
-			createModuleAndModelTraces(etManager, evlModuleTrace, sourceChksum);
+			createModuleAndModelTraces(etManager, getChksum());
 			checkConstraints();
 		}
 		postExecution();
@@ -187,10 +176,9 @@ public class IncrementalEvlModule extends EvlModule implements
 	}
 	
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> getContext() {
-		return (IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>>) context;
+	public String getChksum() {
+		return this.chksum;
 	}
 
 	@Override
@@ -201,16 +189,6 @@ public class IncrementalEvlModule extends EvlModule implements
 		return targets;
 	}
 	
-	
-	// FIXME Can we do this in the constructor?
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public void injectTraceManager(Module incrementalGuiceModule) {
-		Injector injector = Guice.createInjector(incrementalGuiceModule);
-		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = injector
-				.getInstance(IEvlExecutionTraceManager.class);
-		this.getContext().setTraceManager(etManager);
-	}
 
 	public boolean isLive() {
 		return live;
@@ -269,7 +247,7 @@ public class IncrementalEvlModule extends EvlModule implements
 	public void onCreate(IIncrementalModel model, Object newElement) throws EolRuntimeException {
 
 		logger.info("On Craete event for {}", newElement);
-		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = getContext().getTraceManager();
+		IEvlExecutionTraceManager etManager = getContext().getTraceManager();
 		// Do we need to execute the pre blocks to restore context?
 		// logger.info("Executing pre{}");
 		// execute(getPre(), context);
@@ -338,14 +316,14 @@ public class IncrementalEvlModule extends EvlModule implements
 
 	@Override
 	public boolean parse(String code) throws Exception {
-		createCodeDigest(code);
+		createChksumFromCode(code);
 		return super.parse(code);
 	}
 
 	@Override
 	public boolean parse(URI uri) throws Exception {
 		if ("file".equals(uri.getScheme())) {
-			getFileDigest(new File(uri));	
+			createChksumFromFile(new File(uri));	
 		}
 		else {
 		}
@@ -383,11 +361,11 @@ public class IncrementalEvlModule extends EvlModule implements
 	 * @throws EolRuntimeException
 	 */
 	private void createModuleAndModelTraces(
-		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager,
-		IEvlModuleTrace evlModuleTrace,
+		IEvlExecutionTraceManager etManager,
 		String sourceChksum) throws EolRuntimeException {
 		IEvlRootElementsFactory factory = etManager.getTraceFactory();
 		logger.info("Getting the EvlModuleTrace.");		
+		IEvlModuleTrace evlModuleTrace = etManager.getExecutionTraceRepository().getEvlModuleTraceByIdentity(sourceChksum);
 		if (evlModuleTrace == null) {
 			try {
 				evlModuleTrace = factory.createModuleTrace(sourceChksum);
@@ -426,18 +404,19 @@ public class IncrementalEvlModule extends EvlModule implements
 	/**
    	 * Determine if the execution should be incremental. Execution goes into incremental if for
    	 * each of the models, the script has a model access.
+	 * @param sourceChecksum 
    	 * @return
    	 * @throws EolRuntimeException 
    	 */
-	private boolean determineIncremental() throws EolRuntimeException {
+	private boolean determineIncremental(
+		IEvlExecutionTraceManager etManager,
+		String sourceChecksum) throws EolRuntimeException {
 		boolean incremental = true;
 		// Need to check if we already have trace information for the (script, models)
 		// tuple.
-		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = getContext()
-				.getTraceManager();
 		try {
 			IEvlModuleTrace evlModuleTrace = etManager.getExecutionTraceRepository()
-					.getEvlModuleTraceByIdentity(getSourceChecksum());
+					.getEvlModuleTraceByIdentity(sourceChecksum);
 			if (evlModuleTrace == null) {
 				incremental = false;
 			} else {
@@ -604,15 +583,13 @@ public class IncrementalEvlModule extends EvlModule implements
 	 * Execute the module in incremental mode. The source models are traversed and changes detected
 	 * by comparing the property's values of the models' elements against the stored values.
 	 * @param etManager
-	 * @param evlModuleTrace
 	 * @param sourceChksum The checksum for the file/code executed.
 	 * @throws EolRuntimeException if there is an error accessing information from any of the models.
 	 */
 	 // FIXME We need to harmonize the live events (onDelete, onChange, onCreate) with this code
 	 // so we can reuse/optimize the behaviour
 	private void executeIncremental(
-		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager,
-		IEvlModuleTrace evlModuleTrace,
+		IEvlExecutionTraceManager etManager,
 		String sourceChksum) throws EolRuntimeException {
 		IEvlModuleTraceRepository executionTraceRepo = etManager.getExecutionTraceRepository();
 		for (IModel m : context.getModelRepository().getModels()) {
@@ -692,8 +669,9 @@ public class IncrementalEvlModule extends EvlModule implements
 	/**
 	 * Create an MD5 digest of the provided code
 	 * @param code
+	 * @throws Exception 
 	 */
-	private void createCodeDigest(String code) {
+	private void createChksumFromCode(String code) throws Exception {
 		MessageDigest complete = null;
 		try {
 			complete = MessageDigest.getInstance("MD5");
@@ -702,16 +680,16 @@ public class IncrementalEvlModule extends EvlModule implements
 		}
 		complete.update(code.getBytes());
         //Get the hash's bytes
-        digest = complete.digest();
+        this.chksum = getSourceChecksum(complete.digest());
 	}
 
 
 	/**
 	 * Create an MD5 digest of the the provided file
 	 * @param file
-	 * @throws EpsilonExecutorException
+	 * @throws Exception 
 	 */
-	private void getFileDigest(File file) throws EpsilonExecutorException {
+	private void createChksumFromFile(File file) throws Exception {
 		MessageDigest complete = null;
 		try (InputStream fis = new FileInputStream(file)) {
 			byte[] buffer = new byte[1024];
@@ -732,7 +710,7 @@ public class IncrementalEvlModule extends EvlModule implements
 		} catch (IOException e) {
 			throw new EpsilonExecutorException("There was an error reading the source file.", e);
 		}
-		digest = complete == null ? new byte[0] : complete.digest();
+		this.chksum = getSourceChecksum(complete == null ? new byte[0] : complete.digest());
 	}
 
 	private ModuleElement getOrCreateCheckBlock() {
@@ -807,7 +785,7 @@ public class IncrementalEvlModule extends EvlModule implements
 
 	// see this How-to for a faster way to convert
 	// a byte array to a HEX string
-	private String getSourceChecksum() throws Exception {
+	private String getSourceChecksum(byte[] digest) throws Exception {
 		String result = "";
 		for (int i = 0; i < digest.length; i++) {
 			result += Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1);
@@ -819,8 +797,7 @@ public class IncrementalEvlModule extends EvlModule implements
 		logger.info("Executing fixer");
 		super.postExecution();
 		logger.info("Persisting traces");
-		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = getContext().getTraceManager();
-		etManager.persistTraceInformation();
+		getContext().getTraceManager().persistTraceInformation();
 		if (getContext().isOnlineExecutionMode()) {
 			logger.info("Going to live execution.");
 //			for (ConstraintContext conCtx : getConstraintContexts()) { 
@@ -862,8 +839,7 @@ public class IncrementalEvlModule extends EvlModule implements
 		Object modelObject)
 		throws EolRuntimeException {
 		logger.info("Re-executing CheckTrace");
-		IExecutionContext ec = trace.getExexutionContext();
-		IModelElementTrace selfTrace = IncrementalUtils.asStream(ec.contextVariables().get())
+		IModelElementTrace selfTrace = IncrementalUtils.asStream(trace.getExexutionContext().contextVariables().get())
 			.filter(v -> v.getName().equals("self")).findFirst().get().value().get();
 		IModelTrace modelTrace = selfTrace.modelTrace().get();
 		Object self = getSelf(moduleUri, modelTrace, selfTrace);

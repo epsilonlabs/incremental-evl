@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -23,6 +22,11 @@ import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 
+/**
+ * A collection of helper methods
+ * @author Horacio Hoyos Rodriguez
+ *
+ */
 public class IncrementalUtils {
 
 	public static <T> Set<T> asSet(Iterator<T> sourceIterator) {
@@ -104,9 +108,11 @@ public class IncrementalUtils {
 	 * @throws EolIncrementalExecutionException
 	 * @throws EolRuntimeException
 	 */
-	public static IModelElementTrace getOrCreateModelElementTrace(Object modelElement,
-			IIncrementalBaseContext<?, ?, ?> context, final IIncrementalModel model)
-			throws EolIncrementalExecutionException, EolRuntimeException {
+	public static IModelElementTrace getOrCreateModelElementTrace(
+		final Object modelElement,
+		final IIncrementalBaseContext context,
+		final IIncrementalModel model)
+		throws EolIncrementalExecutionException, EolRuntimeException {
 
 		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
 		IModelElementTrace elementTrace = modelTraceRepository.getModelElementTraceFor(model.getModelUri(),

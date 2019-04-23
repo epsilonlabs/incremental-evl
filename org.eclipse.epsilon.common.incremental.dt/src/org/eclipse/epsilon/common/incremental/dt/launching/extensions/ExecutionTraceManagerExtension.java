@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
+import org.eclipse.epsilon.base.incremental.execute.IExecutionTrace;
 import org.eclipse.epsilon.common.incremental.dt.launching.dialogs.AbstractTraceManagerConfigurationDialog;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.swt.graphics.Image;
@@ -154,8 +154,8 @@ public class ExecutionTraceManagerExtension {
 		return (AbstractTraceManagerConfigurationDialog) configurationElement.createExecutableExtension(TRACE_MANAGER_DIALOG);
 	}
 	
-	public IExecutionTraceManager getOrCreateTraceManager() throws CoreException {
-		return (IExecutionTraceManager) configurationElement.createExecutableExtension(TRACE_MANAGER_CLASS);
+	public IExecutionTrace getOrCreateTraceManager() throws CoreException {
+		return (IExecutionTrace) configurationElement.createExecutableExtension(TRACE_MANAGER_CLASS);
 	}
 	
 	public IConfigurationElement getConfigurationElement() {

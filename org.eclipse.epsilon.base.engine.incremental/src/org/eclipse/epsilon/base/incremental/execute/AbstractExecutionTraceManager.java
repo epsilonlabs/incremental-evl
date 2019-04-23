@@ -2,10 +2,7 @@ package org.eclipse.epsilon.base.incremental.execute;
 
 import java.time.LocalDate;
 
-import org.eclipse.epsilon.base.incremental.IBaseRootElementsFactory;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 
 /**
  * A base implementation of the IEolExecutionTraceManager.
@@ -13,8 +10,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepositor
  * @author Horacio Hoyos Rodriguez
  *
  */
-public abstract class AbstractExecutionTraceManager<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<T>, F extends IBaseRootElementsFactory>
-		implements IExecutionTraceManager<T, R, F> {
+public abstract class AbstractExecutionTraceManager implements IExecutionTrace {
 
 	/** A flag to signal parallel persistence */
 	protected boolean inParallel;
@@ -34,14 +30,11 @@ public abstract class AbstractExecutionTraceManager<T extends IModuleExecutionTr
 	/** Time of last flush */
 	protected LocalDate lastFlush;
 
-	protected final R executionTraceRepository;
-
 	protected final IModelTraceRepository modelTraceRepository;
 
-	protected AbstractExecutionTraceManager(R executionTraceRepository, IModelTraceRepository modelTraceRepository) {
+	protected AbstractExecutionTraceManager(IModelTraceRepository mdlTrcRpstry) {
 		this.lastFlush = LocalDate.now();
-		this.executionTraceRepository = executionTraceRepository;
-		this.modelTraceRepository = modelTraceRepository;
+		this.modelTraceRepository = mdlTrcRpstry;
 	}
 
 	@Override
@@ -57,11 +50,6 @@ public abstract class AbstractExecutionTraceManager<T extends IModuleExecutionTr
 	@Override
 	public void setFlushTimeout(float period) {
 		this.timeOut = period;
-	}
-
-	@Override
-	public R getExecutionTraceRepository() {
-		return this.executionTraceRepository;
 	}
 
 	@Override

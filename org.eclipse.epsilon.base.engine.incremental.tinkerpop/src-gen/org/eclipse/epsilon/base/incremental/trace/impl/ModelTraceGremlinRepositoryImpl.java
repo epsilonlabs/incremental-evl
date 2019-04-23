@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
@@ -39,9 +40,11 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelTraceGremlinRepositoryImpl.class);
  
-    protected GraphTraversalSource gts; 
+    private final GraphTraversalSource gts; 
     
-    public ModelTraceGremlinRepositoryImpl() {
+    @Inject
+    public ModelTraceGremlinRepositoryImpl(GraphTraversalSource gts) {
+    	this.gts = gts;
     }
 
     
@@ -93,10 +96,6 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
  
     
     /** protected region IModelTraceRepositry on begin **/
-    public void setGraphTraversalSource(final GraphTraversalSource gts) {
-    	this.gts = gts;
-    }
-   
     
     @Override
 	public IModelTrace getModelTraceByIdentity(String uri) {

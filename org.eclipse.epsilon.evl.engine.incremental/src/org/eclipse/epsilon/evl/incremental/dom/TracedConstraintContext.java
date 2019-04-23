@@ -28,14 +28,11 @@ import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelNotFoundException;
-import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
-import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
-import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
@@ -94,9 +91,8 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 		if (checkType && !owningModel.isOfKind(object, getTypeName())) {
 			return false;
 		}
-		@SuppressWarnings("unchecked")
-		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> tracedEvlContext = 
-				(IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>>) context;
+		assert context instanceof IncrementalEvlContext;
+		IncrementalEvlContext tracedEvlContext = (IncrementalEvlContext) context;
 		if (moduleElementTrace == null) {
 			createModuleElementTraces(tracedEvlContext);	
 		}
@@ -118,7 +114,7 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 	 * @throws EolRuntimeException
 	 */
 	private void populateExecutionContext(Object modelElement,
-		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> context,
+		IncrementalEvlContext context,
 		final IIncrementalModel model) throws EolRuntimeException {		
 		logger.info("createExecutionContext for {}:{}  with element {}", getTypeName(), index,
 				modelElement);
@@ -133,9 +129,9 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 			}
 			getCurrentContext().getOrCreateModelElementVariable("self", elementTrace);
 			
-			IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager()
+			IModuleExecutionTraceRepository executionTraceRepository = context.getTraceManager()
 					.getExecutionTraceRepository();
-			String moduleUri = context.getModule().getUri().toString();
+			String moduleUri = context.getModule().getChksum();
 			IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository
 					.getModuleExecutionTraceByIdentity(moduleUri);
 			if (moduleExecutionTrace == null) {
@@ -172,12 +168,11 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 	 */
 	@SuppressWarnings("unchecked")
 	private void createModuleElementTraces(
-		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> context) throws EolRuntimeException {
+		IncrementalEvlContext context) throws EolRuntimeException {
 		logger.info("createModuleElementTraces for {}:{}", getTypeName(), index);
 		if (moduleElementTrace == null) {
 			try {
-				String moduleUri = context.getModule().getUri().toString();
-				IEvlModuleTrace moduleExecutionTrace = getModuleExecutionTrace(context, moduleUri);
+				IEvlModuleTrace moduleExecutionTrace = getModuleExecutionTrace(context, context.getModule().getChksum());
 				moduleElementTrace = moduleExecutionTrace.getOrCreateContextTrace(getTypeName(), index);
 				if (guardBlock != null) {
 					try {
@@ -233,8 +228,8 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 	 * @throws EolRuntimeException if the module execution trace was not found.
 	 */
 	private IEvlModuleTrace getModuleExecutionTrace(
-			IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> context,
-			String moduleUri) throws EolRuntimeException {
+		IncrementalEvlContext context,
+		String moduleUri) throws EolRuntimeException {
 		IEvlModuleTraceRepository repo = context.getTraceManager().getExecutionTraceRepository();
 		IEvlModuleTrace moduleExecutionTrace = repo.getEvlModuleTraceByIdentity(moduleUri);
 		if (moduleExecutionTrace == null) {

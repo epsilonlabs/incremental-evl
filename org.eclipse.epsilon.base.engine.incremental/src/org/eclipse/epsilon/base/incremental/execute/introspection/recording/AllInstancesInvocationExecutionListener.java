@@ -10,7 +10,6 @@ import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
-import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
@@ -41,11 +40,7 @@ import org.slf4j.LoggerFactory;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class AllInstancesInvocationExecutionListener<
-			T extends IModuleExecutionTrace,
-			R extends IModuleExecutionTraceRepository<T>,
-			M extends IExecutionTraceManager<T, R, ?>
-		> implements IExecutionListener {
+public class AllInstancesInvocationExecutionListener implements IExecutionListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(AllInstancesInvocationExecutionListener.class);
 
@@ -70,7 +65,6 @@ public class AllInstancesInvocationExecutionListener<
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void finishedExecuting(ModuleElement ast, Object result, IEolContext context) {
 		logger.debug("finishedExecuting {} for {}", ast, result);
@@ -97,7 +91,7 @@ public class AllInstancesInvocationExecutionListener<
 				String typeName = typeVar.getName();
 				boolean ofKind = !"allOfType".equals(operationName);
 				try {
-					record(currentAst.getModuleElementTrace(), currentAst.getCurrentContext(), ofKind, typeName, (IIncrementalBaseContext<T, R, M>) context);
+					record(currentAst.getModuleElementTrace(), currentAst.getCurrentContext(), ofKind, typeName, (IIncrementalBaseContext) context);
 				} catch (EolIncrementalExecutionException e) {
 					logger.warn("Unable to create traces for the execution of {}", ast, e);
 				} catch (EolRuntimeException e) {
@@ -130,7 +124,7 @@ public class AllInstancesInvocationExecutionListener<
 		IExecutionContext currentContext,
 		boolean ofKind,
 		String modelAndMetaClass,
-		IIncrementalBaseContext<T, R, M> context) throws EolIncrementalExecutionException, EolRuntimeException {
+		IIncrementalBaseContext context) throws EolIncrementalExecutionException, EolRuntimeException {
 
 		logger.info("Recording AllInstancesAccess. Type: {}, ofKind: {}", modelAndMetaClass, ofKind);
 		String modelName;
@@ -160,7 +154,7 @@ public class AllInstancesInvocationExecutionListener<
 		IIncrementalModel incrementalModel = (IIncrementalModel) model;
 		
 		
-		IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager()
+		IModuleExecutionTraceRepository executionTraceRepository = context.getTraceManager()
 				.getExecutionTraceRepository();
 		String moduleUri = context.getModule().getUri().toString();
 		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository

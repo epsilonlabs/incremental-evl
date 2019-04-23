@@ -27,12 +27,13 @@ import java.util.Collection;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 /** protected region IEvlModuleTraceRepositoryImports end **/
 
-public interface IEvlModuleTraceRepository extends IModuleExecutionTraceRepository<IEvlModuleTrace> {
+public interface IEvlModuleTraceRepository extends IModuleExecutionTraceRepository {
 
 
     IEvlModuleTrace getEvlModuleTraceByIdentity(String uri);
 
 /** protected region IEvlModuleTraceRepositry on begin **/
+     
 	Set<IEvlModuleTrace> getAllModuleTraces();
 	
 	IModelElementTrace getModelElementTraceFromModel(String elementUri, IModelTrace modelTrace);

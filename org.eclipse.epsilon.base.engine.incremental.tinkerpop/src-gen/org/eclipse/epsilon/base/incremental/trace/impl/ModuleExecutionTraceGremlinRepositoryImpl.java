@@ -30,7 +30,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
-public abstract class ModuleExecutionTraceGremlinRepositoryImpl<E extends IModuleExecutionTrace> implements IModuleExecutionTraceRepository<E> {
+public abstract class ModuleExecutionTraceGremlinRepositoryImpl implements IModuleExecutionTraceRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ModuleExecutionTraceGremlinRepositoryImpl.class);
  

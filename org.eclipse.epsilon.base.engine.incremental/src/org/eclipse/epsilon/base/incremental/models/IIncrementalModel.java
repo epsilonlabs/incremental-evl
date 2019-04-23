@@ -66,13 +66,13 @@ public interface IIncrementalModel extends IModel {
 	 *
 	 * @return true if this collection changed as a result of the call
 	 */
-	boolean registerModule(IIncrementalModule<?, ?, ?, ?> module);
+	boolean registerModule(IIncrementalModule module);
 	
 	/**
 	 * Determine if the module is registered with this model to receive notifications
 	 * @param module
 	 */
-	boolean isRegistered(IIncrementalModule<?, ?, ?, ?> module);
+	boolean isRegistered(IIncrementalModule module);
 	
 	/**
 	 * Unregister the module. The module will stop receiving notifications from changes in this
@@ -80,7 +80,7 @@ public interface IIncrementalModel extends IModel {
 	 * @param element
 	 * @param propertyName
 	 */
-	 boolean unregisterModule(IIncrementalModule<?, ?, ?, ?> module);
+	 boolean unregisterModule(IIncrementalModule module);
 	
 	// FIXME The incremental model should really do the comparing, notifying itself about its own 
 	// elements seems silly 

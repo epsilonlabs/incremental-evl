@@ -7,7 +7,6 @@ import java.util.WeakHashMap;
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
-import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
@@ -42,8 +41,7 @@ import org.slf4j.LoggerFactory;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<?>, M extends IExecutionTraceManager<?, ?, ?>>
-		implements IExecutionListener {
+public class PropertyAccessExecutionListener implements IExecutionListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(PropertyAccessExecutionListener.class);
 
@@ -91,7 +89,7 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 			final IIncrementalModel model = getModelThatKnowsAboutProperty(modelElement, propertyName,context);
 			if (model != null) {
 				try {
-					record(tracedModuleElement.getModuleElementTrace(), tracedModuleElement.getCurrentContext(), model, modelElement, propertyName, result, (IIncrementalBaseContext<T, R, M>) context);
+					record(tracedModuleElement.getModuleElementTrace(), tracedModuleElement.getCurrentContext(), model, modelElement, propertyName, result, (IIncrementalBaseContext) context);
 				} catch (EolIncrementalExecutionException e) {
 					logger.warn("Unable to create traces for the execution of {}", ast, e);
 				} catch (EolRuntimeException e) {
@@ -138,14 +136,14 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 		Object modelElement,
 		String propertyName,
 		Object result,
-		IIncrementalBaseContext<T, R, M> context)
+		IIncrementalBaseContext context)
 		throws EolIncrementalExecutionException, EolRuntimeException {
 
 		logger.info("Recording PropertyAccess. model: {}, element: {}, property: {}, result: {}", model.getName(),
 				modelElement, propertyName, result == null ? "Null" : "SomeValue");
 		logger.debug("result: {}", result);
 
-		IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager()
+		IModuleExecutionTraceRepository executionTraceRepository = context.getTraceManager()
 				.getExecutionTraceRepository();
 		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
 		
@@ -182,7 +180,7 @@ public class PropertyAccessExecutionListener<T extends IModuleExecutionTrace, R 
 	private void setPropertyAccessValue(
 		IIncrementalModel model,
 		Object result,
-		IIncrementalBaseContext<T, R, M> context,
+		IIncrementalBaseContext context,
 		IPropertyAccess pa) throws EolIncrementalExecutionException {
 		String value = null;
 		if (model.owns(result)) {

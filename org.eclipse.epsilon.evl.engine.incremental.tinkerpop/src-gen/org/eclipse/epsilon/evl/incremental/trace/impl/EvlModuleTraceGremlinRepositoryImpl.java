@@ -54,19 +54,23 @@ import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
 import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
+/** protected region EvlModuleTraceRepositoryImplImports end **/
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGremlinRepositoryImpl<IEvlModuleTrace> implements IEvlModuleTraceRepository {
+public class EvlModuleTraceGremlinRepositoryImpl implements IEvlModuleTraceRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(EvlModuleTraceGremlinRepositoryImpl.class);
- 
-    public EvlModuleTraceGremlinRepositoryImpl() { }
-
+    private GraphTraversalSource gts; 
     
-    @Override
-    public boolean add(IEvlModuleTrace item) {
+    public void setGraphTraversalSource(GraphTraversalSource gts) {
+		this.gts = gts;
+	}
+
+	@Override
+    public boolean add(IModuleExecutionTrace item) {
         logger.info("Adding {} to repository", item);
+        assert item instanceof EvlModuleTraceGremlin;
         EvlModuleTraceGremlin impl = (EvlModuleTraceGremlin)item;
         Vertex a = ((DetachedVertex)impl.delegate()).attach(Attachable.Method.getOrCreate(gts.getGraph()));
         impl.delegate(a);
@@ -75,17 +79,22 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
     }
 
     @Override
-    public boolean remove(IEvlModuleTrace item) {
+    public boolean remove(IModuleExecutionTrace item) {
         logger.info("Removing {} from repository", item);
+        assert item instanceof EvlModuleTraceGremlin;
         Vertex v = ((EvlModuleTraceGremlin)item).delegate();
         v.remove();
         return v.graph() == null;
     }
     
     @Override
-    public void dispose() {    
-        super.dispose();
-    } 
+	public void dispose() {
+		try {
+			gts.close();
+		} catch (Exception e) {
+			logger.warn("Error closing GraphTraversalSource",  e);
+		}
+	}
   
     @Override
     public IEvlModuleTrace get(Object id) {

@@ -7,7 +7,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 
 import org.eclipse.epsilon.base.incremental.IBaseRootElementsFactory;
-import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
+import org.eclipse.epsilon.base.incremental.execute.IExecutionTrace;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
@@ -27,9 +27,8 @@ import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTraceHasConstraints;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTraceHasInvariantContext;
-import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTrace;
-import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasInvariant;
-import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesTraceHasSatisfiedInvariants;
+import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesAccess;
+import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesAccessHasSatisfiedInvariants;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -53,9 +52,9 @@ public class ExecutionListenerTests {
 		public MockitoRule mockitoRule = MockitoJUnit.rule();
 
 		@Mock
-		private IIncrementalBaseContext<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IExecutionTraceManager<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IBaseRootElementsFactory>> contextMock;
+		private IIncrementalBaseContext contextMock;
 
-		private SatisfiesInvocationExecutionListener<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IExecutionTraceManager<IModuleExecutionTrace, IModuleExecutionTraceRepository<IModuleExecutionTrace>, IBaseRootElementsFactory>> listener;
+		private SatisfiesInvocationExecutionListener listener;
 
 		private OperationCallExpression ast;
 
@@ -63,7 +62,7 @@ public class ExecutionListenerTests {
 
 		@Before
 		public void setup() {
-			listener = new SatisfiesInvocationExecutionListener<>();
+			listener = new SatisfiesInvocationExecutionListener();
 			targetExpression = new NameExpression(typeName);
 			EolCompilationContext contextMock = new EolCompilationContext();
 			targetExpression.compile(contextMock);
@@ -205,9 +204,9 @@ public class ExecutionListenerTests {
 			IInvariantTraceHasInvariantContext invariantHasContextMock = mock(IInvariantTraceHasInvariantContext.class);
 			IContextTraceHasConstraints contextHasInvariants = mock(IContextTraceHasConstraints.class);
 			IInvariantTrace targetInvariantMock = mock(IInvariantTrace.class);
-			ISatisfiesTrace satisfiesMock = mock(ISatisfiesTrace.class);
-			ISatisfiesTraceHasSatisfiedInvariants satisfiesHasSatisfiedInvariantMock = mock(
-					ISatisfiesTraceHasSatisfiedInvariants.class);
+			ISatisfiesAccess satisfiesMock = mock(ISatisfiesAccess.class);
+			ISatisfiesAccessHasSatisfiedInvariants satisfiesHasSatisfiedInvariantMock = mock(
+					ISatisfiesAccessHasSatisfiedInvariants.class);
 
 			when(invariantHasContextMock.get()).thenReturn(contextMock);
 			when(currentInvariantMock.invariantContext()).thenReturn(invariantHasContextMock);

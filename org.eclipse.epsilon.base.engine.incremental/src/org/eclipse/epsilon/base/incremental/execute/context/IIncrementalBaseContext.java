@@ -13,9 +13,8 @@ package org.eclipse.epsilon.base.incremental.execute.context;
 import java.util.Collection;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
+import org.eclipse.epsilon.base.incremental.execute.IExecutionTrace;
+import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
@@ -24,13 +23,9 @@ import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
  * The Interface IIncrementalEolContext.
  *
  * @param <T> the type of ExecutionTraceManager (see
- *        {@link IExecutionTraceManager}
+ *        {@link IExecutionTrace}
  */
-public interface IIncrementalBaseContext<
-		T extends IModuleExecutionTrace,
-		R extends IModuleExecutionTraceRepository<?>,
-		M extends IExecutionTraceManager<?, ?, ?>
-	> extends IEolContext {
+public interface IIncrementalBaseContext extends IEolContext {
 
 	/**
 	 * Gets the trace manager.
@@ -38,16 +33,21 @@ public interface IIncrementalBaseContext<
 	 * @return the trace manager
 	 * @throws EolIncrementalExecutionException
 	 */
-	M getTraceManager() throws EolRuntimeException;
+	IExecutionTrace getTraceManager() throws EolRuntimeException;
+	
 
-	/**
-	 * Sets the trace manager.
-	 *
-	 * @param traceManager the new trace manager
-	 */
-	void setTraceManager(M traceManager);
 
 	Collection<IExecutionListener> getIncrementalExecutionListeners();
+	
+	/**
+	 * Casts the IModule to IEvlModule
+	 * @see org.eclipse.epsilon.eol.execute.context.IEolContext#getModule()
+	 * @since 1.6
+	 */
+	@Override
+	default IIncrementalModule getModule() {
+		return (IIncrementalModule) this.getModule();
+	}
 	
 	/**
 	 * Gets the property access execution listener.

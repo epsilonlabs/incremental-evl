@@ -22,12 +22,9 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
-import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
-import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckResult;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardResult;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
@@ -44,6 +41,7 @@ import org.slf4j.LoggerFactory;
  * @author Horacio Hoyos Rodriguez
  *
  */
+ //FIXME Contraint should have an interface, and we should implement it
 public class TracedConstraint extends Constraint implements TracedModuleElement<IInvariantTrace> {
 
 	private static final Logger logger = LoggerFactory.getLogger(TracedConstraint.class);
@@ -91,8 +89,8 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 		if (result && (guardBlock != null)) {
 			result &= appliesTo(modelElement, context);
 			try {
-				@SuppressWarnings("unchecked")
-				IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> tracedEvlContext = (IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>>) context;
+				assert context instanceof IncrementalEvlContext;
+				IncrementalEvlContext tracedEvlContext = (IncrementalEvlContext) context;
 				IGuardTrace guardTrace = (IGuardTrace) ((TracedExecutableBlock<?, ?>) guardBlock).getModuleElementTrace();
 				IGuardResult guardResult = tracedEvlContext.getTraceManager().getExecutionTraceRepository()
 						.findResultInGuard(guardTrace, getCurrentContext());
@@ -108,8 +106,8 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 	public Optional<UnsatisfiedConstraint> check(Object self, IEvlContext context) throws EolRuntimeException {
 		logger.info("Check {} for {}", getName(), self);
 		UnsatisfiedConstraint unsatisfiedConstraint = preprocessCheck(self, context);
-		@SuppressWarnings("unchecked")
-		IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>> tracedEvlContext = (IncrementalEvlContext<IEvlModuleTraceRepository, IEvlRootElementsFactory, IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory>>) context;
+		assert context instanceof IncrementalEvlContext;
+		IncrementalEvlContext tracedEvlContext = (IncrementalEvlContext) context;
 		
 		boolean result = false;
 		ConstraintTrace trace;

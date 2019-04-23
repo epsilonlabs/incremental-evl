@@ -17,12 +17,12 @@ import org.eclipse.epsilon.base.incremental.trace.IIdElementRepository;
 /** protected region IModuleExecutionTraceRepositoryImports on begin **/
 /** protected region IModuleExecutionTraceRepositoryImports end **/
 
-public interface IModuleExecutionTraceRepository<E extends IModuleExecutionTrace> extends IIdElementRepository<E> {
+public interface IModuleExecutionTraceRepository extends IIdElementRepository<IModuleExecutionTrace> {
 
 
     IModuleExecutionTrace getModuleExecutionTraceByIdentity(String uri);
 
-/** protected region IModuleExecutionTraceRepositry on begin **/
+	/** protected region IModuleExecutionTraceRepositry on begin **/
     /**
 	 * Remove all trace information related to the element. This should be called
 	 * when an element is deleted.

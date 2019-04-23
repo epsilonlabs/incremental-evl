@@ -4,7 +4,6 @@ import org.eclipse.epsilon.base.incremental.execute.AbstractExecutionTraceManage
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.evl.incremental.EvlRootElementsFactory;
 import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 
 import com.google.inject.Inject;
@@ -15,18 +14,18 @@ import com.google.inject.Inject;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class InMemoryEvlExecutionTraceManager
-		extends AbstractExecutionTraceManager<IEvlModuleTrace, IEvlModuleTraceRepository, IEvlRootElementsFactory>
-		implements IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> {
+public class InMemoryEvlExecutionTraceManager extends AbstractExecutionTraceManager implements IEvlExecutionTraceManager {
 
 	private final EvlRootElementsFactory evlTraceFactory;
+	private final IEvlModuleTraceRepository executionTraceRepository;
 
 	@Inject
 	public InMemoryEvlExecutionTraceManager(IEvlModuleTraceRepository executionTraceRepository,
 			IModelTraceRepository modelTraceRepository,
 			EvlRootElementsFactory evlTraceFactory) {
-		super(executionTraceRepository, modelTraceRepository);
+		super(modelTraceRepository);
 		this.evlTraceFactory = evlTraceFactory;
+		this.executionTraceRepository = executionTraceRepository;
 	}
 
 	@Override
@@ -39,6 +38,11 @@ public class InMemoryEvlExecutionTraceManager
 	@Override
 	public IEvlRootElementsFactory getTraceFactory() {
 		return evlTraceFactory;
+	}
+	
+	@Override
+	public IEvlModuleTraceRepository getExecutionTraceRepository() {
+		return this.executionTraceRepository;
 	}
 
 }

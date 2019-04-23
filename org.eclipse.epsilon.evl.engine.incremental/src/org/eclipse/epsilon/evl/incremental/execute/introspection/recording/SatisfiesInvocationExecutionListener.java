@@ -12,14 +12,12 @@ import java.util.Set;
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
-import org.eclipse.epsilon.base.incremental.execute.IExecutionTraceManager;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.Expression;
 import org.eclipse.epsilon.eol.dom.OperationCallExpression;
@@ -47,8 +45,7 @@ import org.slf4j.LoggerFactory;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<?>, M extends IExecutionTraceManager<?, ?, ?>>
-		implements IExecutionListener{
+public class SatisfiesInvocationExecutionListener implements IExecutionListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(SatisfiesInvocationExecutionListener.class);
 
@@ -110,7 +107,6 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void finishedExecuting(ModuleElement ast, Object result, IEolContext context) {
 		logger.debug("finishedExecuting {} for {}", ast, result);
@@ -132,7 +128,7 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 				boolean all = EvlOperationFactory.SATISFIES_ALL_OPERATION.equals(waitingFor.getOperationName());
 				final IIncrementalModel model = getModelThatKnowsElement(modelElement, context);
 				assert model != null;
-				record(all, currentInvariant, (IIncrementalBaseContext<T, R, M>) context, model, model.getElementId(modelElement));
+				record(all, currentInvariant, (IIncrementalBaseContext) context, model, model.getElementId(modelElement));
 				parameters.clear();
 				parameterValues.clear();
 				listening = false;
@@ -181,7 +177,7 @@ public class SatisfiesInvocationExecutionListener<T extends IModuleExecutionTrac
 	private void record(
 		boolean all,
 		TracedModuleElement<IInvariantTrace> invariantTrace,
-		IIncrementalBaseContext<T,R,M> context,
+		IIncrementalBaseContext context,
 		IIncrementalModel model,
 		Object modelElementUri) {
 		logger.info("Creating SatisfiesTrace. invariant: {}, satisfied: {}, all: {}", invariantTrace.getModuleElementTrace().getName(),

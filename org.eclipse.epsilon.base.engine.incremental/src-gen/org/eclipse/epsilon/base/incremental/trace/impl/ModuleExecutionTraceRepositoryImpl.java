@@ -24,24 +24,24 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepositor
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ModuleExecutionTraceRepositoryImpl<E extends IModuleExecutionTrace> implements IModuleExecutionTraceRepository<E> {
+public abstract class ModuleExecutionTraceRepositoryImpl implements IModuleExecutionTraceRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ModuleExecutionTraceRepositoryImpl.class);
  
-    protected final Set<E> extent;    
+    protected final Set<IModuleExecutionTrace> extent;    
     
     public ModuleExecutionTraceRepositoryImpl() {
         this.extent = new LinkedHashSet<>();
     }
     
     @Override
-    public boolean add(E item) {
+    public boolean add(IModuleExecutionTrace item) {
         logger.info("Adding {} to repository", item);
         return extent.add(item);
     }
 
     @Override
-    public boolean remove(E item) {
+    public boolean remove(IModuleExecutionTrace item) {
         logger.info("Removing {} from repository", item);
         return extent.remove(item);
     }

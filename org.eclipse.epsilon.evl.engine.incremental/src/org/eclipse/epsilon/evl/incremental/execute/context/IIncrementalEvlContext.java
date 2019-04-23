@@ -12,28 +12,20 @@ package org.eclipse.epsilon.evl.incremental.execute.context;
 
 import org.eclipse.epsilon.base.incremental.execute.ExecutionMode;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
+import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
-import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
+import org.eclipse.epsilon.evl.incremental.IEvlModuleIncremental;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 
 /**
  * The Interface IIncrementalEvlContext allows extra information about incremental
  * execution to be stored and accessed.
  *
- * @param <T> the generic type
- * @param <R> the generic type
- * @param <F> the generic type
- * @param <M> the generic type
  */
-public interface IIncrementalEvlContext<
-			T extends IEvlModuleTrace,
-			R extends IEvlModuleTraceRepository,
-			F extends IEvlRootElementsFactory,
-			M extends IEvlExecutionTraceManager<R, F>
-		> extends IIncrementalBaseContext<T, R, M>, IEvlContext {
+public interface IIncrementalEvlContext extends IIncrementalBaseContext, IEvlContext {
 
+	@Override
+	IEvlExecutionTraceManager getTraceManager() throws EolRuntimeException;
 	
 	/**
 	 * Sets the online execution mode.
@@ -48,5 +40,10 @@ public interface IIncrementalEvlContext<
 	 * @return true, if is online execution
 	 */
 	public boolean isOnlineExecutionMode();
+
+	@Override
+	default IEvlModuleIncremental getModule() {
+		return (IEvlModuleIncremental) this.getModule();
+	}
 
 }

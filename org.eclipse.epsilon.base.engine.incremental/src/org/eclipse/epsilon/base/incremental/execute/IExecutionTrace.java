@@ -32,7 +32,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepositor
  *        {@link IModuleExecutionTrace}
  * @param <F> the generic type of the RootElements Factory
  */
-public interface IExecutionTraceManager<T extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<T>, F extends IBaseRootElementsFactory> {
+public interface IExecutionTrace {
 
 	/**
 	 * Instruct the manager to persist the model changes using a parallel execution.
@@ -72,7 +72,7 @@ public interface IExecutionTraceManager<T extends IModuleExecutionTrace, R exten
 	 *
 	 * @return the module execution repository
 	 */
-	R getExecutionTraceRepository();
+	IModuleExecutionTraceRepository getExecutionTraceRepository();
 
 	/**
 	 * The repository of models.
@@ -86,6 +86,6 @@ public interface IExecutionTraceManager<T extends IModuleExecutionTrace, R exten
 	 * 
 	 * @return
 	 */
-	F getTraceFactory();
+	IBaseRootElementsFactory getTraceFactory();
 
 }

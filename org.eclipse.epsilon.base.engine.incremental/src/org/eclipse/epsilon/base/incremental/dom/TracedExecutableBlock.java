@@ -64,7 +64,8 @@ public class TracedExecutableBlock<TraceType extends IModuleElementTrace, Return
 	
 	@Override
 	public Object executeBody(IEolContext context) throws EolRuntimeException {
-		IIncrementalBaseContext<?, ?, ?> ic =  (IIncrementalBaseContext<?, ?, ?>) context;
+		assert context instanceof IIncrementalBaseContext;
+		IIncrementalBaseContext ic =  (IIncrementalBaseContext) context;
 		for (IExecutionListener iel : ic.getIncrementalExecutionListeners()) {
 			iel.aboutToExecute(this, context);
 		}

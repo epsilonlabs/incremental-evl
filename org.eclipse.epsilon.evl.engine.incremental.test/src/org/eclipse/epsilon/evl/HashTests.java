@@ -5,7 +5,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import java.io.File;
-import java.net.URISyntaxException;
 
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
@@ -25,29 +24,18 @@ import org.eclipse.epsilon.evl.incremental.IncrementalEvlModule;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.google.inject.Module;
 
 public abstract class HashTests<M extends Module> {
 
-	private IncrementalEvlModule module;
-	private File evlFile;
-
-	public abstract EvlIncrementalGuiceModule getEvlGuiceModule();
-
-	@Before
-	public void setup() throws URISyntaxException {
-		module = new IncrementalEvlModule();
-		module.injectTraceManager(getEvlGuiceModule());
-		evlFile = new File(HashTests.class.getResource("testExecution.evl").toURI());
-	}
+	protected abstract IncrementalEvlModule module();
+	protected abstract File evlFile();
 
 	@Test
-	public void testHash() throws Exception {
+	public final void testHash() throws Exception {
 		StringProperties properties = new StringProperties();
 		properties.put(CsvModel.PROPERTY_NAME, "bank");
 		properties.put(CsvModel.PROPERTY_HAS_KNOWN_HEADERS, "true");
@@ -64,8 +52,7 @@ public abstract class HashTests<M extends Module> {
 		// module.parse(evlFile);
 		// module.getContext().getModelRepository().addModel(model);
 
-		IEvlExecutionTraceManager<IEvlModuleTraceRepository, IEvlRootElementsFactory> etManager = module.getContext()
-				.getTraceManager();
+		IEvlExecutionTraceManager etManager = module().getContext().getTraceManager();
 		IEvlRootElementsFactory factory = etManager.getTraceFactory();
 
 		IModelTrace modelTrace = factory.createModelTrace(((IIncrementalModel) model).getModelUri());
@@ -88,7 +75,7 @@ public abstract class HashTests<M extends Module> {
 		hashCode2 = propertyTrace.hashCode();
 		assertThat("IModelElementTrace Hash code is not constant", hashCode1, is(hashCode2));
 
-		IEvlModuleTrace evlModuleTrace = factory.createModuleTrace(evlFile.getAbsolutePath());
+		IEvlModuleTrace evlModuleTrace = factory.createModuleTrace(evlFile().getAbsolutePath());
 		hashCode1 = evlModuleTrace.hashCode();
 		hashCode2 = evlModuleTrace.hashCode();
 		assertThat("IEvlModuleTrace Hash code is not constant", hashCode1, is(hashCode2));

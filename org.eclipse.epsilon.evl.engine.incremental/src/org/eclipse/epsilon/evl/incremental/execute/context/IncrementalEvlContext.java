@@ -16,16 +16,15 @@ import java.util.List;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.execute.ExecutionMode;
+import org.eclipse.epsilon.base.incremental.execute.IExecutionTrace;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.evl.execute.context.EvlContext;
-import org.eclipse.epsilon.evl.incremental.IEvlRootElementsFactory;
+import org.eclipse.epsilon.evl.incremental.IEvlModuleIncremental;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.introspection.recording.SatisfiesInvocationExecutionListener;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 
 /**
  * An EVL Context that keeps a reference to the traceManager and current EVL
@@ -34,15 +33,14 @@ import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class IncrementalEvlContext<R extends IEvlModuleTraceRepository, F extends IEvlRootElementsFactory, M extends IEvlExecutionTraceManager<R, F>>
-		extends EvlContext implements IIncrementalEvlContext<IEvlModuleTrace, R, F, M> {
+public class IncrementalEvlContext extends EvlContext implements IIncrementalEvlContext {
 
-	private M traceManager;
+	private final IEvlExecutionTraceManager traceManager;
 
 	/** The execution access listeners */
-	private final PropertyAccessExecutionListener<IEvlModuleTrace, R, M> propertyAccessListener = new PropertyAccessExecutionListener<IEvlModuleTrace, R, M>();
-	private final AllInstancesInvocationExecutionListener<IEvlModuleTrace, R, M> allAccessListener = new AllInstancesInvocationExecutionListener<IEvlModuleTrace, R, M>();
-	private final SatisfiesInvocationExecutionListener<IEvlModuleTrace, R, M> satisfiesListener = new SatisfiesInvocationExecutionListener<IEvlModuleTrace, R, M>();
+	private final PropertyAccessExecutionListener propertyAccessListener = new PropertyAccessExecutionListener();
+	private final AllInstancesInvocationExecutionListener allAccessListener = new AllInstancesInvocationExecutionListener();
+	private final SatisfiesInvocationExecutionListener satisfiesListener = new SatisfiesInvocationExecutionListener();
 	
 	private List<IExecutionListener> executionListeners;
 	
@@ -50,29 +48,26 @@ public class IncrementalEvlContext<R extends IEvlModuleTraceRepository, F extend
 	 * Flag to indicate that we are on live mode, i.e. listening to model changes
 	 */
 	private ExecutionMode mode;
-
 	
+	
+	public IncrementalEvlContext(IEvlExecutionTraceManager traceManager) {
+		super();
+		this.traceManager = traceManager;
+	}
+
+	@Override
+	public IEvlModuleIncremental getModule() {
+		return (IEvlModuleIncremental) module;
+	}
+
 	/**
 	 * Gets the trace manager.
 	 *
 	 * @return the trace manager
 	 * @throws EolIncrementalExecutionException
 	 */
-	public M getTraceManager() throws EolRuntimeException {
-		if (traceManager == null) {
-			throw new EolRuntimeException(
-					"The trace manager of the context is null. The trace manager must be set via the incremental module.");
-		}
+	public IEvlExecutionTraceManager getTraceManager() throws EolRuntimeException {
 		return traceManager;
-	}
-
-	/**
-	 * Sets the trace Manager.
-	 *
-	 * @param traceManager the new unit of work
-	 */
-	public void setTraceManager(M traceManager) {
-		this.traceManager = traceManager;
 	}
 
 	@Override

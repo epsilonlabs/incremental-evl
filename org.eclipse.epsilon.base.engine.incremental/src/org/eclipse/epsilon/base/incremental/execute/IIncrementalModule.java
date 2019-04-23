@@ -2,10 +2,8 @@ package org.eclipse.epsilon.base.incremental.execute;
 
 import java.util.Set;
 
-import org.eclipse.epsilon.base.incremental.IBaseRootElementsFactory;
+import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 import org.eclipse.epsilon.common.module.IModule;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 
@@ -16,7 +14,7 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
  * objects that changed and their changes.
  * 
  * Implementations need to create an instance of an
- * {@link IExecutionTraceManager} that will be used to manage the execution
+ * {@link IExecutionTrace} that will be used to manage the execution
  * traces for the module.
  * 
  * An Incremental Module should not be executed completely all the time. Instead
@@ -27,8 +25,7 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
  * 
  * @author Horacio Hoyos Rodriguez
  */
-public interface IIncrementalModule<M extends IModuleExecutionTrace, R extends IModuleExecutionTraceRepository<M>, F extends IBaseRootElementsFactory, T extends IExecutionTraceManager<M, R, F>>
-		extends IModule {
+public interface IIncrementalModule extends IModule {
 
 	/**
 	 * Gets the incremental models that are used in this execution
