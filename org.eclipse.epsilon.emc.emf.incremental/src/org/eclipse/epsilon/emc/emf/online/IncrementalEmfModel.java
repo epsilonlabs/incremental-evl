@@ -11,7 +11,6 @@
 package org.eclipse.epsilon.emc.emf.online;
 
 import java.util.ArrayDeque;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -20,21 +19,21 @@ import java.util.Queue;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotInstantiableModelElementValueException;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
 import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
+import org.eclipse.epsilon.base.incremental.models.ModuleNotifications;
 import org.eclipse.epsilon.emc.emf.EmfModel;
-import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 
 public class IncrementalEmfModel extends EmfModel implements IIncrementalModel {
 	
 	private boolean deliver;
-	private Collection<IIncrementalModule<?,?,?,?>> modules;
+	private ModuleNotifications moduleNotifications;
 	
 	public IncrementalEmfModel() {
 		super();
+		moduleNotifications = new ModuleNotifications(this);
 	}
 
 	@Override
@@ -95,57 +94,34 @@ public class IncrementalEmfModel extends EmfModel implements IIncrementalModel {
 				it.remove();
 			}
 		};
-	}
-
-	@Override
-	public boolean registerModule(IIncrementalModule<?, ?, ?, ?> module) {
-		return modules.add(module);
-	}
-
-	@Override
-	public boolean isRegistered(IIncrementalModule<?, ?, ?, ?> module) {
-		return modules.contains(module);
-	}
-
-	@Override
+	}	@Override
 	public void notifyChange(Object element, String propertyName) {
-		for (IIncrementalModule<?, ?, ?, ?> m : modules) {
-			try {
-				m.onChange(this, element, propertyName);
-			} catch (EolRuntimeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		moduleNotifications.notifyChange(element, propertyName);
 	}
 
 	@Override
 	public void notifyDeletion(Object element) {
-		for (IIncrementalModule<?, ?, ?, ?> m : modules) {
-			try {
-				m.onDelete(this, element);
-			} catch (EolRuntimeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		moduleNotifications.notifyDeletion(element);
 	}
 
 	@Override
 	public void notifyCreation(Object element) {
-		for (IIncrementalModule<?, ?, ?, ?> m : modules) {
-			try {
-				m.onCreate(this, element);
-			} catch (EolRuntimeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		moduleNotifications.notifyCreation(element);
+	}
+	
+	@Override
+	public boolean registerModule(IIncrementalModule module) {
+		return moduleNotifications.registerModule(module);
 	}
 
 	@Override
-	public boolean unregisterModule(IIncrementalModule<?, ?, ?, ?> module) {
-		return modules.remove(module);
+	public boolean isRegistered(IIncrementalModule module) {
+		return moduleNotifications.isRegistered(module);
+	}
+
+	@Override
+	public boolean unregisterModule(IIncrementalModule module) {
+		return moduleNotifications.unregisterModule(module);
 	}
 
 	@Override

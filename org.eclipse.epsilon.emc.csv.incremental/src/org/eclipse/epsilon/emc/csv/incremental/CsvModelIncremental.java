@@ -15,10 +15,8 @@ import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,14 +27,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotInstantiableModelElementValueException;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
 import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
-import org.eclipse.epsilon.base.incremental.trace.impl.MemoryModelTraceFactory;
+import org.eclipse.epsilon.base.incremental.models.ModuleNotifications;
 import org.eclipse.epsilon.emc.csv.CsvModel;
-import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -273,14 +269,20 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 	}
 
 	private boolean deliver;
-	
-	private Collection<IIncrementalModule<?, ?, ?, ?>> modules = new HashSet<IIncrementalModule<?, ?, ?, ?>>();
 
 	private CsvFileWatcher watcher;
 
 	private ExecutorService executor;
 
 	private Future<?> future;
+	
+	private ModuleNotifications moduleNotifications;
+	
+
+	public CsvModelIncremental() {
+		super();
+		moduleNotifications = new ModuleNotifications(this);
+	}
 
 	@Override
 	protected void loadModel() throws EolModelLoadingException {
@@ -343,16 +345,6 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 	}
 	
 	@Override
-	public boolean registerModule(IIncrementalModule<?, ?, ?, ?> module) {
-		return modules.add(module);
-	}
-
-	@Override
-	public boolean isRegistered(IIncrementalModule<?, ?, ?, ?> module) {
-		return modules.contains(module);
-	}
-
-	@Override
 	protected void disposeModel() {
 		logger.info("Dispossing model");
 		super.disposeModel();
@@ -412,50 +404,40 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 		return row;
 	}
 
-	@Override
-	public void notifyChange(Object element, String propertyName) {
-		for (IIncrementalModule<?, ?, ?, ?> m : modules) {
-			try {
-				m.onChange(this, element, propertyName);
-			} catch (EolRuntimeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
-	@Override
-	public void notifyDeletion(Object element) {
-		for (IIncrementalModule<?, ?, ?, ?> m : modules) {
-			try {
-				m.onDelete(this, element);
-			} catch (EolRuntimeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
-	@Override
-	public void notifyCreation(Object element) {
-		for (IIncrementalModule<?, ?, ?, ?> m : modules) {
-			try {
-				m.onCreate(this, element);
-			} catch (EolRuntimeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
-	@Override
-	public boolean unregisterModule(IIncrementalModule<?, ?, ?, ?> module) {
-		return modules.remove(module);
-	}
 
 	@Override
 	public Iterator<? extends Object> getAllElements() {
 		return rows.iterator();
+	}
+	
+	@Override
+	public void notifyChange(Object element, String propertyName) {
+		moduleNotifications.notifyChange(element, propertyName);
+	}
+
+	@Override
+	public void notifyDeletion(Object element) {
+		moduleNotifications.notifyDeletion(element);
+	}
+
+	@Override
+	public void notifyCreation(Object element) {
+		moduleNotifications.notifyCreation(element);
+	}
+	
+	@Override
+	public boolean registerModule(IIncrementalModule module) {
+		return moduleNotifications.registerModule(module);
+	}
+
+	@Override
+	public boolean isRegistered(IIncrementalModule module) {
+		return moduleNotifications.isRegistered(module);
+	}
+
+	@Override
+	public boolean unregisterModule(IIncrementalModule module) {
+		return moduleNotifications.unregisterModule(module);
 	}
 
 }
