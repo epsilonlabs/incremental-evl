@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,6 +13,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
+import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
@@ -20,8 +21,6 @@ import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccessHasProperty;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 
 /**
@@ -49,12 +48,14 @@ public class PropertyAccessHasPropertyGremlin extends Feature
      */
     public PropertyAccessHasPropertyGremlin (
         IPropertyAccess source,
+        Edge delegate,
         GraphTraversalSource gts, 
         TraceFactory factory) {
         super(true);
         this.source = source;
         this.gts = gts;
-        this.factory = factory; 
+        this.factory = factory;
+        this.delegate = delegate;
     }
     
     // PUBLIC API
@@ -64,14 +65,12 @@ public class PropertyAccessHasPropertyGremlin extends Feature
         if (delegate == null) {
             return null;
         }
-        GraphTraversalSource g = startTraversal();
         IPropertyTrace result = null;
-        try {
-            Vertex to = g.E(delegate).inV().next();
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            Vertex to = agts.E(delegate).inV().next();
             result = (IPropertyTrace) factory.createTraceElement(to, gts);
-        }
-        finally {
-            finishTraversal(g);
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
     }
@@ -101,12 +100,12 @@ public class PropertyAccessHasPropertyGremlin extends Feature
     @Override
     public boolean conflict(IPropertyTrace target) {
         boolean result = false;
-        GraphTraversalSource g = startTraversal();
-        try {
-            result |= delegate == null ? g.V(source.getId()).out("property").hasNext() : g.E(delegate).inV().hasId(target.getId()).hasNext();
-        }
-        finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            result |= delegate == null ?
+                    agts.V(source.getId()).out("property").hasNext() :
+                    agts.E(delegate).inV().hasId(target.getId()).hasNext();
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
     }
@@ -120,12 +119,10 @@ public class PropertyAccessHasPropertyGremlin extends Feature
             return false;
         }
         boolean result = false;
-        GraphTraversalSource g = startTraversal();
-        try {
-		  result = g.E(delegate).inV().hasId(target.getId()).hasNext();
-		}
-		finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+		  result = agts.E(delegate).inV().hasId(target.getId()).hasNext();
+		} catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
 	}
@@ -134,56 +131,32 @@ public class PropertyAccessHasPropertyGremlin extends Feature
     public Edge delegate() {
         return delegate;
     }
-
-    @Override
-    public void delegate(Edge delegate) {
-        this.delegate = delegate;
-    }
     
     @Override
-    public void graphTraversalSource(GraphTraversalSource gts) {
-        this.gts = gts;
+    public GraphTraversalSource graphTraversalSource() {
+        return gts;
     }
         
-    
     // PRIVATE API
     
     @Override
     public void set(IPropertyTrace target) {
-        GraphTraversalSource g = startTraversal();
-        try {
-            delegate = g.V(source.getId()).addE("property").to(g.V(target.getId())).next();
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            delegate = agts.V(source.getId()).addE("property")
+                    .to(agts.V(target.getId())).next();
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         
     }
     
     @Override
     public void remove(IPropertyTrace target) {
-        GraphTraversalSource g = startTraversal();
-        try {
-            g.E(delegate).drop();
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            agts.E(delegate).drop();
             delegate = null;
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            finishTraversal(g);
-        }
-    }
-    
-    private GraphTraversalSource startTraversal() {
-        return this.gts.clone();
-    }
-    
-    private void finishTraversal(GraphTraversalSource g) {
-        try {
-            g.close();
         } catch (Exception e) {
-            // Fail silently?
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
     }
-
 }

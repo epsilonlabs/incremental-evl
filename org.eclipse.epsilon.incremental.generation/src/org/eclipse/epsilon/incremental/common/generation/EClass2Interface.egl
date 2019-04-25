@@ -36,6 +36,7 @@ if (docs.isDefined()) {%]
  * The [%=ec.name%] Interface.
 [%}%]
  */
+@SuppressWarnings("unused")
 public interface [%=ec.getFullInterfaceName(interPrefix, interSufix)%] {
 [%
 for (ea in ec.getEAttributes()) {

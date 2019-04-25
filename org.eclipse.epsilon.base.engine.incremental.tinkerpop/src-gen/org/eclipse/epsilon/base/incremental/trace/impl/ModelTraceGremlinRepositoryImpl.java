@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,11 +11,15 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+import java.util.Set;
+
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.util.Attachable;
 import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex;
+import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 /** protected region ModelTraceRepositoryImplImports on begin **/
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
@@ -24,21 +28,23 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 import com.google.inject.Inject;
 /** protected region ModelTraceRepositoryImplImports end **/
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
 
 public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelTraceGremlinRepositoryImpl.class);
  
-    private final GraphTraversalSource gts; 
+    protected GraphTraversalSource gts; 
     
-    @Inject
-    public ModelTraceGremlinRepositoryImpl(GraphTraversalSource gts) {
-    	this.gts = gts;
+    public ModelTraceGremlinRepositoryImpl() {
     }
+
     
     @Override
     public boolean add(IModelTrace item) {
@@ -88,7 +94,6 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
  
     
     /** protected region IModelTraceRepositry on begin **/
-    
     @Override
 	public IModelTrace getModelTraceByIdentity(String uri) {
     	GraphTraversalSource g = gts.clone();

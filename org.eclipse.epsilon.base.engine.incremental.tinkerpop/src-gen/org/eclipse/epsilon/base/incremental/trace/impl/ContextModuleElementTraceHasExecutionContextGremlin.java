@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,6 +13,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
+import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
@@ -54,7 +55,7 @@ public class ContextModuleElementTraceHasExecutionContextGremlin extends Feature
         super(false);
         this.source = source;
         this.gts = gts;
-        this.factory = factory; 
+        this.factory = factory;
     }
     
     // PUBLIC API
@@ -68,14 +69,12 @@ public class ContextModuleElementTraceHasExecutionContextGremlin extends Feature
     /**
      * Get the Tinkerpop GraphTraversal iterator of the vertices that are part of the relation.
      */
-    public  GraphTraversal<Vertex, Vertex> getRaw() {
-        GraphTraversalSource g = startTraversal();
+    public GraphTraversal<Vertex, Vertex> getRaw() {
         GraphTraversal<Vertex, Vertex> result = null;
-        try {
-            result = g.V(source.getId()).out("executionContext");
-        }
-        finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            result = agts.V(source.getId()).out("executionContext");
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
     }
@@ -105,18 +104,16 @@ public class ContextModuleElementTraceHasExecutionContextGremlin extends Feature
     @Override
     public boolean conflict(IExecutionContext target) {
         boolean result = false;
-        GraphTraversalSource g = startTraversal();
-        try {
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 	        if (isUnique()) {
-	            GraphTraversal<Vertex, Vertex> gt =  g.V(source.getId()).out("executionContext");
+	            GraphTraversal<Vertex, Vertex> gt =  agts.V(source.getId()).out("executionContext");
                 for (Entry<String, Object> id : target.getIdProperties().entrySet()) {
                     gt.has(id.getKey(), id.getValue());
                 }
                 result |= gt.hasNext();
             }
-        }
-        finally {
-            finishTraversal(g);
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
     }
@@ -127,12 +124,10 @@ public class ContextModuleElementTraceHasExecutionContextGremlin extends Feature
 			return false;
 		}
         boolean result = false;
-        GraphTraversalSource g = startTraversal();
-        try {
-		  result = g.V(source.getId()).out("executionContext").hasId(target.getId()).hasNext();
-		}
-		finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+		  result = agts.V(source.getId()).out("executionContext").hasId(target.getId()).hasNext();
+		} catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
 	}
@@ -141,54 +136,35 @@ public class ContextModuleElementTraceHasExecutionContextGremlin extends Feature
     public Edge delegate() {
         return null;
     }
-
-    @Override
-    public void delegate(Edge delegate) {
-    }
     
     @Override
-    public void graphTraversalSource(GraphTraversalSource gts) {
-        this.gts = gts;
+    public GraphTraversalSource graphTraversalSource() {
+        return gts;
     }
         
-    
     // PRIVATE API
     
     @Override
     public void set(IExecutionContext target) {
-        GraphTraversalSource g = startTraversal();
-        try {
-            g.V(source.getId()).addE("executionContext").to(g.V(target.getId())).iterate();
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            agts.V(source.getId()).addE("executionContext")
+                    .to(agts.V(target.getId())).iterate();
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         
     }
     
     @Override
     public void remove(IExecutionContext target) {
-        GraphTraversalSource g = startTraversal();
-        try {
-            g.V(source.getId()).outE("executionContext").as("e").inV().hasId(target.getId()).select("e").drop().iterate();
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            finishTraversal(g);
-        }
-    }
-    
-    private GraphTraversalSource startTraversal() {
-        return this.gts.clone();
-    }
-    
-    private void finishTraversal(GraphTraversalSource g) {
-        try {
-            g.close();
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            agts.V(source.getId())
+                    .outE("executionContext")
+                    .as("e").inV()
+                    .hasId(target.getId())
+                    .select("e").drop().iterate();
         } catch (Exception e) {
-            // Fail silently?
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
     }
-
 }

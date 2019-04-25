@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,6 +13,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
+import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
@@ -20,8 +21,6 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTraceHasModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 
 /**
@@ -49,12 +48,14 @@ public class ModelTypeTraceHasModelTraceGremlin extends Feature
      */
     public ModelTypeTraceHasModelTraceGremlin (
         IModelTypeTrace source,
+        Edge delegate,
         GraphTraversalSource gts, 
         TraceFactory factory) {
         super(true);
         this.source = source;
         this.gts = gts;
-        this.factory = factory; 
+        this.factory = factory;
+        this.delegate = delegate;
     }
     
     // PUBLIC API
@@ -64,14 +65,12 @@ public class ModelTypeTraceHasModelTraceGremlin extends Feature
         if (delegate == null) {
             return null;
         }
-        GraphTraversalSource g = startTraversal();
         IModelTrace result = null;
-        try {
-            Vertex to = g.E(delegate).inV().next();
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            Vertex to = agts.E(delegate).inV().next();
             result = (IModelTrace) factory.createTraceElement(to, gts);
-        }
-        finally {
-            finishTraversal(g);
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
     }
@@ -103,23 +102,19 @@ public class ModelTypeTraceHasModelTraceGremlin extends Feature
     @Override
     public boolean conflict(IModelTrace target) {
         boolean result = false;
-        GraphTraversalSource g = startTraversal();
-        try {
-            result |= delegate == null ? g.V(source.getId()).out("modelTrace").hasNext() : g.E(delegate).inV().hasId(target.getId()).hasNext();
-            GraphTraversalSource g2 = startTraversal();
-            try {
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            result |= delegate == null ?
+                    agts.V(source.getId()).out("modelTrace").hasNext() :
+                    agts.E(delegate).inV().hasId(target.getId()).hasNext();
+            try (ActiveTraversal agts2 = new ActiveTraversal(gts)) {
                 result |= delegate == null ? false : (target.types().isUnique() &&
-                        g.V(target.getId()).out("types").hasId(source.getId()).hasNext());
+                        agts2.V(target.getId()).out("types").hasId(source.getId()).hasNext());
             }
             catch (Exception ex) {
                 result = false;
             }
-            finally {
-                finishTraversal(g2);
-            }
-        }
-        finally {
-            finishTraversal(g);
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
     }
@@ -133,20 +128,16 @@ public class ModelTypeTraceHasModelTraceGremlin extends Feature
             return false;
         }
         boolean result = false;
-        GraphTraversalSource g = startTraversal();
         boolean inTarget = false;
-        try {
-            inTarget = g.V(target.getId()).out("types").hasId(source.getId()).hasNext();
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            inTarget = agts.V(target.getId()).out("types").hasId(source.getId()).hasNext();
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
-        finally {
-            finishTraversal(g);
-        }
-        g = startTraversal();
-        try {
-		  result = g.E(delegate).inV().hasId(target.getId()).hasNext() && inTarget;
-		}
-		finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+		  result = agts.E(delegate).inV().hasId(target.getId()).hasNext() && inTarget;
+		} catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
 	}
@@ -155,56 +146,32 @@ public class ModelTypeTraceHasModelTraceGremlin extends Feature
     public Edge delegate() {
         return delegate;
     }
-
-    @Override
-    public void delegate(Edge delegate) {
-        this.delegate = delegate;
-    }
     
     @Override
-    public void graphTraversalSource(GraphTraversalSource gts) {
-        this.gts = gts;
+    public GraphTraversalSource graphTraversalSource() {
+        return gts;
     }
         
-    
     // PRIVATE API
     
     @Override
     public void set(IModelTrace target) {
-        GraphTraversalSource g = startTraversal();
-        try {
-            delegate = g.V(source.getId()).addE("modelTrace").to(g.V(target.getId())).next();
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            delegate = agts.V(source.getId()).addE("modelTrace")
+                    .to(agts.V(target.getId())).next();
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         
     }
     
     @Override
     public void remove(IModelTrace target) {
-        GraphTraversalSource g = startTraversal();
-        try {
-            g.E(delegate).drop();
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            agts.E(delegate).drop();
             delegate = null;
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            finishTraversal(g);
-        }
-    }
-    
-    private GraphTraversalSource startTraversal() {
-        return this.gts.clone();
-    }
-    
-    private void finishTraversal(GraphTraversalSource g) {
-        try {
-            g.close();
         } catch (Exception e) {
-            // Fail silently?
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
     }
-
 }

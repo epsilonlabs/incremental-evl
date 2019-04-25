@@ -32,6 +32,7 @@ package [%=qp%].trace.impl;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
+import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
@@ -44,9 +45,6 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
-[%} else {%]
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 [%}%]
 
 
@@ -77,12 +75,18 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
      */
     public [%=er.getRelationJavaClassName(classPrefix, classSufix)%] (
         [%=sourceType%] source,
+[%if (not er.isMany()) {%]
+        Edge delegate,
+[%}%]
         GraphTraversalSource gts, 
         TraceFactory factory) {
         super([%=unique%]);
         this.source = source;
         this.gts = gts;
-        this.factory = factory; 
+        this.factory = factory;
+[%if (not er.isMany()) {%]
+        this.delegate = delegate;
+[%}%]
     }
     
     // PUBLIC API
@@ -97,14 +101,12 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
     /**
      * Get the Tinkerpop GraphTraversal iterator of the vertices that are part of the relation.
      */
-    public  GraphTraversal<Vertex, Vertex> getRaw() {
-        GraphTraversalSource g = startTraversal();
+    public GraphTraversal<Vertex, Vertex> getRaw() {
         GraphTraversal<Vertex, Vertex> result = null;
-        try {
-            result = g.V(source.getId()).out("[%=er.name%]");
-        }
-        finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            result = agts.V(source.getId()).out("[%=er.name%]");
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
     }
@@ -113,14 +115,12 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
         if (delegate == null) {
             return null;
         }
-        GraphTraversalSource g = startTraversal();
         [%=targetType%] result = null;
-        try {
-            Vertex to = g.E(delegate).inV().next();
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            Vertex to = agts.E(delegate).inV().next();
             result = ([%=targetType%]) factory.createTraceElement(to, gts);
-        }
-        finally {
-            finishTraversal(g);
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
     }
@@ -156,39 +156,35 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
     @Override
     public boolean conflict([%=targetType%] target) {
         boolean result = false;
-        GraphTraversalSource g = startTraversal();
-        try {
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 [%if (er.isMany()) {%]
 	        if (isUnique()) {
-	            GraphTraversal<Vertex, Vertex> gt =  g.V(source.getId()).out("[%=er.name%]");
+	            GraphTraversal<Vertex, Vertex> gt =  agts.V(source.getId()).out("[%=er.name%]");
                 for (Entry<String, Object> id : target.getIdProperties().entrySet()) {
                     gt.has(id.getKey(), id.getValue());
                 }
                 result |= gt.hasNext();
             }
 [%} else {%]
-            result |= delegate == null ? g.V(source.getId()).out("[%=er.name%]").hasNext() : g.E(delegate).inV().hasId(target.getId()).hasNext();
+            result |= delegate == null ?
+                    agts.V(source.getId()).out("[%=er.name%]").hasNext() :
+                    agts.E(delegate).inV().hasId(target.getId()).hasNext();
 [%}
 if (opposite.isDefined()) {
     if (opp_many) {%]
-            GraphTraversalSource g2 = startTraversal();
-            try {
+            try (ActiveTraversal agts2 = new ActiveTraversal(gts)) {
                 result |= delegate == null ? false : (target.[%=opposite%]().isUnique() &&
-                        g.V(target.getId()).out("[%=opposite%]").hasId(source.getId()).hasNext());
+                        agts2.V(target.getId()).out("[%=opposite%]").hasId(source.getId()).hasNext());
             }
             catch (Exception ex) {
                 result = false;
-            }
-            finally {
-                finishTraversal(g2);
             }
 [%  } else {%]
             result |= target.[%=opposite%]().get() != null;
 [%  }
 }%]
-        }
-        finally {
-            finishTraversal(g);
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
     }
@@ -204,36 +200,34 @@ if (opposite.isDefined()) {
         }
 [%}%]
         boolean result = false;
-        GraphTraversalSource g = startTraversal();
+[%if (opposite.isDefined() and opp_many) {%]
+        boolean inTarget = false;
+[%}%]
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 [%var sourceRel;
 if (er.isMany()) {
-    sourceRel = "g.V(source.getId()).out(\"" + er.name + "\").hasId(target.getId()).hasNext()";
+    sourceRel = "agts.V(source.getId()).out(\"" + er.name + "\").hasId(target.getId()).hasNext()";
 } else {
-    sourceRel = "g.E(delegate).inV().hasId(target.getId()).hasNext()";
+    sourceRel = "agts.E(delegate).inV().hasId(target.getId()).hasNext()";
 }
 // If there is an opposite, need to check that too. The check depends on the
 // multiplicity of the opposite
 var targetRel = ";";
 if (opposite.isDefined()) {
     if (opp_many) {%]
-        boolean inTarget = false;
-        try {
-            inTarget = g.V(target.getId()).out("[%=opposite%]").hasId(source.getId()).hasNext();
+            inTarget = agts.V(target.getId()).out("[%=opposite%]").hasId(source.getId()).hasNext();
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
-        finally {
-            finishTraversal(g);
-        }
-        g = startTraversal();
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 [%      targetRel = " && inTarget;";%]
 [%  } else {
         targetRel = " && source.equals(target." + opposite + "().get());";%]
 [%  }
 }%]
-        try {
 		  result = [%=sourceRel%][%=targetRel%]
-		}
-		finally {
-            finishTraversal(g);
+		} catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
 	}
@@ -246,66 +240,45 @@ if (opposite.isDefined()) {
         return null;
 [%}%]
     }
-
-    @Override
-    public void delegate(Edge delegate) {
-[%if (not er.isMany()) {%]
-        this.delegate = delegate;
-[%}%]
-    }
     
     @Override
-    public void graphTraversalSource(GraphTraversalSource gts) {
-        this.gts = gts;
+    public GraphTraversalSource graphTraversalSource() {
+        return gts;
     }
         
-    
     // PRIVATE API
     
     @Override
     public void set([%=targetType%] target) {
-        GraphTraversalSource g = startTraversal();
-        try {
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 [%if (er.isMany()) {%]
-            g.V(source.getId()).addE("[%=er.name%]").to(g.V(target.getId())).iterate();
+            agts.V(source.getId()).addE("[%=er.name%]")
+                    .to(agts.V(target.getId())).iterate();
 [%} else {%]
-            delegate = g.V(source.getId()).addE("[%=er.name%]").to(g.V(target.getId())).next();
+            delegate = agts.V(source.getId()).addE("[%=er.name%]")
+                    .to(agts.V(target.getId())).next();
 [%}%]
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            finishTraversal(g);
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         
     }
     
     @Override
     public void remove([%=targetType%] target) {
-        GraphTraversalSource g = startTraversal();
-        try {
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 [%if (er.isMany()) {%]
-            g.V(source.getId()).outE("[%=er.name%]").as("e").inV().hasId(target.getId()).select("e").drop().iterate();
+            agts.V(source.getId())
+                    .outE("[%=er.name%]")
+                    .as("e").inV()
+                    .hasId(target.getId())
+                    .select("e").drop().iterate();
 [%} else {%]
-            g.E(delegate).drop();
+            agts.E(delegate).drop();
             delegate = null;
 [%}%]
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            finishTraversal(g);
-        }
-    }
-    
-    private GraphTraversalSource startTraversal() {
-        return this.gts.clone();
-    }
-    
-    private void finishTraversal(GraphTraversalSource g) {
-        try {
-            g.close();
         } catch (Exception e) {
-            // Fail silently?
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
     }
-
 }

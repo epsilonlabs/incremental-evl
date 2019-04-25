@@ -6,9 +6,6 @@ public interface GremlinWrapper<E> {
 
 	E delegate();
 
-	void delegate(E delegate);
-
-
-	void graphTraversalSource(GraphTraversalSource gts);
+	GraphTraversalSource graphTraversalSource();
 
 }

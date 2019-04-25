@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -23,29 +23,44 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region ModelElementTraceImports on begin **/
 /** protected region ModelElementTraceImports end **/
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
 /**
  * Implementation of IModelElementTrace. 
  */
+@SuppressWarnings("unused") 
 public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrapper<Vertex> {
     
-
     /** The graph traversal source for all navigations */
-    private GraphTraversalSource gts;
+    private final GraphTraversalSource gts;
     
     /** The delegate Vertex */
     private Vertex delegate;
+    
+    /** The factory used to wrap the vertex's incident vertices */
+    private TraceFactory wrapperFactory;
+    
+    /**
+     * The id.
+     */
+    private Object id;
+
+    /**
+     * The uri.
+     */
+    private String uri;
+
     
     /**
      * The properties.
@@ -68,36 +83,53 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
     private IModelElementTraceHasKind kind;
 
     /**
-     * Empty constructor for deserialization.
+     * Empty constructor for de/-serialization.
      */    
-    public ModelElementTraceGremlin() { }
+    // public ModelElementTraceGremlin() { }
+    
+    /**
+     * Constructor for factory, only needs wrapped vertex, traversal source and factory
+     */
+    public ModelElementTraceGremlin (
+        Vertex vertex,
+        GraphTraversalSource gts,
+        TraceFactory wrapperFactory) {
+        this.delegate = vertex;
+        this.gts = gts;
+        this.wrapperFactory = wrapperFactory;
+    }
     
     /**
      * Instantiates a new ModelElementTraceGremlin. The ModelElementTraceGremlin is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
     public ModelElementTraceGremlin(
-        String uri, IModelTypeTrace type, IModelTrace container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        String uri,
+        IModelTypeTrace type,
+        IModelTrace container,
+        Vertex vertex,
+        GraphTraversalSource gts,
+        TraceFactory wrapperFactory) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
-        GraphTraversalSource g = startTraversal();
-        try {
-            g.V(delegate)
+        this.wrapperFactory = wrapperFactory;
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            agts.V(delegate)
             .property("uri", uri)
             .iterate();
         }
-        finally {
-            finishTraversal(g);
+        catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         if (!container.elements().create(this)) {
             throw new TraceModelDuplicateElement();
         };
         // Derived Features
-        this.properties = new ModelElementTraceHasPropertiesGremlin(this, gts, BaseTraceFactory.getFactory());
+        // this.properties = new ModelElementTraceHasPropertiesGremlin(this, gts, wrapperFactory);
         // Derived Features
-        this.type = new ModelElementTraceHasTypeGremlin(this, gts, BaseTraceFactory.getFactory());
+        // this.type = new ModelElementTraceHasTypeGremlin(this, gts, wrapperFactory);
         // Derived Features
-        this.kind = new ModelElementTraceHasKindGremlin(this, gts, BaseTraceFactory.getFactory());
+        // this.kind = new ModelElementTraceHasKindGremlin(this, gts, wrapperFactory);
         try {
 	        this.type.create(type);
         } catch (TraceModelConflictRelation ex) {
@@ -120,35 +152,33 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
      
     @Override
     public String getUri() {
-        GraphTraversalSource g = startTraversal();
-        String result = null;
-        try {
-	        try {
-	            result = (String) g.V(delegate).values("uri").next();
-	        } catch (NoSuchElementException ex) {
-	            /** protected region uri on begin **/
+        if (uri == null) {
+	        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+		        try {
+		            uri = (String) agts.V(delegate).values("uri").next();
+		        } catch (NoSuchElementException ex) {
+		            /** protected region uri on begin **/
 	            // TODO Add default return value for ModelElementTraceGremlin.getUri
 	            throw new IllegalStateException("Add default return value for ModelElementTraceGremlin.getUri", ex);
 	            /** protected region uri end **/
-	        }
-	    } finally {
-            finishTraversal(g);
-        }    
-        return result;
+		        }
+		    } catch (Exception e) {
+                throw new IllegalStateException("There was an error during graph traversal.", e);
+            }
+	    }    
+        return uri;
     }
     
     @Override
     public IModelElementTraceHasProperties properties() {
         if (properties == null) {
-            properties = new ModelElementTraceHasPropertiesGremlin(this, this.gts, BaseTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("properties");
+            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("properties");
                 if (gt.hasNext()) {
-                    ((ModelElementTraceHasPropertiesGremlin)properties).delegate(gt.next());
+                    properties = new ModelElementTraceHasPropertiesGremlin(this, this.gts, wrapperFactory);
                 }
-            } finally {
-                finishTraversal(g);
+            } catch (Exception e) {
+                throw new IllegalStateException("There was an error during graph traversal.", e);
             }
         }
         return properties;
@@ -157,15 +187,13 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
     @Override
     public IModelElementTraceHasModelTrace modelTrace() {
         if (modelTrace == null) {
-            modelTrace = new ModelElementTraceHasModelTraceGremlin(this, this.gts, BaseTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("modelTrace");
+            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("modelTrace");
                 if (gt.hasNext()) {
-                    ((ModelElementTraceHasModelTraceGremlin)modelTrace).delegate(gt.next());
+                    modelTrace = new ModelElementTraceHasModelTraceGremlin(this, gt.next(), this.gts, wrapperFactory);
                 }
-            } finally {
-                finishTraversal(g);
+            } catch (Exception e) {
+                throw new IllegalStateException("There was an error during graph traversal.", e);
             }
         }
         return modelTrace;
@@ -174,15 +202,13 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
     @Override
     public IModelElementTraceHasType type() {
         if (type == null) {
-            type = new ModelElementTraceHasTypeGremlin(this, this.gts, BaseTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("type");
+            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("type");
                 if (gt.hasNext()) {
-                    ((ModelElementTraceHasTypeGremlin)type).delegate(gt.next());
+                    type = new ModelElementTraceHasTypeGremlin(this, gt.next(), this.gts, wrapperFactory);
                 }
-            } finally {
-                finishTraversal(g);
+            } catch (Exception e) {
+                throw new IllegalStateException("There was an error during graph traversal.", e);
             }
         }
         return type;
@@ -191,46 +217,41 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
     @Override
     public IModelElementTraceHasKind kind() {
         if (kind == null) {
-            kind = new ModelElementTraceHasKindGremlin(this, this.gts, BaseTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("kind");
+            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("kind");
                 if (gt.hasNext()) {
-                    ((ModelElementTraceHasKindGremlin)kind).delegate(gt.next());
+                    kind = new ModelElementTraceHasKindGremlin(this, this.gts, wrapperFactory);
                 }
-            } finally {
-                finishTraversal(g);
+            } catch (Exception e) {
+                throw new IllegalStateException("There was an error during graph traversal.", e);
             }
         }
         return kind;
     }
 
     @Override
-    public IPropertyTrace getOrCreatePropertyTrace(String name) throws EolIncrementalExecutionException {
-        GraphTraversalSource g = startTraversal();
+    public IPropertyTrace getOrCreatePropertyTrace(String name) throws EolIncrementalExecutionException {    
         PropertyTraceGremlin propertyTrace = null;
-        try {
-            GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("properties").has("name", name);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            GraphTraversal<Vertex, Vertex> gt = agts.V(delegate).out("properties").has("name", name);
             if (gt.hasNext()) {
-                propertyTrace = new PropertyTraceGremlin();
-                propertyTrace.delegate(gt.next());
-                propertyTrace.graphTraversalSource(gts);
+                propertyTrace = new PropertyTraceGremlin(gt.next(), gts, wrapperFactory);
             }
             else {
                 Vertex v = null;
                 try {
-                    v = g.addV("PropertyTrace").property("tag", GremlinUtils.identityToString(name, this)).next();
+                    v = agts.addV("PropertyTrace").property("tag", GremlinUtils.identityToString(name, this)).next();
                     /* protected region propertyTraceTypeOverride on begin */
-                    propertyTrace = new PropertyTraceGremlin(name, this, v, gts); 
+                    propertyTrace = new PropertyTraceGremlin(name, this, v, gts, wrapperFactory); 
                     /* protected region propertyTraceTypeOverride end */
                 } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                    g.V(v).as("v").properties().drop().select("v").drop();
+                    agts.V(v).as("v").properties().drop().select("v").drop();
                     throw new EolIncrementalExecutionException("Error creating requested PropertyTrace", e);
                 }
             }
-        } finally {
-            finishTraversal(g);
-        }  
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
+        } 
         return propertyTrace;
     }      
     
@@ -291,30 +312,10 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
     public Vertex delegate() {
         return delegate;
     }
-
-    @Override
-    public void delegate(Vertex delegate) {
-        this.delegate = delegate;
-    }
     
     @Override
-    public void graphTraversalSource(GraphTraversalSource gts) {
-        this.gts = gts;
-    }
-    
-    protected GraphTraversalSource graphTraversalSource() {
+    public GraphTraversalSource graphTraversalSource() {
         return this.gts;
     }
     
-    protected GraphTraversalSource startTraversal() {
-        return this.gts.clone();
-    }
-    
-    protected void finishTraversal(GraphTraversalSource g) {
-        try {
-            g.close();
-        } catch (Exception e) {
-            // Fail silently?
-        }
-    }
 }

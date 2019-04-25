@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-25.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -30,7 +30,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
-public abstract class ModuleExecutionTraceGremlinRepositoryImpl implements IModuleExecutionTraceRepository {
+public abstract class ModuleExecutionTraceGremlinRepositoryImpl<E extends IModuleExecutionTrace> implements IModuleExecutionTraceRepository<E> {
 
     private static final Logger logger = LoggerFactory.getLogger(ModuleExecutionTraceGremlinRepositoryImpl.class);
  

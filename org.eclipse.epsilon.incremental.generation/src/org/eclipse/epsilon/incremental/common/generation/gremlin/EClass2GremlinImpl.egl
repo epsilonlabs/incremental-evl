@@ -13,7 +13,6 @@
  * A template to generate an implementation of an EClass that can be used as a DTO.
  */
 import "../Ecore2JavaTemplates.egl";
-var factory :String = ec.getEPackage().name.firstToUpperCase() + "TraceFactory";
 %]
 [%=getHeader()%]
 package [%=qp%].trace.impl;
@@ -30,9 +29,6 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%];
-import [%=qp%].util.[%=factory%];
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 [%=out.startPreserve("/**", "**/", ec.name + "Imports", true)%]
 
 [%=out.stopPreserve()%]
@@ -42,6 +38,10 @@ import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionEx
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 [%
 for (imp in ec.getRequiredImports(qp+".trace", interPrefix, interSufix, classPrefix, classSufix, true, true)) {%]
 import [%=imp%];
@@ -53,12 +53,25 @@ import [%=imp%];
 @SuppressWarnings("unused") 
 public class [%=ec.getJavaClassName(classPrefix, classSufix)%] implements [%=ec.getJavaInterfaceName(interPrefix, interSufix)%], GremlinWrapper<Vertex> {
     
-
     /** The graph traversal source for all navigations */
-    private GraphTraversalSource gts;
+    private final GraphTraversalSource gts;
     
     /** The delegate Vertex */
     private Vertex delegate;
+    
+    /** The factory used to wrap the vertex's incident vertices */
+    private TraceFactory wrapperFactory;
+    
+[%  // Craete a field for each attribute
+for (ea in ec.getEAllAttributes().select(ea | not ea.derived)) {
+    var multi = "List";
+    if (ea.isOrdered()) { multi = "Set"; }%]
+    /**
+     * The [%=ea.name%].
+     */
+    private [%=ea.getGetterReturnType(multi)%] [%=ea.name%];
+
+[%}%]
     
 [%  // Craete a field for each reference
 for (er in ec.getEAllReferences()) {%]
@@ -75,29 +88,41 @@ for (er in ec.getEAllReferences()) {%]
 [%}
 %]
     /**
-     * Empty constructor for deserialization.
+     * Empty constructor for de/-serialization.
      */    
-    public [%=ec.getJavaClassName(classPrefix, classSufix)%]() { }
+    // public [%=ec.getJavaClassName(classPrefix, classSufix)%]() { }
+    
+    /**
+     * Constructor for factory, only needs wrapped vertex, traversal source and factory
+     */
+    public [%=ec.getJavaClassName(classPrefix, classSufix)%] (
+        Vertex vertex,
+        GraphTraversalSource gts,
+        TraceFactory wrapperFactory) {
+        this.delegate = vertex;
+        this.gts = gts;
+        this.wrapperFactory = wrapperFactory;
+    }
     
     /**
      * Instantiates a new [%=ec.getJavaClassName(classPrefix, classSufix)%]. The [%=ec.getJavaClassName(classPrefix, classSufix)%] is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
     public [%=ec.getJavaClassName(classPrefix, classSufix)%](
-        [%=ec.getConstructorParameters(true, interPrefix, interSufix)%]) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        [%=ec.getConstructorParameters(false, interPrefix, interSufix)%]) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
+        this.wrapperFactory = wrapperFactory;
 [%if (not ec.getIndexAttributes().isEmpty()) {%]
-        GraphTraversalSource g = startTraversal();
-        try {
-            g.V(delegate)
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            agts.V(delegate)
 [%  for (index in ec.getIndexAttributes()) {%]
             .property("[%=index.name%]", [%=index.name%])
 [%  }%]
             .iterate();
         }
-        finally {
-            finishTraversal(g);
+        catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
 [%}
 var container = ec.getContainerReference().at(0);
@@ -120,12 +145,12 @@ if (container.isDefined()) {
 [%
 for (er in ec.getEqualsReferences().excluding(container)) {%]
         // Equals References
-        this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, gts, [%=factory%].getFactory());
+        // this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, gts, wrapperFactory);
 [%}
 var derivedFeatures = ec.getEAllReferences().select(er | not er.isDerived());
 for (er in derivedFeatures.excludingAll(ec.getEqualsReferences())) {%]
         // Derived Features
-        this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, gts, [%=factory%].getFactory());
+        // this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, gts, wrapperFactory);
 [%}
 var createRefs = ec.getEqualsReferences().includingAll(derivedFeatures.excludingAll(ec.getEqualsReferences()))
     .select(er | (er <> ec.getContainerReference().at(0)) and er.isRequired() and not er.isMany());
@@ -153,21 +178,21 @@ if (not createRefs.isEmpty()) {%]
 [%  if (ea.isID()){%]
         return ([%=ea.getGetterReturnType(multi)%]) delegate == null ? null : delegate.id();
 [%  } else {%]
-        GraphTraversalSource g = startTraversal();
-        [%=ea.getGetterReturnType(multi)%] result = null;
-        try {
-	        try {
-	            result = ([%=ea.getGetterReturnType(multi)%]) g.V(delegate).values("[%=ea.name%]").next();
-	        } catch (NoSuchElementException ex) {
-	            [%=out.startPreserve("/**", "**/", ea.name, true)%]
-	            // TODO Add default return value for [%=ec.getJavaClassName(classPrefix, classSufix)%].[%=ea.getGetterMethodName()%]
-	            throw new IllegalStateException("Add default return value for [%=ec.getJavaClassName(classPrefix, classSufix)%].[%=ea.getGetterMethodName()%]", ex);
-	            [%=out.stopPreserve()%]
-	        }
-	    } finally {
-            finishTraversal(g);
-        }    
-        return result;
+        if ([%=ea.name%] == null) {
+	        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+		        try {
+		            [%=ea.name%] = ([%=ea.getGetterReturnType(multi)%]) agts.V(delegate).values("[%=ea.name%]").next();
+		        } catch (NoSuchElementException ex) {
+		            [%=out.startPreserve("/**", "**/", ea.name, true)%]
+		            // TODO Add default return value for [%=ec.getJavaClassName(classPrefix, classSufix)%].[%=ea.getGetterMethodName()%]
+		            throw new IllegalStateException("Add default return value for [%=ec.getJavaClassName(classPrefix, classSufix)%].[%=ea.getGetterMethodName()%]", ex);
+		            [%=out.stopPreserve()%]
+		        }
+		    } catch (Exception e) {
+                throw new IllegalStateException("There was an error during graph traversal.", e);
+            }
+	    }    
+        return [%=ea.name%];
 [%  }%]
     }
     
@@ -177,11 +202,10 @@ if (not createRefs.isEmpty()) {%]
 [%  if (ea.isID()){%]
         throw new UnsupportedOperationException("Id is final");
 [%  } else {%]
-        GraphTraversalSource g = startTraversal();
-        try {
-            g.V(delegate).property("[%=ea.name%]", value).iterate();
-        } finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            agts.V(delegate).property("[%=ea.name%]", value).iterate();
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
 [%  }%]  
     }   
@@ -214,15 +238,17 @@ if (not createRefs.isEmpty()) {%]
     @Override
     public [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] [%=er.name%]() {
         if ([%=er.name%] == null) {
-            [%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, this.gts, [%=factory%].getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("[%=er.name%]");
+            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("[%=er.name%]");
                 if (gt.hasNext()) {
-                    (([%=er.getRelationJavaClassName(classPrefix, classSufix)%])[%=er.name%]).delegate(gt.next());
+[%  if (not er.isMany()) {%]
+                    [%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, gt.next(), this.gts, wrapperFactory);
+[%  } else {%]
+                    [%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, this.gts, wrapperFactory);
+[%  }%]
                 }
-            } finally {
-                finishTraversal(g);
+            } catch (Exception e) {
+                throw new IllegalStateException("There was an error during graph traversal.", e);
             }
         }
         return [%=er.name%];
@@ -249,7 +275,6 @@ for (er in ec.getEAllReferences().select(er | er.isContainment())) {
             var erType = er.getEReferenceType();%]
     @SuppressWarnings("unchecked")
     public <A extends [%=erType.getJavaInterfaceName(interPrefix, interSufix)%]> A getOrCreate[%=erType.name%](Class<A> [%=erType.name.firstToLowerCase()%]Class, Object... args) throws EolIncrementalExecutionException {
-        GraphTraversalSource g = startTraversal();
         A result = null;
         switch([%=erType.name.firstToLowerCase()%]Class.getSimpleName()) {
 [%          for (sc in subClasses) {
@@ -412,32 +437,12 @@ for (er in ec.getEqualsReferences()) {
     public Vertex delegate() {
         return delegate;
     }
-
-    @Override
-    public void delegate(Vertex delegate) {
-        this.delegate = delegate;
-    }
     
     @Override
-    public void graphTraversalSource(GraphTraversalSource gts) {
-        this.gts = gts;
-    }
-    
-    protected GraphTraversalSource graphTraversalSource() {
+    public GraphTraversalSource graphTraversalSource() {
         return this.gts;
     }
     
-    protected GraphTraversalSource startTraversal() {
-        return this.gts.clone();
-    }
-    
-    protected void finishTraversal(GraphTraversalSource g) {
-        try {
-            g.close();
-        } catch (Exception e) {
-            // Fail silently?
-        }
-    }
 }
 [%
 @template
@@ -447,8 +452,7 @@ operation EClass factoryMethod(ref : EReference, subClass : Boolean, interPrefix
     var params = self.getEAttributeParameters().includingAll(self.getRequiredFeatureParameters(interPrefix, interSufix));
     var retType = self.getJavaInterfaceName(interPrefix, interSufix);%]
 @Override
-public [%=retType%] getOrCreate[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException {
-    GraphTraversalSource g = startTraversal();
+public [%=retType%] getOrCreate[%=self.name%]([%=params.concat(", ")%]) throws EolIncrementalExecutionException {    
     [%=self.getJavaClassName(classPrefix, classSufix)%] [%=instanceName%] = null;
     [%=self.createReferenceInstance(ref, subClass, interPrefix, interSufix, classPrefix, classSufix, false)%]
     return [%=instanceName%];
@@ -477,9 +481,7 @@ operation EClass createReferenceInstance(ref : EReference, subClass : Boolean, i
     vars.add("v");
     vars.add("gts");
     var retType = self.getJavaInterfaceName(interPrefix, interSufix);
-    %]
-try {
-[%  var traversal = "g.V(delegate).out(\"" + ref.name + "\")";
+    var traversal = "agts.V(delegate).out(\"" + ref.name + "\")";
     if (ref.isMany()) {    
         if (ref.isUnique()) {
             for (param in indexAttr) {
@@ -492,49 +494,48 @@ try {
         else {
             traversal = "";
         }
-    }
-    if (traversal.length() == 0) {%]
+    }%]
+try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+[%  if (traversal.length() == 0) {%]
     Vertex v = null;
     try {
-[%  if (indexAttr.size() > 0) {%]
-        v = g.addV("[%=self.name%]").property("tag", GremlinUtils.identityToString([%=ids.concat(", ")%])).next();
-[%  } else {%]
-        v = g.addV("[%=self.name%]").next();
-[%  }%]
+[%      if (indexAttr.size() > 0) {%]
+        v = agts.addV("[%=self.name%]").property("tag", GremlinUtils.identityToString([%=ids.concat(", ")%])).next();
+[%      } else {%]
+        v = agts.addV("[%=self.name%]").next();
+[%      }%]
         [%=out.startPreserve("/*", "*/", instanceName+"TypeOverride", true)%]
-        [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=vars.concat(", ")%]);
+        [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=vars.concat(", ")%], wrapperFactory);
         [%=out.stopPreserve()%]
     } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-        g.V(v).as("v").properties().drop().select("v").drop();
+        agts.V(v).as("v").properties().drop().select("v").drop();
         throw new EolIncrementalExecutionException("Error creating requested [%=self.name%]", e);
     }
 [%  } else {%]
     GraphTraversal<Vertex, Vertex> gt = [%=traversal%];
     if (gt.hasNext()) {
-        [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]();
-        [%=instanceName%].delegate(gt.next());
-        [%=instanceName%].graphTraversalSource(gts);
+        [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%](gt.next(), gts, wrapperFactory);
     }
     else {
         Vertex v = null;
         try {
 [%  if (indexAttr.size() > 0) {%]
-            v = g.addV("[%=self.name%]").property("tag", GremlinUtils.identityToString([%=ids.concat(", ")%])).next();
+            v = agts.addV("[%=self.name%]").property("tag", GremlinUtils.identityToString([%=ids.concat(", ")%])).next();
 [%  } else {%]
-            v = g.addV("[%=self.name%]").next();
+            v = agts.addV("[%=self.name%]").next();
 [%  }%]
             [%=out.startPreserve("/*", "*/", instanceName+"TypeOverride", true)%]
-            [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=vars.concat(", ")%]); 
+            [%=instanceName%] = new [%=self.getJavaClassName(classPrefix, classSufix)%]([%=vars.concat(", ")%], wrapperFactory); 
             [%=out.stopPreserve()%]
         } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-            g.V(v).as("v").properties().drop().select("v").drop();
+            agts.V(v).as("v").properties().drop().select("v").drop();
             throw new EolIncrementalExecutionException("Error creating requested [%=self.name%]", e);
         }
     }
 [%  }%]
-} finally {
-    finishTraversal(g);
-}  
+} catch (Exception e) {
+    throw new IllegalStateException("There was an error during graph traversal.", e);
+} 
 [%}
 
 
@@ -562,6 +563,7 @@ operation EClass getConstructorParameters(signature : Boolean, interPrefix:Strin
     }
     results.add("Vertex vertex");
     results.add("GraphTraversalSource gts");
+    results.add("TraceFactory wrapperFactory");
     if (signature) {
 %][%=results.concat(", ")%]
 [%  } else {
