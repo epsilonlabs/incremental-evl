@@ -14,6 +14,7 @@ package org.eclipse.epsilon.evl.incremental.util;
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.eclipse.epsilon.evl.incremental.TinkerpopGraphProvider;
 
@@ -28,7 +29,7 @@ public class ArangoDBGraphProvider implements TinkerpopGraphProvider {
      * augmented with the user specific information: uri, user:passwrd, etc. 
      * @return The base Apache Configuration
      */
-    public Configuration getBaseConfiguration() {
+    private Configuration getBaseConfiguration() {
         final Configuration conf = new BaseConfiguration();
         // Respect the commas in relations
         ((AbstractConfiguration) conf).setListDelimiter('/');
@@ -112,4 +113,16 @@ public class ArangoDBGraphProvider implements TinkerpopGraphProvider {
         conf.addProperty(ArangoDBGraph.PROPERTY_KEY_PREFIX + ".graph.relation", "properties:ModelElementTrace->PropertyTrace");
         return conf;
     }
+
+	@Override
+	public void close() throws Exception {
+		// TODO Implement AutoCloseable.close
+		throw new RuntimeException("Unimplemented Method AutoCloseable.close invoked.");
+	}
+
+	@Override
+	public GraphTraversalSource getTraversalSource() {
+		// TODO Implement TinkerpopGraphProvider.getTraversalSource
+		throw new RuntimeException("Unimplemented Method TinkerpopGraphProvider.getTraversalSource invoked.");
+	}
 }

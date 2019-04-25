@@ -429,6 +429,12 @@ public class EvlModuleTraceRepositoryImpl implements IEvlModuleTraceRepository {
 		// TODO Implement IEvlModuleTraceRepository.getModelElementTraces
 		throw new RuntimeException("Unimplemented Method IEvlModuleTraceRepository.getModelElementTraces invoked.");
 	}
+
+	@Override
+	public Set<IReexecutionTrace> findPropertyAccessExecutionTraces(IPropertyAccess pa) {
+		// TODO Implement IEvlModuleTraceRepository.findPropertyAccessExecutionTraces
+		throw new RuntimeException("Unimplemented Method IEvlModuleTraceRepository.findPropertyAccessExecutionTraces invoked.");
+	}
 	
 	
 //	/**

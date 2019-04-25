@@ -9,19 +9,23 @@ import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTraceGremlinRepositoryImpl;
 
 public class IncrementalEvlTinkerpopGuiceModule extends AbstractEvlTracelGuiceModule {
+
+	private final GraphTraversalSource traversalSource;
 	
-	public void bindGraphTraversalSourceInstance(GraphTraversalSource gtsInstance) {
-		bind(GraphTraversalSource.class).toInstance(gtsInstance);
+	public IncrementalEvlTinkerpopGuiceModule(GraphTraversalSource trvrslSrc) {
+		super();
+		traversalSource = trvrslSrc;
 	}
-	
+
+
 	@Override
 	protected void configure() {
 		bind(IEvlModuleTraceRepository.class).to(EvlModuleTraceGremlinRepositoryImpl.class);
 		bind(IModelTraceRepository.class).to(ModelTraceGremlinRepositoryImpl.class);
 		bind(IEvlRootElementsFactory.class).to(EvlTraceTinkerpopFactory.class);
 		bind(IEvlExecutionTraceManager.class).to(TinkerPopEvlExecutionTraceManager.class);
-		bind(IEvlModuleIncremental.class).to(IncrementalEvlModule.class);
-		bind(TinkerpopGraphProvider.class).to(BitsyGraphProvider.class);
+		bind(IEvlModuleIncremental.class).to(IncrementalEvlModule.class);		
+		bind(GraphTraversalSource.class).toInstance(traversalSource);
 	}
 	
 

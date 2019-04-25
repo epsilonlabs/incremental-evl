@@ -35,11 +35,11 @@ public interface IIncrementalModule extends IModule {
 	Set<IIncrementalModel> getTargets();
 
 	/**
-	 * Set the execution trace manager that will be used by this module.
-	 * 
-	 * @param manager
+	 * We use a checksum as a form of ID so we can recognise the same file/code executed from different
+	 * locations.
+	 * @return The checksum (MD5) for the code/file being executed
 	 */
-	// void setExecutionTraceManager(T manager);
+	String getChksum();
 
 	/**
 	 * Enable/disable listening to model changes (in the used incremental models)

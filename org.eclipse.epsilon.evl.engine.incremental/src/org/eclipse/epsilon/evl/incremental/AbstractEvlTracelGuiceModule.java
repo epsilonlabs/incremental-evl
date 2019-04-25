@@ -22,14 +22,14 @@ import com.google.inject.Injector;
  *  <li> {@link IEvlExecutionTraceManager}
  *  <li> {@link IEvlModuleIncremental}
  * </ul>
- * and provide the appropiate bindings in the {@link #configure()} method.
+ * and provide the appropriate bindings in the {@link #configure()} method.
  * @author Horacio Hoyos Rodriguez
  *
  */
 public abstract class AbstractEvlTracelGuiceModule extends AbstractModule {
 	
 	
-	public void validateBindings(Injector injector) {
+	public final void validateBindings(Injector injector) {
 		Set<Class<?>> reqInterfaces = new HashSet<>(Arrays.asList(
 				IEvlModuleTraceRepository.class,
 				IModelTraceRepository.class,

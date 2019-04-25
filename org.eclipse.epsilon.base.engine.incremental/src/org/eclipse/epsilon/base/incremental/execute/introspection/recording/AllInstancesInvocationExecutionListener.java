@@ -92,10 +92,9 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 				boolean ofKind = !"allOfType".equals(operationName);
 				try {
 					record(currentAst.getModuleElementTrace(), currentAst.getCurrentContext(), ofKind, typeName, (IIncrementalBaseContext) context);
-				} catch (EolIncrementalExecutionException e) {
-					logger.warn("Unable to create traces for the execution of {}", ast, e);
-				} catch (EolRuntimeException e) {
-					logger.warn("Unable to create traces for the execution of {}", ast, e);
+				} catch (EolIncrementalExecutionException | EolRuntimeException e) {
+					logger.error("Unable to create AllInstances traces for the execution of {}", ast, e);
+					throw new IllegalStateException(String.format("Unable to create AllInstances traces for the execution of %s", ast, e));
 				}
 			}
 		}
@@ -156,9 +155,8 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 		
 		IModuleExecutionTraceRepository executionTraceRepository = context.getTraceManager()
 				.getExecutionTraceRepository();
-		String moduleUri = context.getModule().getUri().toString();
 		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository
-				.getModuleExecutionTraceByIdentity(moduleUri);
+				.getModuleExecutionTraceByIdentity(context.getModule().getChksum());
 		if (moduleExecutionTrace == null) {
 			throw new EolIncrementalExecutionException(
 					"A moduleExecutionTrace was not found for the module under execution. "

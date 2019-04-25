@@ -26,17 +26,13 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
  */
 public class BaseTraceFactory implements TraceFactory {
     
-    private static final TraceFactory FACTORY = new BaseTraceFactory ();
 
-    private BaseTraceFactory () {
+    public BaseTraceFactory () {
         
     }
-
-    public static TraceFactory getFactory() {
-        return FACTORY;
-    }
     
-    public Object createTraceElement(Element delegate, GraphTraversalSource gts) {
+    @Override
+    public Object createTraceElement(Vertex delegate, GraphTraversalSource gts) {
         String label = delegate.label();
         switch (label) {
   
@@ -104,7 +100,9 @@ public class BaseTraceFactory implements TraceFactory {
         /* protected region BaseTraceFactory end */
         
         }
-        throw new IllegalArgumentException("Trace Class unkown. If you changed the metamodel make sure "
-                + "the Ecore2Domain factory is executed to regenerate this factory.");
+        throw new IllegalArgumentException(
+        		String.format("Trace Class %s not present in factory. If you changed the metamodel"
+        				+ "make sure the Ecore2DomainFactoryImpl egl is executed to regenerate this "
+        				+ "factory.", label));
     }
 }

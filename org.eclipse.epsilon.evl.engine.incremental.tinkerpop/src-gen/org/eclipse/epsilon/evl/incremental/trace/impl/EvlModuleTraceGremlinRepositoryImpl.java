@@ -54,17 +54,22 @@ import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
 import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
+import com.google.inject.Inject;
 /** protected region EvlModuleTraceRepositoryImplImports end **/
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class EvlModuleTraceGremlinRepositoryImpl implements IEvlModuleTraceRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(EvlModuleTraceGremlinRepositoryImpl.class);
-    private GraphTraversalSource gts; 
+    private final GraphTraversalSource gts; 
     
-    public void setGraphTraversalSource(GraphTraversalSource gts) {
-		this.gts = gts;
+    
+    @Inject
+	public EvlModuleTraceGremlinRepositoryImpl(GraphTraversalSource trvrslSrc) {
+		super();
+		this.gts = trvrslSrc;
 	}
 
 	@Override
@@ -426,6 +431,30 @@ public class EvlModuleTraceGremlinRepositoryImpl implements IEvlModuleTraceRepos
 	}
 	
 	@Override
+	public Set<IReexecutionTrace> findPropertyAccessExecutionTraces(IPropertyAccess pa) {
+		GraphTraversalSource g = gts.clone();
+		GraphTraversal<Vertex, Path> find_gt = g.V(pa.getId())
+				.out("from")
+				.as("me")
+				.select("a")
+				.out("in")
+				.as("c")
+				.select("a")
+				.path();
+		Set<IReexecutionTrace> result = new HashSet<>();
+		while (find_gt.hasNext()) {
+			Optional<IReexecutionTrace> ret = makeRexecutionTrace(find_gt);
+			ret.ifPresent(result::add);
+		}
+		try {
+			find_gt.close();
+        } catch (Exception e) {
+            logger.error("Error closing GraphTraversalSource", e);
+        }
+		return result;
+	}
+	
+	@Override
 	public IInvariantTrace findInvariantTraceinContext(IContextTrace contextTrace, String invariantName) {
 		GraphTraversalSource g = gts.clone();
 		GraphTraversal<Vertex, Vertex> gt = g.V(contextTrace.getId()).out("constraints").has("name", invariantName);
@@ -558,6 +587,7 @@ public class EvlModuleTraceGremlinRepositoryImpl implements IEvlModuleTraceRepos
 			PropertyAccessGremlin pa = new PropertyAccessGremlin();
 			pa.delegate(find_gt.next());
 			pa.graphTraversalSource(gts);
+			result.add(pa);
 		}
 		try {
 			find_gt.close();

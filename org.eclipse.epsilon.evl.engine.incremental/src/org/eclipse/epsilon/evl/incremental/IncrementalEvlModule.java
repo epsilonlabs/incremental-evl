@@ -72,10 +72,7 @@ import org.eclipse.epsilon.executors.EpsilonExecutorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Module;
 
 /**
  * An IncrementalEvlModule.
@@ -439,7 +436,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 						boolean found = false;
 						while (it.hasNext()) {
 							IModelAccess ma = it.next();
-							if (ma.modelTrace().get() == mt) {
+							if (ma.modelTrace().get().equals(mt)) {
 								found = true;
 								break;
 							}
@@ -608,7 +605,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 						// If there are not access maybe new element. Do we have any type/kind access?
 						Collection<String> alltypes = im.getAllTypeNamesOf(element);
 						Set<IReexecutionTrace> traces = new HashSet<>();
-						for (String type : alltypes) {
+						for (String type : alltypes) {		// FIXME We can group all missing types, then execute
 							traces.addAll(executionTraceRepo
 									.findAllInstancesExecutionTraces(
 										sourceChksum,
@@ -618,23 +615,19 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 						executeTraces(sourceChksum, im, traces, element);
 					}		
 					else {
-						Set<IReexecutionTrace> traces = null;
+						Set<IReexecutionTrace> traces = new HashSet<>();
 						for (IPropertyAccess pa : pas) {
 							Object newValue = null;
 							newValue = pg.invoke(element, pa.property().get().getName());
 							if (!pa.getValue().equals(newValue)) {
 								// Change
-								traces = executionTraceRepo
-										.findPropertyAccessExecutionTraces(
-											sourceChksum,
-											im.getModelUri(),
-											im.getElementId(element),
-											pa.property().get().getName());
+								traces.addAll(executionTraceRepo
+										.findPropertyAccessExecutionTraces(pa));
 								logger.debug("Found {} traces for the element", traces.size());
 							}
 						}
 						// If any property changed also get all Instance accesses by elements type/kind
-						// and then execute
+						// and then execute. FIXME Can we tell if the property access was after an AllInstances?
 						if (traces != null) {
 							traces.addAll(executionTraceRepo
 									.findAllInstancesExecutionTraces(

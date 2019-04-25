@@ -15,7 +15,6 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSo
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
-import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.evl.incremental.trace.impl.*;
 
 /**
@@ -27,79 +26,74 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.*;
  */
 public class EvlTraceFactory implements TraceFactory {
     
-    private static final TraceFactory FACTORY = new EvlTraceFactory ();
-
-    private EvlTraceFactory () {
-        
-    }
-
-    public static TraceFactory getFactory() {
-        return FACTORY;
+    private final TraceFactory delegate;
+    
+    protected EvlTraceFactory (TraceFactory dlgtFctry) {
+        delegate = dlgtFctry;
     }
     
-    public Object createTraceElement(Element delegate, GraphTraversalSource gts) {
-        String label = delegate.label();
+    public Object createTraceElement(Vertex dlgt, GraphTraversalSource gts) {
+        String label = dlgt.label();
         switch (label) {
   
         case "EvlModuleTrace":
             EvlModuleTraceGremlin evlModuleTrace = new EvlModuleTraceGremlin();
-            evlModuleTrace.delegate((Vertex) delegate);
+            evlModuleTrace.delegate((Vertex) dlgt);
             evlModuleTrace.graphTraversalSource(gts);
             return evlModuleTrace;
   
         case "ContextTrace":
             ContextTraceGremlin contextTrace = new ContextTraceGremlin();
-            contextTrace.delegate((Vertex) delegate);
+            contextTrace.delegate((Vertex) dlgt);
             contextTrace.graphTraversalSource(gts);
             return contextTrace;
   
         case "InvariantTrace":
             InvariantTraceGremlin invariantTrace = new InvariantTraceGremlin();
-            invariantTrace.delegate((Vertex) delegate);
+            invariantTrace.delegate((Vertex) dlgt);
             invariantTrace.graphTraversalSource(gts);
             return invariantTrace;
   
         case "GuardResult":
             GuardResultGremlin guardResult = new GuardResultGremlin();
-            guardResult.delegate((Vertex) delegate);
+            guardResult.delegate((Vertex) dlgt);
             guardResult.graphTraversalSource(gts);
             return guardResult;
   
         case "GuardTrace":
             GuardTraceGremlin guardTrace = new GuardTraceGremlin();
-            guardTrace.delegate((Vertex) delegate);
+            guardTrace.delegate((Vertex) dlgt);
             guardTrace.graphTraversalSource(gts);
             return guardTrace;
   
         case "CheckResult":
             CheckResultGremlin checkResult = new CheckResultGremlin();
-            checkResult.delegate((Vertex) delegate);
+            checkResult.delegate((Vertex) dlgt);
             checkResult.graphTraversalSource(gts);
             return checkResult;
   
         case "CheckTrace":
             CheckTraceGremlin checkTrace = new CheckTraceGremlin();
-            checkTrace.delegate((Vertex) delegate);
+            checkTrace.delegate((Vertex) dlgt);
             checkTrace.graphTraversalSource(gts);
             return checkTrace;
   
         case "MessageTrace":
             MessageTraceGremlin messageTrace = new MessageTraceGremlin();
-            messageTrace.delegate((Vertex) delegate);
+            messageTrace.delegate((Vertex) dlgt);
             messageTrace.graphTraversalSource(gts);
             return messageTrace;
   
         case "SatisfiesAccess":
             SatisfiesAccessGremlin satisfiesAccess = new SatisfiesAccessGremlin();
-            satisfiesAccess.delegate((Vertex) delegate);
+            satisfiesAccess.delegate((Vertex) dlgt);
             satisfiesAccess.graphTraversalSource(gts);
             return satisfiesAccess;
         /* protected region EvlTraceFactory on begin */
 
         /* protected region EvlTraceFactory end */
         default:
-            TraceFactory sf = BaseTraceFactory.getFactory();
-            return sf.createTraceElement(delegate, gts);
+            return delegate.createTraceElement(dlgt, gts);
         }
     }
 }

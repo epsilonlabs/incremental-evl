@@ -143,31 +143,33 @@ public class IncrementalEmfModel extends EmfModel implements IIncrementalModel {
 
 		@Override
 		public boolean hasNext() {
-			if (iterators.isEmpty()) {
-				return false;
-			}
 			if (current == null) {
+				if (iterators.isEmpty()) {
+					return false;
+				}
 				current = iterators.poll();
 			}
 			if (current.hasNext()) {
 				return true;
 			}
 			current = iterators.poll();
+			if (current == null) {
+				return false;
+			}
 			return current.hasNext();
 			
 		}
 
 		@Override
 		public EObject next() {
-			if (!iterators.isEmpty()) {
-				throw new NoSuchElementException();
-			}
 			if (current == null) {
+				if (iterators.isEmpty()) {
+					throw new NoSuchElementException();
+				}
 				current = iterators.poll();
 			}
 			return current.next();
 		}
-		
 	}
 	
 }

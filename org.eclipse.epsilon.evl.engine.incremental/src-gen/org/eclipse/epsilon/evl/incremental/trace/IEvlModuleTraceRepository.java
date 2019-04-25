@@ -91,6 +91,14 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 	 */
 	Set<IReexecutionTrace> findPropertyAccessExecutionTraces(String moduleUri, String modelUri,
 			String elementUri, String propertyName);
+	
+	/**
+	 * Find all ExecutionTraces associated to a PropertyAccess.
+	 *
+	 * @param pa the pa
+	 * @return the sets the
+	 */
+	Set<IReexecutionTrace> findPropertyAccessExecutionTraces(IPropertyAccess pa);
 
 	
 	IInvariantTrace findInvariantTraceinContext(IContextTrace contextTrace, String invariantName);
@@ -118,6 +126,8 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 	 * @return the model element traces
 	 */
 	Collection<IModelElementTrace> getModelElementTraces(String moduleUri, String modelUri, Set<String> filteredIds);
+
+
 
 	/** protected region IEvlModuleTraceRepositry end **/
 

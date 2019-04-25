@@ -112,6 +112,11 @@ public class CsvModelIncrementalTests {
 				e.printStackTrace();
 			}
 		}
+
+		@Override
+		public String getChksum() {
+			return "a57eaa76ca1f4a230c68d7dd5c422f6a";
+		}
 		
 	}
 	

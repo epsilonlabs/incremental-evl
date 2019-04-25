@@ -90,10 +90,9 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 			if (model != null) {
 				try {
 					record(tracedModuleElement.getModuleElementTrace(), tracedModuleElement.getCurrentContext(), model, modelElement, propertyName, result, (IIncrementalBaseContext) context);
-				} catch (EolIncrementalExecutionException e) {
-					logger.warn("Unable to create traces for the execution of {}", ast, e);
-				} catch (EolRuntimeException e) {
-					logger.warn("Unable to create traces for the execution of {}", ast, e);
+				} catch (EolIncrementalExecutionException | EolRuntimeException e) {
+					logger.error("Unable to create PropertyAccess traces for the execution of {}", ast, e);
+					throw new IllegalStateException(String.format("Unable to create PropertyAccess traces for the execution of %s", ast), e);
 				}
 			}
 
@@ -147,9 +146,8 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 				.getExecutionTraceRepository();
 		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
 		
-		String moduleUri = context.getModule().getUri().toString();
 		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository
-				.getModuleExecutionTraceByIdentity(moduleUri);
+				.getModuleExecutionTraceByIdentity(context.getModule().getChksum());
 		if (moduleExecutionTrace == null) {
 			throw new EolIncrementalExecutionException(
 					"A moduleExecutionTrace was not found for the module under execution. "
