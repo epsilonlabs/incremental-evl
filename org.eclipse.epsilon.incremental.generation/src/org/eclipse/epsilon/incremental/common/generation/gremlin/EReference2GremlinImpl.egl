@@ -94,7 +94,7 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
     @Override
 [%if (er.isMany()) {%]
     public Iterator<[%=targetType%]> get() {
-        return new GremlinUtils.IncrementalFactoryIterator<[%=targetType%], Vertex>(getRaw(),
+        return new GremlinUtils.IncrementalFactoryIterator<[%=targetType%]>(getRaw(),
                 gts, factory);
     }
     

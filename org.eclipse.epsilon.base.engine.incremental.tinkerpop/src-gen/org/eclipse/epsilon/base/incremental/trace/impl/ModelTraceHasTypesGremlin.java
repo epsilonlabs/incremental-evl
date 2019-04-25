@@ -62,7 +62,7 @@ public class ModelTraceHasTypesGremlin extends Feature
         
     @Override
     public Iterator<IModelTypeTrace> get() {
-        return new GremlinUtils.IncrementalFactoryIterator<IModelTypeTrace, Vertex>(getRaw(),
+        return new GremlinUtils.IncrementalFactoryIterator<IModelTypeTrace>(getRaw(),
                 gts, factory);
     }
     

@@ -62,7 +62,7 @@ public class ExecutionContextHasContextVariablesGremlin extends Feature
         
     @Override
     public Iterator<IModelElementVariable> get() {
-        return new GremlinUtils.IncrementalFactoryIterator<IModelElementVariable, Vertex>(getRaw(),
+        return new GremlinUtils.IncrementalFactoryIterator<IModelElementVariable>(getRaw(),
                 gts, factory);
     }
     

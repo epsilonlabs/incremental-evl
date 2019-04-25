@@ -11,32 +11,40 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
-import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.structure.util.Attachable;
-import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
+import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 /** protected region ModuleExecutionTraceRepositoryImplImports on begin **/
 /** protected region ModuleExecutionTraceRepositoryImplImports end **/
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-
-public abstract class ModuleExecutionTraceGremlinRepositoryImpl<E extends IModuleExecutionTrace> implements IModuleExecutionTraceRepository<E> {
+/**
+ * A repository for handling elements in the domain of ModuleExecutionTrace.
+ *
+ * @author Horacio Hoyos Rodriguez
+ */
+@SuppressWarnings("unused")
+public abstract class ModuleExecutionTraceGremlinRepositoryImpl implements IModuleExecutionTraceRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ModuleExecutionTraceGremlinRepositoryImpl.class);
  
     protected GraphTraversalSource gts; 
+    protected final TraceFactory factory;
     
-    public ModuleExecutionTraceGremlinRepositoryImpl() {
+    public ModuleExecutionTraceGremlinRepositoryImpl(
+        GraphTraversalSource trvrslSrc, TraceFactory fctry) {
+        gts = trvrslSrc;
+        factory = fctry;
     }
 
  

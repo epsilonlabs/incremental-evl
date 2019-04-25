@@ -118,12 +118,12 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
         // Derived Features
         // this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
         try {
-	        this.from.create(from);
 	        this.element.create(element);
+	        this.from.create(from);
 	        this.in.create(in);
         } catch (TraceModelConflictRelation ex) {
-            ((AccessHasFromGremlin)this.from).delegate().remove();
             ((ElementAccessHasElementGremlin)this.element).delegate().remove();
+            ((AccessHasFromGremlin)this.from).delegate().remove();
             ((AccessHasInGremlin)this.in).delegate().remove();
             throw ex;
         }
@@ -225,18 +225,18 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
         ElementAccessGremlin other = (ElementAccessGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-    if (module == null) {
-        if (other.module != null)
-            return false;
-    }
-        if (!module().get().equals(other.module().get())) {
-            return false;
-        }
     if (element == null) {
         if (other.element != null)
             return false;
     }
         if (!element().get().equals(other.element().get())) {
+            return false;
+        }
+    if (module == null) {
+        if (other.module != null)
+            return false;
+    }
+        if (!module().get().equals(other.module().get())) {
             return false;
         }
         return true; 
@@ -246,10 +246,10 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        IModuleExecutionTrace module = module().get();
-        result = prime * result + ((module == null) ? 0 : module.hashCode());
         IModelElementTrace element = element().get();
         result = prime * result + ((element == null) ? 0 : element.hashCode());
+        IModuleExecutionTrace module = module().get();
+        result = prime * result + ((module == null) ? 0 : module.hashCode());
         return result;
     }
     

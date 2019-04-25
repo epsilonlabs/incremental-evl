@@ -1,5 +1,6 @@
 package org.eclipse.epsilon.base.incremental;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex;
 import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex.Builder;
@@ -8,13 +9,18 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElemen
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModelTraceGremlin;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 
 
 public abstract class GremlinBaseFactoryImpl implements IBaseRootElementsFactory {
     
-
-	public GremlinBaseFactoryImpl() {
+	protected final TraceFactory factory;
+	protected final GraphTraversalSource gts;
+	
+	public GremlinBaseFactoryImpl(TraceFactory factory, GraphTraversalSource gts) {
 		super();
+		this.factory = factory;
+		this.gts = gts;
 	}
 
 	@Override
@@ -28,8 +34,7 @@ public abstract class GremlinBaseFactoryImpl implements IBaseRootElementsFactory
 		pBuilder.setValue(uri);
 		vertexBuilder.addProperty(pBuilder.create());
 		Vertex m = vertexBuilder.create();
-		ModelTraceGremlin result = new ModelTraceGremlin();
-		result.delegate(m);
+		ModelTraceGremlin result = new ModelTraceGremlin(m, gts, factory);
 		return result;
 	}
 

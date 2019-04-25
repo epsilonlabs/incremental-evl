@@ -62,7 +62,7 @@ public class ModuleExecutionTraceHasAccessesGremlin extends Feature
         
     @Override
     public Iterator<IAccess> get() {
-        return new GremlinUtils.IncrementalFactoryIterator<IAccess, Vertex>(getRaw(),
+        return new GremlinUtils.IncrementalFactoryIterator<IAccess>(getRaw(),
                 gts, factory);
     }
     

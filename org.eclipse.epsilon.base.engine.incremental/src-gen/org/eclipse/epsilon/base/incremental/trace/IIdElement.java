@@ -41,7 +41,6 @@ public interface IIdElement {
      */
     void setId(java.lang.Object value);
 
-    Map<String,Object> getIdProperties();  
-
-
+    Map<String,Object> getIdProperties();
+    
 }

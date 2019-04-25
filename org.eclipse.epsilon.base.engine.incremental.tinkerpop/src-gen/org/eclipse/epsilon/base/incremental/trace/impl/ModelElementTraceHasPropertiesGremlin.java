@@ -62,7 +62,7 @@ public class ModelElementTraceHasPropertiesGremlin extends Feature
         
     @Override
     public Iterator<IPropertyTrace> get() {
-        return new GremlinUtils.IncrementalFactoryIterator<IPropertyTrace, Vertex>(getRaw(),
+        return new GremlinUtils.IncrementalFactoryIterator<IPropertyTrace>(getRaw(),
                 gts, factory);
     }
     

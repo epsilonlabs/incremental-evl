@@ -1,5 +1,6 @@
 package org.eclipse.epsilon.evl.incremental;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex;
 import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex.Builder;
@@ -7,13 +8,16 @@ import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertexProper
 import org.eclipse.epsilon.base.incremental.GremlinBaseFactoryImpl;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTraceGremlin;
 
 public class EvlTraceTinkerpopFactory extends GremlinBaseFactoryImpl implements IEvlRootElementsFactory {
 
-	public EvlTraceTinkerpopFactory() {
-		super();
+	
+	public EvlTraceTinkerpopFactory(TraceFactory factory, GraphTraversalSource gts) {
+		super(factory, gts);
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override

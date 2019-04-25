@@ -62,7 +62,7 @@ public class ContextModuleElementTraceHasExecutionContextGremlin extends Feature
         
     @Override
     public Iterator<IExecutionContext> get() {
-        return new GremlinUtils.IncrementalFactoryIterator<IExecutionContext, Vertex>(getRaw(),
+        return new GremlinUtils.IncrementalFactoryIterator<IExecutionContext>(getRaw(),
                 gts, factory);
     }
     
