@@ -35,6 +35,7 @@ import java.util.Queue;
 
 import [%=erqp%].trace.[%=targetType%];
 
+@SuppressWarnings("unused")
 public interface [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] {
 
     // PUBLIC API

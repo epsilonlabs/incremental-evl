@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-25.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -31,7 +31,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElemen
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.TinkerpopDelegate;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
@@ -40,7 +40,7 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
  * Implementation of IModelTrace. 
  */
 @SuppressWarnings("unused") 
-public class ModelTraceGremlin implements IModelTrace, GremlinWrapper<Vertex> {
+public class ModelTraceGremlin implements IModelTrace, TinkerpopDelegate<Vertex> {
     
     /** The graph traversal source for all navigations */
     private final GraphTraversalSource gts;
@@ -72,11 +72,7 @@ public class ModelTraceGremlin implements IModelTrace, GremlinWrapper<Vertex> {
      */
     private IModelTraceHasTypes types;
 
-    /**
-     * Empty constructor for de/-serialization.
-     */    
-    // public ModelTraceGremlin() { }
-    
+
     /**
      * Constructor for factory, only needs wrapped vertex, traversal source and factory
      */
@@ -87,6 +83,8 @@ public class ModelTraceGremlin implements IModelTrace, GremlinWrapper<Vertex> {
         this.delegate = vertex;
         this.gts = gts;
         this.wrapperFactory = wrapperFactory;
+        this.elements = new ModelTraceHasElementsGremlin(this, gts, wrapperFactory);
+        this.types = new ModelTraceHasTypesGremlin(this, gts, wrapperFactory);
     }
     
     /**
@@ -108,11 +106,10 @@ public class ModelTraceGremlin implements IModelTrace, GremlinWrapper<Vertex> {
         }
         catch (Exception e) {
             throw new IllegalStateException("There was an error during graph traversal.", e);
-        }
-        // Derived Features
-        // this.elements = new ModelTraceHasElementsGremlin(this, gts, wrapperFactory);
-        // Derived Features
-        // this.types = new ModelTraceHasTypesGremlin(this, gts, wrapperFactory);
+        } 
+        this.elements = new ModelTraceHasElementsGremlin(this, gts, wrapperFactory);
+        this.types = new ModelTraceHasTypesGremlin(this, gts, wrapperFactory);
+    
     }
     
     @Override
@@ -148,31 +145,13 @@ public class ModelTraceGremlin implements IModelTrace, GremlinWrapper<Vertex> {
     
     @Override
     public IModelTraceHasElements elements() {
-        if (elements == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("elements");
-                if (gt.hasNext()) {
-                    elements = new ModelTraceHasElementsGremlin(this, this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return elements;
     }
 
     @Override
     public IModelTraceHasTypes types() {
-        if (types == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("types");
-                if (gt.hasNext()) {
-                    types = new ModelTraceHasTypesGremlin(this, this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return types;
     }
 

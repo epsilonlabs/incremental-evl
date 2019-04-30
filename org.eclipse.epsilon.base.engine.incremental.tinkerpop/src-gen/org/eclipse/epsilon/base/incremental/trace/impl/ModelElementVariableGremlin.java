@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-25.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -30,7 +30,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElemen
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.TinkerpopDelegate;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
@@ -39,7 +39,7 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
  * Implementation of IModelElementVariable. 
  */
 @SuppressWarnings("unused") 
-public class ModelElementVariableGremlin implements IModelElementVariable, GremlinWrapper<Vertex> {
+public class ModelElementVariableGremlin implements IModelElementVariable, TinkerpopDelegate<Vertex> {
     
     /** The graph traversal source for all navigations */
     private final GraphTraversalSource gts;
@@ -66,11 +66,7 @@ public class ModelElementVariableGremlin implements IModelElementVariable, Greml
      */
     private IModelElementVariableHasValue value;
 
-    /**
-     * Empty constructor for de/-serialization.
-     */    
-    // public ModelElementVariableGremlin() { }
-    
+
     /**
      * Constructor for factory, only needs wrapped vertex, traversal source and factory
      */
@@ -81,6 +77,7 @@ public class ModelElementVariableGremlin implements IModelElementVariable, Greml
         this.delegate = vertex;
         this.gts = gts;
         this.wrapperFactory = wrapperFactory;
+        this.value = new ModelElementVariableHasValueGremlin(this, gts, wrapperFactory);
     }
     
     /**
@@ -104,18 +101,18 @@ public class ModelElementVariableGremlin implements IModelElementVariable, Greml
         }
         catch (Exception e) {
             throw new IllegalStateException("There was an error during graph traversal.", e);
-        }
+        } 
+        this.value = new ModelElementVariableHasValueGremlin(this, gts, wrapperFactory);
         if (!container.contextVariables().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        // Equals References
-        // this.value = new ModelElementVariableHasValueGremlin(this, gts, wrapperFactory);
         try {
-	        this.value.create(value);
+            this.value.create(value);
         } catch (TraceModelConflictRelation ex) {
             ((ModelElementVariableHasValueGremlin)this.value).delegate().remove();
             throw ex;
         }
+    
     }
     
     @Override
@@ -151,16 +148,7 @@ public class ModelElementVariableGremlin implements IModelElementVariable, Greml
     
     @Override
     public IModelElementVariableHasValue value() {
-        if (value == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("value");
-                if (gt.hasNext()) {
-                    value = new ModelElementVariableHasValueGremlin(this, gt.next(), this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return value;
     }
 

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-29.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -23,9 +23,11 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.*;
  * A ModuleExecutionTrace represents the trace of the execution of a particular Epsilon module
  * (e.g. Eol, Etl, etc.) for a given script (identified by the source) and a given set of Models.
  */
+@SuppressWarnings("unused")
 public interface IEvlModuleTrace extends IModuleExecutionTrace {
 
 
+ 
     /**
      * EvlModuleTrace has same identity in the aggregate.
      */

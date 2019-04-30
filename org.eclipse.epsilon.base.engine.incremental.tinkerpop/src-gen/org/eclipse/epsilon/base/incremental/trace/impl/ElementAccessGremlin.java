@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-25.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -30,7 +30,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElemen
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.TinkerpopDelegate;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
@@ -39,7 +39,7 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
  * Implementation of IElementAccess. 
  */
 @SuppressWarnings("unused") 
-public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vertex> {
+public class ElementAccessGremlin implements IElementAccess, TinkerpopDelegate<Vertex> {
     
     /** The graph traversal source for all navigations */
     private final GraphTraversalSource gts;
@@ -76,11 +76,7 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
      */
     private IElementAccessHasElement element;
 
-    /**
-     * Empty constructor for de/-serialization.
-     */    
-    // public ElementAccessGremlin() { }
-    
+
     /**
      * Constructor for factory, only needs wrapped vertex, traversal source and factory
      */
@@ -91,6 +87,10 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
         this.delegate = vertex;
         this.gts = gts;
         this.wrapperFactory = wrapperFactory;
+        this.module = new AccessHasModuleGremlin(this, gts, wrapperFactory);
+        this.element = new ElementAccessHasElementGremlin(this, gts, wrapperFactory);
+        this.from = new AccessHasFromGremlin(this, gts, wrapperFactory);
+        this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
     }
     
     /**
@@ -108,25 +108,25 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
         this.delegate = vertex;
         this.gts = gts;
         this.wrapperFactory = wrapperFactory;
+ 
+        this.from = new AccessHasFromGremlin(this, gts, wrapperFactory);
+        this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
+        this.module = new AccessHasModuleGremlin(this, gts, wrapperFactory);
+        this.element = new ElementAccessHasElementGremlin(this, gts, wrapperFactory);
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        // Equals References
-        // this.element = new ElementAccessHasElementGremlin(this, gts, wrapperFactory);
-        // Derived Features
-        // this.from = new AccessHasFromGremlin(this, gts, wrapperFactory);
-        // Derived Features
-        // this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
         try {
-	        this.element.create(element);
-	        this.from.create(from);
-	        this.in.create(in);
+            this.in.create(in);
+            this.from.create(from);
+            this.element.create(element);
         } catch (TraceModelConflictRelation ex) {
-            ((ElementAccessHasElementGremlin)this.element).delegate().remove();
-            ((AccessHasFromGremlin)this.from).delegate().remove();
             ((AccessHasInGremlin)this.in).delegate().remove();
+            ((AccessHasFromGremlin)this.from).delegate().remove();
+            ((ElementAccessHasElementGremlin)this.element).delegate().remove();
             throw ex;
         }
+    
     }
     
     @Override
@@ -143,61 +143,25 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
      
     @Override
     public IAccessHasModule module() {
-        if (module == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("module");
-                if (gt.hasNext()) {
-                    module = new AccessHasModuleGremlin(this, gt.next(), this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return module;
     }
 
     @Override
     public IAccessHasFrom from() {
-        if (from == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("from");
-                if (gt.hasNext()) {
-                    from = new AccessHasFromGremlin(this, gt.next(), this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return from;
     }
 
     @Override
     public IAccessHasIn in() {
-        if (in == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("in");
-                if (gt.hasNext()) {
-                    in = new AccessHasInGremlin(this, gt.next(), this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return in;
     }
 
     @Override
     public IElementAccessHasElement element() {
-        if (element == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("element");
-                if (gt.hasNext()) {
-                    element = new ElementAccessHasElementGremlin(this, gt.next(), this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return element;
     }
 
@@ -225,18 +189,18 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
         ElementAccessGremlin other = (ElementAccessGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-    if (element == null) {
-        if (other.element != null)
-            return false;
-    }
-        if (!element().get().equals(other.element().get())) {
-            return false;
-        }
     if (module == null) {
         if (other.module != null)
             return false;
     }
         if (!module().get().equals(other.module().get())) {
+            return false;
+        }
+    if (element == null) {
+        if (other.element != null)
+            return false;
+    }
+        if (!element().get().equals(other.element().get())) {
             return false;
         }
         return true; 
@@ -246,10 +210,10 @@ public class ElementAccessGremlin implements IElementAccess, GremlinWrapper<Vert
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        IModelElementTrace element = element().get();
-        result = prime * result + ((element == null) ? 0 : element.hashCode());
         IModuleExecutionTrace module = module().get();
         result = prime * result + ((module == null) ? 0 : module.hashCode());
+        IModelElementTrace element = element().get();
+        result = prime * result + ((element == null) ? 0 : element.hashCode());
         return result;
     }
     

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -23,14 +23,15 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.evl.incremental.trace.ISatisfiesAccess;
-import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region SatisfiesAccessImports on begin **/
 /** protected region SatisfiesAccessImports end **/
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.TinkerpopDelegate;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -39,14 +40,28 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.*;
 /**
  * Implementation of ISatisfiesAccess. 
  */
-public class SatisfiesAccessGremlin implements ISatisfiesAccess, GremlinWrapper<Vertex> {
+@SuppressWarnings("unused") 
+public class SatisfiesAccessGremlin implements ISatisfiesAccess, TinkerpopDelegate<Vertex> {
     
-
     /** The graph traversal source for all navigations */
-    private GraphTraversalSource gts;
+    private final GraphTraversalSource gts;
     
     /** The delegate Vertex */
     private Vertex delegate;
+    
+    /** The factory used to wrap the vertex's incident vertices */
+    private TraceFactory wrapperFactory;
+    
+    /**
+     * The id.
+     */
+    private Object id;
+
+    /**
+     * The all.
+     */
+    private Boolean all;
+
     
     /**
      * The module.
@@ -73,40 +88,59 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, GremlinWrapper<
      */
     private ISatisfiesAccessHasSatisfiedInvariants satisfiedInvariants;
 
+
     /**
-     * Empty constructor for deserialization.
-     */    
-    public SatisfiesAccessGremlin() { }
+     * Constructor for factory, only needs wrapped vertex, traversal source and factory
+     */
+    public SatisfiesAccessGremlin (
+        Vertex vertex,
+        GraphTraversalSource gts,
+        TraceFactory wrapperFactory) {
+        this.delegate = vertex;
+        this.gts = gts;
+        this.wrapperFactory = wrapperFactory;
+        this.modelElement = new SatisfiesAccessHasModelElementGremlin(this, gts, wrapperFactory);
+        this.module = new AccessHasModuleGremlin(this, gts, wrapperFactory);
+        this.from = new AccessHasFromGremlin(this, gts, wrapperFactory);
+        this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
+        this.satisfiedInvariants = new SatisfiesAccessHasSatisfiedInvariantsGremlin(this, gts, wrapperFactory);
+    }
     
     /**
      * Instantiates a new SatisfiesAccessGremlin. The SatisfiesAccessGremlin is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
     public SatisfiesAccessGremlin(
-        IModuleElementTrace from, IExecutionContext in, IModelElementTrace modelElement, IModuleExecutionTrace container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        IModuleElementTrace from,
+        IExecutionContext in,
+        IModelElementTrace modelElement,
+        IModuleExecutionTrace container,
+        Vertex vertex,
+        GraphTraversalSource gts,
+        TraceFactory wrapperFactory) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
+        this.wrapperFactory = wrapperFactory;
+ 
+        this.from = new AccessHasFromGremlin(this, gts, wrapperFactory);
+        this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
+        this.satisfiedInvariants = new SatisfiesAccessHasSatisfiedInvariantsGremlin(this, gts, wrapperFactory);
+        this.modelElement = new SatisfiesAccessHasModelElementGremlin(this, gts, wrapperFactory);
+        this.module = new AccessHasModuleGremlin(this, gts, wrapperFactory);
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        // Equals References
-        this.modelElement = new SatisfiesAccessHasModelElementGremlin(this, gts, EvlTraceFactory.getFactory());
-        // Derived Features
-        this.from = new AccessHasFromGremlin(this, gts, EvlTraceFactory.getFactory());
-        // Derived Features
-        this.in = new AccessHasInGremlin(this, gts, EvlTraceFactory.getFactory());
-        // Derived Features
-        this.satisfiedInvariants = new SatisfiesAccessHasSatisfiedInvariantsGremlin(this, gts, EvlTraceFactory.getFactory());
         try {
-	        this.from.create(from);
-	        this.modelElement.create(modelElement);
-	        this.in.create(in);
+            this.from.create(from);
+            this.modelElement.create(modelElement);
+            this.in.create(in);
         } catch (TraceModelConflictRelation ex) {
             ((AccessHasFromGremlin)this.from).delegate().remove();
             ((SatisfiesAccessHasModelElementGremlin)this.modelElement).delegate().remove();
             ((AccessHasInGremlin)this.in).delegate().remove();
             throw ex;
         }
+    
     }
     
     @Override
@@ -123,117 +157,61 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, GremlinWrapper<
      
     @Override
     public Boolean getAll() {
-        GraphTraversalSource g = startTraversal();
-        Boolean result = null;
-        try {
-	        try {
-	            result = (Boolean) g.V(delegate).values("all").next();
-	        } catch (NoSuchElementException ex) {
-	            /** protected region all on begin **/
+        if (all == null) {
+	        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+		        try {
+		            all = (Boolean) agts.V(delegate).values("all").next();
+		        } catch (NoSuchElementException ex) {
+		            /** protected region all on begin **/
 	            // TODO Add default return value for SatisfiesAccessGremlin.getAll
 	            throw new IllegalStateException("Add default return value for SatisfiesAccessGremlin.getAll", ex);
 	            /** protected region all end **/
-	        }
-	    } finally {
-            finishTraversal(g);
-        }    
-        return result;
+		        }
+		    } catch (Exception e) {
+                throw new IllegalStateException("There was an error during graph traversal.", e);
+            }
+	    }    
+        return all;
     }
     
     
     @Override
     public void setAll(boolean value) {
-        GraphTraversalSource g = startTraversal();
-        try {
-            g.V(delegate).property("all", value).iterate();
-        } finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            agts.V(delegate).property("all", value).iterate();
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
   
     }   
      
     @Override
     public IAccessHasModule module() {
-        if (module == null) {
-            module = new AccessHasModuleGremlin(this, this.gts, EvlTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("module");
-                if (gt.hasNext()) {
-                    ((AccessHasModuleGremlin)module).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
+        
         return module;
     }
 
     @Override
     public IAccessHasFrom from() {
-        if (from == null) {
-            from = new AccessHasFromGremlin(this, this.gts, EvlTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("from");
-                if (gt.hasNext()) {
-                    ((AccessHasFromGremlin)from).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
+        
         return from;
     }
 
     @Override
     public IAccessHasIn in() {
-        if (in == null) {
-            in = new AccessHasInGremlin(this, this.gts, EvlTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("in");
-                if (gt.hasNext()) {
-                    ((AccessHasInGremlin)in).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
+        
         return in;
     }
 
     @Override
     public ISatisfiesAccessHasModelElement modelElement() {
-        if (modelElement == null) {
-            modelElement = new SatisfiesAccessHasModelElementGremlin(this, this.gts, EvlTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("modelElement");
-                if (gt.hasNext()) {
-                    ((SatisfiesAccessHasModelElementGremlin)modelElement).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
+        
         return modelElement;
     }
 
     @Override
     public ISatisfiesAccessHasSatisfiedInvariants satisfiedInvariants() {
-        if (satisfiedInvariants == null) {
-            satisfiedInvariants = new SatisfiesAccessHasSatisfiedInvariantsGremlin(this, this.gts, EvlTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("satisfiedInvariants");
-                if (gt.hasNext()) {
-                    ((SatisfiesAccessHasSatisfiedInvariantsGremlin)satisfiedInvariants).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
+        
         return satisfiedInvariants;
     }
 
@@ -293,30 +271,10 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, GremlinWrapper<
     public Vertex delegate() {
         return delegate;
     }
-
-    @Override
-    public void delegate(Vertex delegate) {
-        this.delegate = delegate;
-    }
     
     @Override
-    public void graphTraversalSource(GraphTraversalSource gts) {
-        this.gts = gts;
-    }
-    
-    protected GraphTraversalSource graphTraversalSource() {
+    public GraphTraversalSource graphTraversalSource() {
         return this.gts;
     }
     
-    protected GraphTraversalSource startTraversal() {
-        return this.gts.clone();
-    }
-    
-    protected void finishTraversal(GraphTraversalSource g) {
-        try {
-            g.close();
-        } catch (Exception e) {
-            // Fail silently?
-        }
-    }
 }

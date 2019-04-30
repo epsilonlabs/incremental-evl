@@ -1,6 +1,7 @@
 package org.eclipse.epsilon.evl;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -71,10 +72,10 @@ public abstract class ExecutionTests {
 		module().getContext().getModelRepository().addModel(model);
 		module().execute();
 
-		Set<IEvlModuleTrace> moduleTraces = module().getContext().getTraceManager().getExecutionTraceRepository()
+		Iterator<IEvlModuleTrace> moduleTraces = module().getContext().getTraceManager().getExecutionTraceRepository()
 				.getAllModuleTraces();
-		assertThat("One single EvlModuleTrace", moduleTraces.size(), is(1));
-		IEvlModuleTrace moduleTrace = moduleTraces.iterator().next();
+		IEvlModuleTrace moduleTrace = moduleTraces.next();
+		assertThat("One single EvlModuleTrace", !moduleTraces.hasNext());
 		List<IContextTrace> contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
 				.filter(t -> t instanceof IContextTrace)
 				.map(IContextTrace.class::cast).collect(Collectors.toList());

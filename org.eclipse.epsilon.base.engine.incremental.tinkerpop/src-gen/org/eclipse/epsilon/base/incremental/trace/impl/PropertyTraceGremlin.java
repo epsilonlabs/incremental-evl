@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-25.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -30,7 +30,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElemen
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.TinkerpopDelegate;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
@@ -39,7 +39,7 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
  * Implementation of IPropertyTrace. 
  */
 @SuppressWarnings("unused") 
-public class PropertyTraceGremlin implements IPropertyTrace, GremlinWrapper<Vertex> {
+public class PropertyTraceGremlin implements IPropertyTrace, TinkerpopDelegate<Vertex> {
     
     /** The graph traversal source for all navigations */
     private final GraphTraversalSource gts;
@@ -66,11 +66,7 @@ public class PropertyTraceGremlin implements IPropertyTrace, GremlinWrapper<Vert
      */
     private IPropertyTraceHasElementTrace elementTrace;
 
-    /**
-     * Empty constructor for de/-serialization.
-     */    
-    // public PropertyTraceGremlin() { }
-    
+
     /**
      * Constructor for factory, only needs wrapped vertex, traversal source and factory
      */
@@ -81,6 +77,7 @@ public class PropertyTraceGremlin implements IPropertyTrace, GremlinWrapper<Vert
         this.delegate = vertex;
         this.gts = gts;
         this.wrapperFactory = wrapperFactory;
+        this.elementTrace = new PropertyTraceHasElementTraceGremlin(this, gts, wrapperFactory);
     }
     
     /**
@@ -103,10 +100,12 @@ public class PropertyTraceGremlin implements IPropertyTrace, GremlinWrapper<Vert
         }
         catch (Exception e) {
             throw new IllegalStateException("There was an error during graph traversal.", e);
-        }
+        } 
+        this.elementTrace = new PropertyTraceHasElementTraceGremlin(this, gts, wrapperFactory);
         if (!container.properties().create(this)) {
             throw new TraceModelDuplicateElement();
         };
+    
     }
     
     @Override
@@ -142,16 +141,7 @@ public class PropertyTraceGremlin implements IPropertyTrace, GremlinWrapper<Vert
     
     @Override
     public IPropertyTraceHasElementTrace elementTrace() {
-        if (elementTrace == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("elementTrace");
-                if (gt.hasNext()) {
-                    elementTrace = new PropertyTraceHasElementTraceGremlin(this, gt.next(), this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return elementTrace;
     }
 

@@ -73,8 +73,8 @@ public abstract class OfflineTests<M extends Module> {
 		module().execute();
 		// Save the previous state so we can compare changes
 		// ContextTraces
-		IEvlModuleTrace moduleTrace = module().getContext().getTraceManager().getExecutionTraceRepository()
-				.getAllModuleTraces().iterator().next();
+		IEvlModuleTrace moduleTrace = (IEvlModuleTrace) module().getContext().getTraceManager().getExecutionTraceRepository()
+				.getAllModuleTraces().next();
 		List<IContextTrace> contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
 				.filter(t -> t instanceof IContextTrace)
 				.map(IContextTrace.class::cast).collect(Collectors.toList());
@@ -150,8 +150,8 @@ public abstract class OfflineTests<M extends Module> {
 
 		// Save the previous state so we can compare changes
 		// ContextTraces
-		IEvlModuleTrace moduleTrace = module().getContext().getTraceManager().getExecutionTraceRepository()
-				.getAllModuleTraces().iterator().next();
+		IEvlModuleTrace moduleTrace = (IEvlModuleTrace) module().getContext().getTraceManager().getExecutionTraceRepository()
+				.getAllModuleTraces().next();
 		List<IContextTrace> contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
 				.filter(t -> t instanceof IContextTrace)
 				.map(IContextTrace.class::cast).collect(Collectors.toList());
@@ -233,8 +233,8 @@ public abstract class OfflineTests<M extends Module> {
 
 		// Save the previous state so we can compare changes
 		// ContextTraces
-		IEvlModuleTrace moduleTrace = module().getContext().getTraceManager().getExecutionTraceRepository()
-				.getAllModuleTraces().iterator().next();
+		IEvlModuleTrace moduleTrace = (IEvlModuleTrace) module().getContext().getTraceManager().getExecutionTraceRepository()
+				.getAllModuleTraces().next();
 		List<IContextTrace> contextExecutionTraces = IncrementalUtils.asStream(moduleTrace.moduleElements().get())
 				.filter(t -> t instanceof IContextTrace)
 				.map(IContextTrace.class::cast).collect(Collectors.toList());

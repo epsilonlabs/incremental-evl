@@ -21,6 +21,8 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.util.Attachable;
+import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex;
 import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%];
 import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%]Repository;
 import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
@@ -29,16 +31,18 @@ import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 var superClass = ec.getESuperTypes().first();
 var extends = null;
 var name = ec.getJavaClassName(classPrefix, classSufix) + "RepositoryImpl";
-var implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository";
+var implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
 var extendGeneric = ec.getJavaInterfaceName(interPrefix, interSufix);
 if (ec.isAbstract) {
-    // name = name + "<E extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
-    // implements = implements + "<E>";
-    // extendGeneric = "E";
+    name = name + "<ST extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+    implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<ST>";
+    extendGeneric = "ST";
 }
 if (not superClass.isInterface) {
-    // extends = superClass.getJavaClassName(classPrefix, classSufix) + "RepositoryImpl<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";    
-    var erqp = superClass.getCorrectPackage(qp+".trace", ec);%]
+    extends = superClass.getJavaClassName(classPrefix, classSufix) + "RepositoryImpl<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";    
+    var erqp = superClass.getCorrectPackage(qp+".trace", ec);
+    extendGeneric = ec.getJavaInterfaceName(interPrefix, interSufix);
+    %]
 import [%=erqp%].impl.[%=superClass.getJavaClassName(classPrefix, classSufix)%]RepositoryImpl;
 [%
 }
@@ -49,6 +53,8 @@ import [%=erqp%].impl.[%=superClass.getJavaClassName(classPrefix, classSufix)%]R
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * A repository for handling elements in the domain of [%=ec.name%].
@@ -62,46 +68,37 @@ public [%if(ec.isAbstract){%]abstract [%}%]class [%=name%][%if(extends.isDefined
  
 [%if(not extends.isDefined()){%]
     protected GraphTraversalSource gts; 
-[%}%]
     protected final TraceFactory factory;
+[%}%]
     
+    @Inject
     public [%=ec.getJavaClassName(classPrefix, classSufix)%]RepositoryImpl(
-        GraphTraversalSource trvrslSrc, TraceFactory fctry) {
+        GraphTraversalSource trvrslSrc,
+        TraceFactory fctry) {
+[%if(extends.isDefined()){%]
+        super(trvrslSrc, fctry);
+[%} else {%]
         gts = trvrslSrc;
         factory = fctry;
+[%}%]        
     }
 
-[%if (not ec.isAbstract){%]    
+[%if (not ec.isAbstract){%]
     @Override
-    public boolean add([%=extendGeneric%] item) {
+    public [%=extendGeneric%] add([%=extendGeneric%] item) {
         logger.info("Adding {} to repository", item);
-        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-            GraphTraversal<Vertex, Vertex> existing = agts.V(item.getId());
-            Vertex newVertex;
-            if (existing.hasNext()) {
-                newVertex = existing.next();
-            }
-            else {
-                List<Object> keyValues = new ArrayList<>();
-[%  for (ea in ec.getEAllAttributes().select(ea | not ea.derived)) {%]
-                keyValues.add("[%=ea.name%]");
-                keyValues.add(item.[%=ea.getGetterMethodName()%]());
-[%  }%]
-                newVertex = agts.addV("[%=ec.getJavaClassName(classPrefix, classSufix)%]").property(T.id, item.getId(), keyValues.toArray()).next();
-            }
-            item = (IModelTrace) factory.createTraceElement(newVertex, gts);
-        } catch (Exception e) {
-            throw new IllegalStateException("There was an error during graph traversal.", e);
-        } 
-        return true;
+        assert item instanceof [%=ec.getJavaClassName(classPrefix, classSufix)%];
+        [%=ec.getJavaClassName(classPrefix, classSufix)%] impl = ([%=ec.getJavaClassName(classPrefix, classSufix)%])item;
+        Vertex attached = ((DetachedVertex)impl.delegate()).attach(Attachable.Method.getOrCreate(gts.getGraph()));
+        return factory.createTraceElement(attached, gts);
     }
 
     @Override
-    public boolean remove([%=extendGeneric%] item) {
+    public [%=extendGeneric%] remove([%=extendGeneric%] item) {
         logger.info("Removing {} from repository", item);
         Vertex v = (([%=ec.getJavaClassName(classPrefix, classSufix)%])item).delegate();
         v.remove();
-        return v.graph() == null;
+        return factory.createTraceElement(null, gts);
     }
     
     @Override

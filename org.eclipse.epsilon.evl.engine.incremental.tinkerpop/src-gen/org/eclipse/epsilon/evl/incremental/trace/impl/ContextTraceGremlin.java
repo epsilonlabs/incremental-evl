@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -23,15 +23,16 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region ContextTraceImports on begin **/
 /** protected region ContextTraceImports end **/
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.TinkerpopDelegate;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -40,14 +41,33 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.*;
 /**
  * Implementation of IContextTrace. 
  */
-public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex> {
+@SuppressWarnings("unused") 
+public class ContextTraceGremlin implements IContextTrace, TinkerpopDelegate<Vertex> {
     
-
     /** The graph traversal source for all navigations */
-    private GraphTraversalSource gts;
+    private final GraphTraversalSource gts;
     
     /** The delegate Vertex */
     private Vertex delegate;
+    
+    /** The factory used to wrap the vertex's incident vertices */
+    private TraceFactory wrapperFactory;
+    
+    /**
+     * The id.
+     */
+    private Object id;
+
+    /**
+     * The kind.
+     */
+    private String kind;
+
+    /**
+     * The index.
+     */
+    private Integer index;
+
     
     /**
      * The guard.
@@ -64,38 +84,52 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
      */
     private IContextTraceHasConstraints constraints;
 
+
     /**
-     * Empty constructor for deserialization.
-     */    
-    public ContextTraceGremlin() { }
+     * Constructor for factory, only needs wrapped vertex, traversal source and factory
+     */
+    public ContextTraceGremlin (
+        Vertex vertex,
+        GraphTraversalSource gts,
+        TraceFactory wrapperFactory) {
+        this.delegate = vertex;
+        this.gts = gts;
+        this.wrapperFactory = wrapperFactory;
+        this.executionContext = new ContextModuleElementTraceHasExecutionContextGremlin(this, gts, wrapperFactory);
+        this.guard = new GuardedElementTraceHasGuardGremlin(this, gts, wrapperFactory);
+        this.constraints = new ContextTraceHasConstraintsGremlin(this, gts, wrapperFactory);
+    }
     
     /**
      * Instantiates a new ContextTraceGremlin. The ContextTraceGremlin is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
     public ContextTraceGremlin(
-        String kind, Integer index, IModuleExecutionTrace container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        String kind,
+        Integer index,
+        IModuleExecutionTrace container,
+        Vertex vertex,
+        GraphTraversalSource gts,
+        TraceFactory wrapperFactory) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
-        GraphTraversalSource g = startTraversal();
-        try {
-            g.V(delegate)
+        this.wrapperFactory = wrapperFactory;
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            agts.V(delegate)
             .property("kind", kind)
             .property("index", index)
             .iterate();
         }
-        finally {
-            finishTraversal(g);
-        }
+        catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
+        } 
+        this.guard = new GuardedElementTraceHasGuardGremlin(this, gts, wrapperFactory);
+        this.constraints = new ContextTraceHasConstraintsGremlin(this, gts, wrapperFactory);
+        this.executionContext = new ContextModuleElementTraceHasExecutionContextGremlin(this, gts, wrapperFactory);
         if (!container.moduleElements().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        // Equals References
-        this.executionContext = new ContextModuleElementTraceHasExecutionContextGremlin(this, gts, EvlTraceFactory.getFactory());
-        // Derived Features
-        this.guard = new GuardedElementTraceHasGuardGremlin(this, gts, EvlTraceFactory.getFactory());
-        // Derived Features
-        this.constraints = new ContextTraceHasConstraintsGremlin(this, gts, EvlTraceFactory.getFactory());
+    
     }
     
     @Override
@@ -112,169 +146,129 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
      
     @Override
     public String getKind() {
-        GraphTraversalSource g = startTraversal();
-        String result = null;
-        try {
-	        try {
-	            result = (String) g.V(delegate).values("kind").next();
-	        } catch (NoSuchElementException ex) {
-	            /** protected region kind on begin **/
+        if (kind == null) {
+	        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+		        try {
+		            kind = (String) agts.V(delegate).values("kind").next();
+		        } catch (NoSuchElementException ex) {
+		            /** protected region kind on begin **/
 	            // TODO Add default return value for ContextTraceGremlin.getKind
 	            throw new IllegalStateException("Add default return value for ContextTraceGremlin.getKind", ex);
 	            /** protected region kind end **/
-	        }
-	    } finally {
-            finishTraversal(g);
-        }    
-        return result;
+		        }
+		    } catch (Exception e) {
+                throw new IllegalStateException("There was an error during graph traversal.", e);
+            }
+	    }    
+        return kind;
     }
     
     @Override
     public Integer getIndex() {
-        GraphTraversalSource g = startTraversal();
-        Integer result = null;
-        try {
-	        try {
-	            result = (Integer) g.V(delegate).values("index").next();
-	        } catch (NoSuchElementException ex) {
-	            /** protected region index on begin **/
+        if (index == null) {
+	        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+		        try {
+		            index = (Integer) agts.V(delegate).values("index").next();
+		        } catch (NoSuchElementException ex) {
+		            /** protected region index on begin **/
 	            // TODO Add default return value for ContextTraceGremlin.getIndex
 	            throw new IllegalStateException("Add default return value for ContextTraceGremlin.getIndex", ex);
 	            /** protected region index end **/
-	        }
-	    } finally {
-            finishTraversal(g);
-        }    
-        return result;
+		        }
+		    } catch (Exception e) {
+                throw new IllegalStateException("There was an error during graph traversal.", e);
+            }
+	    }    
+        return index;
     }
     
     @Override
     public IGuardedElementTraceHasGuard guard() {
-        if (guard == null) {
-            guard = new GuardedElementTraceHasGuardGremlin(this, this.gts, EvlTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("guard");
-                if (gt.hasNext()) {
-                    ((GuardedElementTraceHasGuardGremlin)guard).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
+        
         return guard;
     }
 
     @Override
     public IContextModuleElementTraceHasExecutionContext executionContext() {
-        if (executionContext == null) {
-            executionContext = new ContextModuleElementTraceHasExecutionContextGremlin(this, this.gts, EvlTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("executionContext");
-                if (gt.hasNext()) {
-                    ((ContextModuleElementTraceHasExecutionContextGremlin)executionContext).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
+        
         return executionContext;
     }
 
     @Override
     public IContextTraceHasConstraints constraints() {
-        if (constraints == null) {
-            constraints = new ContextTraceHasConstraintsGremlin(this, this.gts, EvlTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("constraints");
-                if (gt.hasNext()) {
-                    ((ContextTraceHasConstraintsGremlin)constraints).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
+        
         return constraints;
     }
 
     @Override
-    public IGuardTrace getOrCreateGuardTrace() throws EolIncrementalExecutionException {
-        GraphTraversalSource g = startTraversal();
+    public IGuardTrace getOrCreateGuardTrace() throws EolIncrementalExecutionException {    
         GuardTraceGremlin guardTrace = null;
-        try {
-            GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("guard");
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            GraphTraversal<Vertex, Vertex> gt = agts.V(delegate).out("guard");
             if (gt.hasNext()) {
-                guardTrace = new GuardTraceGremlin();
-                guardTrace.delegate(gt.next());
-                guardTrace.graphTraversalSource(gts);
+                guardTrace = new GuardTraceGremlin(gt.next(), gts, wrapperFactory);
             }
             else {
                 Vertex v = null;
                 try {
-                    v = g.addV("GuardTrace").next();
+                    v = agts.addV("GuardTrace").next();
                     /* protected region guardTraceTypeOverride on begin */
-                    guardTrace = new GuardTraceGremlin(this, v, gts); 
+                    guardTrace = new GuardTraceGremlin(this, v, gts, wrapperFactory); 
                     /* protected region guardTraceTypeOverride end */
                 } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                    g.V(v).as("v").properties().drop().select("v").drop();
+                    agts.V(v).as("v").properties().drop().select("v").drop();
                     throw new EolIncrementalExecutionException("Error creating requested GuardTrace", e);
                 }
             }
-        } finally {
-            finishTraversal(g);
-        }  
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
+        } 
         return guardTrace;
     }      
     
     @Override
-    public IExecutionContext getOrCreateExecutionContext() throws EolIncrementalExecutionException {
-        GraphTraversalSource g = startTraversal();
+    public IExecutionContext getOrCreateExecutionContext() throws EolIncrementalExecutionException {    
         ExecutionContextGremlin executionContext = null;
-        try {
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
             Vertex v = null;
             try {
-                v = g.addV("ExecutionContext").next();
+                v = agts.addV("ExecutionContext").next();
                 /* protected region executionContextTypeOverride on begin */
-                executionContext = new ExecutionContextGremlin(this, v, gts);
+                executionContext = new ExecutionContextGremlin(this, v, gts, wrapperFactory);
                 /* protected region executionContextTypeOverride end */
             } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                g.V(v).as("v").properties().drop().select("v").drop();
+                agts.V(v).as("v").properties().drop().select("v").drop();
                 throw new EolIncrementalExecutionException("Error creating requested ExecutionContext", e);
             }
-        } finally {
-            finishTraversal(g);
-        }  
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
+        } 
         return executionContext;
     }      
     
     @Override
-    public IInvariantTrace getOrCreateInvariantTrace(String name) throws EolIncrementalExecutionException {
-        GraphTraversalSource g = startTraversal();
+    public IInvariantTrace getOrCreateInvariantTrace(String name) throws EolIncrementalExecutionException {    
         InvariantTraceGremlin invariantTrace = null;
-        try {
-            GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("constraints").has("name", name);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            GraphTraversal<Vertex, Vertex> gt = agts.V(delegate).out("constraints").has("name", name);
             if (gt.hasNext()) {
-                invariantTrace = new InvariantTraceGremlin();
-                invariantTrace.delegate(gt.next());
-                invariantTrace.graphTraversalSource(gts);
+                invariantTrace = new InvariantTraceGremlin(gt.next(), gts, wrapperFactory);
             }
             else {
                 Vertex v = null;
                 try {
-                    v = g.addV("InvariantTrace").property("tag", GremlinUtils.identityToString(name, this)).next();
+                    v = agts.addV("InvariantTrace").property("tag", GremlinUtils.identityToString(name, this)).next();
                     /* protected region invariantTraceTypeOverride on begin */
-                    invariantTrace = new InvariantTraceGremlin(name, this, v, gts); 
+                    invariantTrace = new InvariantTraceGremlin(name, this, v, gts, wrapperFactory); 
                     /* protected region invariantTraceTypeOverride end */
                 } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                    g.V(v).as("v").properties().drop().select("v").drop();
+                    agts.V(v).as("v").properties().drop().select("v").drop();
                     throw new EolIncrementalExecutionException("Error creating requested InvariantTrace", e);
                 }
             }
-        } finally {
-            finishTraversal(g);
-        }  
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
+        } 
         return invariantTrace;
     }      
     
@@ -346,30 +340,10 @@ public class ContextTraceGremlin implements IContextTrace, GremlinWrapper<Vertex
     public Vertex delegate() {
         return delegate;
     }
-
-    @Override
-    public void delegate(Vertex delegate) {
-        this.delegate = delegate;
-    }
     
     @Override
-    public void graphTraversalSource(GraphTraversalSource gts) {
-        this.gts = gts;
-    }
-    
-    protected GraphTraversalSource graphTraversalSource() {
+    public GraphTraversalSource graphTraversalSource() {
         return this.gts;
     }
     
-    protected GraphTraversalSource startTraversal() {
-        return this.gts.clone();
-    }
-    
-    protected void finishTraversal(GraphTraversalSource g) {
-        try {
-            g.close();
-        } catch (Exception e) {
-            // Fail silently?
-        }
-    }
 }

@@ -22,5 +22,7 @@ public interface TraceFactory {
 	 * @return the object
 	 */
 	<E> E createTraceElement(Vertex delegate, GraphTraversalSource gts);
+	
+	<E> E createTraceElement(Vertex delegate, GraphTraversalSource gts, TraceFactory subFactory);
 
 }

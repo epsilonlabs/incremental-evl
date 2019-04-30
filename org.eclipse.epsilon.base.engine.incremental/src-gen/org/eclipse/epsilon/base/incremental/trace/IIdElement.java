@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-29.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -19,6 +19,7 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
 /**
  * The IdElement Interface.
  */
+@SuppressWarnings("unused")
 public interface IIdElement {
     
     /**
@@ -41,6 +42,7 @@ public interface IIdElement {
      */
     void setId(java.lang.Object value);
 
-    Map<String,Object> getIdProperties();
-    
+    Map<String,Object> getIdProperties();  
+
+
 }

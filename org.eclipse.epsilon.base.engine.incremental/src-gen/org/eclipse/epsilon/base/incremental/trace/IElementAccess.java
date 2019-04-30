@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-29.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,6 +20,7 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
  * An ElementAccess denotes access to a model element as a whole. This usually
  * happens when an element is used for a context.
  */
+@SuppressWarnings("unused")
 public interface IElementAccess extends IAccess {
 
     /**

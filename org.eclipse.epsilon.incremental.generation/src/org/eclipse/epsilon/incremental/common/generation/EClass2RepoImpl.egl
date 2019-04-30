@@ -24,12 +24,12 @@ import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%]Reposi
 var superClass = ec.getESuperTypes().first();
 var extends = null;
 var name = ec.getJavaClassName(classPrefix, classSufix) + "RepositoryImpl";
-var implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository";
+var implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
 var extendGeneric = ec.getJavaInterfaceName(interPrefix, interSufix);
 if (ec.isAbstract) {
-    name = name + "<E extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
-    implements = implements + "<E>";
-    extendGeneric = "E";
+    name = name + "<T extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+    implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<T>";
+    extendGeneric = "T";
 }
 if (not superClass.isInterface) {
     extends = superClass.name + "RepositoryImpl<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";    
@@ -46,6 +46,7 @@ import [%=erqp%].impl.[%=superClass.name%]RepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("unused")
 public [%if(ec.isAbstract){%]abstract [%}%]class [%=name%][%if(extends.isDefined()){%] extends [%=extends%][%}%] implements [%=implements%] {
 
     private static final Logger logger = LoggerFactory.getLogger([%=ec.getJavaClassName(classPrefix, classSufix)%]RepositoryImpl.class);
@@ -63,15 +64,19 @@ public [%if(ec.isAbstract){%]abstract [%}%]class [%=name%][%if(extends.isDefined
     }
     
     @Override
-    public boolean add([%=extendGeneric%] item) {
+    public [%=extendGeneric%]  add([%=extendGeneric%] item) {
         logger.info("Adding {} to repository", item);
-        return extent.add(item);
+        extent.add(item);
+        // FIXME Perhaps throw exception if not added?
+        return item;
     }
 
     @Override
-    public boolean remove([%=extendGeneric%] item) {
+    public [%=extendGeneric%]  remove([%=extendGeneric%] item) {
         logger.info("Removing {} from repository", item);
-        return extent.remove(item);
+        extent.remove(item);
+        // FIXME Perhaps throw exception if not removed?
+        return item;
     }
     
     @Override

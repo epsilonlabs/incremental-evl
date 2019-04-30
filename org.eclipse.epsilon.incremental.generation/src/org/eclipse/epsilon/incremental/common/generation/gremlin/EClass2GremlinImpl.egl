@@ -40,7 +40,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElemen
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.TinkerpopDelegate;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 [%
 for (imp in ec.getRequiredImports(qp+".trace", interPrefix, interSufix, classPrefix, classSufix, true, true)) {%]
@@ -51,7 +51,7 @@ import [%=imp%];
  * Implementation of [%=ec.getJavaInterfaceName(interPrefix, interSufix)%]. 
  */
 @SuppressWarnings("unused") 
-public class [%=ec.getJavaClassName(classPrefix, classSufix)%] implements [%=ec.getJavaInterfaceName(interPrefix, interSufix)%], GremlinWrapper<Vertex> {
+public class [%=ec.getJavaClassName(classPrefix, classSufix)%] implements [%=ec.getJavaInterfaceName(interPrefix, interSufix)%], TinkerpopDelegate<Vertex> {
     
     /** The graph traversal source for all navigations */
     private final GraphTraversalSource gts;
@@ -87,11 +87,7 @@ for (er in ec.getEAllReferences()) {%]
 
 [%}
 %]
-    /**
-     * Empty constructor for de/-serialization.
-     */    
-    // public [%=ec.getJavaClassName(classPrefix, classSufix)%]() { }
-    
+
     /**
      * Constructor for factory, only needs wrapped vertex, traversal source and factory
      */
@@ -102,6 +98,7 @@ for (er in ec.getEAllReferences()) {%]
         this.delegate = vertex;
         this.gts = gts;
         this.wrapperFactory = wrapperFactory;
+        [%=ec.getSimpleConstructorImplementation(classPrefix, classSufix)%]
     }
     
     /**
@@ -123,49 +120,9 @@ for (er in ec.getEAllReferences()) {%]
         }
         catch (Exception e) {
             throw new IllegalStateException("There was an error during graph traversal.", e);
-        }
-[%}
-var container = ec.getContainerReference().at(0);
-var type = ec.getContainerReference().at(1);
-var opposite = ec.getContainerReference().at(2);
-if (container.isDefined()) {
-    if (ec.getRequiredFeatures().includes(container)) {%]
-        if (!this.[%=container.name%].[%=opposite.name%]().create(this)) {
-[%  } else {%]
-        if (!container.[%=opposite.name%]().create(this)) {
-[%  }%]
-            throw new TraceModelDuplicateElement();
-        };
-[%
-} else if (opposite.isDefined()) {%]
-        if (!container.[%=opposite.name%]().create(this)) {
-            throw new TraceModelDuplicateElement();
-        };
-[%}%]
-[%
-for (er in ec.getEqualsReferences().excluding(container)) {%]
-        // Equals References
-        // this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, gts, wrapperFactory);
-[%}
-var derivedFeatures = ec.getEAllReferences().select(er | not er.isDerived());
-for (er in derivedFeatures.excludingAll(ec.getEqualsReferences())) {%]
-        // Derived Features
-        // this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, gts, wrapperFactory);
-[%}
-var createRefs = ec.getEqualsReferences().includingAll(derivedFeatures.excludingAll(ec.getEqualsReferences()))
-    .select(er | (er <> ec.getContainerReference().at(0)) and er.isRequired() and not er.isMany());
-if (not createRefs.isEmpty()) {%]
-        try {
-[% for (er in createRefs) {%]
-	        this.[%=er.name%].create([%=er.name%]);
-[%}%]
-        } catch (TraceModelConflictRelation ex) {
-[% for (er in createRefs) {%]
-            (([%=er.getRelationJavaClassName(classPrefix, classSufix)%])this.[%=er.name%]).delegate().remove();
-[%}%]
-            throw ex;
-        }
-[%}%]
+        }[%}%] 
+        [%=ec.getConstructorImplementation(classPrefix, classSufix)%]
+    
     }
     
 [%for (ea in ec.getEAllAttributes().select(ea | not ea.derived)) {
@@ -220,7 +177,8 @@ if (not createRefs.isEmpty()) {%]
     @Override
     public [%=ea.makeGetterSignature(multi)%] {
         [%=out.startPreserve("/**", "**/", ea.name, true)%]
-        return null;
+        // TODO Implement derived attribute getter [%=ec.getJavaClassName(classPrefix, classSufix)%].[%=ea.name%]()
+        throw new UnsupportedOperationException("The attribute [%=ea.name%] is derived and the getter hasn't been implemented");
         [%=out.stopPreserve()%]
     }
     
@@ -228,7 +186,8 @@ if (not createRefs.isEmpty()) {%]
     @Override
     public [%=ea.makeSetterSignature(multi)%] {
         [%=out.startPreserve("/**", "**/", ea.name, true)%]
-        return null;
+        // TODO Implement derived attribute setter [%=ec.getJavaClassName(classPrefix, classSufix)%].[%=ea.name%]()
+        throw new UnsupportedOperationException("The attribute [%=ea.name%] is derived and the setter hasn't been implemented");
         [%=out.stopPreserve()%]
     }   
      
@@ -237,21 +196,14 @@ if (not createRefs.isEmpty()) {%]
 [%for (er in ec.getEAllReferences()) {%]
     @Override
     public [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] [%=er.name%]() {
-        if ([%=er.name%] == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("[%=er.name%]");
-                if (gt.hasNext()) {
-[%  if (not er.isMany()) {%]
-                    [%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, gt.next(), this.gts, wrapperFactory);
-[%  } else {%]
-                    [%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, this.gts, wrapperFactory);
-[%  }%]
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+[%  if (er.derived) {%]
+        [%=out.startPreserve("/**", "**/", er.name, true)%]
+        // TODO Implement derived reference [%=ec.getJavaClassName(classPrefix, classSufix)%].[%=er.name%]()
+        throw new UnsupportedOperationException("The reference [%=er.name%] is derived and the getter hasn't been implemented");
+        [%=out.stopPreserve()%]
+[%  } else {%]        
         return [%=er.name%];
+[%  }%]
     }
 
 [%}%]
@@ -571,4 +523,62 @@ operation EClass getConstructorParameters(signature : Boolean, interPrefix:Strin
 [%  }
 }
 
-%]
+/**
+ * Constructor implementation
+ */
+@template
+operation EClass getConstructorImplementation(classPrefix:String, classSufix:String) {
+    var container = self.getContainerReference().at(0);
+    var type = self.getContainerReference().at(1);
+    var opposite = ec.getContainerReference().at(2);
+    var derivedFeatures = self.getEAllReferences().select(er | not er.isDerived());
+    for (er in derivedFeatures.excludingAll(ec.getEqualsReferences())) {%]
+this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, gts, wrapperFactory);
+[%  }
+    for (er in self.getEqualsReferences()) {%]
+this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, gts, wrapperFactory);
+[%  }    
+    if (container.isDefined()) {
+        if (self.getRequiredFeatures().includes(container)) {%]
+if (!this.[%=container.name%].[%=opposite.name%]().create(this)) {
+[%      } else {%]
+if (!container.[%=opposite.name%]().create(this)) {
+[%      }%]
+    throw new TraceModelDuplicateElement();
+};
+[%  } else if (opposite.isDefined()) {%]
+if (!container.[%=opposite.name%]().create(this)) {
+    throw new TraceModelDuplicateElement();
+};
+[%  }
+    var createRefs = self.getEqualsReferences().includingAll(derivedFeatures.excludingAll(self.getEqualsReferences()))
+        .select(er | (er <> self.getContainerReference().at(0)) and er.isRequired() and not er.isMany());
+    if (not createRefs.isEmpty()) {%]
+try {
+[%      for (er in createRefs) {%]
+    this.[%=er.name%].create([%=er.name%]);
+[%      }%]
+} catch (TraceModelConflictRelation ex) {
+[%      for (er in createRefs) {%]
+    (([%=er.getRelationJavaClassName(classPrefix, classSufix)%])this.[%=er.name%]).delegate().remove();
+[%      }%]
+    throw ex;
+}
+[%  }
+}
+
+@template
+operation EClass getSimpleConstructorImplementation(classPrefix:String, classSufix:String) {
+    var container = self.getContainerReference().at(0);
+    var type = self.getContainerReference().at(1);
+    var opposite = ec.getContainerReference().at(2);
+    for (er in self.getEqualsReferences()) {%]
+this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, gts, wrapperFactory);
+[%  }
+    var derivedFeatures = self.getEAllReferences().select(er | not er.isDerived());
+    for (er in derivedFeatures.excludingAll(ec.getEqualsReferences())) {%]
+this.[%=er.name%] = new [%=er.getRelationJavaClassName(classPrefix, classSufix)%](this, gts, wrapperFactory);
+[%  }
+    var createRefs = self.getEqualsReferences().includingAll(derivedFeatures.excludingAll(self.getEqualsReferences()))
+        .select(er | (er <> self.getContainerReference().at(0)) and er.isRequired() and not er.isMany());
+}%]

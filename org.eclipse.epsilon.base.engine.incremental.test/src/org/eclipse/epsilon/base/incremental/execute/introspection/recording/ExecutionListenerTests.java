@@ -1,32 +1,12 @@
 package org.eclipse.epsilon.base.incremental.execute.introspection.recording;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
-
-import org.eclipse.epsilon.base.incremental.IBaseRootElementsFactory;
-import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
-import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.execute.IExecutionTrace;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
-import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
-import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
-import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTraceHasAccesses;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
-import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.compile.context.EolCompilationContext;
 import org.eclipse.epsilon.eol.dom.Expression;
 import org.eclipse.epsilon.eol.dom.NameExpression;
 import org.eclipse.epsilon.eol.dom.OperationCallExpression;
 import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
 import org.eclipse.epsilon.eol.dom.StringLiteral;
-import org.eclipse.epsilon.eol.models.IModel;
-import org.eclipse.epsilon.eol.models.ModelRepository;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

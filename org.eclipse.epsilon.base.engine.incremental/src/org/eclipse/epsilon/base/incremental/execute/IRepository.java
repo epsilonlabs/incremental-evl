@@ -18,10 +18,10 @@ public interface IRepository<T> {
 	//void get(Function predicate);
 	
 	// Add Objects
-	boolean add(T item);
+	T add(T item);
 
 	// Remove Objects
-    boolean remove(T item);
+    T remove(T item);
     
     // Dispose the repository when done
     void dispose();

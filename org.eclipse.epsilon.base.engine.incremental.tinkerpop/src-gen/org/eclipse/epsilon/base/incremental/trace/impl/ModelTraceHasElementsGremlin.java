@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-25.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,11 +11,13 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace.impl;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.TinkerpopDelegate;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
@@ -23,15 +25,16 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTraceHasElements;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 import java.util.Iterator;
 import java.util.Map.Entry;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 
 /**
  * Implementation of IModelTraceHasElements reference. 
  */
+@SuppressWarnings("unused") 
 public class ModelTraceHasElementsGremlin extends Feature
-        implements IModelTraceHasElements, GremlinWrapper<Edge> {
+        implements IModelTraceHasElements, TinkerpopDelegate<Edge> {
     
     /** The graph traversal source for all navigations */
     private GraphTraversalSource gts;
@@ -46,7 +49,10 @@ public class ModelTraceHasElementsGremlin extends Feature
     /**
      * Instantiates a new IModelTraceHasElements.
      *
-     * @param source the source of the reference
+     * @param source                the source element of the reference
+     * @param delegate              the delegate edge
+     * @param gts                   the graph taversal source   
+     * @param factory               the factory used to instantiante the target
      */
     public ModelTraceHasElementsGremlin (
         IModelTrace source,
@@ -57,6 +63,8 @@ public class ModelTraceHasElementsGremlin extends Feature
         this.gts = gts;
         this.factory = factory;
     }
+    
+    
     
     // PUBLIC API
         

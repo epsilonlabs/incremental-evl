@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-29.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -16,6 +16,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelatio
 
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 
+@SuppressWarnings("unused")
 public interface IInvariantTraceHasInvariantContext {
 
     // PUBLIC API

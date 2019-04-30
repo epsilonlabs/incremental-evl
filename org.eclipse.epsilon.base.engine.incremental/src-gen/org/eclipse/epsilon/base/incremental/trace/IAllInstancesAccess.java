@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-29.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -20,6 +20,7 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
  * An AllInstancesAccess denotes access to all elemens of a given type/kind. This 
  * is the result of a call to all() (and its derivatives).
  */
+@SuppressWarnings("unused")
 public interface IAllInstancesAccess extends IAccess {
     
     /**

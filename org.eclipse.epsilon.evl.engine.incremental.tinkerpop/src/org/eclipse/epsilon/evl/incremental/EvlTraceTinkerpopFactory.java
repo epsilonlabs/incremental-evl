@@ -1,40 +1,31 @@
 package org.eclipse.epsilon.evl.incremental;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex;
-import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex.Builder;
-import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertexProperty;
 import org.eclipse.epsilon.base.incremental.GremlinBaseFactoryImpl;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.impl.EvlModuleTraceGremlin;
 
-public class EvlTraceTinkerpopFactory extends GremlinBaseFactoryImpl implements IEvlRootElementsFactory {
+import com.google.inject.Inject;
 
+
+public class EvlTraceTinkerpopFactory extends GremlinBaseFactoryImpl implements IEvlRootElementsFactory {
 	
+	@Inject
 	public EvlTraceTinkerpopFactory(TraceFactory factory, GraphTraversalSource gts) {
 		super(factory, gts);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public IEvlModuleTrace createModuleTrace(String uri) throws TraceModelDuplicateElement {
-		
-		Builder vertexBuilder = DetachedVertex.build();
-		vertexBuilder.setLabel("EvlModuleTrace");
-		vertexBuilder.setId(GremlinUtils.identityToString(uri));
-		// Properties
-		org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertexProperty.Builder pBuilder = DetachedVertexProperty.build();		
-		pBuilder.setLabel("uri");
-		pBuilder.setValue(uri);
-		vertexBuilder.addProperty(pBuilder.create());
-		Vertex m = vertexBuilder.create();
-		EvlModuleTraceGremlin result = new EvlModuleTraceGremlin();
-		result.delegate(m);
+		EvlModuleTraceGremlin result = new EvlModuleTraceGremlin(
+				detachableFactory.createDetachedVertex("EvlModuleTrace", "uri", uri),
+				gts,
+				factory);
 		return result;
 	}
+	
+	
 
 }

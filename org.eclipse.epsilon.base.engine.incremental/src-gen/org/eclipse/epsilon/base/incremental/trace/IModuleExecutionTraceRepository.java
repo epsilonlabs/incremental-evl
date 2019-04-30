@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-29.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,18 +11,20 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.trace.IIdElementRepository;
 /** protected region IModuleExecutionTraceRepositoryImports on begin **/
 /** protected region IModuleExecutionTraceRepositoryImports end **/
 
-public interface IModuleExecutionTraceRepository extends IIdElementRepository<IModuleExecutionTrace> {
+@SuppressWarnings("unused")
+public interface IModuleExecutionTraceRepository<T extends IModuleExecutionTrace> extends IIdElementRepository<T> {
 
 
     IModuleExecutionTrace getModuleExecutionTraceByIdentity(String uri);
 
-	/** protected region IModuleExecutionTraceRepositry on begin **/
+/** protected region IModuleExecutionTraceRepositry on begin **/
     /**
 	 * Remove all trace information related to the element. This should be called
 	 * when an element is deleted.
@@ -33,25 +35,6 @@ public interface IModuleExecutionTraceRepository extends IIdElementRepository<IM
 	 */
 	
     void removeTraceInformation(String moduleUri, String elementUri, String modellUri);
-	
-	/**
-	 * Get the model trace information of a model used within a module execution.
-	 * @param modelUri
-	 * @param moduleUri
-	 * @return
-	 */
-	
-    IModelTrace getModelTraceForModule(String modelUri, String moduleUri);
-
-	/**
-	 * Get the model trace information of a model used within a module execution.
-	 * 
-	 * @param modelUri
-	 * @param moduleUri
-	 * @return
-	 */
-	
-    IModelTrace getModelTraceForModule(String modelUri, IModuleExecutionTrace moduleTrace);
 
 	/** protected region IModuleExecutionTraceRepositry end **/
 

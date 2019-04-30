@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-25.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -30,7 +30,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElemen
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.TinkerpopDelegate;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
@@ -39,7 +39,7 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
  * Implementation of IPropertyAccess. 
  */
 @SuppressWarnings("unused") 
-public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Vertex> {
+public class PropertyAccessGremlin implements IPropertyAccess, TinkerpopDelegate<Vertex> {
     
     /** The graph traversal source for all navigations */
     private final GraphTraversalSource gts;
@@ -81,11 +81,7 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
      */
     private IPropertyAccessHasProperty property;
 
-    /**
-     * Empty constructor for de/-serialization.
-     */    
-    // public PropertyAccessGremlin() { }
-    
+
     /**
      * Constructor for factory, only needs wrapped vertex, traversal source and factory
      */
@@ -96,6 +92,10 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
         this.delegate = vertex;
         this.gts = gts;
         this.wrapperFactory = wrapperFactory;
+        this.module = new AccessHasModuleGremlin(this, gts, wrapperFactory);
+        this.property = new PropertyAccessHasPropertyGremlin(this, gts, wrapperFactory);
+        this.from = new AccessHasFromGremlin(this, gts, wrapperFactory);
+        this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
     }
     
     /**
@@ -113,25 +113,25 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
         this.delegate = vertex;
         this.gts = gts;
         this.wrapperFactory = wrapperFactory;
+ 
+        this.from = new AccessHasFromGremlin(this, gts, wrapperFactory);
+        this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
+        this.module = new AccessHasModuleGremlin(this, gts, wrapperFactory);
+        this.property = new PropertyAccessHasPropertyGremlin(this, gts, wrapperFactory);
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        // Equals References
-        // this.property = new PropertyAccessHasPropertyGremlin(this, gts, wrapperFactory);
-        // Derived Features
-        // this.from = new AccessHasFromGremlin(this, gts, wrapperFactory);
-        // Derived Features
-        // this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
         try {
-	        this.from.create(from);
-	        this.property.create(property);
-	        this.in.create(in);
+            this.property.create(property);
+            this.in.create(in);
+            this.from.create(from);
         } catch (TraceModelConflictRelation ex) {
-            ((AccessHasFromGremlin)this.from).delegate().remove();
             ((PropertyAccessHasPropertyGremlin)this.property).delegate().remove();
             ((AccessHasInGremlin)this.in).delegate().remove();
+            ((AccessHasFromGremlin)this.from).delegate().remove();
             throw ex;
         }
+    
     }
     
     @Override
@@ -178,61 +178,25 @@ public class PropertyAccessGremlin implements IPropertyAccess, GremlinWrapper<Ve
      
     @Override
     public IAccessHasModule module() {
-        if (module == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("module");
-                if (gt.hasNext()) {
-                    module = new AccessHasModuleGremlin(this, gt.next(), this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return module;
     }
 
     @Override
     public IAccessHasFrom from() {
-        if (from == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("from");
-                if (gt.hasNext()) {
-                    from = new AccessHasFromGremlin(this, gt.next(), this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return from;
     }
 
     @Override
     public IAccessHasIn in() {
-        if (in == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("in");
-                if (gt.hasNext()) {
-                    in = new AccessHasInGremlin(this, gt.next(), this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return in;
     }
 
     @Override
     public IPropertyAccessHasProperty property() {
-        if (property == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("property");
-                if (gt.hasNext()) {
-                    property = new PropertyAccessHasPropertyGremlin(this, gt.next(), this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return property;
     }
 

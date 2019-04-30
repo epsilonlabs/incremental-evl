@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-29.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,13 +11,15 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.trace.IIdElementRepository;
 /** protected region IModelTraceRepositoryImports on begin **/
 /** protected region IModelTraceRepositoryImports end **/
 
-public interface IModelTraceRepository extends IIdElementRepository<IModelTrace> {
+@SuppressWarnings("unused")
+public interface IModelTraceRepository<T extends IModelTrace> extends IIdElementRepository<T> {
 
 
     IModelTrace getModelTraceByIdentity(String uri);
@@ -31,6 +33,7 @@ public interface IModelTraceRepository extends IIdElementRepository<IModelTrace>
      * @param modelElementUri The uri of the element for which the trace is being retrieved
      * @return The model element trace, or null if not found
      */
+     
     IModelElementTrace getModelElementTraceFor(String modelUri, String modelElementUri);
     
     /**
@@ -41,6 +44,7 @@ public interface IModelTraceRepository extends IIdElementRepository<IModelTrace>
      * @param typeName The name of the type for which the trace is being retrieved
      * @return The model type trace, or null if not found
      */
+     
     IModelTypeTrace getTypeTraceFor(String modelUri, String typeName);
     
     /**
@@ -52,8 +56,53 @@ public interface IModelTraceRepository extends IIdElementRepository<IModelTrace>
      * @param propertyName The property trace
      * @return The property trace, or null if not found
      */
+     
     IPropertyTrace getPropertyTraceFor(String modelUri, String elementId, String propertyName);
+    
+    
+    /**
+     * Gets the model element trace from model.
+     *
+     * @param elementUri the element uri
+     * @param modelTrace the model trace
+     * @return the model element trace from model
+     */
+     
+    IModelElementTrace getModelElementTrace(String elementUri, IModelTrace modelTrace);
+    
+    /**
+	 * Get the model trace information of a model used within a module execution.
+	 * @param modelUri
+	 * @param moduleUri
+	 * @return
+	 */
+	
+    IModelTrace getModelTraceForModule(String modelUri, String moduleUri);
 
+	/**
+	 * Get the model trace information of a model used within a module execution.
+	 * 
+	 * @param modelUri
+	 * @param moduleUri
+	 * @return
+	 */
+	
+    IModelTrace getModelTraceForModule(String modelUri, IModuleExecutionTrace moduleTrace);
+    
+    /**
+	 * Get all model element traces from the model. Elements with id included the filteredIds set
+	 * will be excluded.
+	 *
+	 * @param moduleUri 			the module uri
+	 * @param modelUri 				the model uri
+	 * @param filteredIds 			the set of ids to be filtered (excluded)
+	 * @return the model element traces
+	 */
+	 
+	Collection<IModelElementTrace> getModelElementTraces(
+		String moduleUri,
+		String modelUri,
+		Set<String> filteredIds);
 
 /** protected region IModelTraceRepositry end **/
 

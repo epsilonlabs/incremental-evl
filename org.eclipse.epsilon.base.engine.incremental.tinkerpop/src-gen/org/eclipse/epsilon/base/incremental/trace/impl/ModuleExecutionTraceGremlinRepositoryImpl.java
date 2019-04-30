@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-25.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,6 +18,8 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.util.Attachable;
+import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
@@ -28,23 +30,28 @@ import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 /**
  * A repository for handling elements in the domain of ModuleExecutionTrace.
  *
  * @author Horacio Hoyos Rodriguez
  */
 @SuppressWarnings("unused")
-public abstract class ModuleExecutionTraceGremlinRepositoryImpl implements IModuleExecutionTraceRepository {
+public abstract class ModuleExecutionTraceGremlinRepositoryImpl<ST extends IModuleExecutionTrace> implements IModuleExecutionTraceRepository<ST> {
 
     private static final Logger logger = LoggerFactory.getLogger(ModuleExecutionTraceGremlinRepositoryImpl.class);
  
     protected GraphTraversalSource gts; 
     protected final TraceFactory factory;
     
+    @Inject
     public ModuleExecutionTraceGremlinRepositoryImpl(
-        GraphTraversalSource trvrslSrc, TraceFactory fctry) {
+        GraphTraversalSource trvrslSrc,
+        TraceFactory fctry) {
         gts = trvrslSrc;
         factory = fctry;
+        
     }
 
  

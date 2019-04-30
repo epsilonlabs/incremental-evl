@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-25.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,18 +18,30 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.util.Attachable;
+import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 /** protected region ModelTraceRepositoryImplImports on begin **/
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 /** protected region ModelTraceRepositoryImplImports end **/
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * A repository for handling elements in the domain of ModelTrace.
@@ -37,50 +49,37 @@ import org.slf4j.LoggerFactory;
  * @author Horacio Hoyos Rodriguez
  */
 @SuppressWarnings("unused")
-public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
+public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository<IModelTrace> {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelTraceGremlinRepositoryImpl.class);
  
     protected GraphTraversalSource gts; 
     protected final TraceFactory factory;
     
+    @Inject
     public ModelTraceGremlinRepositoryImpl(
-        GraphTraversalSource trvrslSrc, TraceFactory fctry) {
+        GraphTraversalSource trvrslSrc,
+        TraceFactory fctry) {
         gts = trvrslSrc;
         factory = fctry;
+        
     }
 
-    
     @Override
-    public boolean add(IModelTrace item) {
+    public IModelTrace add(IModelTrace item) {
         logger.info("Adding {} to repository", item);
-        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-            GraphTraversal<Vertex, Vertex> existing = agts.V(item.getId());
-            Vertex newVertex;
-            if (existing.hasNext()) {
-                newVertex = existing.next();
-            }
-            else {
-                List<Object> keyValues = new ArrayList<>();
-                keyValues.add("id");
-                keyValues.add(item.getId());
-                keyValues.add("uri");
-                keyValues.add(item.getUri());
-                newVertex = agts.addV("ModelTraceGremlin").property(T.id, item.getId(), keyValues.toArray()).next();
-            }
-            item = (IModelTrace) factory.createTraceElement(newVertex, gts);
-        } catch (Exception e) {
-            throw new IllegalStateException("There was an error during graph traversal.", e);
-        } 
-        return true;
+        assert item instanceof ModelTraceGremlin;
+        ModelTraceGremlin impl = (ModelTraceGremlin)item;
+        Vertex attached = ((DetachedVertex)impl.delegate()).attach(Attachable.Method.getOrCreate(gts.getGraph()));
+        return factory.createTraceElement(attached, gts);
     }
 
     @Override
-    public boolean remove(IModelTrace item) {
+    public IModelTrace remove(IModelTrace item) {
         logger.info("Removing {} from repository", item);
         Vertex v = ((ModelTraceGremlin)item).delegate();
         v.remove();
-        return v.graph() == null;
+        return factory.createTraceElement(null, gts);
     }
     
     @Override
@@ -164,6 +163,89 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
 				result = factory.createTraceElement(gt.next(), gts);
 			}
 		} catch (Exception e) {
+			throw new IllegalStateException("There was an error during graph traversal.", e);
+        }
+		return result;
+	}
+	
+	@Override
+	public IModelTrace getModelTraceForModule(String modelUri, String moduleUri) {
+		IModelTrace result = null;
+		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+			GraphTraversal<Vertex, Vertex> gt = agts.V().hasLabel("EvlModuleTrace")
+				.has("uri", moduleUri)
+				.out("models")
+				.out("modelTrace").has("uri", modelUri);
+			if (gt.hasNext()) {
+				result = new ModelTraceGremlin(gt.next(), gts, factory);
+			}
+		}
+		catch (Exception e) {
+			throw new IllegalStateException("There was an error during graph traversal.", e);
+        }
+		return result;
+	}
+	
+	@Override
+	public IModelTrace getModelTraceForModule(String modelUri, IModuleExecutionTrace moduleTrace) {
+		IModelTrace result = null;
+		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+			GraphTraversal<Vertex, Vertex> gt = agts.V(moduleTrace.getId())
+					.out("models")
+					.out("modelTrace").has("uri", modelUri);
+			if (gt.hasNext()) {
+				result = factory.createTraceElement(gt.next(), gts);
+			}
+		}
+		catch (Exception e) {
+			throw new IllegalStateException("There was an error during graph traversal.", e);
+        }
+		return result;
+	}
+	
+	
+	@Override
+	public IModelElementTrace getModelElementTrace(String elementUri, IModelTrace modelTrace) {
+		IModelElementTrace result = null;
+		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+			GraphTraversal<Vertex, Vertex> gt = agts.V(modelTrace.getId())
+					.out("elements")
+					.has("uri", elementUri);
+			if (gt.hasNext()) {
+				result = factory.createTraceElement(gt.next(), gts);
+			}
+		}
+		catch (Exception e) {
+			throw new IllegalStateException("There was an error during graph traversal.", e);
+        }
+		return result;
+		
+	}
+	
+	@Override
+	public Collection<IModelElementTrace> getModelElementTraces(
+		String moduleUri,
+		String modelUri,
+		Set<String> filteredIds) {
+		Set<IModelElementTrace> result = new HashSet<>();
+		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+			GraphTraversal<Vertex, Vertex> gt = agts.V().hasLabel("EvlModuleTrace")
+					.has("uri", moduleUri)
+					.out("models")
+					.out("modelTrace").has("uri", modelUri);
+			GraphTraversal<Vertex, Vertex> element_gt;
+			if (filteredIds.isEmpty()) {
+				element_gt = gt.out("elements");
+			}
+			else {
+				element_gt = gt.out("elements").has("uri", P.without(filteredIds));
+			}
+			while(element_gt.hasNext()) {
+				ModelElementTraceGremlin met = factory.createTraceElement(element_gt.next(), gts);
+		        result.add(met);
+			}
+		}
+		catch (Exception e) {
 			throw new IllegalStateException("There was an error during graph traversal.", e);
         }
 		return result;

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-25.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -30,7 +30,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElemen
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.TinkerpopDelegate;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
@@ -39,7 +39,7 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
  * Implementation of IModelAccess. 
  */
 @SuppressWarnings("unused") 
-public class ModelAccessGremlin implements IModelAccess, GremlinWrapper<Vertex> {
+public class ModelAccessGremlin implements IModelAccess, TinkerpopDelegate<Vertex> {
     
     /** The graph traversal source for all navigations */
     private final GraphTraversalSource gts;
@@ -66,11 +66,7 @@ public class ModelAccessGremlin implements IModelAccess, GremlinWrapper<Vertex> 
      */
     private IModelAccessHasModelTrace modelTrace;
 
-    /**
-     * Empty constructor for de/-serialization.
-     */    
-    // public ModelAccessGremlin() { }
-    
+
     /**
      * Constructor for factory, only needs wrapped vertex, traversal source and factory
      */
@@ -81,6 +77,7 @@ public class ModelAccessGremlin implements IModelAccess, GremlinWrapper<Vertex> 
         this.delegate = vertex;
         this.gts = gts;
         this.wrapperFactory = wrapperFactory;
+        this.modelTrace = new ModelAccessHasModelTraceGremlin(this, gts, wrapperFactory);
     }
     
     /**
@@ -104,18 +101,18 @@ public class ModelAccessGremlin implements IModelAccess, GremlinWrapper<Vertex> 
         }
         catch (Exception e) {
             throw new IllegalStateException("There was an error during graph traversal.", e);
-        }
+        } 
+        this.modelTrace = new ModelAccessHasModelTraceGremlin(this, gts, wrapperFactory);
         if (!container.models().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        // Equals References
-        // this.modelTrace = new ModelAccessHasModelTraceGremlin(this, gts, wrapperFactory);
         try {
-	        this.modelTrace.create(modelTrace);
+            this.modelTrace.create(modelTrace);
         } catch (TraceModelConflictRelation ex) {
             ((ModelAccessHasModelTraceGremlin)this.modelTrace).delegate().remove();
             throw ex;
         }
+    
     }
     
     @Override
@@ -151,16 +148,7 @@ public class ModelAccessGremlin implements IModelAccess, GremlinWrapper<Vertex> 
     
     @Override
     public IModelAccessHasModelTrace modelTrace() {
-        if (modelTrace == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("modelTrace");
-                if (gt.hasNext()) {
-                    modelTrace = new ModelAccessHasModelTraceGremlin(this, gt.next(), this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return modelTrace;
     }
 

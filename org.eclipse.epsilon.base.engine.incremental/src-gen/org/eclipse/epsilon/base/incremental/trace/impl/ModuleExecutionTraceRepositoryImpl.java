@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-29.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -24,26 +24,31 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepositor
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ModuleExecutionTraceRepositoryImpl implements IModuleExecutionTraceRepository {
+@SuppressWarnings("unused")
+public abstract class ModuleExecutionTraceRepositoryImpl<T extends IModuleExecutionTrace> implements IModuleExecutionTraceRepository<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ModuleExecutionTraceRepositoryImpl.class);
  
-    protected final Set<IModuleExecutionTrace> extent;    
+    protected final Set<T> extent;    
     
     public ModuleExecutionTraceRepositoryImpl() {
         this.extent = new LinkedHashSet<>();
     }
     
     @Override
-    public boolean add(IModuleExecutionTrace item) {
+    public T  add(T item) {
         logger.info("Adding {} to repository", item);
-        return extent.add(item);
+        extent.add(item);
+        // FIXME Perhaps throw exception if not added?
+        return item;
     }
 
     @Override
-    public boolean remove(IModuleExecutionTrace item) {
+    public T  remove(T item) {
         logger.info("Removing {} from repository", item);
-        return extent.remove(item);
+        extent.remove(item);
+        // FIXME Perhaps throw exception if not removed?
+        return item;
     }
     
     @Override

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-29.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -22,6 +22,7 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.*;
  * An Access is the super class of all possible types of accesses that can ocurr
  * during execution.
  */
+@SuppressWarnings("unused")
 public interface ISatisfiesAccess extends IAccess {
     
     /**

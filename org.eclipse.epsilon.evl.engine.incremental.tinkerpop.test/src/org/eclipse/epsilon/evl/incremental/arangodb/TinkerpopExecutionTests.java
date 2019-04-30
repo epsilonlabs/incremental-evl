@@ -39,6 +39,7 @@ public class TinkerpopExecutionTests extends ExecutionTests {
 			dbPath.toFile().mkdir();
 		}
 		gr = new BitsyGraphResource(dbPath, true);
+		
 		IncrementalEvlTinkerpopGuiceModule gModule = new IncrementalEvlTinkerpopGuiceModule(gr.getTraversalSource());
 		Injector injector = Guice.createInjector(gModule);
 		module = injector.getInstance(IncrementalEvlModule.class);

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,88 +12,60 @@
 package org.eclipse.epsilon.evl.incremental.util;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
-import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.evl.incremental.trace.impl.*;
 
 /**
  * A Factory to wrap Vertices around concrete classes based on the Vertex label.
- * It is useful for instantiating domain elements back from Gremlin elements
+ * It is useful for instantiating domain elements back from Gremlin elements. This Factory delegates
+ * to another factory for labels (types) it does not support, if such facotry exists.
  * 
- * @author Horacio Hoyos
+ * @author Horacio Hoyos Rodriguez
  *
  */
 public class EvlTraceFactory implements TraceFactory {
-    
+
     private final TraceFactory delegate;
     
-    protected EvlTraceFactory (TraceFactory dlgtFctry) {
-        delegate = dlgtFctry;
+    public EvlTraceFactory () {
+        delegate = new BaseTraceFactory();
     }
     
-    public Object createTraceElement(Vertex dlgt, GraphTraversalSource gts) {
+    @Override
+    public <E> E createTraceElement(Vertex dlgt, GraphTraversalSource gts) {
+        return createTraceElement(dlgt, gts, this);
+    
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public <E> E createTraceElement(Vertex dlgt, GraphTraversalSource gts, TraceFactory subFactory) {
         String label = dlgt.label();
         switch (label) {
-  
         case "EvlModuleTrace":
-            EvlModuleTraceGremlin evlModuleTrace = new EvlModuleTraceGremlin();
-            evlModuleTrace.delegate((Vertex) dlgt);
-            evlModuleTrace.graphTraversalSource(gts);
-            return evlModuleTrace;
-  
+            return (E) new EvlModuleTraceGremlin(dlgt, gts, subFactory);
         case "ContextTrace":
-            ContextTraceGremlin contextTrace = new ContextTraceGremlin();
-            contextTrace.delegate((Vertex) dlgt);
-            contextTrace.graphTraversalSource(gts);
-            return contextTrace;
-  
+            return (E) new ContextTraceGremlin(dlgt, gts, subFactory);
         case "InvariantTrace":
-            InvariantTraceGremlin invariantTrace = new InvariantTraceGremlin();
-            invariantTrace.delegate((Vertex) dlgt);
-            invariantTrace.graphTraversalSource(gts);
-            return invariantTrace;
-  
+            return (E) new InvariantTraceGremlin(dlgt, gts, subFactory);
         case "GuardResult":
-            GuardResultGremlin guardResult = new GuardResultGremlin();
-            guardResult.delegate((Vertex) dlgt);
-            guardResult.graphTraversalSource(gts);
-            return guardResult;
-  
+            return (E) new GuardResultGremlin(dlgt, gts, subFactory);
         case "GuardTrace":
-            GuardTraceGremlin guardTrace = new GuardTraceGremlin();
-            guardTrace.delegate((Vertex) dlgt);
-            guardTrace.graphTraversalSource(gts);
-            return guardTrace;
-  
+            return (E) new GuardTraceGremlin(dlgt, gts, subFactory);
         case "CheckResult":
-            CheckResultGremlin checkResult = new CheckResultGremlin();
-            checkResult.delegate((Vertex) dlgt);
-            checkResult.graphTraversalSource(gts);
-            return checkResult;
-  
+            return (E) new CheckResultGremlin(dlgt, gts, subFactory);
         case "CheckTrace":
-            CheckTraceGremlin checkTrace = new CheckTraceGremlin();
-            checkTrace.delegate((Vertex) dlgt);
-            checkTrace.graphTraversalSource(gts);
-            return checkTrace;
-  
+            return (E) new CheckTraceGremlin(dlgt, gts, subFactory);
         case "MessageTrace":
-            MessageTraceGremlin messageTrace = new MessageTraceGremlin();
-            messageTrace.delegate((Vertex) dlgt);
-            messageTrace.graphTraversalSource(gts);
-            return messageTrace;
-  
+            return (E) new MessageTraceGremlin(dlgt, gts, subFactory);
         case "SatisfiesAccess":
-            SatisfiesAccessGremlin satisfiesAccess = new SatisfiesAccessGremlin();
-            satisfiesAccess.delegate((Vertex) dlgt);
-            satisfiesAccess.graphTraversalSource(gts);
-            return satisfiesAccess;
+            return (E) new SatisfiesAccessGremlin(dlgt, gts, subFactory);
         /* protected region EvlTraceFactory on begin */
-
         /* protected region EvlTraceFactory end */
         default:
-            return delegate.createTraceElement(dlgt, gts);
+            return delegate.createTraceElement(dlgt, gts, subFactory);
         }
     }
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-25.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,6 +13,7 @@ package org.eclipse.epsilon.base.incremental.util;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.eclipse.epsilon.base.incremental.util.BaseTraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 
@@ -27,46 +28,41 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
 public class BaseTraceFactory implements TraceFactory {
 
     public BaseTraceFactory () { }
-   
     
     @Override
-    public Object createTraceElement(Vertex dlgt, GraphTraversalSource gts) {
+    public <E> E createTraceElement(Vertex dlgt, GraphTraversalSource gts) {
+        return createTraceElement(dlgt, gts, this);
+    
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public <E> E createTraceElement(Vertex dlgt, GraphTraversalSource gts, TraceFactory subFactory) {
         String label = dlgt.label();
         switch (label) {
-  
         case "ModelAccess":
-            return new ModelAccessGremlin(dlgt, gts, this);
-  
+            return (E) new ModelAccessGremlin(dlgt, gts, subFactory);
         case "ExecutionContext":
-            return new ExecutionContextGremlin(dlgt, gts, this);
-  
+            return (E) new ExecutionContextGremlin(dlgt, gts, subFactory);
         case "ModelElementVariable":
-            return new ModelElementVariableGremlin(dlgt, gts, this);
-  
+            return (E) new ModelElementVariableGremlin(dlgt, gts, subFactory);
         case "ElementAccess":
-            return new ElementAccessGremlin(dlgt, gts, this);
-  
+            return (E) new ElementAccessGremlin(dlgt, gts, subFactory);
         case "AllInstancesAccess":
-            return new AllInstancesAccessGremlin(dlgt, gts, this);
-  
+            return (E) new AllInstancesAccessGremlin(dlgt, gts, subFactory);
         case "PropertyAccess":
-            return new PropertyAccessGremlin(dlgt, gts, this);
-  
+            return (E) new PropertyAccessGremlin(dlgt, gts, subFactory);
         case "ModelTrace":
-            return new ModelTraceGremlin(dlgt, gts, this);
-  
+            return (E) new ModelTraceGremlin(dlgt, gts, subFactory);
         case "ModelTypeTrace":
-            return new ModelTypeTraceGremlin(dlgt, gts, this);
-  
+            return (E) new ModelTypeTraceGremlin(dlgt, gts, subFactory);
         case "ModelElementTrace":
-            return new ModelElementTraceGremlin(dlgt, gts, this);
-  
+            return (E) new ModelElementTraceGremlin(dlgt, gts, subFactory);
         case "PropertyTrace":
-            return new PropertyTraceGremlin(dlgt, gts, this);
+            return (E) new PropertyTraceGremlin(dlgt, gts, subFactory);
         /* protected region BaseTraceFactory on begin */
         // Add special factory overrides 
         /* protected region BaseTraceFactory end */
-        
         }
         throw new IllegalArgumentException(
                 String.format("Trace Class %s not present in factory. If you changed the metamodel"

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-29.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,9 +18,11 @@ import java.util.Set;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 /** protected region ModelTraceRepositoryImplImports on begin **/
+import java.util.Collection;
 import java.util.Iterator;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 /** protected region ModelTraceRepositoryImplImports end **/
 
@@ -28,7 +30,8 @@ import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ModelTraceRepositoryImpl implements IModelTraceRepository {
+@SuppressWarnings("unused")
+public class ModelTraceRepositoryImpl implements IModelTraceRepository<IModelTrace> {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelTraceRepositoryImpl.class);
  
@@ -39,15 +42,19 @@ public class ModelTraceRepositoryImpl implements IModelTraceRepository {
     }
     
     @Override
-    public boolean add(IModelTrace item) {
+    public IModelTrace  add(IModelTrace item) {
         logger.info("Adding {} to repository", item);
-        return extent.add(item);
+        extent.add(item);
+        // FIXME Perhaps throw exception if not added?
+        return item;
     }
 
     @Override
-    public boolean remove(IModelTrace item) {
+    public IModelTrace  remove(IModelTrace item) {
         logger.info("Removing {} from repository", item);
-        return extent.remove(item);
+        extent.remove(item);
+        // FIXME Perhaps throw exception if not removed?
+        return item;
     }
     
     @Override
@@ -115,6 +122,31 @@ public class ModelTraceRepositoryImpl implements IModelTraceRepository {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public IModelElementTrace getModelElementTrace(String elementUri, IModelTrace modelTrace) {
+		// TODO Implement IModelTraceRepository.getModelElementTrace
+		throw new RuntimeException("Unimplemented Method IModelTraceRepository.getModelElementTrace invoked.");
+	}
+
+	@Override
+	public IModelTrace getModelTraceForModule(String modelUri, String moduleUri) {
+		// TODO Implement IModelTraceRepository.getModelTraceForModule
+		throw new RuntimeException("Unimplemented Method IModelTraceRepository.getModelTraceForModule invoked.");
+	}
+
+	@Override
+	public IModelTrace getModelTraceForModule(String modelUri, IModuleExecutionTrace moduleTrace) {
+		// TODO Implement IModelTraceRepository.getModelTraceForModule
+		throw new RuntimeException("Unimplemented Method IModelTraceRepository.getModelTraceForModule invoked.");
+	}
+
+	@Override
+	public Collection<IModelElementTrace> getModelElementTraces(String moduleUri, String modelUri,
+			Set<String> filteredIds) {
+		// TODO Implement IModelTraceRepository.getModelElementTraces
+		throw new RuntimeException("Unimplemented Method IModelTraceRepository.getModelElementTraces invoked.");
 	}
 
 	/** protected region IModelTraceRepositry end **/

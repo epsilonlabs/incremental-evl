@@ -37,6 +37,7 @@ import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.common.module.ModuleElement;
@@ -159,9 +160,11 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		IEvlExecutionTraceManager etManager = getContext().getTraceManager();
 		boolean incremental = determineIncremental(etManager, getChksum());		
 		if (incremental) {
+			logger.info("Execution is incremental.");
 			executeIncremental(etManager, getChksum());
 		}
 		else {
+			logger.info("Execution is normal.");
 			createModuleAndModelTraces(etManager, getChksum());
 			checkConstraints();
 		}
@@ -227,13 +230,14 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	public void onChange(IIncrementalModel model, Object object, String propertyName) throws EolRuntimeException {
 
 		logger.info("On Change event for {} with property {}", object, propertyName);
-		String elementId = model.getElementId(object);
 		IEvlModuleTraceRepository repo = getContext().getTraceManager().getExecutionTraceRepository();
 		String moduleUri = context.getModule().getUri().toString();
-		// We need to find all the ModuleElementTrace-Context in which there was an access
-		
-		Set<IReexecutionTrace> traces = repo.findPropertyAccessExecutionTraces(moduleUri, model.getModelUri(),
-				elementId, propertyName);
+		Set<IReexecutionTrace> traces = repo.findPropertyAccessExecutionTraces(moduleUri,
+				getContext().getTraceManager().getModelTraceRepository()
+				.getPropertyTraceFor(
+					model.getModelUri(),
+					model.getElementId(object),
+					propertyName));
 		traces.addAll(repo.findAllInstancesExecutionTraces(moduleUri, model.getModelUri(), model.getTypeNameOf(object)));
 		logger.debug("Found {} traces for the element", traces.size());
 		executeTraces(moduleUri, model, traces, object);
@@ -277,13 +281,14 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 
 		logger.info("On Delete event for {}", modelElememt);
 		String elementUri = model.getElementId(modelElememt);
-		IEvlModuleTraceRepository repo = getContext().getTraceManager().getExecutionTraceRepository();
+		IEvlModuleTraceRepository moduleRepo = getContext().getTraceManager().getExecutionTraceRepository();
 		String moduleUri = context.getModule().getUri().toString();
 		
 		// FIXME This should follow the same pattern as change/create!
-		Set<IReexecutionTrace> traces = repo.findIndirectExecutionTraces(moduleUri, elementUri, model.getModelUri());
+		Set<IReexecutionTrace> traces = moduleRepo.findIndirectExecutionTraces(moduleUri, elementUri, model.getAllTypeNamesOf(modelElememt));
 
-		IModelTrace modelTrace = repo.getModelTraceForModule(model.getModelUri(), moduleUri);
+		IModelTrace modelTrace = getContext().getTraceManager().getModelTraceRepository()
+			.getModelTraceForModule(model.getModelUri(), moduleUri);
 		logger.info("Executing indirect contexts");
 		traces.stream().filter(IContextTrace.class::isInstance).map(IContextTrace.class::cast)
 				.forEach(ct -> executeContextTrace(ct, modelTrace));
@@ -307,7 +312,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 				it.remove();
 			}
 		}
-		repo.removeTraceInformation(moduleUri, elementUri, model.getModelUri());
+		moduleRepo.removeTraceInformation(moduleUri, elementUri, model.getModelUri());
 		getContext().getConstraintTrace().clear();
 	}
 
@@ -366,7 +371,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		if (evlModuleTrace == null) {
 			try {
 				evlModuleTrace = factory.createModuleTrace(sourceChksum);
-				etManager.getExecutionTraceRepository().add(evlModuleTrace);
+				evlModuleTrace = etManager.getExecutionTraceRepository().add(evlModuleTrace);
 			} catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
 				throw new EolRuntimeException(e.getMessage());
 			}
@@ -379,7 +384,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 				if (mt == null) {
 					try {
 						mt = factory.createModelTrace(im.getModelUri());
-						etManager.getModelTraceRepository().add(mt);
+						mt = etManager.getModelTraceRepository().add(mt);
 					} catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
 						throw new EolRuntimeException(e.getMessage());
 					}
@@ -589,6 +594,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		IEvlExecutionTraceManager etManager,
 		String sourceChksum) throws EolRuntimeException {
 		IEvlModuleTraceRepository executionTraceRepo = etManager.getExecutionTraceRepository();
+		IModelTraceRepository modelTraceRepo = etManager.getModelTraceRepository();
 		for (IModel m : context.getModelRepository().getModels()) {
 			IPropertyGetter pg = m.getPropertyGetter();
 			if (m instanceof IIncrementalModel) {
@@ -640,7 +646,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 					// We need to keep all ElementTraces so we can then know which has been deleted...
 					visited.add(im.getElementId(element));
 				}
-				Collection<IModelElementTrace> deleted = executionTraceRepo.getModelElementTraces(sourceChksum, im.getModelUri(), visited);
+				Collection<IModelElementTrace> deleted = modelTraceRepo.getModelElementTraces(sourceChksum, im.getModelUri(), visited);
 				for (IModelElementTrace met : deleted) {
 					onDelete(im, im.getElementById(met.getUri()));
 				}
@@ -865,7 +871,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		IModelElementTrace selfTrace = IncrementalUtils.asStream(ec.contextVariables().get())
 				.filter(v -> v.getName().equals("self")).findFirst().get().value().get();
 		IGuardedElementTrace guardedElement = trace.getModuleElementTrace().limits().get();
-		IModelTrace modelTrace = getContext().getTraceManager().getExecutionTraceRepository()
+		IModelTrace modelTrace = getContext().getTraceManager().getModelTraceRepository()
 				.getModelTraceForModule(model.getModelUri(), moduleUri);
 		Object self = getSelf(moduleUri, modelTrace, selfTrace);
 		if (guardedElement instanceof IInvariantTrace) {
@@ -907,7 +913,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		throws EolRuntimeException {
 		logger.info("Re-executing InvariantTrace");
 		IExecutionContext ec = trace.getExexutionContext();
-		IModelTrace modelTrace = getContext().getTraceManager().getExecutionTraceRepository()
+		IModelTrace modelTrace = getContext().getTraceManager().getModelTraceRepository()
 				.getModelTraceForModule(model.getModelUri(), moduleUri);
 		IModelElementTrace selfTrace = IncrementalUtils.asStream(ec.contextVariables().get())
 				.filter(v -> v.getName().equals("self")).findFirst().get().value().get();
@@ -938,7 +944,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		IExecutionContext ec = trace.getExexutionContext();
 		IModelElementTrace selfTrace = IncrementalUtils.asStream(ec.contextVariables().get())
 			.filter(v -> v.getName().equals("self")).findFirst().get().value().get();
-		IModelTrace modelTrace = getContext().getTraceManager().getExecutionTraceRepository()
+		IModelTrace modelTrace = getContext().getTraceManager().getModelTraceRepository()
 				.getModelTraceForModule(model.getModelUri(), moduleUri);
 		Object self = getSelf(moduleUri, modelTrace, selfTrace);
 		IInvariantTrace invariantT = trace.getModuleElementTrace().invariant().get();

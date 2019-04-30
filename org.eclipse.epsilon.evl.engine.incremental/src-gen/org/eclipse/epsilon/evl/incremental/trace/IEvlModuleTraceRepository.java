@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-29.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,32 +11,27 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace;
 
-
+import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
-import org.eclipse.epsilon.evl.incremental.IReexecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
-import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
-
 /** protected region IEvlModuleTraceRepositoryImports on begin **/
-import java.util.Collection;
+import java.util.Iterator;
+
+import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
+import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
+import org.eclipse.epsilon.evl.incremental.IReexecutionTrace;
 /** protected region IEvlModuleTraceRepositoryImports end **/
 
-public interface IEvlModuleTraceRepository extends IModuleExecutionTraceRepository {
+@SuppressWarnings("unused")
+public interface IEvlModuleTraceRepository<T extends IEvlModuleTrace> extends IModuleExecutionTraceRepository<T> {
 
 
     IEvlModuleTrace getEvlModuleTraceByIdentity(String uri);
 
 /** protected region IEvlModuleTraceRepositry on begin **/
-     
-	Set<IEvlModuleTrace> getAllModuleTraces();
-	
-	IModelElementTrace getModelElementTraceFromModel(String elementUri, IModelTrace modelTrace);
+    Iterator<T> getAllModuleTraces();
     
     /**
 	 * Find all ExecutionTraces related to an AllInstanceAccess (either by kind or by type) for the
@@ -46,7 +41,10 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
      * @param typeName		The type name
 	 * @return
 	 */
-	Set<IReexecutionTrace> findAllInstancesExecutionTraces(String moduleUri, String modelUri, String typeName);
+	Set<IReexecutionTrace> findAllInstancesExecutionTraces(
+		String moduleUri,
+		String modelUri,
+		String typeName);
 	
 	/**
 	 * Find all ExecutionTraces related to an AllInstanceAccess for the given type name
@@ -57,7 +55,11 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 	 * 						accesses are considered
 	 * @return
 	 */
-	Set<IReexecutionTrace> findAllInstancesExecutionTraces(String moduleUri, String modelUri, String typeName, boolean ofType);
+	Set<IReexecutionTrace> findAllInstancesExecutionTraces(
+		String moduleUri,
+		String modelUri,
+		String typeName,
+		boolean ofType);
 	
 	/**
 	 * Find all indirect execution traces for the element. The indirectExecutionTraces are the
@@ -67,8 +69,16 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 	 * This method is used when the element has been deleted from the model, hence, all searches
 	 * should start from the ModelElementTrace as we can not retrieve the element's type information
 	 * from the model.
+	 *
+	 * @param moduleUri 			the module uri
+	 * @param elementId 			the element id
+	 * @param allElementTypes 		all element's types
+	 * @return the sets the
 	 */
-	Set<IReexecutionTrace> findIndirectExecutionTraces(String moduleUri, String elementUri, String modelUri);
+	Set<IReexecutionTrace> findIndirectExecutionTraces(
+		String moduleUri,
+		Object elementId,
+		Collection<String> allElementTypes);
 	
 	/**
 	 * Find all ExecutionTraces in which the given element is accessed. Access is via element,
@@ -78,19 +88,22 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 	 * @param modelUri
 	 * @return
 	 */
-	Set<IReexecutionTrace> findModelElementExecutionTraces(String moduleUri, String elementUri, String modelUri);
+	Set<IReexecutionTrace> findModelElementExecutionTraces(
+		String moduleUri,
+		String elementUri,
+		String modelUri,
+		Set<String> allElementTypes);
 	
 	/**
 	 * Find all ExecutionTraces associated to a PropertyAccess for a given property and element.
-	 * 
-	 * @param moduleUri		The URI of the module
-	 * @param modelUri		The URI of the model
-	 * @param elementId		The element id
-	 * @param propertyName	The property name
-	 * @return
+	 *
+	 * @param moduleUri 			The URI of the module
+	 * @param propertyTrace 		the PropertyTrace that represents the model-element-property
+	 * @return the sets the
 	 */
-	Set<IReexecutionTrace> findPropertyAccessExecutionTraces(String moduleUri, String modelUri,
-			String elementUri, String propertyName);
+	Set<IReexecutionTrace> findPropertyAccessExecutionTraces(
+		String moduleUri,
+		IPropertyTrace propertyTrace);
 	
 	/**
 	 * Find all ExecutionTraces associated to a PropertyAccess.
@@ -99,34 +112,24 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 	 * @return the sets the
 	 */
 	Set<IReexecutionTrace> findPropertyAccessExecutionTraces(IPropertyAccess pa);
-
 	
+	/**
+	 * Get all property accesses for a given model element
+	 * @param elementUri
+	 * @param modelUri
+	 * @param moduleUri
+	 * @return
+	 */
+	Collection<IPropertyAccess> getPropertyAccessesForElement(
+			String elementUri,
+			String modelUri,
+			String moduleUri);
+		
 	IInvariantTrace findInvariantTraceinContext(IContextTrace contextTrace, String invariantName);
 
 	ICheckResult findResultInCheck(ICheckTrace checkTrace, IExecutionContext currentContext);
 	
 	IGuardResult findResultInGuard(IGuardTrace guardTrace, IExecutionContext currentContext);
-
-	Collection<IPropertyAccess> getPropertyAccessesForElement(
-		String elementUri,
-		String modelUri,
-		String moduleUri);
-	
-	
-	
-	// Collection<IModelElementTrace> getAllModelElementTraces(String modelUri);
-	
-	/**
-	 * Get all model element traces from the model. Elements with id included the filteredIds set
-	 * will be excluded.
-	 *
-	 * @param moduleUri 			the module uri
-	 * @param modelUri 				the model uri
-	 * @param filteredIds 			the set of ids to be filtered (excluded)
-	 * @return the model element traces
-	 */
-	Collection<IModelElementTrace> getModelElementTraces(String moduleUri, String modelUri, Set<String> filteredIds);
-
 
 
 	/** protected region IEvlModuleTraceRepositry end **/

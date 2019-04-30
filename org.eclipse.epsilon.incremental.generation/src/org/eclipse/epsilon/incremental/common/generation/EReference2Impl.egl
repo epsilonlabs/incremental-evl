@@ -53,6 +53,7 @@ import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 /**
  * Implementation of [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] reference. 
  */
+@SuppressWarnings("unused") 
 public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends Feature implements [%=er.getRelationJavaInterfaceName(interPrefix, interSufix)%] {
     
     /** The source(s) of the reference */

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-29.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -32,6 +32,7 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.*;
 /**
  * Implementation of ISatisfiesAccess. 
  */
+@SuppressWarnings("unused") 
 public class SatisfiesAccess implements ISatisfiesAccess {
 
     /**
@@ -81,8 +82,8 @@ public class SatisfiesAccess implements ISatisfiesAccess {
             throw new TraceModelDuplicateElement();
         };
 
-        this.modelElement = new SatisfiesAccessHasModelElement(this);
         this.module = new AccessHasModule(this);
+        this.modelElement = new SatisfiesAccessHasModelElement(this);
         if (!this.modelElement.create(modelElement)) {
             throw new TraceModelDuplicateElement();
         }
@@ -169,18 +170,18 @@ public class SatisfiesAccess implements ISatisfiesAccess {
         SatisfiesAccess other = (SatisfiesAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (modelElement.get() == null) {
-            if (other.modelElement.get() != null)
-                return false;
-        }
-        if (!modelElement.get().equals(other.modelElement.get())) {
-            return false;
-        }
         if (module.get() == null) {
             if (other.module.get() != null)
                 return false;
         }
         if (!module.get().equals(other.module.get())) {
+            return false;
+        }
+        if (modelElement.get() == null) {
+            if (other.modelElement.get() != null)
+                return false;
+        }
+        if (!modelElement.get().equals(other.modelElement.get())) {
             return false;
         }
         return true; 
@@ -190,8 +191,8 @@ public class SatisfiesAccess implements ISatisfiesAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((modelElement.get() == null) ? 0 : modelElement.get().hashCode());
         result = prime * result + ((module.get() == null) ? 0 : module.get().hashCode());
+        result = prime * result + ((modelElement.get() == null) ? 0 : modelElement.get().hashCode());
         return result;
     }
 }

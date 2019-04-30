@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -23,14 +23,15 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
-import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region MessageTraceImports on begin **/
 /** protected region MessageTraceImports end **/
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.TinkerpopDelegate;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -39,14 +40,23 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.*;
 /**
  * Implementation of IMessageTrace. 
  */
-public class MessageTraceGremlin implements IMessageTrace, GremlinWrapper<Vertex> {
+@SuppressWarnings("unused") 
+public class MessageTraceGremlin implements IMessageTrace, TinkerpopDelegate<Vertex> {
     
-
     /** The graph traversal source for all navigations */
-    private GraphTraversalSource gts;
+    private final GraphTraversalSource gts;
     
     /** The delegate Vertex */
     private Vertex delegate;
+    
+    /** The factory used to wrap the vertex's incident vertices */
+    private TraceFactory wrapperFactory;
+    
+    /**
+     * The id.
+     */
+    private Object id;
+
     
     /**
      * The contextModuleElement.
@@ -58,22 +68,38 @@ public class MessageTraceGremlin implements IMessageTrace, GremlinWrapper<Vertex
      */
     private IMessageTraceHasInvariant invariant;
 
+
     /**
-     * Empty constructor for deserialization.
-     */    
-    public MessageTraceGremlin() { }
+     * Constructor for factory, only needs wrapped vertex, traversal source and factory
+     */
+    public MessageTraceGremlin (
+        Vertex vertex,
+        GraphTraversalSource gts,
+        TraceFactory wrapperFactory) {
+        this.delegate = vertex;
+        this.gts = gts;
+        this.wrapperFactory = wrapperFactory;
+        this.invariant = new MessageTraceHasInvariantGremlin(this, gts, wrapperFactory);
+    }
     
     /**
      * Instantiates a new MessageTraceGremlin. The MessageTraceGremlin is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
     public MessageTraceGremlin(
-        IInvariantTrace container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        IInvariantTrace container,
+        Vertex vertex,
+        GraphTraversalSource gts,
+        TraceFactory wrapperFactory) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
+        this.wrapperFactory = wrapperFactory;
+ 
+        this.invariant = new MessageTraceHasInvariantGremlin(this, gts, wrapperFactory);
         if (!container.message().create(this)) {
             throw new TraceModelDuplicateElement();
         };
+    
     }
     
     @Override
@@ -90,35 +116,14 @@ public class MessageTraceGremlin implements IMessageTrace, GremlinWrapper<Vertex
      
     @Override
     public IInContextModuleElementTraceHasContextModuleElement contextModuleElement() {
-        if (contextModuleElement == null) {
-            contextModuleElement = new InContextModuleElementTraceHasContextModuleElementGremlin(this, this.gts, EvlTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("contextModuleElement");
-                if (gt.hasNext()) {
-                    ((InContextModuleElementTraceHasContextModuleElementGremlin)contextModuleElement).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
-        return contextModuleElement;
+        /** protected region contextModuleElement on begin **/
+        throw new UnsupportedOperationException("The reference contextModuleElement is derived and the getter hasn't been implemented");
+        /** protected region contextModuleElement end **/
     }
 
     @Override
     public IMessageTraceHasInvariant invariant() {
-        if (invariant == null) {
-            invariant = new MessageTraceHasInvariantGremlin(this, this.gts, EvlTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("invariant");
-                if (gt.hasNext()) {
-                    ((MessageTraceHasInvariantGremlin)invariant).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
+        
         return invariant;
     }
 
@@ -169,30 +174,10 @@ public class MessageTraceGremlin implements IMessageTrace, GremlinWrapper<Vertex
     public Vertex delegate() {
         return delegate;
     }
-
-    @Override
-    public void delegate(Vertex delegate) {
-        this.delegate = delegate;
-    }
     
     @Override
-    public void graphTraversalSource(GraphTraversalSource gts) {
-        this.gts = gts;
-    }
-    
-    protected GraphTraversalSource graphTraversalSource() {
+    public GraphTraversalSource graphTraversalSource() {
         return this.gts;
     }
     
-    protected GraphTraversalSource startTraversal() {
-        return this.gts.clone();
-    }
-    
-    protected void finishTraversal(GraphTraversalSource g) {
-        try {
-            g.close();
-        } catch (Exception e) {
-            // Fail silently?
-        }
-    }
 }

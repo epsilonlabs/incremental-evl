@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-29.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,16 +18,13 @@ import java.util.Set;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceRepositoryImpl;
-
-import java.util.Collection;
 /** protected region EvlModuleTraceRepositoryImplImports on begin **/
-import java.util.Collections;
 import java.util.function.Function;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
@@ -44,33 +41,35 @@ import org.eclipse.epsilon.evl.incremental.trace.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EvlModuleTraceRepositoryImpl implements IEvlModuleTraceRepository {
+@SuppressWarnings("unused")
+public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepositoryImpl<IEvlModuleTrace> implements IEvlModuleTraceRepository<IEvlModuleTrace> {
 
     private static final Logger logger = LoggerFactory.getLogger(EvlModuleTraceRepositoryImpl.class);
  
-    protected final Set<IEvlModuleTrace> extent;    
     
     public EvlModuleTraceRepositoryImpl() {
         super();
-        extent = new LinkedHashSet<>();
     }
     
     @Override
-    public boolean add(IModuleExecutionTrace item) {
+    public IEvlModuleTrace  add(IEvlModuleTrace item) {
         logger.info("Adding {} to repository", item);
-        assert item instanceof IModuleExecutionTrace;
-        return extent.add((IEvlModuleTrace) item);
+        extent.add(item);
+        // FIXME Perhaps throw exception if not added?
+        return item;
     }
 
     @Override
-    public boolean remove(IModuleExecutionTrace item) {
+    public IEvlModuleTrace  remove(IEvlModuleTrace item) {
         logger.info("Removing {} from repository", item);
-        return extent.remove(item);
+        extent.remove(item);
+        // FIXME Perhaps throw exception if not removed?
+        return item;
     }
     
     @Override
     public void dispose() {
-    	extent.clear();
+        super.dispose();
     }
     
     
@@ -92,8 +91,8 @@ public class EvlModuleTraceRepositoryImpl implements IEvlModuleTraceRepository {
     
     /** protected region IEvlModuleTraceRepositry on begin **/
 	@Override
-	public Set<IEvlModuleTrace> getAllModuleTraces() {
-		return Collections.unmodifiableSet(extent);
+	public Iterator<IEvlModuleTrace> getAllModuleTraces() {
+		return extent.iterator();
 	}
 
     @Override
@@ -106,39 +105,39 @@ public class EvlModuleTraceRepositoryImpl implements IEvlModuleTraceRepository {
 		return getEvlModuleTraceByIdentity(source);
 	}
     
-	@Override
-	public IModelTrace getModelTraceForModule(String modelUri, String moduleUri) {
-		IModuleExecutionTrace moduleTrace = getEvlModuleTraceByIdentity(moduleUri);
-		return getModelTraceForModule(modelUri, moduleTrace);
-	}
-    
-	@Override
-	public IModelTrace getModelTraceForModule(String modelUri, IModuleExecutionTrace moduleTrace) {
-		IModelTrace modelTrace = null;
-		Iterator<IModelAccess> it = moduleTrace.models().get();
-		while (it.hasNext()) {
-			IModelAccess next = it.next();
-			IModelTrace mt = next.modelTrace().get();
-			if (mt.getUri().equals(modelUri)) {
-				modelTrace = mt;
-				break;
-			}
-		}
-		return modelTrace;
-	}
+//	@Override
+//	public IModelTrace getModelTraceForModule(String modelUri, String moduleUri) {
+//		IModuleExecutionTrace moduleTrace = getEvlModuleTraceByIdentity(moduleUri);
+//		return getModelTraceForModule(modelUri, moduleTrace);
+//	}
+//    
+//	@Override
+//	public IModelTrace getModelTraceForModule(String modelUri, IModuleExecutionTrace moduleTrace) {
+//		IModelTrace modelTrace = null;
+//		Iterator<IModelAccess> it = moduleTrace.models().get();
+//		while (it.hasNext()) {
+//			IModelAccess next = it.next();
+//			IModelTrace mt = next.modelTrace().get();
+//			if (mt.getUri().equals(modelUri)) {
+//				modelTrace = mt;
+//				break;
+//			}
+//		}
+//		return modelTrace;
+//	}
 
-	@Override
-	public IModelElementTrace getModelElementTraceFromModel(String elementUri, IModelTrace modelTrace) {
-		IModelElementTrace elementTrace = null;
-		Iterator<IModelElementTrace> eIt = modelTrace.elements().get();
-		while (eIt.hasNext()) {
-			IModelElementTrace next = eIt.next();
-			if (next.getUri().equals(elementUri)) {
-				elementTrace = next;
-			}
-		}
-		return elementTrace;
-	}
+//	@Override
+//	public IModelElementTrace getModelElementTraceFromModel(String elementUri, IModelTrace modelTrace) {
+//		IModelElementTrace elementTrace = null;
+//		Iterator<IModelElementTrace> eIt = modelTrace.elements().get();
+//		while (eIt.hasNext()) {
+//			IModelElementTrace next = eIt.next();
+//			if (next.getUri().equals(elementUri)) {
+//				elementTrace = next;
+//			}
+//		}
+//		return elementTrace;
+//	}
 	
 //	@Override
 //	public Set<IReexecutionTrace> getAllExecutionTraces() {
@@ -175,112 +174,112 @@ public class EvlModuleTraceRepositoryImpl implements IEvlModuleTraceRepository {
 		return result;
 	}
 	
-	@Override
-	public Set<IReexecutionTrace> findIndirectExecutionTraces(String moduleUri, String elementUri, String modelUri) {
-		Set<IReexecutionTrace> result = new HashSet<>();
-		IEvlModuleTrace moduleTrace = getEvlModuleTraceByIdentity(moduleUri);
-		IModelTrace modelTrace = getModelTraceForModule(modelUri, moduleTrace);
-		IModelElementTrace modelElementTrace = getModelElementTraceFromModel(elementUri, modelTrace);
-		Set<String> allElementTypes = IncrementalUtils.asStream(modelElementTrace.kind().get())
-				.map(IModelTypeTrace::getName).collect(Collectors.toSet());
-		
-		Iterator<IAccess> it = moduleTrace.accesses().get();
-		while (it.hasNext()) {
-			IAccess a = it.next();
-			boolean elementIsAccessed = false;
-			if (a instanceof IElementAccess) {
-				elementIsAccessed = ((IElementAccess)a).element().get().equals(modelElementTrace);
-			}
-			else if (a instanceof IPropertyAccess) {
-				elementIsAccessed = ((IPropertyAccess)a).property().get().elementTrace().get().equals(modelElementTrace);
-			}
-			else if (a instanceof IAllInstancesAccess) {
-				elementIsAccessed = allElementTypes.contains(((IAllInstancesAccess)a).type().get().getName());
-			}
-			if (elementIsAccessed) {
-				IExecutionContext exContext = a.in().get();
-				if (IncrementalUtils.asStream(exContext.contextVariables().get())
-								.anyMatch(v -> v.getName().equals("self") 
-											&& !v.value().get().equals(modelElementTrace))) {
-					
-					Optional<IReexecutionTrace> rext = createReexecutionTrace(exContext, a.from().get());
-					if (rext.isPresent()) {
-						result.add(rext.get());
-					}
-				}								
-			}
-		}
-		return result;	
-	}
+//	@Override
+//	public Set<IReexecutionTrace> findIndirectExecutionTraces(String moduleUri, String elementUri, String modelUri) {
+//		Set<IReexecutionTrace> result = new HashSet<>();
+//		IEvlModuleTrace moduleTrace = getEvlModuleTraceByIdentity(moduleUri);
+//		IModelTrace modelTrace = getModelTraceForModule(modelUri, moduleTrace);
+//		IModelElementTrace modelElementTrace = getModelElementTraceFromModel(elementUri, modelTrace);
+//		Set<String> allElementTypes = IncrementalUtils.asStream(modelElementTrace.kind().get())
+//				.map(IModelTypeTrace::getName).collect(Collectors.toSet());
+//		
+//		Iterator<IAccess> it = moduleTrace.accesses().get();
+//		while (it.hasNext()) {
+//			IAccess a = it.next();
+//			boolean elementIsAccessed = false;
+//			if (a instanceof IElementAccess) {
+//				elementIsAccessed = ((IElementAccess)a).element().get().equals(modelElementTrace);
+//			}
+//			else if (a instanceof IPropertyAccess) {
+//				elementIsAccessed = ((IPropertyAccess)a).property().get().elementTrace().get().equals(modelElementTrace);
+//			}
+//			else if (a instanceof IAllInstancesAccess) {
+//				elementIsAccessed = allElementTypes.contains(((IAllInstancesAccess)a).type().get().getName());
+//			}
+//			if (elementIsAccessed) {
+//				IExecutionContext exContext = a.in().get();
+//				if (IncrementalUtils.asStream(exContext.contextVariables().get())
+//								.anyMatch(v -> v.getName().equals("self") 
+//											&& !v.value().get().equals(modelElementTrace))) {
+//					
+//					Optional<IReexecutionTrace> rext = createReexecutionTrace(exContext, a.from().get());
+//					if (rext.isPresent()) {
+//						result.add(rext.get());
+//					}
+//				}								
+//			}
+//		}
+//		return result;	
+//	}
+//	
+//	@Override
+//	public Set<IReexecutionTrace> findModelElementExecutionTraces(String moduleUri, String elementUri, String modelUri) {
+//		Set<IReexecutionTrace> result = new HashSet<>();
+//		IEvlModuleTrace moduleTrace = getEvlModuleTraceByIdentity(moduleUri);
+//		IModelTrace modelTrace = getModelTraceForModule(modelUri, moduleTrace);
+//		IModelElementTrace modelElementTrace = getModelElementTraceFromModel(elementUri, modelTrace);
+//		Set<String> allElementTypes = IncrementalUtils.asStream(modelElementTrace.kind().get())
+//				.map(IModelTypeTrace::getName).collect(Collectors.toSet());
+//		
+//		Iterator<IAccess> it = moduleTrace.accesses().get();
+//		while (it.hasNext()) {
+//			IAccess a = it.next();
+//			boolean elementIsAccessed = false;
+//			if (a instanceof IElementAccess) {
+//				elementIsAccessed = ((IElementAccess)a).element().get().equals(modelElementTrace);
+//			}
+//			else if (a instanceof IPropertyAccess) {
+//				elementIsAccessed = ((IPropertyAccess)a).property().get().elementTrace().get().equals(modelElementTrace);
+//			}
+//			else if (a instanceof IAllInstancesAccess) {
+//				elementIsAccessed = allElementTypes.contains(((IAllInstancesAccess)a).type().get().getName());
+//			}
+//			if (elementIsAccessed) {
+//				IExecutionContext exContext = a.in().get();
+//				Optional<IReexecutionTrace> rext = createReexecutionTrace(exContext, a.from().get());
+//				if (rext.isPresent()) {
+//					result.add(rext.get());
+//				}
+//			}
+//		}
+//		return result;	
+//	}
+	
 	
 	@Override
-	public Set<IReexecutionTrace> findModelElementExecutionTraces(String moduleUri, String elementUri, String modelUri) {
-		Set<IReexecutionTrace> result = new HashSet<>();
-		IEvlModuleTrace moduleTrace = getEvlModuleTraceByIdentity(moduleUri);
-		IModelTrace modelTrace = getModelTraceForModule(modelUri, moduleTrace);
-		IModelElementTrace modelElementTrace = getModelElementTraceFromModel(elementUri, modelTrace);
-		Set<String> allElementTypes = IncrementalUtils.asStream(modelElementTrace.kind().get())
-				.map(IModelTypeTrace::getName).collect(Collectors.toSet());
-		
-		Iterator<IAccess> it = moduleTrace.accesses().get();
-		while (it.hasNext()) {
-			IAccess a = it.next();
-			boolean elementIsAccessed = false;
-			if (a instanceof IElementAccess) {
-				elementIsAccessed = ((IElementAccess)a).element().get().equals(modelElementTrace);
-			}
-			else if (a instanceof IPropertyAccess) {
-				elementIsAccessed = ((IPropertyAccess)a).property().get().elementTrace().get().equals(modelElementTrace);
-			}
-			else if (a instanceof IAllInstancesAccess) {
-				elementIsAccessed = allElementTypes.contains(((IAllInstancesAccess)a).type().get().getName());
-			}
-			if (elementIsAccessed) {
-				IExecutionContext exContext = a.in().get();
-				Optional<IReexecutionTrace> rext = createReexecutionTrace(exContext, a.from().get());
-				if (rext.isPresent()) {
-					result.add(rext.get());
-				}
-			}
-		}
-		return result;	
-	}
-	
-	
-	@Override
-	public Set<IReexecutionTrace> findPropertyAccessExecutionTraces(String moduleUri, String modelUri,
-			String elementId, String propertyName) {
+	public Set<IReexecutionTrace> findPropertyAccessExecutionTraces(
+		String moduleUri,
+		IPropertyTrace propertyTrace) {
 		
 		IEvlModuleTrace moduleTrace = getEvlModuleTraceByIdentity(moduleUri);
-		IModelTrace modelTrace = getModelTraceForModule(modelUri, moduleTrace);
-		if (modelTrace == null) {
-			// Model not involved in execution
-			return Collections.emptySet();
-		}
-		IModelElementTrace elementTrace = getModelElementTraceFromModel(elementId, modelTrace);
-		if (elementTrace == null) {
-			// No info about element, there should be no trace associated to it
-			return Collections.emptySet();
-		}
-		IPropertyTrace pt = null;
-		Iterator<IPropertyTrace> pIt = elementTrace.properties().get();
-		while (pIt.hasNext()) {
-			pt = pIt.next();
-			if (pt.getName().equals(propertyName)) {
-				break;
-			}
-		}
-		if (pt == null) {
-			// Element does not have property by that name
-			return Collections.emptySet();
-		}
+		moduleTrace.accesses().get();
+//		IModelTrace modelTrace = getModelTraceForModule(modelUri, moduleTrace);
+//		if (modelTrace == null) {
+//			// Model not involved in execution
+//			return Collections.emptySet();
+//		}
+//		IModelElementTrace elementTrace = getModelElementTraceFromModel(elementId, modelTrace);
+//		if (elementTrace == null) {
+//			// No info about element, there should be no trace associated to it
+//			return Collections.emptySet();
+//		}
+//		IPropertyTrace pt = null;
+//		Iterator<IPropertyTrace> pIt = elementTrace.properties().get();
+//		while (pIt.hasNext()) {
+//			pt = pIt.next();
+//			if (pt.getName().equals(propertyName)) {
+//				break;
+//			}
+//		}
+//		if (pt == null) {
+//			// Element does not have property by that name
+//			return Collections.emptySet();
+//		}
 		Set<IReexecutionTrace> result = new HashSet<>();
-		
 		IncrementalUtils.asStream(moduleTrace.accesses().get())
 				.filter(IPropertyAccess.class::isInstance)
 				.map(IPropertyAccess.class::cast)
-				.filter(pa -> pa.property().get().getName().equals(propertyName))
-				.filter(pa -> pa.property().get().elementTrace().get().equals(elementTrace))
+				.filter(pa -> pa.property().get().equals(propertyTrace))
 				.map(pa -> createReexecutionTrace(pa.in().get(), pa.from().get()))
 				.filter(Optional::isPresent)
 				.forEach(et -> result.add(et.get()));
@@ -408,32 +407,41 @@ public class EvlModuleTraceRepositoryImpl implements IEvlModuleTraceRepository {
 		}
 		return Optional.empty();
 	}
-
+	
 	@Override
 	public Collection<IPropertyAccess> getPropertyAccessesForElement(
 			String elementUri,
 			String modelUri,
 			String moduleUri) {
-		IModelTrace modelTrace = getModelTraceForModule(modelUri, moduleUri);
 		IModuleExecutionTrace moduleTrace = getModuleExecutionTraceByIdentity(moduleUri);
- 		IModelElementTrace modelElementTrace = getModelElementTraceFromModel(elementUri, modelTrace);
+ 		//IModelElementTrace modelElementTrace = getModelElementTraceFromModel(elementUri, modelTrace);
 		return IncrementalUtils.asStream(moduleTrace.accesses().get())
 				.filter(IPropertyAccess.class::isInstance).map(IPropertyAccess.class::cast)
-				.filter(pa -> pa.property().get().elementTrace().get().equals(modelElementTrace))
+				.filter(pa -> pa.property().get().elementTrace().get().getUri().equals(elementUri)
+							&& pa.property().get().elementTrace().get().modelTrace().get().getUri().equals(elementUri))
 				.collect(Collectors.toList());
 	}
 
-	@Override
-	public Collection<IModelElementTrace> getModelElementTraces(String moduleUri, String modelUri,
-			Set<String> filteredIds) {
-		// TODO Implement IEvlModuleTraceRepository.getModelElementTraces
-		throw new RuntimeException("Unimplemented Method IEvlModuleTraceRepository.getModelElementTraces invoked.");
-	}
 
 	@Override
 	public Set<IReexecutionTrace> findPropertyAccessExecutionTraces(IPropertyAccess pa) {
 		// TODO Implement IEvlModuleTraceRepository.findPropertyAccessExecutionTraces
 		throw new RuntimeException("Unimplemented Method IEvlModuleTraceRepository.findPropertyAccessExecutionTraces invoked.");
+	}
+
+
+	@Override
+	public Set<IReexecutionTrace> findIndirectExecutionTraces(String moduleUri, Object elementId,
+			Collection<String> allElementTypes) {
+		// TODO Implement IEvlModuleTraceRepository.findIndirectExecutionTraces
+		throw new RuntimeException("Unimplemented Method IEvlModuleTraceRepository.findIndirectExecutionTraces invoked.");
+	}
+
+	@Override
+	public Set<IReexecutionTrace> findModelElementExecutionTraces(String moduleUri, String elementUri, String modelUri,
+			Set<String> allElementTypes) {
+		// TODO Implement IEvlModuleTraceRepository.findModelElementExecutionTraces
+		throw new RuntimeException("Unimplemented Method IEvlModuleTraceRepository.findModelElementExecutionTraces invoked.");
 	}
 	
 	

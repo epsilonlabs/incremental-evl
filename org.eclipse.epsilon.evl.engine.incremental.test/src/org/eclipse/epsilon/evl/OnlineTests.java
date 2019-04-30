@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Set;
+import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.csv.CSVFormat;
 import org.eclipse.epsilon.base.incremental.execute.ExecutionMode;
+import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.emc.csv.incremental.test.util.CsvAddRowInjector;
 import org.eclipse.epsilon.emc.csv.incremental.test.util.CsvAppendMethod;
@@ -91,10 +92,12 @@ public abstract class OnlineTests<M extends Module> {
 		module().execute();
 		// Save the previous state so we can compare changes
 		// ContextTraces
-		Set<IEvlModuleTrace> executionTraces = module().getContext().getTraceManager().getExecutionTraceRepository()
+		Iterator<IEvlModuleTrace> executionTraces = module().getContext()
+				.getTraceManager()
+				.getExecutionTraceRepository()
 				.getAllModuleTraces();
 
-		long contextExecutionTraces = executionTraces.stream().filter(t -> t instanceof IContextTrace)
+		long contextExecutionTraces = IncrementalUtils.asStream(executionTraces).filter(t -> t instanceof IContextTrace)
 				.map(IContextTrace.class::cast).count();
 		// Unsatisfied constraints
 		long unsatisfied = module().getContext().getUnsatisfiedConstraints().size();
@@ -180,7 +183,7 @@ public abstract class OnlineTests<M extends Module> {
 		// Let Evl finish execute
 		Thread.sleep(100);
 		executionTraces = module().getContext().getTraceManager().getExecutionTraceRepository().getAllModuleTraces();
-		long contextExecutionTracesNew = executionTraces.stream().filter(t -> t instanceof IContextTrace).count();
+		long contextExecutionTracesNew = IncrementalUtils.asStream(executionTraces).filter(t -> t instanceof IContextTrace).count();
 		assertThat("A new row adss two new ContextTraces", contextExecutionTracesNew, is(contextExecutionTraces + 2));
 		int unsatisfiedNew = module().getContext().getUnsatisfiedConstraints().size();
 		System.out.println("New Unsatisfied constraints " + unsatisfiedNew);
@@ -194,9 +197,12 @@ public abstract class OnlineTests<M extends Module> {
 		module().execute();
 		// Save the previous state so we can compare changes
 		// ContextTraces
-		Set<IEvlModuleTrace> executionTraces = module().getContext().getTraceManager().getExecutionTraceRepository()
+		Iterator<IEvlModuleTrace> executionTraces = module()
+				.getContext()
+				.getTraceManager()
+				.getExecutionTraceRepository()
 				.getAllModuleTraces();
-		long contextExecutionTraces = executionTraces.stream().filter(t -> t instanceof IContextTrace)
+		long contextExecutionTraces = IncrementalUtils.asStream(executionTraces).filter(t -> t instanceof IContextTrace)
 				.map(IContextTrace.class::cast).count();
 		// Unsatisfied constraints
 		long unsatisfied = module().getContext().getUnsatisfiedConstraints().size();
@@ -254,7 +260,7 @@ public abstract class OnlineTests<M extends Module> {
 		Thread.sleep(100);
 		executionTraces = module().getContext().getTraceManager().getExecutionTraceRepository().getAllModuleTraces();
 
-		long contextExecutionTracesNew = executionTraces.stream().filter(t -> t instanceof IContextTrace)
+		long contextExecutionTracesNew = IncrementalUtils.asStream(executionTraces).filter(t -> t instanceof IContextTrace)
 				.map(IContextTrace.class::cast).count();
 		assertThat("Change should not create new traces", contextExecutionTracesNew - contextExecutionTraces, is(0L));
 		long unsatisfiedNew = module().getContext().getUnsatisfiedConstraints().size();

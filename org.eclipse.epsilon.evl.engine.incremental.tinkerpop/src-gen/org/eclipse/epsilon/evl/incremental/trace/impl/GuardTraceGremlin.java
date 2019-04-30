@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -23,15 +23,16 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
-import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region GuardTraceImports on begin **/
 /** protected region GuardTraceImports end **/
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.TinkerpopDelegate;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -40,14 +41,23 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.*;
 /**
  * Implementation of IGuardTrace. 
  */
-public class GuardTraceGremlin implements IGuardTrace, GremlinWrapper<Vertex> {
+@SuppressWarnings("unused") 
+public class GuardTraceGremlin implements IGuardTrace, TinkerpopDelegate<Vertex> {
     
-
     /** The graph traversal source for all navigations */
-    private GraphTraversalSource gts;
+    private final GraphTraversalSource gts;
     
     /** The delegate Vertex */
     private Vertex delegate;
+    
+    /** The factory used to wrap the vertex's incident vertices */
+    private TraceFactory wrapperFactory;
+    
+    /**
+     * The id.
+     */
+    private Object id;
+
     
     /**
      * The contextModuleElement.
@@ -64,24 +74,40 @@ public class GuardTraceGremlin implements IGuardTrace, GremlinWrapper<Vertex> {
      */
     private IGuardTraceHasResult result;
 
+
     /**
-     * Empty constructor for deserialization.
-     */    
-    public GuardTraceGremlin() { }
+     * Constructor for factory, only needs wrapped vertex, traversal source and factory
+     */
+    public GuardTraceGremlin (
+        Vertex vertex,
+        GraphTraversalSource gts,
+        TraceFactory wrapperFactory) {
+        this.delegate = vertex;
+        this.gts = gts;
+        this.wrapperFactory = wrapperFactory;
+        this.limits = new GuardTraceHasLimitsGremlin(this, gts, wrapperFactory);
+        this.result = new GuardTraceHasResultGremlin(this, gts, wrapperFactory);
+    }
     
     /**
      * Instantiates a new GuardTraceGremlin. The GuardTraceGremlin is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
     public GuardTraceGremlin(
-        IGuardedElementTrace container, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        IGuardedElementTrace container,
+        Vertex vertex,
+        GraphTraversalSource gts,
+        TraceFactory wrapperFactory) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
+        this.wrapperFactory = wrapperFactory;
+ 
+        this.result = new GuardTraceHasResultGremlin(this, gts, wrapperFactory);
+        this.limits = new GuardTraceHasLimitsGremlin(this, gts, wrapperFactory);
         if (!container.guard().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        // Derived Features
-        this.result = new GuardTraceHasResultGremlin(this, gts, EvlTraceFactory.getFactory());
+    
     }
     
     @Override
@@ -98,73 +124,40 @@ public class GuardTraceGremlin implements IGuardTrace, GremlinWrapper<Vertex> {
      
     @Override
     public IInContextModuleElementTraceHasContextModuleElement contextModuleElement() {
-        if (contextModuleElement == null) {
-            contextModuleElement = new InContextModuleElementTraceHasContextModuleElementGremlin(this, this.gts, EvlTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("contextModuleElement");
-                if (gt.hasNext()) {
-                    ((InContextModuleElementTraceHasContextModuleElementGremlin)contextModuleElement).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
-        return contextModuleElement;
+        /** protected region contextModuleElement on begin **/
+        throw new UnsupportedOperationException("The reference contextModuleElement is derived and the getter hasn't been implemented");
+        /** protected region contextModuleElement end **/
     }
 
     @Override
     public IGuardTraceHasLimits limits() {
-        if (limits == null) {
-            limits = new GuardTraceHasLimitsGremlin(this, this.gts, EvlTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("limits");
-                if (gt.hasNext()) {
-                    ((GuardTraceHasLimitsGremlin)limits).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
+        
         return limits;
     }
 
     @Override
     public IGuardTraceHasResult result() {
-        if (result == null) {
-            result = new GuardTraceHasResultGremlin(this, this.gts, EvlTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("result");
-                if (gt.hasNext()) {
-                    ((GuardTraceHasResultGremlin)result).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
+        
         return result;
     }
 
     @Override
-    public IGuardResult getOrCreateGuardResult(IExecutionContext context) throws EolIncrementalExecutionException {
-        GraphTraversalSource g = startTraversal();
+    public IGuardResult getOrCreateGuardResult(IExecutionContext context) throws EolIncrementalExecutionException {    
         GuardResultGremlin guardResult = null;
-        try {
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
             Vertex v = null;
             try {
-                v = g.addV("GuardResult").next();
+                v = agts.addV("GuardResult").next();
                 /* protected region guardResultTypeOverride on begin */
-                guardResult = new GuardResultGremlin(context, this, v, gts);
+                guardResult = new GuardResultGremlin(context, this, v, gts, wrapperFactory);
                 /* protected region guardResultTypeOverride end */
             } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                g.V(v).as("v").properties().drop().select("v").drop();
+                agts.V(v).as("v").properties().drop().select("v").drop();
                 throw new EolIncrementalExecutionException("Error creating requested GuardResult", e);
             }
-        } finally {
-            finishTraversal(g);
-        }  
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
+        } 
         return guardResult;
     }      
     
@@ -215,30 +208,10 @@ public class GuardTraceGremlin implements IGuardTrace, GremlinWrapper<Vertex> {
     public Vertex delegate() {
         return delegate;
     }
-
-    @Override
-    public void delegate(Vertex delegate) {
-        this.delegate = delegate;
-    }
     
     @Override
-    public void graphTraversalSource(GraphTraversalSource gts) {
-        this.gts = gts;
-    }
-    
-    protected GraphTraversalSource graphTraversalSource() {
+    public GraphTraversalSource graphTraversalSource() {
         return this.gts;
     }
     
-    protected GraphTraversalSource startTraversal() {
-        return this.gts.clone();
-    }
-    
-    protected void finishTraversal(GraphTraversalSource g) {
-        try {
-            g.close();
-        } catch (Exception e) {
-            // Fail silently?
-        }
-    }
 }

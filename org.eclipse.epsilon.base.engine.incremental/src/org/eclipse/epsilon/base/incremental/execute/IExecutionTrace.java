@@ -11,6 +11,7 @@
 package org.eclipse.epsilon.base.incremental.execute;
 
 import org.eclipse.epsilon.base.incremental.IBaseRootElementsFactory;
+import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
@@ -72,14 +73,14 @@ public interface IExecutionTrace {
 	 *
 	 * @return the module execution repository
 	 */
-	IModuleExecutionTraceRepository getExecutionTraceRepository();
+	IModuleExecutionTraceRepository<? extends IModuleExecutionTrace> getExecutionTraceRepository();
 
 	/**
 	 * The repository of models.
 	 * 
 	 * @return
 	 */
-	IModelTraceRepository getModelTraceRepository();
+	IModelTraceRepository<IModelTrace> getModelTraceRepository();
 
 	/**
 	 * A factory for creating root elements.

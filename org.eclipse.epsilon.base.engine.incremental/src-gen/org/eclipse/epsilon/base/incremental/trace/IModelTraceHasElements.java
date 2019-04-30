@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-29.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -17,6 +17,7 @@ import java.util.Queue;
 
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 
+@SuppressWarnings("unused")
 public interface IModelTraceHasElements {
 
     // PUBLIC API

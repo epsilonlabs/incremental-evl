@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -23,15 +23,16 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
-import org.eclipse.epsilon.evl.incremental.util.EvlTraceFactory;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
 /** protected region EvlModuleTraceImports on begin **/
 /** protected region EvlModuleTraceImports end **/
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.TinkerpopDelegate;
+import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
 import org.eclipse.epsilon.evl.incremental.trace.*;
@@ -40,14 +41,28 @@ import org.eclipse.epsilon.evl.incremental.trace.impl.*;
 /**
  * Implementation of IEvlModuleTrace. 
  */
-public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Vertex> {
+@SuppressWarnings("unused") 
+public class EvlModuleTraceGremlin implements IEvlModuleTrace, TinkerpopDelegate<Vertex> {
     
-
     /** The graph traversal source for all navigations */
-    private GraphTraversalSource gts;
+    private final GraphTraversalSource gts;
     
     /** The delegate Vertex */
     private Vertex delegate;
+    
+    /** The factory used to wrap the vertex's incident vertices */
+    private TraceFactory wrapperFactory;
+    
+    /**
+     * The id.
+     */
+    private Object id;
+
+    /**
+     * The uri.
+     */
+    private String uri;
+
     
     /**
      * * The module elements that conform the module.
@@ -65,34 +80,46 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
      */
     private IModuleExecutionTraceHasAccesses accesses;
 
+
     /**
-     * Empty constructor for deserialization.
-     */    
-    public EvlModuleTraceGremlin() { }
+     * Constructor for factory, only needs wrapped vertex, traversal source and factory
+     */
+    public EvlModuleTraceGremlin (
+        Vertex vertex,
+        GraphTraversalSource gts,
+        TraceFactory wrapperFactory) {
+        this.delegate = vertex;
+        this.gts = gts;
+        this.wrapperFactory = wrapperFactory;
+        this.moduleElements = new ModuleExecutionTraceHasModuleElementsGremlin(this, gts, wrapperFactory);
+        this.models = new ModuleExecutionTraceHasModelsGremlin(this, gts, wrapperFactory);
+        this.accesses = new ModuleExecutionTraceHasAccessesGremlin(this, gts, wrapperFactory);
+    }
     
     /**
      * Instantiates a new EvlModuleTraceGremlin. The EvlModuleTraceGremlin is uniquely identified by its
      * container and any attributes identified as indexes.
      */    
     public EvlModuleTraceGremlin(
-        String uri, Vertex vertex, GraphTraversalSource gts) throws TraceModelDuplicateElement, TraceModelConflictRelation {
+        String uri,
+        Vertex vertex,
+        GraphTraversalSource gts,
+        TraceFactory wrapperFactory) throws TraceModelDuplicateElement, TraceModelConflictRelation {
         this.delegate = vertex;
         this.gts = gts;
-        GraphTraversalSource g = startTraversal();
-        try {
-            g.V(delegate)
+        this.wrapperFactory = wrapperFactory;
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            agts.V(delegate)
             .property("uri", uri)
             .iterate();
         }
-        finally {
-            finishTraversal(g);
-        }
-        // Derived Features
-        this.moduleElements = new ModuleExecutionTraceHasModuleElementsGremlin(this, gts, EvlTraceFactory.getFactory());
-        // Derived Features
-        this.models = new ModuleExecutionTraceHasModelsGremlin(this, gts, EvlTraceFactory.getFactory());
-        // Derived Features
-        this.accesses = new ModuleExecutionTraceHasAccessesGremlin(this, gts, EvlTraceFactory.getFactory());
+        catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
+        } 
+        this.moduleElements = new ModuleExecutionTraceHasModuleElementsGremlin(this, gts, wrapperFactory);
+        this.models = new ModuleExecutionTraceHasModelsGremlin(this, gts, wrapperFactory);
+        this.accesses = new ModuleExecutionTraceHasAccessesGremlin(this, gts, wrapperFactory);
+    
     }
     
     @Override
@@ -109,136 +136,96 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
      
     @Override
     public String getUri() {
-        GraphTraversalSource g = startTraversal();
-        String result = null;
-        try {
-	        try {
-	            result = (String) g.V(delegate).values("uri").next();
-	        } catch (NoSuchElementException ex) {
-	            /** protected region uri on begin **/
-	            result = "";
-	            /** protected region uri end **/
-	        }
-	    } finally {
-            finishTraversal(g);
-        }    
-        return result;
+        if (uri == null) {
+	        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+		        try {
+		            uri = (String) agts.V(delegate).values("uri").next();
+		        } catch (NoSuchElementException ex) {
+		            /** protected region uri on begin **/
+	            	uri = "";
+	            	/** protected region uri end **/
+		        }
+		    } catch (Exception e) {
+                throw new IllegalStateException("There was an error during graph traversal.", e);
+            }
+	    }    
+        return uri;
     }
     
     @Override
     public IModuleExecutionTraceHasModuleElements moduleElements() {
-        if (moduleElements == null) {
-            moduleElements = new ModuleExecutionTraceHasModuleElementsGremlin(this, this.gts, EvlTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("moduleElements");
-                if (gt.hasNext()) {
-                    ((ModuleExecutionTraceHasModuleElementsGremlin)moduleElements).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
+        
         return moduleElements;
     }
 
     @Override
     public IModuleExecutionTraceHasModels models() {
-        if (models == null) {
-            models = new ModuleExecutionTraceHasModelsGremlin(this, this.gts, EvlTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("models");
-                if (gt.hasNext()) {
-                    ((ModuleExecutionTraceHasModelsGremlin)models).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
+        
         return models;
     }
 
     @Override
     public IModuleExecutionTraceHasAccesses accesses() {
-        if (accesses == null) {
-            accesses = new ModuleExecutionTraceHasAccessesGremlin(this, this.gts, EvlTraceFactory.getFactory());
-            GraphTraversalSource g = startTraversal();
-            try {
-                GraphTraversal<Vertex, Edge> gt = g.V(delegate).outE("accesses");
-                if (gt.hasNext()) {
-                    ((ModuleExecutionTraceHasAccessesGremlin)accesses).delegate(gt.next());
-                }
-            } finally {
-                finishTraversal(g);
-            }
-        }
+        
         return accesses;
     }
 
     @Override
-    public IContextTrace getOrCreateContextTrace(String kind, Integer index) throws EolIncrementalExecutionException {
-        GraphTraversalSource g = startTraversal();
+    public IContextTrace getOrCreateContextTrace(String kind, Integer index) throws EolIncrementalExecutionException {    
         ContextTraceGremlin contextTrace = null;
-        try {
-            GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("moduleElements").has("kind", kind)
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            GraphTraversal<Vertex, Vertex> gt = agts.V(delegate).out("moduleElements").has("kind", kind)
                                                 .has("index", index);
             if (gt.hasNext()) {
-                contextTrace = new ContextTraceGremlin();
-                contextTrace.delegate(gt.next());
-                contextTrace.graphTraversalSource(gts);
+                contextTrace = new ContextTraceGremlin(gt.next(), gts, wrapperFactory);
             }
             else {
                 Vertex v = null;
                 try {
-                    v = g.addV("ContextTrace").property("tag", GremlinUtils.identityToString(kind, index, this)).next();
+                    v = agts.addV("ContextTrace").property("tag", GremlinUtils.identityToString(kind, index, this)).next();
                     /* protected region contextTraceTypeOverride on begin */
-                    contextTrace = new ContextTraceGremlin(kind, index, this, v, gts); 
+                    contextTrace = new ContextTraceGremlin(kind, index, this, v, gts, wrapperFactory); 
                     /* protected region contextTraceTypeOverride end */
                 } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                    g.V(v).as("v").properties().drop().select("v").drop();
+                    agts.V(v).as("v").properties().drop().select("v").drop();
                     throw new EolIncrementalExecutionException("Error creating requested ContextTrace", e);
                 }
             }
-        } finally {
-            finishTraversal(g);
-        }  
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
+        } 
         return contextTrace;
     }      
 
     
     @Override
-    public IModelAccess getOrCreateModelAccess(String modelName, IModelTrace modelTrace) throws EolIncrementalExecutionException {
-        GraphTraversalSource g = startTraversal();
+    public IModelAccess getOrCreateModelAccess(String modelName, IModelTrace modelTrace) throws EolIncrementalExecutionException {    
         ModelAccessGremlin modelAccess = null;
-        try {
-            GraphTraversal<Vertex, Vertex> gt = g.V(delegate).out("models").has("modelName", modelName);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            GraphTraversal<Vertex, Vertex> gt = agts.V(delegate).out("models").has("modelName", modelName);
             if (gt.hasNext()) {
-                modelAccess = new ModelAccessGremlin();
-                modelAccess.delegate(gt.next());
-                modelAccess.graphTraversalSource(gts);
+                modelAccess = new ModelAccessGremlin(gt.next(), gts, wrapperFactory);
             }
             else {
                 Vertex v = null;
                 try {
-                    v = g.addV("ModelAccess").property("tag", GremlinUtils.identityToString(modelName, modelTrace, this)).next();
+                    v = agts.addV("ModelAccess").property("tag", GremlinUtils.identityToString(modelName, modelTrace, this)).next();
                     /* protected region modelAccessTypeOverride on begin */
-                    modelAccess = new ModelAccessGremlin(modelName, modelTrace, this, v, gts); 
+                    modelAccess = new ModelAccessGremlin(modelName, modelTrace, this, v, gts, wrapperFactory); 
                     /* protected region modelAccessTypeOverride end */
                 } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                    g.V(v).as("v").properties().drop().select("v").drop();
+                    agts.V(v).as("v").properties().drop().select("v").drop();
                     throw new EolIncrementalExecutionException("Error creating requested ModelAccess", e);
                 }
             }
-        } finally {
-            finishTraversal(g);
-        }  
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
+        } 
         return modelAccess;
     }      
     
     @SuppressWarnings("unchecked")
     public <A extends IAccess> A getOrCreateAccess(Class<A> accessClass, Object... args) throws EolIncrementalExecutionException {
-        GraphTraversalSource g = startTraversal();
         A result = null;
         switch(accessClass.getSimpleName()) {
             case "ISatisfiesAccess":
@@ -246,23 +233,23 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
                 assert args[1] instanceof IExecutionContext;
                 assert args[2] instanceof IModelElementTrace;
                 ISatisfiesAccess satisfiesAccess = null;
-                try {
+                try (ActiveTraversal agts = new ActiveTraversal(gts)) {
                     Vertex v = null;
                     try {
-                        v = g.addV("SatisfiesAccess").next();
+                        v = agts.addV("SatisfiesAccess").next();
                         /* protected region satisfiesAccessTypeOverride on begin */
                         satisfiesAccess = new SatisfiesAccessGremlin(
                         	(IModuleElementTrace) args[0],
                         	(IExecutionContext) args[1],
-                        	(IModelElementTrace) args[2], this, v, gts);
+                        	(IModelElementTrace) args[2], this, v, gts, wrapperFactory);
                         /* protected region satisfiesAccessTypeOverride end */
                     } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                        g.V(v).as("v").properties().drop().select("v").drop();
+                        agts.V(v).as("v").properties().drop().select("v").drop();
                         throw new EolIncrementalExecutionException("Error creating requested SatisfiesAccess", e);
                     }
-                } finally {
-                    finishTraversal(g);
-                }  
+                } catch (Exception e) {
+                    throw new IllegalStateException("There was an error during graph traversal.", e);
+                } 
                 result = (A) satisfiesAccess;
                 break;
             case "IElementAccess":
@@ -270,23 +257,23 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
                 assert args[1] instanceof IExecutionContext;
                 assert args[2] instanceof IModelElementTrace;
                 IElementAccess elementAccess = null;
-                try {
+                try (ActiveTraversal agts = new ActiveTraversal(gts)) {
                     Vertex v = null;
                     try {
-                        v = g.addV("ElementAccess").next();
+                        v = agts.addV("ElementAccess").next();
                         /* protected region elementAccessTypeOverride on begin */
                         elementAccess = new ElementAccessGremlin(
                         		(IModuleElementTrace) args[0],
                             	(IExecutionContext) args[1],
-                            	(IModelElementTrace) args[2], this, v, gts);
+                            	(IModelElementTrace) args[2], this, v, gts, wrapperFactory);
                         /* protected region elementAccessTypeOverride end */
                     } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                        g.V(v).as("v").properties().drop().select("v").drop();
+                        agts.V(v).as("v").properties().drop().select("v").drop();
                         throw new EolIncrementalExecutionException("Error creating requested ElementAccess", e);
                     }
-                } finally {
-                    finishTraversal(g);
-                }  
+                } catch (Exception e) {
+                    throw new IllegalStateException("There was an error during graph traversal.", e);
+                } 
                 result = (A) elementAccess;
                 break;
             case "IAllInstancesAccess":
@@ -295,24 +282,24 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
                 assert args[2] instanceof IExecutionContext;
                 assert args[3] instanceof IModelTypeTrace;
                 IAllInstancesAccess allInstancesAccess = null;
-                try {
+                try (ActiveTraversal agts = new ActiveTraversal(gts)) {
                     Vertex v = null;
                     try {
-                        v = g.addV("AllInstancesAccess").property("tag", GremlinUtils.identityToString((Boolean) args[0], (IModuleElementTrace) args[1], (IExecutionContext) args[2], (IModelTypeTrace) args[3], this)).next();
+                        v = agts.addV("AllInstancesAccess").property("tag", GremlinUtils.identityToString((Boolean) args[0], (IModuleElementTrace) args[1], (IExecutionContext) args[2], (IModelTypeTrace) args[3], this)).next();
                         /* protected region allInstancesAccessTypeOverride on begin */
                         allInstancesAccess = new AllInstancesAccessGremlin(
                         		(Boolean) args[0],
                         		(IModuleElementTrace) args[1],
                         		(IExecutionContext) args[2],
-                            	(IModelTypeTrace) args[3], this, v, gts);
+                            	(IModelTypeTrace) args[3], this, v, gts, wrapperFactory);
                         /* protected region allInstancesAccessTypeOverride end */
                     } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                        g.V(v).as("v").properties().drop().select("v").drop();
+                        agts.V(v).as("v").properties().drop().select("v").drop();
                         throw new EolIncrementalExecutionException("Error creating requested AllInstancesAccess", e);
                     }
-                } finally {
-                    finishTraversal(g);
-                }  
+                } catch (Exception e) {
+                    throw new IllegalStateException("There was an error during graph traversal.", e);
+                } 
                 result = (A) allInstancesAccess;
                 break;
             case "IPropertyAccess":
@@ -320,23 +307,23 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
                 assert args[1] instanceof IExecutionContext;
                 assert args[2] instanceof IPropertyTrace;
                 IPropertyAccess propertyAccess = null;
-                try {
+                try (ActiveTraversal agts = new ActiveTraversal(gts)) {
                     Vertex v = null;
                     try {
-                        v = g.addV("PropertyAccess").next();
+                        v = agts.addV("PropertyAccess").next();
                         /* protected region propertyAccessTypeOverride on begin */
                         propertyAccess = new PropertyAccessGremlin(
                         		(IModuleElementTrace) args[0],
                             	(IExecutionContext) args[1],
-                            	(IPropertyTrace) args[2], this, v, gts);
+                            	(IPropertyTrace) args[2], this, v, gts, wrapperFactory);
                         /* protected region propertyAccessTypeOverride end */
                     } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                        g.V(v).as("v").properties().drop().select("v").drop();
+                        agts.V(v).as("v").properties().drop().select("v").drop();
                         throw new EolIncrementalExecutionException("Error creating requested PropertyAccess", e);
                     }
-                } finally {
-                    finishTraversal(g);
-                }  
+                } catch (Exception e) {
+                    throw new IllegalStateException("There was an error during graph traversal.", e);
+                } 
                 result = (A) propertyAccess;
                 break;
         }
@@ -391,30 +378,10 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, GremlinWrapper<Ve
     public Vertex delegate() {
         return delegate;
     }
-
-    @Override
-    public void delegate(Vertex delegate) {
-        this.delegate = delegate;
-    }
     
     @Override
-    public void graphTraversalSource(GraphTraversalSource gts) {
-        this.gts = gts;
-    }
-    
-    protected GraphTraversalSource graphTraversalSource() {
+    public GraphTraversalSource graphTraversalSource() {
         return this.gts;
     }
     
-    protected GraphTraversalSource startTraversal() {
-        return this.gts.clone();
-    }
-    
-    protected void finishTraversal(GraphTraversalSource g) {
-        try {
-            g.close();
-        } catch (Exception e) {
-            // Fail silently?
-        }
-    }
 }

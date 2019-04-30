@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-29.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -28,6 +28,7 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
  * ModelElements that define the context and all of the Accesses that ocurred
  * during execution of the module element and its children. 
  */
+@SuppressWarnings("unused")
 public interface IContextModuleElementTrace extends IModuleElementTrace {
 
     /**

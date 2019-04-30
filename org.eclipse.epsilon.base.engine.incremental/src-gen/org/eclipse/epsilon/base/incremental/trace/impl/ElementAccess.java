@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-29.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -30,6 +30,7 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
 /**
  * Implementation of IElementAccess. 
  */
+@SuppressWarnings("unused") 
 public class ElementAccess implements IElementAccess {
 
     /**
@@ -69,8 +70,8 @@ public class ElementAccess implements IElementAccess {
             throw new TraceModelDuplicateElement();
         };
 
-        this.module = new AccessHasModule(this);
         this.element = new ElementAccessHasElement(this);
+        this.module = new AccessHasModule(this);
         if (!this.element.create(element)) {
             throw new TraceModelDuplicateElement();
         }
@@ -140,18 +141,18 @@ public class ElementAccess implements IElementAccess {
         ElementAccess other = (ElementAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (module.get() == null) {
-            if (other.module.get() != null)
-                return false;
-        }
-        if (!module.get().equals(other.module.get())) {
-            return false;
-        }
         if (element.get() == null) {
             if (other.element.get() != null)
                 return false;
         }
         if (!element.get().equals(other.element.get())) {
+            return false;
+        }
+        if (module.get() == null) {
+            if (other.module.get() != null)
+                return false;
+        }
+        if (!module.get().equals(other.module.get())) {
             return false;
         }
         return true; 
@@ -161,8 +162,8 @@ public class ElementAccess implements IElementAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((module.get() == null) ? 0 : module.get().hashCode());
         result = prime * result + ((element.get() == null) ? 0 : element.get().hashCode());
+        result = prime * result + ((module.get() == null) ? 0 : module.get().hashCode());
         return result;
     }
 }

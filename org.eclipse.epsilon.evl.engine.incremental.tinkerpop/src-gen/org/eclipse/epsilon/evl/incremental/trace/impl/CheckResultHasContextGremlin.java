@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,24 +11,26 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
+import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.TinkerpopDelegate;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckResult;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckResultHasContext;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 
 /**
  * Implementation of ICheckResultHasContext reference. 
  */
+@SuppressWarnings("unused") 
 public class CheckResultHasContextGremlin extends Feature
-        implements ICheckResultHasContext, GremlinWrapper<Edge> {
+        implements ICheckResultHasContext, TinkerpopDelegate<Edge> {
     
     /** The graph traversal source for all navigations */
     private GraphTraversalSource gts;
@@ -45,7 +47,29 @@ public class CheckResultHasContextGremlin extends Feature
     /**
      * Instantiates a new ICheckResultHasContext.
      *
-     * @param source the source of the reference
+     * @param source                the source element of the reference
+     * @param delegate              the delegate edge
+     * @param gts                   the graph taversal source   
+     * @param factory               the factory used to instantiante the target
+     */
+    public CheckResultHasContextGremlin (
+        ICheckResult source,
+        Edge delegate,
+        GraphTraversalSource gts, 
+        TraceFactory factory) {
+        super(true);
+        this.source = source;
+        this.gts = gts;
+        this.factory = factory;
+        this.delegate = delegate;
+    }
+    
+   /**
+     * Instantiates a new ICheckResultHasContext.
+     *
+     * @param source                the source element of the reference
+     * @param gts                   the graph taversal source   
+     * @param factory               the factory used to instantiante the target
      */
     public CheckResultHasContextGremlin (
         ICheckResult source,
@@ -54,26 +78,36 @@ public class CheckResultHasContextGremlin extends Feature
         super(true);
         this.source = source;
         this.gts = gts;
-        this.factory = factory; 
+        this.factory = factory;
     }
+    
     
     // PUBLIC API
         
     @Override
     public IExecutionContext get() {
         if (delegate == null) {
+            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+                GraphTraversal<Vertex, Edge> et = agts.V(source.getId()).outE("context");
+                if (et.hasNext()) {
+                    delegate = et.next();
+                }
+            } catch (Exception e) {
+                throw new IllegalStateException("There was an error during graph traversal.", e);
+            }
+        }
+        
+        if (delegate == null) {
             return null;
         }
-        GraphTraversalSource g = startTraversal();
-        IExecutionContext result = null;
-        try {
-            Vertex to = g.E(delegate).inV().next();
-            result = (IExecutionContext) factory.createTraceElement(to, gts);
+        Vertex to = null;
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            to = agts.E(delegate).inV().next();
+            
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
-        finally {
-            finishTraversal(g);
-        }
-        return result;
+        return factory.createTraceElement(to, gts);
     }
     
 
@@ -101,12 +135,12 @@ public class CheckResultHasContextGremlin extends Feature
     @Override
     public boolean conflict(IExecutionContext target) {
         boolean result = false;
-        GraphTraversalSource g = startTraversal();
-        try {
-            result |= delegate == null ? g.V(source.getId()).out("context").hasNext() : g.E(delegate).inV().hasId(target.getId()).hasNext();
-        }
-        finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            result |= delegate == null ?
+                    agts.V(source.getId()).out("context").hasNext() :
+                    agts.E(delegate).inV().hasId(target.getId()).hasNext();
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
     }
@@ -120,12 +154,10 @@ public class CheckResultHasContextGremlin extends Feature
             return false;
         }
         boolean result = false;
-        GraphTraversalSource g = startTraversal();
-        try {
-		  result = g.E(delegate).inV().hasId(target.getId()).hasNext();
-		}
-		finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+		  result = agts.E(delegate).inV().hasId(target.getId()).hasNext();
+		} catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
 	}
@@ -134,56 +166,32 @@ public class CheckResultHasContextGremlin extends Feature
     public Edge delegate() {
         return delegate;
     }
-
-    @Override
-    public void delegate(Edge delegate) {
-        this.delegate = delegate;
-    }
     
     @Override
-    public void graphTraversalSource(GraphTraversalSource gts) {
-        this.gts = gts;
+    public GraphTraversalSource graphTraversalSource() {
+        return gts;
     }
         
-    
     // PRIVATE API
     
     @Override
     public void set(IExecutionContext target) {
-        GraphTraversalSource g = startTraversal();
-        try {
-            delegate = g.V(source.getId()).addE("context").to(g.V(target.getId())).next();
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            delegate = agts.V(source.getId()).addE("context")
+                    .to(agts.V(target.getId())).next();
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         
     }
     
     @Override
     public void remove(IExecutionContext target) {
-        GraphTraversalSource g = startTraversal();
-        try {
-            g.E(delegate).drop();
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            agts.E(delegate).drop();
             delegate = null;
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            finishTraversal(g);
-        }
-    }
-    
-    private GraphTraversalSource startTraversal() {
-        return this.gts.clone();
-    }
-    
-    private void finishTraversal(GraphTraversalSource g) {
-        try {
-            g.close();
         } catch (Exception e) {
-            // Fail silently?
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
     }
-
 }

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-25.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -31,7 +31,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElemen
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.TinkerpopDelegate;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;
@@ -40,7 +40,7 @@ import org.eclipse.epsilon.base.incremental.trace.impl.*;
  * Implementation of IModelElementTrace. 
  */
 @SuppressWarnings("unused") 
-public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrapper<Vertex> {
+public class ModelElementTraceGremlin implements IModelElementTrace, TinkerpopDelegate<Vertex> {
     
     /** The graph traversal source for all navigations */
     private final GraphTraversalSource gts;
@@ -82,11 +82,7 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
      */
     private IModelElementTraceHasKind kind;
 
-    /**
-     * Empty constructor for de/-serialization.
-     */    
-    // public ModelElementTraceGremlin() { }
-    
+
     /**
      * Constructor for factory, only needs wrapped vertex, traversal source and factory
      */
@@ -97,6 +93,10 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
         this.delegate = vertex;
         this.gts = gts;
         this.wrapperFactory = wrapperFactory;
+        this.modelTrace = new ModelElementTraceHasModelTraceGremlin(this, gts, wrapperFactory);
+        this.properties = new ModelElementTraceHasPropertiesGremlin(this, gts, wrapperFactory);
+        this.type = new ModelElementTraceHasTypeGremlin(this, gts, wrapperFactory);
+        this.kind = new ModelElementTraceHasKindGremlin(this, gts, wrapperFactory);
     }
     
     /**
@@ -120,22 +120,21 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
         }
         catch (Exception e) {
             throw new IllegalStateException("There was an error during graph traversal.", e);
-        }
+        } 
+        this.properties = new ModelElementTraceHasPropertiesGremlin(this, gts, wrapperFactory);
+        this.type = new ModelElementTraceHasTypeGremlin(this, gts, wrapperFactory);
+        this.kind = new ModelElementTraceHasKindGremlin(this, gts, wrapperFactory);
+        this.modelTrace = new ModelElementTraceHasModelTraceGremlin(this, gts, wrapperFactory);
         if (!container.elements().create(this)) {
             throw new TraceModelDuplicateElement();
         };
-        // Derived Features
-        // this.properties = new ModelElementTraceHasPropertiesGremlin(this, gts, wrapperFactory);
-        // Derived Features
-        // this.type = new ModelElementTraceHasTypeGremlin(this, gts, wrapperFactory);
-        // Derived Features
-        // this.kind = new ModelElementTraceHasKindGremlin(this, gts, wrapperFactory);
         try {
-	        this.type.create(type);
+            this.type.create(type);
         } catch (TraceModelConflictRelation ex) {
             ((ModelElementTraceHasTypeGremlin)this.type).delegate().remove();
             throw ex;
         }
+    
     }
     
     @Override
@@ -171,61 +170,25 @@ public class ModelElementTraceGremlin implements IModelElementTrace, GremlinWrap
     
     @Override
     public IModelElementTraceHasProperties properties() {
-        if (properties == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("properties");
-                if (gt.hasNext()) {
-                    properties = new ModelElementTraceHasPropertiesGremlin(this, this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return properties;
     }
 
     @Override
     public IModelElementTraceHasModelTrace modelTrace() {
-        if (modelTrace == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("modelTrace");
-                if (gt.hasNext()) {
-                    modelTrace = new ModelElementTraceHasModelTraceGremlin(this, gt.next(), this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return modelTrace;
     }
 
     @Override
     public IModelElementTraceHasType type() {
-        if (type == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("type");
-                if (gt.hasNext()) {
-                    type = new ModelElementTraceHasTypeGremlin(this, gt.next(), this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return type;
     }
 
     @Override
     public IModelElementTraceHasKind kind() {
-        if (kind == null) {
-            try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-                GraphTraversal<Vertex, Edge> gt = agts.V(delegate).outE("kind");
-                if (gt.hasNext()) {
-                    kind = new ModelElementTraceHasKindGremlin(this, this.gts, wrapperFactory);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
-            }
-        }
+        
         return kind;
     }
 

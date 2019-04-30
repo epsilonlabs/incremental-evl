@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-02-07.
+ * This file was automatically generated on: 2019-04-30.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,10 +11,13 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
+import org.eclipse.epsilon.base.incremental.trace.util.ActiveTraversal;
+import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
 import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinWrapper;
+import org.eclipse.epsilon.base.incremental.trace.util.TinkerpopDelegate;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
@@ -22,15 +25,16 @@ import org.eclipse.epsilon.evl.incremental.trace.IContextTraceHasConstraints;
 import org.eclipse.epsilon.base.incremental.trace.impl.Feature;
 import java.util.Iterator;
 import java.util.Map.Entry;
-import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils;
+
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 
 /**
  * Implementation of IContextTraceHasConstraints reference. 
  */
+@SuppressWarnings("unused") 
 public class ContextTraceHasConstraintsGremlin extends Feature
-        implements IContextTraceHasConstraints, GremlinWrapper<Edge> {
+        implements IContextTraceHasConstraints, TinkerpopDelegate<Edge> {
     
     /** The graph traversal source for all navigations */
     private GraphTraversalSource gts;
@@ -45,7 +49,10 @@ public class ContextTraceHasConstraintsGremlin extends Feature
     /**
      * Instantiates a new IContextTraceHasConstraints.
      *
-     * @param source the source of the reference
+     * @param source                the source element of the reference
+     * @param delegate              the delegate edge
+     * @param gts                   the graph taversal source   
+     * @param factory               the factory used to instantiante the target
      */
     public ContextTraceHasConstraintsGremlin (
         IContextTrace source,
@@ -54,28 +61,28 @@ public class ContextTraceHasConstraintsGremlin extends Feature
         super(true);
         this.source = source;
         this.gts = gts;
-        this.factory = factory; 
+        this.factory = factory;
     }
+    
+    
     
     // PUBLIC API
         
     @Override
     public Iterator<IInvariantTrace> get() {
-        return new GremlinUtils.IncrementalFactoryIterator<IInvariantTrace, Vertex>(getRaw(),
+        return new GremlinUtils.IncrementalFactoryIterator<IInvariantTrace>(getRaw(),
                 gts, factory);
     }
     
     /**
      * Get the Tinkerpop GraphTraversal iterator of the vertices that are part of the relation.
      */
-    public  GraphTraversal<Vertex, Vertex> getRaw() {
-        GraphTraversalSource g = startTraversal();
+    public GraphTraversal<Vertex, Vertex> getRaw() {
         GraphTraversal<Vertex, Vertex> result = null;
-        try {
-            result = g.V(source.getId()).out("constraints");
-        }
-        finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            result = agts.V(source.getId()).out("constraints");
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
     }
@@ -107,19 +114,17 @@ public class ContextTraceHasConstraintsGremlin extends Feature
     @Override
     public boolean conflict(IInvariantTrace target) {
         boolean result = false;
-        GraphTraversalSource g = startTraversal();
-        try {
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 	        if (isUnique()) {
-	            GraphTraversal<Vertex, Vertex> gt =  g.V(source.getId()).out("constraints");
+	            GraphTraversal<Vertex, Vertex> gt =  agts.V(source.getId()).out("constraints");
                 for (Entry<String, Object> id : target.getIdProperties().entrySet()) {
                     gt.has(id.getKey(), id.getValue());
                 }
                 result |= gt.hasNext();
             }
             result |= target.invariantContext().get() != null;
-        }
-        finally {
-            finishTraversal(g);
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
     }
@@ -130,12 +135,10 @@ public class ContextTraceHasConstraintsGremlin extends Feature
 			return false;
 		}
         boolean result = false;
-        GraphTraversalSource g = startTraversal();
-        try {
-		  result = g.V(source.getId()).out("constraints").hasId(target.getId()).hasNext() && source.equals(target.invariantContext().get());
-		}
-		finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+		  result = agts.V(source.getId()).out("constraints").hasId(target.getId()).hasNext() && source.equals(target.invariantContext().get());
+		} catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         return result;
 	}
@@ -144,54 +147,35 @@ public class ContextTraceHasConstraintsGremlin extends Feature
     public Edge delegate() {
         return null;
     }
-
-    @Override
-    public void delegate(Edge delegate) {
-    }
     
     @Override
-    public void graphTraversalSource(GraphTraversalSource gts) {
-        this.gts = gts;
+    public GraphTraversalSource graphTraversalSource() {
+        return gts;
     }
         
-    
     // PRIVATE API
     
     @Override
     public void set(IInvariantTrace target) {
-        GraphTraversalSource g = startTraversal();
-        try {
-            g.V(source.getId()).addE("constraints").to(g.V(target.getId())).iterate();
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            finishTraversal(g);
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            agts.V(source.getId()).addE("constraints")
+                    .to(agts.V(target.getId())).iterate();
+        } catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
         
     }
     
     @Override
     public void remove(IInvariantTrace target) {
-        GraphTraversalSource g = startTraversal();
-        try {
-            g.V(source.getId()).outE("constraints").as("e").inV().hasId(target.getId()).select("e").drop().iterate();
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            finishTraversal(g);
-        }
-    }
-    
-    private GraphTraversalSource startTraversal() {
-        return this.gts.clone();
-    }
-    
-    private void finishTraversal(GraphTraversalSource g) {
-        try {
-            g.close();
+        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+            agts.V(source.getId())
+                    .outE("constraints")
+                    .as("e").inV()
+                    .hasId(target.getId())
+                    .select("e").drop().iterate();
         } catch (Exception e) {
-            // Fail silently?
+            throw new IllegalStateException("There was an error during graph traversal.", e);
         }
     }
-
 }
