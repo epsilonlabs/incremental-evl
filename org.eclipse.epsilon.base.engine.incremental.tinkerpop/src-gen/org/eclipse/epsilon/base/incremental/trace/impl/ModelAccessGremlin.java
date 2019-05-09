@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-30.
+ * This file was automatically generated on: 2019-05-09.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -49,17 +49,6 @@ public class ModelAccessGremlin implements IModelAccess, TinkerpopDelegate<Verte
     
     /** The factory used to wrap the vertex's incident vertices */
     private TraceFactory wrapperFactory;
-    
-    /**
-     * The id.
-     */
-    private Object id;
-
-    /**
-     * The modelName.
-     */
-    private String modelName;
-
     
     /**
      * The modelTrace.
@@ -129,21 +118,20 @@ public class ModelAccessGremlin implements IModelAccess, TinkerpopDelegate<Verte
      
     @Override
     public String getModelName() {
-        if (modelName == null) {
-	        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-		        try {
-		            modelName = (String) agts.V(delegate).values("modelName").next();
-		        } catch (NoSuchElementException ex) {
-		            /** protected region modelName on begin **/
-	            // TODO Add default return value for ModelAccessGremlin.getModelName
-	            throw new IllegalStateException("Add default return value for ModelAccessGremlin.getModelName", ex);
-	            /** protected region modelName end **/
-		        }
-		    } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
+        if (delegate != null) {
+            Iterator<VertexProperty<Object>> values = delegate.properties("modelName");
+            if (values.hasNext()) {
+                return (String) values.next().value();
             }
-	    }    
-        return modelName;
+            else {
+                /** protected region modelName on begin **/
+	            // TODO Add default return value for ModelAccessGremlin.getModelName
+	            throw new IllegalStateException("Add default return value for ModelAccessGremlin.getModelName");
+	            /** protected region modelName end **/
+            }
+            
+        }
+        return null;
     }
     
     @Override

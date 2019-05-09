@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-30.
+ * This file was automatically generated on: 2019-05-09.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -36,10 +36,10 @@ import java.util.stream.Collectors;
 import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.Path;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
+import org.eclipse.epsilon.base.incremental.ModuleElementTraceExecution;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.util.GremlinUtils.IncrementalFactoryIterator;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
-import org.eclipse.epsilon.evl.incremental.IReexecutionTrace;
 import org.eclipse.epsilon.evl.incremental.ReexecutionCheckTrace;
 import org.eclipse.epsilon.evl.incremental.ReexecutionContextTrace;
 import org.eclipse.epsilon.evl.incremental.ReexecutionGuardTrace;
@@ -143,7 +143,7 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 	
 	
 	@Override
-	public Set<IReexecutionTrace> findAllInstancesExecutionTraces(
+	public Set<ModuleElementTraceExecution> findAllInstancesExecutionTraces(
 		String moduleUri,
 		String modelUri,
 		String typeName) {
@@ -151,12 +151,12 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 	}
 	
 	@Override
-	public Set<IReexecutionTrace> findAllInstancesExecutionTraces(
+	public Set<ModuleElementTraceExecution> findAllInstancesExecutionTraces(
 	    String moduleUri,
 	    String modelUri,
 	    String typeName,
 	    boolean ofType) {
-		Set<IReexecutionTrace> result = new HashSet<>();
+		Set<ModuleElementTraceExecution> result = new HashSet<>();
 		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 			GraphTraversal<Vertex, Path> find_gt = agts.V().hasLabel("EvlModuleTrace")
 				.has("uri", moduleUri)
@@ -174,7 +174,7 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 				.select("a")
 				.path();
 			while (find_gt.hasNext()) {
-				Optional<IReexecutionTrace> ret = makeRexecutionTrace(find_gt);
+				Optional<ModuleElementTraceExecution> ret = makeRexecutionTrace(find_gt);
 				ret.ifPresent(result::add);
 			}
 		} catch (Exception e) {
@@ -184,13 +184,13 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 	}
 	
 	@Override
-	public Set<IReexecutionTrace> findIndirectExecutionTraces(
+	public Set<ModuleElementTraceExecution> findIndirectExecutionTraces(
 	    String moduleUri,
 	    Object elementId,
 	    Collection<String> allElementTypes) {
 		IEvlModuleTrace moduleTrace = getEvlModuleTraceByIdentity(moduleUri);
 		
-		Set<IReexecutionTrace> result = new HashSet<>();
+		Set<ModuleElementTraceExecution> result = new HashSet<>();
 		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 			GraphTraversal<Vertex, Path> find_gt = agts.V().hasLabel("EvlModuleTrace")
 					.has("uri", moduleUri)
@@ -220,7 +220,7 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 					)	   	
 					.path();
 			while (find_gt.hasNext()) {
-				Optional<IReexecutionTrace> ret = makeRexecutionTrace(find_gt);
+				Optional<ModuleElementTraceExecution> ret = makeRexecutionTrace(find_gt);
 				ret.ifPresent(result::add);
 			}
 		} catch (Exception e) {
@@ -230,12 +230,12 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 	}
 	
 	@Override
-	public Set<IReexecutionTrace> findModelElementExecutionTraces(
+	public Set<ModuleElementTraceExecution> findModelElementExecutionTraces(
 		String moduleUri,
 		String elementUri,
 		String modelUri,
 		Set<String> allElementTypes) {
-		Set<IReexecutionTrace> result = new HashSet<>();
+		Set<ModuleElementTraceExecution> result = new HashSet<>();
 		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 			GraphTraversal<Vertex, Path> gt = agts.V().hasLabel("EvlModuleTrace")
 					.has("uri", moduleUri)
@@ -261,7 +261,7 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 					.as("c")
 					.path();
 			while (gt.hasNext()) {
-				Optional<IReexecutionTrace> ret = makeRexecutionTrace(gt);
+				Optional<ModuleElementTraceExecution> ret = makeRexecutionTrace(gt);
 				ret.ifPresent(result::add);
 			}
 		} catch (Exception e) {
@@ -271,10 +271,10 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 	}
 	
 	@Override
-	public Set<IReexecutionTrace> findPropertyAccessExecutionTraces(
+	public Set<ModuleElementTraceExecution> findPropertyAccessExecutionTraces(
 		String moduleUri,
 		IPropertyTrace propertyTrace) {
-		Set<IReexecutionTrace> result = new HashSet<>();
+		Set<ModuleElementTraceExecution> result = new HashSet<>();
 		if (propertyTrace != null) {
 			try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 				GraphTraversal<Vertex, Path> find_gt = agts.V().hasLabel("EvlModuleTrace")
@@ -294,7 +294,7 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 						.path();
 				
 				while (find_gt.hasNext()) {
-					Optional<IReexecutionTrace> ret = makeRexecutionTrace(find_gt);
+					Optional<ModuleElementTraceExecution> ret = makeRexecutionTrace(find_gt);
 					ret.ifPresent(result::add);
 				}
 			} catch (Exception e) {
@@ -305,8 +305,8 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 	}
 	
 	@Override
-	public Set<IReexecutionTrace> findPropertyAccessExecutionTraces(IPropertyAccess pa) {
-		Set<IReexecutionTrace> result = new HashSet<>();
+	public Set<ModuleElementTraceExecution> findPropertyAccessExecutionTraces(IPropertyAccess pa) {
+		Set<ModuleElementTraceExecution> result = new HashSet<>();
 		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 			GraphTraversal<Vertex, Path> find_gt = agts.V(pa.getId())
 					.out("from")
@@ -318,7 +318,7 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 					.path();
 			
 			while (find_gt.hasNext()) {
-				Optional<IReexecutionTrace> ret = makeRexecutionTrace(find_gt);
+				Optional<ModuleElementTraceExecution> ret = makeRexecutionTrace(find_gt);
 				ret.ifPresent(result::add);
 			}
 		} catch (Exception e) {
@@ -444,12 +444,12 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 	}
 
 	
-	private Optional<IReexecutionTrace>  makeRexecutionTrace(GraphTraversal<Vertex, Path> find_gt) {
+	private Optional<ModuleElementTraceExecution>  makeRexecutionTrace(GraphTraversal<Vertex, Path> find_gt) {
 		Path p = find_gt.next();
 		Vertex metVertex = p.get("me");
 		Object met = factory.createTraceElement(metVertex, gts);
 		Object exContext = factory.createTraceElement(p.get("c"), gts);
-		IReexecutionTrace rt = null;
+		ModuleElementTraceExecution rt = null;
 		switch(metVertex.label()) {
 		case "ContextTrace":
 			rt = new ReexecutionContextTrace((IContextTrace) met, (IExecutionContext) exContext);

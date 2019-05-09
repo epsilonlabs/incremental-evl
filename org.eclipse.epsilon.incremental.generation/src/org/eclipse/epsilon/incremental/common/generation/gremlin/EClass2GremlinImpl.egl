@@ -62,17 +62,6 @@ public class [%=ec.getJavaClassName(classPrefix, classSufix)%] implements [%=ec.
     /** The factory used to wrap the vertex's incident vertices */
     private TraceFactory wrapperFactory;
     
-[%  // Craete a field for each attribute
-for (ea in ec.getEAllAttributes().select(ea | not ea.derived)) {
-    var multi = "List";
-    if (ea.isOrdered()) { multi = "Set"; }%]
-    /**
-     * The [%=ea.name%].
-     */
-    private [%=ea.getGetterReturnType(multi)%] [%=ea.name%];
-
-[%}%]
-    
 [%  // Craete a field for each reference
 for (er in ec.getEAllReferences()) {%]
     /**
@@ -135,21 +124,20 @@ for (er in ec.getEAllReferences()) {%]
 [%  if (ea.isID()){%]
         return ([%=ea.getGetterReturnType(multi)%]) delegate == null ? null : delegate.id();
 [%  } else {%]
-        if ([%=ea.name%] == null) {
-	        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-		        try {
-		            [%=ea.name%] = ([%=ea.getGetterReturnType(multi)%]) agts.V(delegate).values("[%=ea.name%]").next();
-		        } catch (NoSuchElementException ex) {
-		            [%=out.startPreserve("/**", "**/", ea.name, true)%]
-		            // TODO Add default return value for [%=ec.getJavaClassName(classPrefix, classSufix)%].[%=ea.getGetterMethodName()%]
-		            throw new IllegalStateException("Add default return value for [%=ec.getJavaClassName(classPrefix, classSufix)%].[%=ea.getGetterMethodName()%]", ex);
-		            [%=out.stopPreserve()%]
-		        }
-		    } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
+        if (delegate != null) {
+            Iterator<VertexProperty<Object>> values = delegate.properties("[%=ea.name%]");
+            if (values.hasNext()) {
+                return ([%=ea.getGetterReturnType(multi)%]) values.next().value();
             }
-	    }    
-        return [%=ea.name%];
+            else {
+                [%=out.startPreserve("/**", "**/", ea.name, true)%]
+                // TODO Add default return value for [%=ec.getJavaClassName(classPrefix, classSufix)%].[%=ea.getGetterMethodName()%]
+                throw new IllegalStateException("Add default return value for [%=ec.getJavaClassName(classPrefix, classSufix)%].[%=ea.getGetterMethodName()%]");
+                [%=out.stopPreserve()%]
+            }
+            
+        }
+        return null;
 [%  }%]
     }
     

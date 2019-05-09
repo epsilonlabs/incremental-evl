@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-30.
+ * This file was automatically generated on: 2019-05-09.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -52,22 +52,6 @@ public class ContextTraceGremlin implements IContextTrace, TinkerpopDelegate<Ver
     
     /** The factory used to wrap the vertex's incident vertices */
     private TraceFactory wrapperFactory;
-    
-    /**
-     * The id.
-     */
-    private Object id;
-
-    /**
-     * The kind.
-     */
-    private String kind;
-
-    /**
-     * The index.
-     */
-    private Integer index;
-
     
     /**
      * The guard.
@@ -146,40 +130,38 @@ public class ContextTraceGremlin implements IContextTrace, TinkerpopDelegate<Ver
      
     @Override
     public String getKind() {
-        if (kind == null) {
-	        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-		        try {
-		            kind = (String) agts.V(delegate).values("kind").next();
-		        } catch (NoSuchElementException ex) {
-		            /** protected region kind on begin **/
-	            // TODO Add default return value for ContextTraceGremlin.getKind
-	            throw new IllegalStateException("Add default return value for ContextTraceGremlin.getKind", ex);
-	            /** protected region kind end **/
-		        }
-		    } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
+        if (delegate != null) {
+            Iterator<VertexProperty<Object>> values = delegate.properties("kind");
+            if (values.hasNext()) {
+                return (String) values.next().value();
             }
-	    }    
-        return kind;
+            else {
+                /** protected region kind on begin **/
+	            // TODO Add default return value for ContextTraceGremlin.getKind
+	            throw new IllegalStateException("Add default return value for ContextTraceGremlin.getKind");
+	            /** protected region kind end **/
+            }
+            
+        }
+        return null;
     }
     
     @Override
     public Integer getIndex() {
-        if (index == null) {
-	        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-		        try {
-		            index = (Integer) agts.V(delegate).values("index").next();
-		        } catch (NoSuchElementException ex) {
-		            /** protected region index on begin **/
-	            // TODO Add default return value for ContextTraceGremlin.getIndex
-	            throw new IllegalStateException("Add default return value for ContextTraceGremlin.getIndex", ex);
-	            /** protected region index end **/
-		        }
-		    } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
+        if (delegate != null) {
+            Iterator<VertexProperty<Object>> values = delegate.properties("index");
+            if (values.hasNext()) {
+                return (Integer) values.next().value();
             }
-	    }    
-        return index;
+            else {
+                /** protected region index on begin **/
+	            // TODO Add default return value for ContextTraceGremlin.getIndex
+	            throw new IllegalStateException("Add default return value for ContextTraceGremlin.getIndex");
+	            /** protected region index end **/
+            }
+            
+        }
+        return null;
     }
     
     @Override

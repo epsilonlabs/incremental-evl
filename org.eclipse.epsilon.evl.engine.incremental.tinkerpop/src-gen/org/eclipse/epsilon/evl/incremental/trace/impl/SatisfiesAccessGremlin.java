@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-30.
+ * This file was automatically generated on: 2019-05-09.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -51,17 +51,6 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, TinkerpopDelega
     
     /** The factory used to wrap the vertex's incident vertices */
     private TraceFactory wrapperFactory;
-    
-    /**
-     * The id.
-     */
-    private Object id;
-
-    /**
-     * The all.
-     */
-    private Boolean all;
-
     
     /**
      * The module.
@@ -131,13 +120,13 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, TinkerpopDelega
             throw new TraceModelDuplicateElement();
         };
         try {
+            this.in.create(in);
             this.from.create(from);
             this.modelElement.create(modelElement);
-            this.in.create(in);
         } catch (TraceModelConflictRelation ex) {
+            ((AccessHasInGremlin)this.in).delegate().remove();
             ((AccessHasFromGremlin)this.from).delegate().remove();
             ((SatisfiesAccessHasModelElementGremlin)this.modelElement).delegate().remove();
-            ((AccessHasInGremlin)this.in).delegate().remove();
             throw ex;
         }
     
@@ -157,21 +146,20 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, TinkerpopDelega
      
     @Override
     public Boolean getAll() {
-        if (all == null) {
-	        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-		        try {
-		            all = (Boolean) agts.V(delegate).values("all").next();
-		        } catch (NoSuchElementException ex) {
-		            /** protected region all on begin **/
-	            // TODO Add default return value for SatisfiesAccessGremlin.getAll
-	            throw new IllegalStateException("Add default return value for SatisfiesAccessGremlin.getAll", ex);
-	            /** protected region all end **/
-		        }
-		    } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
+        if (delegate != null) {
+            Iterator<VertexProperty<Object>> values = delegate.properties("all");
+            if (values.hasNext()) {
+                return (Boolean) values.next().value();
             }
-	    }    
-        return all;
+            else {
+                /** protected region all on begin **/
+	            // TODO Add default return value for SatisfiesAccessGremlin.getAll
+	            throw new IllegalStateException("Add default return value for SatisfiesAccessGremlin.getAll");
+	            /** protected region all end **/
+            }
+            
+        }
+        return null;
     }
     
     

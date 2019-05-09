@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-30.
+ * This file was automatically generated on: 2019-05-09.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -51,17 +51,6 @@ public class CheckResultGremlin implements ICheckResult, TinkerpopDelegate<Verte
     
     /** The factory used to wrap the vertex's incident vertices */
     private TraceFactory wrapperFactory;
-    
-    /**
-     * The id.
-     */
-    private Object id;
-
-    /**
-     * The value.
-     */
-    private Boolean value;
-
     
     /**
      * The context.
@@ -123,20 +112,19 @@ public class CheckResultGremlin implements ICheckResult, TinkerpopDelegate<Verte
      
     @Override
     public Boolean getValue() {
-        if (value == null) {
-	        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-		        try {
-		            value = (Boolean) agts.V(delegate).values("value").next();
-		        } catch (NoSuchElementException ex) {
-		            /** protected region value on begin **/
-		            value = false;
-		            /** protected region value end **/
-		        }
-		    } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
+        if (delegate != null) {
+            Iterator<VertexProperty<Object>> values = delegate.properties("value");
+            if (values.hasNext()) {
+                return (Boolean) values.next().value();
             }
-	    }    
-        return value;
+            else {
+                /** protected region value on begin **/
+		        return false;
+		        /** protected region value end **/
+            }
+            
+        }
+        return null;
     }
     
     

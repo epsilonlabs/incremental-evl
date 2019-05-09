@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-30.
+ * This file was automatically generated on: 2019-05-09.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -50,17 +50,6 @@ public class ModelTraceGremlin implements IModelTrace, TinkerpopDelegate<Vertex>
     
     /** The factory used to wrap the vertex's incident vertices */
     private TraceFactory wrapperFactory;
-    
-    /**
-     * The id.
-     */
-    private Object id;
-
-    /**
-     * The uri.
-     */
-    private String uri;
-
     
     /**
      * The elements.
@@ -126,21 +115,20 @@ public class ModelTraceGremlin implements IModelTrace, TinkerpopDelegate<Vertex>
      
     @Override
     public String getUri() {
-        if (uri == null) {
-	        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-		        try {
-		            uri = (String) agts.V(delegate).values("uri").next();
-		        } catch (NoSuchElementException ex) {
-		            /** protected region uri on begin **/
-	            // TODO Add default return value for ModelTraceGremlin.getUri
-	            throw new IllegalStateException("Add default return value for ModelTraceGremlin.getUri", ex);
-	            /** protected region uri end **/
-		        }
-		    } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
+        if (delegate != null) {
+            Iterator<VertexProperty<Object>> values = delegate.properties("uri");
+            if (values.hasNext()) {
+                return (String) values.next().value();
             }
-	    }    
-        return uri;
+            else {
+                /** protected region uri on begin **/
+	            // TODO Add default return value for ModelTraceGremlin.getUri
+	            throw new IllegalStateException("Add default return value for ModelTraceGremlin.getUri");
+	            /** protected region uri end **/
+            }
+            
+        }
+        return null;
     }
     
     @Override

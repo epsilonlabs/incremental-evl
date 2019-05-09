@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-30.
+ * This file was automatically generated on: 2019-05-09.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -49,17 +49,6 @@ public class ModelElementVariableGremlin implements IModelElementVariable, Tinke
     
     /** The factory used to wrap the vertex's incident vertices */
     private TraceFactory wrapperFactory;
-    
-    /**
-     * The id.
-     */
-    private Object id;
-
-    /**
-     * The name.
-     */
-    private String name;
-
     
     /**
      * The value.
@@ -129,21 +118,20 @@ public class ModelElementVariableGremlin implements IModelElementVariable, Tinke
      
     @Override
     public String getName() {
-        if (name == null) {
-	        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-		        try {
-		            name = (String) agts.V(delegate).values("name").next();
-		        } catch (NoSuchElementException ex) {
-		            /** protected region name on begin **/
-	            // TODO Add default return value for ModelElementVariableGremlin.getName
-	            throw new IllegalStateException("Add default return value for ModelElementVariableGremlin.getName", ex);
-	            /** protected region name end **/
-		        }
-		    } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
+        if (delegate != null) {
+            Iterator<VertexProperty<Object>> values = delegate.properties("name");
+            if (values.hasNext()) {
+                return (String) values.next().value();
             }
-	    }    
-        return name;
+            else {
+                /** protected region name on begin **/
+	            // TODO Add default return value for ModelElementVariableGremlin.getName
+	            throw new IllegalStateException("Add default return value for ModelElementVariableGremlin.getName");
+	            /** protected region name end **/
+            }
+            
+        }
+        return null;
     }
     
     @Override

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-30.
+ * This file was automatically generated on: 2019-05-09.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -51,17 +51,6 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, Tinkerpop
     private TraceFactory wrapperFactory;
     
     /**
-     * The id.
-     */
-    private Object id;
-
-    /**
-     * The ofKind.
-     */
-    private Boolean ofKind;
-
-    
-    /**
      * The module.
      */
     private IAccessHasModule module;
@@ -92,8 +81,8 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, Tinkerpop
         this.delegate = vertex;
         this.gts = gts;
         this.wrapperFactory = wrapperFactory;
-        this.type = new AllInstancesAccessHasTypeGremlin(this, gts, wrapperFactory);
         this.module = new AccessHasModuleGremlin(this, gts, wrapperFactory);
+        this.type = new AllInstancesAccessHasTypeGremlin(this, gts, wrapperFactory);
         this.from = new AccessHasFromGremlin(this, gts, wrapperFactory);
         this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
     }
@@ -124,19 +113,19 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, Tinkerpop
         } 
         this.from = new AccessHasFromGremlin(this, gts, wrapperFactory);
         this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
-        this.type = new AllInstancesAccessHasTypeGremlin(this, gts, wrapperFactory);
         this.module = new AccessHasModuleGremlin(this, gts, wrapperFactory);
+        this.type = new AllInstancesAccessHasTypeGremlin(this, gts, wrapperFactory);
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
         try {
-            this.type.create(type);
-            this.in.create(in);
             this.from.create(from);
+            this.in.create(in);
+            this.type.create(type);
         } catch (TraceModelConflictRelation ex) {
-            ((AllInstancesAccessHasTypeGremlin)this.type).delegate().remove();
-            ((AccessHasInGremlin)this.in).delegate().remove();
             ((AccessHasFromGremlin)this.from).delegate().remove();
+            ((AccessHasInGremlin)this.in).delegate().remove();
+            ((AllInstancesAccessHasTypeGremlin)this.type).delegate().remove();
             throw ex;
         }
     
@@ -156,21 +145,20 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, Tinkerpop
      
     @Override
     public Boolean getOfKind() {
-        if (ofKind == null) {
-	        try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-		        try {
-		            ofKind = (Boolean) agts.V(delegate).values("ofKind").next();
-		        } catch (NoSuchElementException ex) {
-		            /** protected region ofKind on begin **/
-	            // TODO Add default return value for AllInstancesAccessGremlin.getOfKind
-	            throw new IllegalStateException("Add default return value for AllInstancesAccessGremlin.getOfKind", ex);
-	            /** protected region ofKind end **/
-		        }
-		    } catch (Exception e) {
-                throw new IllegalStateException("There was an error during graph traversal.", e);
+        if (delegate != null) {
+            Iterator<VertexProperty<Object>> values = delegate.properties("ofKind");
+            if (values.hasNext()) {
+                return (Boolean) values.next().value();
             }
-	    }    
-        return ofKind;
+            else {
+                /** protected region ofKind on begin **/
+	            // TODO Add default return value for AllInstancesAccessGremlin.getOfKind
+	            throw new IllegalStateException("Add default return value for AllInstancesAccessGremlin.getOfKind");
+	            /** protected region ofKind end **/
+            }
+            
+        }
+        return null;
     }
     
     @Override
@@ -230,18 +218,18 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, Tinkerpop
         AllInstancesAccessGremlin other = (AllInstancesAccessGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-    if (type == null) {
-        if (other.type != null)
-            return false;
-    }
-        if (!type().get().equals(other.type().get())) {
-            return false;
-        }
     if (module == null) {
         if (other.module != null)
             return false;
     }
         if (!module().get().equals(other.module().get())) {
+            return false;
+        }
+    if (type == null) {
+        if (other.type != null)
+            return false;
+    }
+        if (!type().get().equals(other.type().get())) {
             return false;
         }
         return true; 
@@ -253,10 +241,10 @@ public class AllInstancesAccessGremlin implements IAllInstancesAccess, Tinkerpop
         int result = 1;
         Boolean ofKind = Boolean.valueOf(getOfKind());
         result = prime * result + ((ofKind == null) ? 0 : ofKind.hashCode());
-        IModelTypeTrace type = type().get();
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
         IModuleExecutionTrace module = module().get();
         result = prime * result + ((module == null) ? 0 : module.hashCode());
+        IModelTypeTrace type = type().get();
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
     }
     

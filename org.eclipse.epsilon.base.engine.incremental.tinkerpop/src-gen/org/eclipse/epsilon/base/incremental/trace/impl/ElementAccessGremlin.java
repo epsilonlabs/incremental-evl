@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-30.
+ * This file was automatically generated on: 2019-05-09.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -51,12 +51,6 @@ public class ElementAccessGremlin implements IElementAccess, TinkerpopDelegate<V
     private TraceFactory wrapperFactory;
     
     /**
-     * The id.
-     */
-    private Object id;
-
-    
-    /**
      * The module.
      */
     private IAccessHasModule module;
@@ -87,8 +81,8 @@ public class ElementAccessGremlin implements IElementAccess, TinkerpopDelegate<V
         this.delegate = vertex;
         this.gts = gts;
         this.wrapperFactory = wrapperFactory;
-        this.module = new AccessHasModuleGremlin(this, gts, wrapperFactory);
         this.element = new ElementAccessHasElementGremlin(this, gts, wrapperFactory);
+        this.module = new AccessHasModuleGremlin(this, gts, wrapperFactory);
         this.from = new AccessHasFromGremlin(this, gts, wrapperFactory);
         this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
     }
@@ -111,19 +105,19 @@ public class ElementAccessGremlin implements IElementAccess, TinkerpopDelegate<V
  
         this.from = new AccessHasFromGremlin(this, gts, wrapperFactory);
         this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
-        this.module = new AccessHasModuleGremlin(this, gts, wrapperFactory);
         this.element = new ElementAccessHasElementGremlin(this, gts, wrapperFactory);
+        this.module = new AccessHasModuleGremlin(this, gts, wrapperFactory);
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
         try {
-            this.in.create(in);
-            this.from.create(from);
             this.element.create(element);
+            this.from.create(from);
+            this.in.create(in);
         } catch (TraceModelConflictRelation ex) {
-            ((AccessHasInGremlin)this.in).delegate().remove();
-            ((AccessHasFromGremlin)this.from).delegate().remove();
             ((ElementAccessHasElementGremlin)this.element).delegate().remove();
+            ((AccessHasFromGremlin)this.from).delegate().remove();
+            ((AccessHasInGremlin)this.in).delegate().remove();
             throw ex;
         }
     
@@ -189,18 +183,18 @@ public class ElementAccessGremlin implements IElementAccess, TinkerpopDelegate<V
         ElementAccessGremlin other = (ElementAccessGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-    if (module == null) {
-        if (other.module != null)
-            return false;
-    }
-        if (!module().get().equals(other.module().get())) {
-            return false;
-        }
     if (element == null) {
         if (other.element != null)
             return false;
     }
         if (!element().get().equals(other.element().get())) {
+            return false;
+        }
+    if (module == null) {
+        if (other.module != null)
+            return false;
+    }
+        if (!module().get().equals(other.module().get())) {
             return false;
         }
         return true; 
@@ -210,10 +204,10 @@ public class ElementAccessGremlin implements IElementAccess, TinkerpopDelegate<V
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        IModuleExecutionTrace module = module().get();
-        result = prime * result + ((module == null) ? 0 : module.hashCode());
         IModelElementTrace element = element().get();
         result = prime * result + ((element == null) ? 0 : element.hashCode());
+        IModuleExecutionTrace module = module().get();
+        result = prime * result + ((module == null) ? 0 : module.hashCode());
         return result;
     }
     
