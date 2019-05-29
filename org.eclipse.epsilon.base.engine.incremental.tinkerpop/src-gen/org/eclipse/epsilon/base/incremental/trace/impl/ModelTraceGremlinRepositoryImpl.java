@@ -51,7 +51,7 @@ import com.google.inject.Inject;
  * @author Horacio Hoyos Rodriguez
  */
 @SuppressWarnings("unused")
-public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository<IModelTrace> {
+public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelTraceGremlinRepositoryImpl.class);
  

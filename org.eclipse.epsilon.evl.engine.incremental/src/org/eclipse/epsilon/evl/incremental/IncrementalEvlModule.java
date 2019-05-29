@@ -237,7 +237,6 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		// executeTraces(moduleUri, model, traces, object);
 	}
 
-
 	@Override
 	public void onCreate(IIncrementalModel model, Object newElement) throws EolRuntimeException {
 
@@ -592,9 +591,9 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		IEvlExecutionTraceManager etManager = getContext().getTraceManager();
 		ModelRepository modelRepository = context.getModelRepository();
 		IEvlModuleTraceRepository<IEvlModuleTrace>  executionTraceRepo = etManager.getExecutionTraceRepository();
-		IModelTraceRepository<IModelTrace>  modelTraceRepo = etManager.getModelTraceRepository();
+		IModelTraceRepository  modelTraceRepo = etManager.getModelTraceRepository();
 		// FIXME This should be injected so we can try different strategies!?
-		IncrementalEvlExecutionStrategy strategy = new TreeIteratorStrategy(this);
+		IncrementalEvlExecutionStrategy strategy = new SimpleStrategy(this);
 		strategy.execute(sourceChksum, modelRepository, executionTraceRepo, modelTraceRepo, getContext());
 	}
 

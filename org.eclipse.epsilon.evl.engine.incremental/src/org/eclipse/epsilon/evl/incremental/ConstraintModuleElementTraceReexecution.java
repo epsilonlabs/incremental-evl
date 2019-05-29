@@ -9,7 +9,6 @@ import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseCont
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelNotFoundException;
@@ -19,15 +18,15 @@ import org.eclipse.epsilon.evl.incremental.execute.context.IIncrementalEvlContex
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 
 /**
- * A class that represents a ModuleElementTrace-ExecutionContext pair that should be re-executed
- * @author Horacio Hoyos
+ * A base implementation of TraceReexecution for EVL reexecution.
+ * 
+ * @author Horacio Hoyos Rodriguez
  *
  */
  // TODO We might need a ModuleElementTraceReexecution shared by all languages
 public abstract class ConstraintModuleElementTraceReexecution implements TraceReexecution {
 
 	protected final IEvlModuleTrace moduleTrace;
-	protected final IModelTrace modelTrace;
 	protected final IModelElementTrace selfTrace;
 	protected final IExecutionContext executionContext;	
 	protected final Set<TraceReexecution> children;
@@ -37,20 +36,26 @@ public abstract class ConstraintModuleElementTraceReexecution implements TraceRe
 	
 	protected abstract String section();
 	
+	/**
+	 * Create a new ConstraintModuleElementTraceReexecution
+	 * @param mdulTrc		The module element being executed
+	 * @param slfTrc
+	 * @param exctnCntxt
+	 * @param chldrn
+	 * @param prnt
+	 */
 	public ConstraintModuleElementTraceReexecution(
-		IEvlModuleTrace moduleTrace,
-		IModelTrace modelTrace,
-		IModelElementTrace selfTrace,
-		IExecutionContext executionContext,
-		Set<TraceReexecution> children,
-		TraceReexecution parent) {
+		IEvlModuleTrace mdulTrc,
+		IModelElementTrace slfTrc,
+		IExecutionContext exctnCntxt,
+		Set<TraceReexecution> chldrn,
+		TraceReexecution prnt) {
 		super();
-		this.moduleTrace = moduleTrace;
-		this.modelTrace = modelTrace;
-		this.selfTrace = selfTrace;
-		this.executionContext = executionContext;
-		this.children = children;
-		this.parent = parent;
+		moduleTrace = mdulTrc;
+		selfTrace = slfTrc;
+		executionContext = exctnCntxt;
+		children = chldrn;
+		parent = prnt;
 	}
 
 	@Override
@@ -76,10 +81,10 @@ public abstract class ConstraintModuleElementTraceReexecution implements TraceRe
 	protected Object getSelf(IIncrementalEvlContext context) throws EolRuntimeException {
 		// logger.info("Resolve self element.");
 		Optional<IModelAccess> ma = IncrementalUtils.asStream(moduleTrace.models().get())
-				.filter(m -> m.modelTrace().get().equals(modelTrace)).findFirst();
+				.filter(m -> m.modelTrace().get().equals(selfTrace.modelTrace().get())).findFirst();
 		if (!ma.isPresent()) {
 			throw new EolRuntimeException(
-					"No model access information found for " + modelTrace.getUri() + " for the given module.");
+					"No model access information found for " + selfTrace.modelTrace().get().getUri() + " for the given module.");
 		}
 		String selfModelName = ma.get().getModelName();
 		IModel selfModel = null;

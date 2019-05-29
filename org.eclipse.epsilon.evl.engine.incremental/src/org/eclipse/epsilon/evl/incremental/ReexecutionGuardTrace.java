@@ -10,7 +10,6 @@ import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseCont
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelNotFoundException;
@@ -24,7 +23,8 @@ import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 
 /**
- * A class that represents a ModuleElementTrace-ExecutionContext pair that should be re-executed
+  * A reexecution for a guard trace.
+ * 
  * @author Horacio Hoyos Rodriguez
  *
  */
@@ -32,7 +32,6 @@ public class ReexecutionGuardTrace  implements TraceReexecution {
 
 	private final IGuardTrace guardTrace;
 	private final IEvlModuleTrace moduleTrace;
-	private final IModelTrace modelTrace;
 	private final IModelElementTrace selfTrace;
 	private final IExecutionContext executionContext;	
 	private final Set<TraceReexecution> children;
@@ -42,23 +41,20 @@ public class ReexecutionGuardTrace  implements TraceReexecution {
 		IGuardTrace trace,
 		IExecutionContext exctnCntxt,
 		IEvlModuleTrace evlMdlUri,
-		IModelTrace mdlTrc,
 		IModelElementTrace slfTrc) {
-		this(trace, exctnCntxt, evlMdlUri, mdlTrc, slfTrc, new HashSet<>(), null);
+		this(trace, exctnCntxt, evlMdlUri, slfTrc, new HashSet<>(), null);
 	}
 
 	public ReexecutionGuardTrace(
 		IGuardTrace trace,
 		IExecutionContext exctnCntxt,
 		IEvlModuleTrace evlMdl,
-		IModelTrace mdlTrc,
 		IModelElementTrace slfTrc,
 		Set<TraceReexecution> chldrn,
 		TraceReexecution prnt) {
 		guardTrace = trace;
 		executionContext = exctnCntxt;
 		moduleTrace = evlMdl;
-		modelTrace = mdlTrc;
 		selfTrace = slfTrc;
 		children = chldrn;
 		parent = prnt;
@@ -66,7 +62,7 @@ public class ReexecutionGuardTrace  implements TraceReexecution {
 
 	@Override
 	public final TraceReexecution makeChildOf(TraceReexecution parent) {
-		return new ReexecutionGuardTrace(guardTrace, executionContext, moduleTrace, modelTrace, selfTrace,
+		return new ReexecutionGuardTrace(guardTrace, executionContext, moduleTrace, selfTrace,
 				children, parent);
 	}
 
@@ -122,10 +118,10 @@ public class ReexecutionGuardTrace  implements TraceReexecution {
 	protected Object getSelf(IIncrementalEvlContext context) throws EolRuntimeException {
 		// logger.info("Resolve self element.");
 		Optional<IModelAccess> ma = IncrementalUtils.asStream(moduleTrace.models().get())
-				.filter(m -> m.modelTrace().get().equals(modelTrace)).findFirst();
+				.filter(m -> m.modelTrace().get().equals(selfTrace.modelTrace().get())).findFirst();
 		if (!ma.isPresent()) {
 			throw new EolRuntimeException(
-					"No model access information found for " + modelTrace.getUri() + " for the given module.");
+					"No model access information found for " + selfTrace.modelTrace().get().getUri() + " for the given module.");
 		}
 		String selfModelName = ma.get().getModelName();
 		IModel selfModel = null;

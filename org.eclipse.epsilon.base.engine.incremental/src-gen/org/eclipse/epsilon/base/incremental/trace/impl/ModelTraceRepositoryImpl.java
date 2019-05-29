@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unused")
-public class ModelTraceRepositoryImpl implements IModelTraceRepository<IModelTrace> {
+public class ModelTraceRepositoryImpl implements IModelTraceRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelTraceRepositoryImpl.class);
  

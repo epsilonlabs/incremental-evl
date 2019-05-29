@@ -9,6 +9,7 @@ import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraintContext;
 import org.eclipse.epsilon.evl.incremental.execute.context.IIncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
@@ -31,7 +32,7 @@ public interface IncrementalEvlExecutionStrategy extends IncrementalExecutionStr
 		String sourceChksum,
 		ModelRepository modelRepository,
 		IEvlModuleTraceRepository<IEvlModuleTrace>  executionTraceRepo,
-		IModelTraceRepository<IModelTrace>  modelTraceRepo,
+		IModelTraceRepository  modelTraceRepo,
 		IIncrementalEvlContext context) throws EolRuntimeException;
 	
 	
@@ -44,5 +45,7 @@ public interface IncrementalEvlExecutionStrategy extends IncrementalExecutionStr
 	TracedConstraint getConstraint(IGuardTrace guardTrace);
 	
 	TracedConstraintContext getConstraintContext(IGuardTrace guardTrace);
+	
+	TracedConstraintContext getConstraintContext(IContextTrace contextTrace);
 	
 }

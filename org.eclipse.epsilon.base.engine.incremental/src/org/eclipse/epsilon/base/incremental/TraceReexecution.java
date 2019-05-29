@@ -12,6 +12,7 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
  * 
  * Additionally, the reexecution provides a tree-like structure to allow dependant traces to be
  * nested below their supporter traces. Only supporter traces should be re-executed.
+ * 
  * @author Horacio Hoyos Rodriguez
  *
  */

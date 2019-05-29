@@ -151,9 +151,7 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 			return;
 		}
 		IIncrementalModel incrementalModel = (IIncrementalModel) model;
-		
-		
-		IModuleExecutionTraceRepository executionTraceRepository = context.getTraceManager()
+		IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager()
 				.getExecutionTraceRepository();
 		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository
 				.getModuleExecutionTraceByIdentity(context.getModule().getChksum());
@@ -181,7 +179,4 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 		}
 		moduleExecutionTrace.getOrCreateAccess(IAllInstancesAccess.class, ofKind, executionTrace, currentContext, typeTrace);
 	}
-
-
-
 }

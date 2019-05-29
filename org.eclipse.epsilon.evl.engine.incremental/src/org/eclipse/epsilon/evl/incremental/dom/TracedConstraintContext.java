@@ -59,6 +59,10 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 	private IExecutionContext currentContext;
 	private int index;
 
+	public int getIndex() {
+		return index;
+	}
+
 	@Override
 	public void setModuleElementTrace(IContextTrace trace) {
 		this.moduleElementTrace = trace;

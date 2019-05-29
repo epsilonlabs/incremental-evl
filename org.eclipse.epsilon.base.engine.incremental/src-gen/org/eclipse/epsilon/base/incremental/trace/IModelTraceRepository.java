@@ -18,8 +18,7 @@ import org.eclipse.epsilon.base.incremental.trace.IIdElementRepository;
 /** protected region IModelTraceRepositoryImports on begin **/
 /** protected region IModelTraceRepositoryImports end **/
 
-@SuppressWarnings("unused")
-public interface IModelTraceRepository<T extends IModelTrace> extends IIdElementRepository<T> {
+public interface IModelTraceRepository extends IIdElementRepository<IModelTrace> {
 
 
     IModelTrace getModelTraceByIdentity(String uri);

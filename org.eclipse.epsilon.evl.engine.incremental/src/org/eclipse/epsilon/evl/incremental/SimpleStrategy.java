@@ -8,7 +8,6 @@ import java.util.Set;
 import org.eclipse.epsilon.base.incremental.TraceReexecution;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -30,25 +29,43 @@ import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TreeIteratorStrategy implements IncrementalEvlExecutionStrategy {
+/**
+ * An implementation of IncrementalEvlExecutionStrategy that reexecutes by visiting the modes
+ * via TreeIterator and executes each trace as found.
+ */
+public class SimpleStrategy implements IncrementalEvlExecutionStrategy {
 
-	private static final Logger logger = LoggerFactory.getLogger(TreeIteratorStrategy.class);
+	/** The Constant logger. */
+	private static final Logger logger = LoggerFactory.getLogger(SimpleStrategy.class);
 
+	/** The incremental evl module. */
 	private final IncrementalEvlModule incrementalEvlModule;
 
 	/**
-	 * @param incrementalEvlModule
+	 * Instantiates a new tree iterator strategy.
+	 *
+	 * @param incrementalEvlModule the incremental evl module
 	 */
-	TreeIteratorStrategy(IncrementalEvlModule incrementalEvlModule) {
+	SimpleStrategy(IncrementalEvlModule incrementalEvlModule) {
 		this.incrementalEvlModule = incrementalEvlModule;
 	}
 
+	/**
+	 * Execute.
+	 *
+	 * @param sourceChksum the source chksum
+	 * @param modelRepository the model repository
+	 * @param executionTraceRepo the execution trace repo
+	 * @param modelTraceRepo the model trace repo
+	 * @param context the context
+	 * @throws EolRuntimeException the eol runtime exception
+	 */
 	@Override
 	public void execute(
 		String sourceChksum,
 		ModelRepository modelRepository,
 		IEvlModuleTraceRepository<IEvlModuleTrace>  executionTraceRepo,
-		IModelTraceRepository<IModelTrace>  modelTraceRepo,
+		IModelTraceRepository  modelTraceRepo,
 		IIncrementalEvlContext context) throws EolRuntimeException {
 		for (IModel m : modelRepository.getModels()) {
 			IPropertyGetter pg = m.getPropertyGetter();
@@ -117,6 +134,12 @@ public class TreeIteratorStrategy implements IncrementalEvlExecutionStrategy {
 		context.getConstraintTrace().clear();
 	}
 
+	/**
+	 * Gets the constraint.
+	 *
+	 * @param checkTrace the check trace
+	 * @return the constraint
+	 */
 	@Override
 	public TracedConstraint getConstraint(ICheckTrace checkTrace) {
 		IInvariantTrace invariantT = checkTrace.invariant().get();
@@ -128,6 +151,12 @@ public class TreeIteratorStrategy implements IncrementalEvlExecutionStrategy {
 				+ "One could not be found for: " + checkTrace.toString());
 	}
 
+	/**
+	 * Gets the constraint.
+	 *
+	 * @param messageTrace the message trace
+	 * @return the constraint
+	 */
 	@Override
 	public TracedConstraint getConstraint(IMessageTrace messageTrace) {
 		IInvariantTrace invariantT = messageTrace.invariant().get();
@@ -139,6 +168,12 @@ public class TreeIteratorStrategy implements IncrementalEvlExecutionStrategy {
 				+ "One could not be found for: " + messageTrace.toString());
 	}
 
+	/**
+	 * Gets the constraint.
+	 *
+	 * @param invariantTrace the invariant trace
+	 * @return the constraint
+	 */
 	@Override
 	public TracedConstraint getConstraint(IInvariantTrace invariantTrace) {
 		ConstraintContext conCtx = getConstraintContextForTrace(invariantTrace.invariantContext().get());
@@ -149,6 +184,12 @@ public class TreeIteratorStrategy implements IncrementalEvlExecutionStrategy {
 				+ "One could not be found for: " + invariantTrace.toString());
 	}
 
+	/**
+	 * Gets the constraint.
+	 *
+	 * @param guardTrace the guard trace
+	 * @return the constraint
+	 */
 	@Override
 	public TracedConstraint getConstraint(IGuardTrace guardTrace) {
 		IGuardedElementTrace limits = guardTrace.limits().get();
@@ -162,6 +203,12 @@ public class TreeIteratorStrategy implements IncrementalEvlExecutionStrategy {
 				+ "One could not be found for: " + guardTrace.toString());
 	}
 	
+	/**
+	 * Gets the constraint context.
+	 *
+	 * @param guardTrace the guard trace
+	 * @return the constraint context
+	 */
 	@Override
 	public TracedConstraintContext getConstraintContext(IGuardTrace guardTrace) {
 		IGuardedElementTrace limits = guardTrace.limits().get();
@@ -176,17 +223,46 @@ public class TreeIteratorStrategy implements IncrementalEvlExecutionStrategy {
 		
 	}
 	
+	/**
+	 * Gets the constraint context.
+	 *
+	 * @param contextTrace the context trace
+	 * @return the constraint context
+	 */
+	@Override
+	public TracedConstraintContext getConstraintContext(IContextTrace contextTrace) {
+		ConstraintContext conCtx = getConstraintContextForTrace(contextTrace);
+		if (conCtx != null) {
+			return (TracedConstraintContext) conCtx;
+		}
+		throw new IllegalStateException("A traced context should always be found for an IContextTrace. "
+				+ "One could not be found for: " + contextTrace.toString());
+	}
+	
+	/**
+	 * Gets the constraint context for trace.
+	 *
+	 * @param trace the trace
+	 * @return the constraint context for trace
+	 */
 	// TODO Adding a cache could help a bit
 	private ConstraintContext getConstraintContextForTrace(IContextTrace trace) {
-		int index = 1;
 		for (ConstraintContext conCtx : incrementalEvlModule.getConstraintContexts()) {
-			if (conCtx.getTypeName().equals(trace.getKind()) && (index++ == trace.getIndex())) {
+			TracedConstraintContext tConCtx = (TracedConstraintContext) conCtx;
+			if (conCtx.getTypeName().equals(trace.getKind()) && (tConCtx.getIndex() == trace.getIndex())) {
 				return conCtx;
 			}
 		}
 		return null;
 	}
 	
+	/**
+	 * Find traced constraint.
+	 *
+	 * @param invariantTrace the invariant trace
+	 * @param conCtx the con ctx
+	 * @return the traced constraint
+	 */
 	// TODO Cache?
 	private TracedConstraint findTracedConstraint(IInvariantTrace invariantTrace, ConstraintContext conCtx) {
 		return (TracedConstraint) conCtx.getConstraints().stream()
@@ -194,5 +270,4 @@ public class TreeIteratorStrategy implements IncrementalEvlExecutionStrategy {
 				.findFirst().get();
 	}
 
-	
 }
