@@ -6,7 +6,7 @@ import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex.Build
 import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertexProperty;
 
 /**
- * A factory class to created detached Tinkerpop vertices
+ * A factory class to create detached Tinkerpop vertices
  * @author Horacio Hoyos Rodriguez
  *
  */

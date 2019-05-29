@@ -18,6 +18,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.apache.tinkerpop.gremlin.structure.util.Attachable;
 import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
@@ -27,6 +28,7 @@ import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 /** protected region ModelTraceRepositoryImplImports on begin **/
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -70,7 +72,13 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository<IM
         logger.info("Adding {} to repository", item);
         assert item instanceof ModelTraceGremlin;
         ModelTraceGremlin impl = (ModelTraceGremlin)item;
-        Vertex attached = ((DetachedVertex)impl.delegate()).attach(Attachable.Method.getOrCreate(gts.getGraph()));
+        Vertex attached = gts.getGraph().addVertex(impl.delegate().label());
+        Iterator<VertexProperty<Object>> it = impl.delegate().properties();
+        while (it.hasNext()) {
+        	VertexProperty<Object> vp = it.next();
+        	attached.property(vp.key(), vp.value());
+        }
+        
         return factory.createTraceElement(attached, gts);
     }
 

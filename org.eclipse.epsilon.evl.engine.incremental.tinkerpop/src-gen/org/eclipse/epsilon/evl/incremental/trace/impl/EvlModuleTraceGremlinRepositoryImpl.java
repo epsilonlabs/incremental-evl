@@ -18,6 +18,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.apache.tinkerpop.gremlin.structure.util.Attachable;
 import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
@@ -77,7 +78,12 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
         logger.info("Adding {} to repository", item);
         assert item instanceof EvlModuleTraceGremlin;
         EvlModuleTraceGremlin impl = (EvlModuleTraceGremlin)item;
-        Vertex attached = ((DetachedVertex)impl.delegate()).attach(Attachable.Method.getOrCreate(gts.getGraph()));
+        Vertex attached = gts.getGraph().addVertex(impl.delegate().label());
+        Iterator<VertexProperty<Object>> it = impl.delegate().properties();
+        while (it.hasNext()) {
+        	VertexProperty<Object> vp = it.next();
+        	attached.property(vp.key(), vp.value());
+        }
         return factory.createTraceElement(attached, gts);
     }
 

@@ -352,21 +352,21 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 			TraceReexecution rt = null;
 			// This could be a factory method in the IxxxTrace
 			// IxxxTrace.createRexecutionTrace(IExecutionContext exContext)
-			if (met instanceof IContextTrace) {
-				rt = new ReexecutionContextTrace((IContextTrace) met, exContext);
-			}
-			else if (met instanceof IInvariantTrace) {
-				rt = new ReexecutionInvariantTrace((IInvariantTrace) met, exContext);
-			}
-			else if (met instanceof IGuardTrace) {
-				rt = new ReexecutionGuardTrace((IGuardTrace) met, exContext);
-			}
-			else if (met instanceof ICheckTrace) {
-				rt = new ReexecutionCheckTrace((ICheckTrace) met, exContext);
-			}
-			else if (met instanceof IMessageTrace) {
-				rt = new ReexecutionMessageTrace((IMessageTrace) met, exContext);
-			}
+//			if (met instanceof IContextTrace) {
+//				rt = new ReexecutionContextTrace((IContextTrace) met, exContext);
+//			}
+//			else if (met instanceof IInvariantTrace) {
+//				rt = new ReexecutionInvariantTrace((IInvariantTrace) met, exContext);
+//			}
+//			else if (met instanceof IGuardTrace) {
+//				rt = new ReexecutionGuardTrace((IGuardTrace) met, exContext);
+//			}
+//			else if (met instanceof ICheckTrace) {
+//				rt = new ReexecutionCheckTrace((ICheckTrace) met, exContext);
+//			}
+//			else if (met instanceof IMessageTrace) {
+//				rt = new ReexecutionMessageTrace((IMessageTrace) met, exContext);
+//			}
 			return Optional.of(rt);
 			
 		}
@@ -388,21 +388,21 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 			TraceReexecution rt = null;
 			// This could be a factory method in the IxxxTrace
 			// IxxxTrace.createRexecutionTrace(IExecutionContext exContext)
-			if (met instanceof IContextTrace) {
-				rt = new ReexecutionContextTrace((IContextTrace) met, exContext);
-			}
-			else if (met instanceof IInvariantTrace) {
-				rt = new ReexecutionInvariantTrace((IInvariantTrace) met, exContext);
-			}
-			else if (met instanceof IGuardTrace) {
-				rt = new ReexecutionGuardTrace((IGuardTrace) met, exContext);
-			}
-			else if (met instanceof ICheckTrace) {
-				rt = new ReexecutionCheckTrace((ICheckTrace) met, exContext);
-			}
-			else if (met instanceof IMessageTrace) {
-				rt = new ReexecutionMessageTrace((IMessageTrace) met, exContext);
-			}
+//			if (met instanceof IContextTrace) {
+//				rt = new ReexecutionContextTrace((IContextTrace) met, exContext);
+//			}
+//			else if (met instanceof IInvariantTrace) {
+//				rt = new ReexecutionInvariantTrace((IInvariantTrace) met, exContext);
+//			}
+//			else if (met instanceof IGuardTrace) {
+//				rt = new ReexecutionGuardTrace((IGuardTrace) met, exContext);
+//			}
+//			else if (met instanceof ICheckTrace) {
+//				rt = new ReexecutionCheckTrace((ICheckTrace) met, exContext);
+//			}
+//			else if (met instanceof IMessageTrace) {
+//				rt = new ReexecutionMessageTrace((IMessageTrace) met, exContext);
+//			}
 			return Optional.of(rt);
 		}
 		return Optional.empty();
