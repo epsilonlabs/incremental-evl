@@ -1,6 +1,5 @@
 package org.eclipse.epsilon.evl.incremental;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -16,92 +15,47 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelNotFoundException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
-import org.eclipse.epsilon.evl.incremental.dom.TracedConstraintContext;
 import org.eclipse.epsilon.evl.incremental.execute.context.IIncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 
 /**
  * A class that represents a ModuleElementTrace-ExecutionContext pair that should be re-executed
- * @author Horacio Hoyos Rodriguez
+ * @author Horacio Hoyos
  *
  */
-public class ReexecutionGuardTrace  implements TraceReexecution {
+ // TODO We might need a ModuleElementTraceReexecution shared by all languages
+public abstract class ConstraintModuleElementTraceReexecution implements TraceReexecution {
 
-	private final IGuardTrace guardTrace;
-	private final IEvlModuleTrace moduleTrace;
-	private final IModelTrace modelTrace;
-	private final IModelElementTrace selfTrace;
-	private final IExecutionContext executionContext;	
-	private final Set<TraceReexecution> children;
-	private final TraceReexecution parent;
-
-	public ReexecutionGuardTrace(
-		IGuardTrace trace,
-		IExecutionContext exctnCntxt,
-		IEvlModuleTrace evlMdlUri,
-		IModelTrace mdlTrc,
-		IModelElementTrace slfTrc) {
-		this(trace, exctnCntxt, evlMdlUri, mdlTrc, slfTrc, new HashSet<>(), null);
-	}
-
-	public ReexecutionGuardTrace(
-		IGuardTrace trace,
-		IExecutionContext exctnCntxt,
-		IEvlModuleTrace evlMdl,
-		IModelTrace mdlTrc,
-		IModelElementTrace slfTrc,
-		Set<TraceReexecution> chldrn,
-		TraceReexecution prnt) {
-		guardTrace = trace;
-		executionContext = exctnCntxt;
-		moduleTrace = evlMdl;
-		modelTrace = mdlTrc;
-		selfTrace = slfTrc;
-		children = chldrn;
-		parent = prnt;
-	}
-
-	@Override
-	public final TraceReexecution makeChildOf(TraceReexecution parent) {
-		return new ReexecutionGuardTrace(guardTrace, executionContext, moduleTrace, modelTrace, selfTrace,
-				children, parent);
-	}
-
-	@Override
-	public IGuardTrace moduleElementTrace() {
-		return guardTrace;
-	}
+	protected final IEvlModuleTrace moduleTrace;
+	protected final IModelTrace modelTrace;
+	protected final IModelElementTrace selfTrace;
+	protected final IExecutionContext executionContext;	
+	protected final Set<TraceReexecution> children;
+	protected final TraceReexecution parent;
 	
+	protected abstract TracedConstraint getTracedConstraint(IncrementalExecutionStrategy strategy);
+	
+	protected abstract String section();
+	
+	public ConstraintModuleElementTraceReexecution(
+		IEvlModuleTrace moduleTrace,
+		IModelTrace modelTrace,
+		IModelElementTrace selfTrace,
+		IExecutionContext executionContext,
+		Set<TraceReexecution> children,
+		TraceReexecution parent) {
+		super();
+		this.moduleTrace = moduleTrace;
+		this.modelTrace = modelTrace;
+		this.selfTrace = selfTrace;
+		this.executionContext = executionContext;
+		this.children = children;
+		this.parent = parent;
+	}
+
 	@Override
 	public Optional<TraceReexecution> parent() {
 		return Optional.ofNullable(parent);
-	}
-
-
-	protected String section() {
-		return "GI";
-	}
-
-	@Override
-	public void reexecute(IIncrementalBaseContext context, IncrementalExecutionStrategy strategy)
-			throws EolRuntimeException {
-		assert context instanceof IIncrementalEvlContext;
-		// Reexecution is different if the guard limits an Invariant or a Context
-		IGuardedElementTrace limits = guardTrace.limits().get();
-		Object selfVal = getSelf((IIncrementalEvlContext) context);
-		if (limits instanceof IInvariantTrace) {
-			TracedConstraint tc = ((IncrementalEvlExecutionStrategy) strategy).getConstraint(moduleElementTrace());
-			tc.executeImpl(selfVal, (IIncrementalEvlContext) context, "I");
-		}
-		else {
-			TracedConstraintContext tcc = ((IncrementalEvlExecutionStrategy) strategy).getConstraintContext(moduleElementTrace());
-			tcc.execute(selfVal, (IIncrementalEvlContext)context);
-		}
-		
-		
 	}
 	
 	/**
@@ -138,4 +92,49 @@ public class ReexecutionGuardTrace  implements TraceReexecution {
 		Object self = selfModel.getElementById(selfTrace.getUri());
 		return self;
 	}
+	
+	@Override
+	public void reexecute(IIncrementalBaseContext context, IncrementalExecutionStrategy strategy)
+			throws EolRuntimeException {
+		assert context instanceof IIncrementalEvlContext;
+		assert strategy instanceof IncrementalEvlExecutionStrategy;
+		Object selfVal = getSelf((IIncrementalEvlContext) context);
+		TracedConstraint tc = getTracedConstraint(strategy);
+		tc.executeImpl(selfVal, (IIncrementalEvlContext) context, section());
+	}
+
+	@Override
+	public final int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((executionContext == null) ? 0 : executionContext.hashCode());
+		result = prime * result + ((moduleElementTrace() == null) ? 0 : moduleElementTrace().hashCode());
+		return result;
+	}
+
+	@Override
+	public final boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ConstraintModuleElementTraceReexecution other = (ConstraintModuleElementTraceReexecution) obj;
+		if (executionContext == null) {
+			if (other.executionContext != null)
+				return false;
+		} else if (!executionContext.equals(other.executionContext))
+			return false;
+		if (moduleElementTrace() == null) {
+			if (other.moduleElementTrace() != null)
+				return false;
+		} else if (!moduleElementTrace().equals(other.moduleElementTrace()))
+			return false;
+		return true;
+	}
+
+	
+	
+
 }

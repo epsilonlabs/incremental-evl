@@ -23,5 +23,7 @@ public interface TracedModuleElement<T extends IModuleElementTrace> extends Modu
 	
 	/** Get the current context */
 	IExecutionContext getCurrentContext();
+	
+	// FIXME Might need to move this to a ExecutableTracedModuleElement
 
 }

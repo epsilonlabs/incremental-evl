@@ -18,10 +18,10 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepositor
 /** protected region IEvlModuleTraceRepositoryImports on begin **/
 import java.util.Iterator;
 
+import org.eclipse.epsilon.base.incremental.TraceReexecution;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
-import org.eclipse.epsilon.evl.incremental.IReexecutionTrace;
 /** protected region IEvlModuleTraceRepositoryImports end **/
 
 @SuppressWarnings("unused")
@@ -41,7 +41,7 @@ public interface IEvlModuleTraceRepository<T extends IEvlModuleTrace> extends IM
      * @param typeName		The type name
 	 * @return
 	 */
-	Set<IReexecutionTrace> findAllInstancesExecutionTraces(
+	Set<TraceReexecution> findAllInstancesExecutionTraces(
 		String moduleUri,
 		String modelUri,
 		String typeName);
@@ -55,7 +55,7 @@ public interface IEvlModuleTraceRepository<T extends IEvlModuleTrace> extends IM
 	 * 						accesses are considered
 	 * @return
 	 */
-	Set<IReexecutionTrace> findAllInstancesExecutionTraces(
+	Set<TraceReexecution> findAllInstancesExecutionTraces(
 		String moduleUri,
 		String modelUri,
 		String typeName,
@@ -75,7 +75,7 @@ public interface IEvlModuleTraceRepository<T extends IEvlModuleTrace> extends IM
 	 * @param allElementTypes 		all element's types
 	 * @return the sets the
 	 */
-	Set<IReexecutionTrace> findIndirectExecutionTraces(
+	Set<TraceReexecution> findIndirectExecutionTraces(
 		String moduleUri,
 		Object elementId,
 		Collection<String> allElementTypes);
@@ -88,7 +88,7 @@ public interface IEvlModuleTraceRepository<T extends IEvlModuleTrace> extends IM
 	 * @param modelUri
 	 * @return
 	 */
-	Set<IReexecutionTrace> findModelElementExecutionTraces(
+	Set<TraceReexecution> findModelElementExecutionTraces(
 		String moduleUri,
 		String elementUri,
 		String modelUri,
@@ -101,7 +101,7 @@ public interface IEvlModuleTraceRepository<T extends IEvlModuleTrace> extends IM
 	 * @param propertyTrace 		the PropertyTrace that represents the model-element-property
 	 * @return the sets the
 	 */
-	Set<IReexecutionTrace> findPropertyAccessExecutionTraces(
+	Set<TraceReexecution> findPropertyAccessExecutionTraces(
 		String moduleUri,
 		IPropertyTrace propertyTrace);
 	
@@ -111,7 +111,7 @@ public interface IEvlModuleTraceRepository<T extends IEvlModuleTrace> extends IM
 	 * @param pa the pa
 	 * @return the sets the
 	 */
-	Set<IReexecutionTrace> findPropertyAccessExecutionTraces(IPropertyAccess pa);
+	Set<TraceReexecution> findPropertyAccessExecutionTraces(IPropertyAccess pa);
 	
 	/**
 	 * Get all property accesses for a given model element

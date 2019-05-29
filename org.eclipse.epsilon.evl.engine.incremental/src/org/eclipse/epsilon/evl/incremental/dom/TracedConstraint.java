@@ -19,6 +19,9 @@ import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.eol.execute.context.FrameType;
+import org.eclipse.epsilon.eol.execute.context.Variable;
+import org.eclipse.epsilon.erl.execute.context.IErlContext;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
@@ -141,6 +144,79 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 		return !postprocessCheck(self, context, unsatisfiedConstraint, result)
 				? Optional.of(unsatisfiedConstraint) : Optional.empty();
 
+	}
+	
+	/** Only execute a single part of the Constraint 
+	 * @throws EolRuntimeException */
+	public final Optional<UnsatisfiedConstraint> executeImpl(
+		Object selfModelElement,
+		IErlContext context_,
+		String part) throws EolRuntimeException {
+		IncrementalEvlContext context = (IncrementalEvlContext) context_;
+		switch(part) {
+		case "I":
+		case "GI":		// Invariant Guard
+			if (shouldBeChecked(selfModelElement, context)) {
+				return check(selfModelElement, context);
+			}
+			else {
+				// Remove unsatisfied constraint created by message/fix
+				Optional<UnsatisfiedConstraint> ouc = context.getUnsatisfiedConstraint(this);
+				ouc.ifPresent(uc -> {
+						context.getUnsatisfiedConstraints().remove(uc);
+						context.unmapUnsatisfiedConstraint(this, uc);});
+			}
+			break;
+		case "C":		// Check
+			if (traceGuardValue()) {
+				check(selfModelElement, context);
+			}
+		case "M":		// Invariant Message
+			// Make sure guard is true
+			if (traceGuardValue()) {
+				UnsatisfiedConstraint unsatisfiedConstraint = preprocessCheck(selfModelElement, context);
+				// FIXME If doing Fixes, check postprocess check!!
+				unsatisfiedConstraint.setInstance(selfModelElement);
+				unsatisfiedConstraint.setConstraint(this);
+				String messageResult = messageBlock.execute(context, false);
+				unsatisfiedConstraint.setMessage(messageResult);
+				context.getUnsatisfiedConstraints().add(unsatisfiedConstraint);
+			}
+			
+		}
+		return Optional.empty();
+	}
+	
+	private boolean traceGuardValue() throws EolRuntimeException {
+		Iterator<IGuardResult> rit;
+		try {
+			rit = moduleElementTrace.getOrCreateGuardTrace().result().get();
+		} catch (EolIncrementalExecutionException e) {
+			throw new EolRuntimeException(e);
+		}
+		boolean execute = false;
+		if (rit.hasNext()) {
+			IGuardResult r = rit.next();
+			execute = r.getValue();
+		}
+		return execute;
+	}	
+	// A previous Message/FIX may have created the UnsatisfiedConstraint
+	protected UnsatisfiedConstraint preprocessCheck(Object self, IEvlContext context_) {
+		IncrementalEvlContext context = (IncrementalEvlContext) context_;
+		Optional<UnsatisfiedConstraint> uc = context.getUnsatisfiedConstraint(this);
+		UnsatisfiedConstraint unsatisfiedConstraint = uc.orElseGet(() -> {
+					UnsatisfiedConstraint nuc = new UnsatisfiedConstraint();
+					context.mapUnsatisfiedConstraint(this, nuc);
+					return nuc;
+					});
+		context.getFrameStack()
+			.enterLocal(FrameType.UNPROTECTED, checkBlock.getBody())
+			.put(
+				Variable.createReadOnlyVariable("self", self),
+				Variable.createReadOnlyVariable("extras", unsatisfiedConstraint.getExtras())
+			);
+		return unsatisfiedConstraint;
 	}
 
 	/**

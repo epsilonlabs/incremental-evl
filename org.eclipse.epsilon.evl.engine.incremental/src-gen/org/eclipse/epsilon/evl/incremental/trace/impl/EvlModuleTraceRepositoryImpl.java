@@ -26,9 +26,9 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.eclipse.epsilon.base.incremental.TraceReexecution;
 import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
-import org.eclipse.epsilon.evl.incremental.IReexecutionTrace;
 import org.eclipse.epsilon.evl.incremental.ReexecutionCheckTrace;
 import org.eclipse.epsilon.evl.incremental.ReexecutionContextTrace;
 import org.eclipse.epsilon.evl.incremental.ReexecutionGuardTrace;
@@ -148,14 +148,14 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 //	}
 	
 	@Override
-	public Set<IReexecutionTrace> findAllInstancesExecutionTraces(String moduleUri, String modelUri, String typeName) {
+	public Set<TraceReexecution> findAllInstancesExecutionTraces(String moduleUri, String modelUri, String typeName) {
 		
 		return findAllInstancesExecutionTraces(moduleUri, null, typeName, false);
 	}
 	
 	@Override
-	public Set<IReexecutionTrace> findAllInstancesExecutionTraces(String moduleUri, String modelUri, String typeName, boolean ofKind) {
-		Set<IReexecutionTrace> result = new HashSet<>();
+	public Set<TraceReexecution> findAllInstancesExecutionTraces(String moduleUri, String modelUri, String typeName, boolean ofKind) {
+		Set<TraceReexecution> result = new HashSet<>();
 		IEvlModuleTrace moduleTrace = getEvlModuleTraceByIdentity(moduleUri);
 		Iterator<IAccess> it = moduleTrace.accesses().get();
 		while (it.hasNext()) {
@@ -164,7 +164,7 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 				IAllInstancesAccess allInstAcc = (IAllInstancesAccess) access;
 				if (allInstAcc.type().get().getName().equals(typeName)
 						&& (allInstAcc.getOfKind() == ofKind)) {
-					Optional<IReexecutionTrace> rext = createReexecutionTrace(allInstAcc.in().get(), allInstAcc.from().get()); 
+					Optional<TraceReexecution> rext = createReexecutionTrace(allInstAcc.in().get(), allInstAcc.from().get()); 
 					if (rext.isPresent()) {
 						result.add(rext.get());
 					}
@@ -247,7 +247,7 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 	
 	
 	@Override
-	public Set<IReexecutionTrace> findPropertyAccessExecutionTraces(
+	public Set<TraceReexecution> findPropertyAccessExecutionTraces(
 		String moduleUri,
 		IPropertyTrace propertyTrace) {
 		
@@ -275,7 +275,7 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 //			// Element does not have property by that name
 //			return Collections.emptySet();
 //		}
-		Set<IReexecutionTrace> result = new HashSet<>();
+		Set<TraceReexecution> result = new HashSet<>();
 		IncrementalUtils.asStream(moduleTrace.accesses().get())
 				.filter(IPropertyAccess.class::isInstance)
 				.map(IPropertyAccess.class::cast)
@@ -345,11 +345,11 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 		// exist in the model?
 	}
 	
-	private Optional<IReexecutionTrace> createReexecutionTrace(
+	private Optional<TraceReexecution> createReexecutionTrace(
 			IExecutionContext exContext,
 			IModuleElementTrace met) {
 			
-			IReexecutionTrace rt = null;
+			TraceReexecution rt = null;
 			// This could be a factory method in the IxxxTrace
 			// IxxxTrace.createRexecutionTrace(IExecutionContext exContext)
 			if (met instanceof IContextTrace) {
@@ -380,12 +380,12 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 	 * @param filter
 	 * @return
 	 */
-	private Optional<IReexecutionTrace> filterExecutionContexts(
+	private Optional<TraceReexecution> filterExecutionContexts(
 		IExecutionContext exContext,
 		IModuleElementTrace met,
 		Function<IExecutionContext, Boolean> filter) {
 		if (filter.apply(exContext)) {
-			IReexecutionTrace rt = null;
+			TraceReexecution rt = null;
 			// This could be a factory method in the IxxxTrace
 			// IxxxTrace.createRexecutionTrace(IExecutionContext exContext)
 			if (met instanceof IContextTrace) {
@@ -424,21 +424,21 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 
 
 	@Override
-	public Set<IReexecutionTrace> findPropertyAccessExecutionTraces(IPropertyAccess pa) {
+	public Set<TraceReexecution> findPropertyAccessExecutionTraces(IPropertyAccess pa) {
 		// TODO Implement IEvlModuleTraceRepository.findPropertyAccessExecutionTraces
 		throw new RuntimeException("Unimplemented Method IEvlModuleTraceRepository.findPropertyAccessExecutionTraces invoked.");
 	}
 
 
 	@Override
-	public Set<IReexecutionTrace> findIndirectExecutionTraces(String moduleUri, Object elementId,
+	public Set<TraceReexecution> findIndirectExecutionTraces(String moduleUri, Object elementId,
 			Collection<String> allElementTypes) {
 		// TODO Implement IEvlModuleTraceRepository.findIndirectExecutionTraces
 		throw new RuntimeException("Unimplemented Method IEvlModuleTraceRepository.findIndirectExecutionTraces invoked.");
 	}
 
 	@Override
-	public Set<IReexecutionTrace> findModelElementExecutionTraces(String moduleUri, String elementUri, String modelUri,
+	public Set<TraceReexecution> findModelElementExecutionTraces(String moduleUri, String elementUri, String modelUri,
 			Set<String> allElementTypes) {
 		// TODO Implement IEvlModuleTraceRepository.findModelElementExecutionTraces
 		throw new RuntimeException("Unimplemented Method IEvlModuleTraceRepository.findModelElementExecutionTraces invoked.");

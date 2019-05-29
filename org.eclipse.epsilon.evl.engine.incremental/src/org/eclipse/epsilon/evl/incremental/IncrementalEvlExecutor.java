@@ -1,6 +1,7 @@
 package org.eclipse.epsilon.evl.incremental;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +115,11 @@ public class IncrementalEvlExecutor implements EvlExecutor {
 
 	public void printUnsatisfied(Collection<UnsatisfiedConstraint> unsatisfiedConstraints) {
 		delegate.printUnsatisfied(unsatisfiedConstraints);
+	}
+
+	@Override
+	public void printUnsatisfied(Collection<UnsatisfiedConstraint> unsatisfiedConstraints, PrintWriter writer) {
+		delegate.printUnsatisfied(unsatisfiedConstraints, writer);
 	}
 
 }

@@ -13,6 +13,7 @@ package org.eclipse.epsilon.base.incremental.execute.context;
 import java.util.Collection;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.execute.ExecutionMode;
 import org.eclipse.epsilon.base.incremental.execute.IExecutionTrace;
 import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -48,6 +49,20 @@ public interface IIncrementalBaseContext extends IEolContext {
 	default IIncrementalModule getModule() {
 		return (IIncrementalModule) this.getModule();
 	}
+	
+	/**
+	 * Sets the online execution mode.
+	 *
+	 * @param onlineExecution the new online execution
+	 */
+	public void setMode(ExecutionMode mode);
+
+	/**
+	 * Checks if is online execution mode is on.
+	 *
+	 * @return true, if is online execution
+	 */
+	public boolean isOnlineExecutionMode();
 	
 	/**
 	 * Gets the property access execution listener.

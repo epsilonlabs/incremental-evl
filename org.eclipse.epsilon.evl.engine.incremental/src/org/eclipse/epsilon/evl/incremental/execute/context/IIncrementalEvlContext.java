@@ -10,11 +10,14 @@
  ******************************************************************************/
 package org.eclipse.epsilon.evl.incremental.execute.context;
 
-import org.eclipse.epsilon.base.incremental.execute.ExecutionMode;
+import java.util.Optional;
+
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.incremental.IEvlModuleIncremental;
+import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 
 /**
@@ -27,23 +30,16 @@ public interface IIncrementalEvlContext extends IIncrementalBaseContext, IEvlCon
 	@Override
 	IEvlExecutionTraceManager getTraceManager() throws EolRuntimeException;
 	
-	/**
-	 * Sets the online execution mode.
-	 *
-	 * @param onlineExecution the new online execution
-	 */
-	public void setMode(ExecutionMode mode);
-
-	/**
-	 * Checks if is online execution mode is on.
-	 *
-	 * @return true, if is online execution
-	 */
-	public boolean isOnlineExecutionMode();
 
 	@Override
 	default IEvlModuleIncremental getModule() {
 		return (IEvlModuleIncremental) this.getModule();
 	}
+	
+	Optional<UnsatisfiedConstraint> getUnsatisfiedConstraint(TracedConstraint constraint);
+	
+	void mapUnsatisfiedConstraint(TracedConstraint constraint, UnsatisfiedConstraint uc);
+
+	void unmapUnsatisfiedConstraint(TracedConstraint constraint, UnsatisfiedConstraint uc);
 
 }

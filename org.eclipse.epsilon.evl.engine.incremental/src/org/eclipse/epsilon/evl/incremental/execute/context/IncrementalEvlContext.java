@@ -12,7 +12,10 @@ package org.eclipse.epsilon.evl.incremental.execute.context;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.execute.ExecutionMode;
@@ -21,8 +24,10 @@ import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllI
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
+import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.EvlContext;
 import org.eclipse.epsilon.evl.incremental.IEvlModuleIncremental;
+import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 import org.eclipse.epsilon.evl.incremental.execute.introspection.recording.SatisfiesInvocationExecutionListener;
 
@@ -44,6 +49,8 @@ public class IncrementalEvlContext extends EvlContext implements IIncrementalEvl
 	
 	private List<IExecutionListener> executionListeners;
 	
+	private Map<TracedConstraint, UnsatisfiedConstraint> unsatisfiedMap = new HashMap<>();
+	
 	/**
 	 * Flag to indicate that we are on live mode, i.e. listening to model changes
 	 */
@@ -59,7 +66,9 @@ public class IncrementalEvlContext extends EvlContext implements IIncrementalEvl
 	public IEvlModuleIncremental getModule() {
 		return (IEvlModuleIncremental) module;
 	}
-
+	
+	
+	
 	/**
 	 * Gets the trace manager.
 	 *
@@ -90,5 +99,22 @@ public class IncrementalEvlContext extends EvlContext implements IIncrementalEvl
 	public boolean isOnlineExecutionMode() {
 		return ExecutionMode.online.equals(mode);
 	}
+
+	@Override
+	public Optional<UnsatisfiedConstraint> getUnsatisfiedConstraint(TracedConstraint constraint) {
+		return Optional.ofNullable(unsatisfiedMap.get(constraint));
+	}
+
+	@Override
+	public void mapUnsatisfiedConstraint(TracedConstraint constraint, UnsatisfiedConstraint uc) {
+		 unsatisfiedMap.put(constraint, uc);
+	}
+	
+	@Override
+	public void unmapUnsatisfiedConstraint(TracedConstraint constraint, UnsatisfiedConstraint uc) {
+		 unsatisfiedMap.remove(constraint, uc);
+	}
+	
+	
 
 }
