@@ -383,7 +383,7 @@ public class CsvModelIncremental extends CsvModel implements IIncrementalModel {
 	}
 
 	@Override
-	public Object deserializePropertyValue(String value) throws NotInstantiableModelElementValueException {
+	public Object deserializePropertyValue(Object value) throws NotInstantiableModelElementValueException {
 		InputStream is = new ByteArrayInputStream(value.getBytes());
 
 		// read it with BufferedReader

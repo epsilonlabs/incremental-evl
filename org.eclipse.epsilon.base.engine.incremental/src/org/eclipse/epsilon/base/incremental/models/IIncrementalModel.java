@@ -13,7 +13,6 @@ package org.eclipse.epsilon.base.incremental.models;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.epsilon.base.incremental.exceptions.models.NotInstantiableModelElementValueException;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
 import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
 import org.eclipse.epsilon.eol.exceptions.models.EolNotAModelElementException;
@@ -97,22 +96,34 @@ public interface IIncrementalModel extends IModel {
 	 * representations for model elements and collections of model elements. As such, any non-model
 	 * values could simple be returned unmodified. 
 	 *
-	 * @param propertyValue the instance
+	 * @param propertyValue		the property value
+	 * @param propertyName 		the property name
+	 * @param modelElement 		the model element
 	 * @return the string
-	 * @throws EolNotAModelElementException if the instance does not belong to the
-	 *                                      model
+	 * @throws EolNotAModelElementException if the property value is not serialisable by this model
 	 */
-	Object serializePropertyValue(Object propertyValue) throws NotSerializableModelException;
+	Object serializePropertyValue(Object propertyValue, Object modelElement, String propertyName) throws NotSerializableModelException;
 
 	/**
-	 * Create an object from its string representation.
+	 * Create a property value from its "serialisable" representation.
 	 *
 	 * @param value the value
 	 * @return the object
 	 * @throws UnsupportedOperationException if the value can not be converted to an
 	 *                                       object.
 	 */
-	Object deserializePropertyValue(String value) throws NotInstantiableModelElementValueException;
+	// Object deserializePropertyValue(Object value) throws NotInstantiableModelElementValueException;
+	
+	/**
+	 * Compare the element's property current value with the oldValue. Return true if the values
+	 * are the same.
+	 * 
+	 * @param modelElement		The element that has the property
+	 * @param propertyName		The property name
+	 * @param newValue			The new value
+	 * @return	True, if the values are equal
+	 */
+	boolean comparePropertyValue(Object modelElement, String propertyName, Object oldValue);
 
 	/**
 	 * Returns the fully qualified names of every type to which the given object

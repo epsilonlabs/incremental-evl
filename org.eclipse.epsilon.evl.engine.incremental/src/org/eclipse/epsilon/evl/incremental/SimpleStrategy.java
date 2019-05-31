@@ -6,13 +6,11 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.TraceReexecution;
-import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
-import org.eclipse.epsilon.eol.execute.introspection.IPropertyGetter;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.models.ModelRepository;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
@@ -21,7 +19,6 @@ import org.eclipse.epsilon.evl.incremental.dom.TracedConstraintContext;
 import org.eclipse.epsilon.evl.incremental.execute.context.IIncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
@@ -65,11 +62,10 @@ public class SimpleStrategy implements IncrementalEvlExecutionStrategy {
 	public void execute(
 		String sourceChksum,
 		ModelRepository modelRepository,
-		IEvlModuleTraceRepository<IEvlModuleTrace>  executionTraceRepo,
+		IEvlModuleTraceRepository  executionTraceRepo,
 		IModelTraceRepository  modelTraceRepo,
 		IIncrementalEvlContext context) throws EolRuntimeException {
 		for (IModel m : modelRepository.getModels()) {
-			IPropertyGetter pg = m.getPropertyGetter();
 			if (m instanceof IIncrementalModel) {
 				IIncrementalModel im = (IIncrementalModel) m;
 				Iterator<? extends Object> it = im.getAllElements();
@@ -84,27 +80,20 @@ public class SimpleStrategy implements IncrementalEvlExecutionStrategy {
 					if (pas.isEmpty()) {
 						// If there are not access maybe new element. Do we have any type/kind access?
 						Collection<String> alltypes = im.getAllTypeNamesOf(element);
-						
 						for (String type : alltypes) {		// FIXME We can group all missing types, then execute?
-							traces.addAll(executionTraceRepo
-									.findAllInstancesExecutionTraces(
-										sourceChksum,
-										im.getModelUri(),
-										type));
+							// Check for type access and if so, if there is no element trace its a new element
+//							traces.addAll(executionTraceRepo
+//									.findAllInstancesExecutionTraces(
+//										sourceChksum,
+//										im.getModelUri(),
+//										type));
 						}
-						// this.incrementalEvlModule.executeTraces(sourceChksum, im, traces, element);
 					}		
 					else {
 						for (IPropertyAccess pa : pas) {
 							// The PropertyAccessExecutionListener asks the model how to store the properties
 							// so we must use the same "wrapping" in order to get comparable results
-							String newValue = null;
-							try {
-								newValue = ((IIncrementalModel)m).serializePropertyValue(pg.invoke(element, pa.property().get().getName()));
-							} catch (NotSerializableModelException e) {
-								throw new EolRuntimeException("Unable to retrieve property value representation.", e);
-							}
-							if (!pa.getValue().equals(newValue)) {
+							if (! im.comparePropertyValue(element, pa.property().get().getName(), pa.getValue())) {
 								// Change
 								traces.addAll(executionTraceRepo
 										.findPropertyAccessExecutionTraces(pa));

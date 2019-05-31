@@ -11,20 +11,30 @@
 package org.eclipse.epsilon.emc.emf.online;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.epsilon.base.incremental.exceptions.models.NotInstantiableModelElementValueException;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
 import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.models.ModuleNotifications;
 import org.eclipse.epsilon.emc.emf.EmfModel;
+import org.eclipse.epsilon.emc.emf.EmfUtil;
 
 public class IncrementalEmfModel extends EmfModel implements IIncrementalModel {
 	
@@ -37,17 +47,100 @@ public class IncrementalEmfModel extends EmfModel implements IIncrementalModel {
 	}
 
 	@Override
-	public Object serializePropertyValue(Object instance) throws NotSerializableModelException {
-		if (!owns(instance)) {
-			throw new NotSerializableModelException("Can not convert objects that dont belong to this model.");
+	public Object serializePropertyValue(
+		Object value,
+		Object modelElement,
+		String propertyName) throws NotSerializableModelException {
+		assert modelElement instanceof EObject;
+		EStructuralFeature sf = EmfUtil.getEStructuralFeature(((EObject) modelElement).eClass(), propertyName);
+		if (sf instanceof EAttribute) {
+			// Let the DB serialise primitive and Java types
+			return value;
 		}
-		// We assume that once the model is loaded, we can get the correspoing value from its id.
-		return getElementId(instance);
+		EReference er = (EReference)sf;
+		if (er.isMany()) {
+			// If Many, it must be a collection
+			@SuppressWarnings("unchecked")
+			List<EObject> values = (List<EObject>) value;
+			final List<String> result = new ArrayList<>(values.size());
+			for (EObject ref : values) {
+				// TODO Verify that ECoreUtil does as expected
+				result.add(EcoreUtil.getURI(ref).toString());
+			}
+			// Return the result as CSV
+			return result.stream().collect(Collectors.joining(","));
+		}
+		else {
+			assert value instanceof EObject;
+			if (!owns(value)) {
+				throw new NotSerializableModelException("Can not serialise objects that dont belong to this model.");
+			}	
+			return getElementId(value);
+		}
 	}
 
 	@Override
-	public Object deserializePropertyValue(String value) throws NotInstantiableModelElementValueException {
-		return getElementById(value);
+	public boolean comparePropertyValue(Object modelElement, String propertyName, Object oldValue) {
+		// We need to determine the type of the property, if its an ERefernce, then we need to 
+		// compare via ids, else compare values directly
+		assert modelElement instanceof EObject;
+		EObject element = (EObject) modelElement;
+		EStructuralFeature sf = EmfUtil.getEStructuralFeature(element.eClass(), propertyName);
+		Object currentValue = element.eGet(sf);
+		if (sf instanceof EAttribute) {
+			return currentValue.equals(oldValue);
+		}		
+		EReference er = (EReference)sf;
+		if (er.isMany()) {
+			// If Many, it must be a collection
+			@SuppressWarnings("unchecked")
+			List<EObject> currentValues = (List<EObject>) currentValue;
+			Collection<String> compare;
+			Collection<String> oldValues;
+			if (er.isUnique()) {
+				if (er.isOrdered()) {
+					oldValues = Arrays.asList(((String)oldValue).split(","));
+					compare = new ArrayList<>(currentValues.size());
+				}
+				else {
+					oldValues = new HashSet<>();
+					Collections.addAll(oldValues, ((String)oldValue).split(","));
+					compare = new HashSet<>(currentValues.size());
+				}
+				for (EObject ref : currentValues) {
+					// TODO Verify that ECoreUtil does as expected
+					compare.add(EcoreUtil.getURI(ref).toString());
+				}
+				return compare.equals(oldValues);
+			}
+			else {
+				// For non unique we can not use sets... is it worth the difference? or use this
+				// block for both cases?
+				oldValues = Arrays.asList(((String)oldValue).split(","));
+				compare = new ArrayList<>(currentValues.size());
+				for (EObject ref : currentValues) {
+					// TODO Verify that ECoreUtil does as expected
+					compare.add(EcoreUtil.getURI(ref).toString());
+				}
+				if (er.isOrdered()) {
+					return compare.equals(oldValues);
+				}
+				else {
+					if (compare.size() != oldValues.size()) {
+						return false;
+					}
+					for (String current : compare) {
+						if (!oldValues.remove(current)) {
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+		}
+		else {
+			return currentValue.equals(getElementById((String) oldValue));
+		}
 	}
 
 	@Override

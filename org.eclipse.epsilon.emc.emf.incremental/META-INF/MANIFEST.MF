@@ -8,6 +8,7 @@ Require-Bundle: org.eclipse.emf.ecore,
  org.eclipse.epsilon.eol.engine;visibility:=reexport,
  org.eclipse.epsilon.emc.emf;visibility:=reexport,
  org.eclipse.epsilon.base.engine.incremental,
- org.slf4j.api
+ org.slf4j.api,
+ org.eclipse.emf.common
 Export-Package: org.eclipse.epsilon.emc.emf.online
 Bundle-Vendor: Eclipse Epsilon

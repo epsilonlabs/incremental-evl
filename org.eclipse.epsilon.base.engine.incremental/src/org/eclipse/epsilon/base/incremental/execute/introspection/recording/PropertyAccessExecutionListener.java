@@ -168,7 +168,7 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 		}
 		// FIXME A property access should also generate the matching element access.
 		IPropertyAccess pa = moduleExecutionTrace.getOrCreateAccess(IPropertyAccess.class, executionTrace, currentContext, propertyTrace);
-		setPropertyAccessValue(model, result, context, pa);
+		setPropertyAccessValue(model, result, context, pa, modelElement, propertyName);
 	}
 	
 	/**
@@ -178,6 +178,8 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 	 * @param result				The result of the execution
 	 * @param context				The execution context
 	 * @param pa					The property access
+	 * @param propertyName 			The name of the property
+	 * @param modelElement 			The element that owns the property
 	 * @throws EolIncrementalExecutionException	If there is an error serializing the result value.
 	 */
 	 // FIXME WE need to deal with collection values
@@ -185,30 +187,27 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 		IIncrementalModel model,
 		Object result,
 		IIncrementalBaseContext context,
-		IPropertyAccess pa) throws EolIncrementalExecutionException {
+		IPropertyAccess pa,
+		Object modelElement,
+		String propertyName) throws EolIncrementalExecutionException {
 		Object value = null;
-		if (model.owns(result)) {
-			try {
-				value = model.serializePropertyValue(result);
-			} catch (NotSerializableModelException e) {
-				logger.error(e.getMessage());
-				throw new EolIncrementalExecutionException(
-						"Error getting serializable value of result" + e.getMessage());
-			}
-		} else {
+		try {
+			value = model.serializePropertyValue(result, modelElement, propertyName);
+		} catch (NotSerializableModelException e) {
+			// The model does not own the modelElement
 			IModel resOwner = context.getModelRepository().getOwningModel(result);
 			if (resOwner != null && (resOwner instanceof IIncrementalModel)) {
 				try {
-					value = ((IIncrementalModel)resOwner).serializePropertyValue(result);
-				} catch (NotSerializableModelException e) {
+					value = ((IIncrementalModel)resOwner).serializePropertyValue(result, modelElement, propertyName);
+				} catch (NotSerializableModelException e2) {
 					logger.error(e.getMessage());
-					throw new EolIncrementalExecutionException(
-							"Error getting serializable value of result" + e.getMessage());
 				}
 			}
-			if (result != null) {
-				value = result.toString();
-			}
+		}
+		if (value == null) {
+			throw new EolIncrementalExecutionException(String.format(
+					"Error getting serializable value of property %s of element %s",
+					propertyName, modelElement));
 		}
 		pa.setValue(value);
 	}
