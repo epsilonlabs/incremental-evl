@@ -1,7 +1,6 @@
 package org.eclipse.epsilon.evl.incremental;
 
 import org.eclipse.epsilon.base.incremental.IncrementalExecutionStrategy;
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.ModelRepository;
@@ -10,7 +9,6 @@ import org.eclipse.epsilon.evl.incremental.dom.TracedConstraintContext;
 import org.eclipse.epsilon.evl.incremental.execute.context.IIncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
@@ -31,7 +29,7 @@ public interface IncrementalEvlExecutionStrategy extends IncrementalExecutionStr
 	void execute(
 		String sourceChksum,
 		ModelRepository modelRepository,
-		IEvlModuleTraceRepository<IEvlModuleTrace>  executionTraceRepo,
+		IEvlModuleTraceRepository  executionTraceRepo,
 		IModelTraceRepository  modelTraceRepo,
 		IIncrementalEvlContext context) throws EolRuntimeException;
 	

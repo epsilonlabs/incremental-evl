@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-05-09.
+ * This file was automatically generated on: 2019-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -81,8 +81,8 @@ public class PropertyAccessGremlin implements IPropertyAccess, TinkerpopDelegate
         this.delegate = vertex;
         this.gts = gts;
         this.wrapperFactory = wrapperFactory;
-        this.property = new PropertyAccessHasPropertyGremlin(this, gts, wrapperFactory);
         this.module = new AccessHasModuleGremlin(this, gts, wrapperFactory);
+        this.property = new PropertyAccessHasPropertyGremlin(this, gts, wrapperFactory);
         this.from = new AccessHasFromGremlin(this, gts, wrapperFactory);
         this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
     }
@@ -105,19 +105,19 @@ public class PropertyAccessGremlin implements IPropertyAccess, TinkerpopDelegate
  
         this.from = new AccessHasFromGremlin(this, gts, wrapperFactory);
         this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
-        this.property = new PropertyAccessHasPropertyGremlin(this, gts, wrapperFactory);
         this.module = new AccessHasModuleGremlin(this, gts, wrapperFactory);
+        this.property = new PropertyAccessHasPropertyGremlin(this, gts, wrapperFactory);
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
         try {
             this.from.create(from);
-            this.property.create(property);
             this.in.create(in);
+            this.property.create(property);
         } catch (TraceModelConflictRelation ex) {
             ((AccessHasFromGremlin)this.from).delegate().remove();
-            ((PropertyAccessHasPropertyGremlin)this.property).delegate().remove();
             ((AccessHasInGremlin)this.in).delegate().remove();
+            ((PropertyAccessHasPropertyGremlin)this.property).delegate().remove();
             throw ex;
         }
     
@@ -136,11 +136,11 @@ public class PropertyAccessGremlin implements IPropertyAccess, TinkerpopDelegate
     }   
      
     @Override
-    public String getValue() {
+    public Object getValue() {
         if (delegate != null) {
             Iterator<VertexProperty<Object>> values = delegate.properties("value");
             if (values.hasNext()) {
-                return (String) values.next().value();
+                return (Object) values.next().value();
             }
             else {
                 /** protected region value on begin **/
@@ -155,7 +155,7 @@ public class PropertyAccessGremlin implements IPropertyAccess, TinkerpopDelegate
     
     
     @Override
-    public void setValue(java.lang.String value) {
+    public void setValue(java.lang.Object value) {
         try (ActiveTraversal agts = new ActiveTraversal(gts)) {
             agts.V(delegate).property("value", value).iterate();
         } catch (Exception e) {
@@ -212,18 +212,18 @@ public class PropertyAccessGremlin implements IPropertyAccess, TinkerpopDelegate
         PropertyAccessGremlin other = (PropertyAccessGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-    if (property == null) {
-        if (other.property != null)
-            return false;
-    }
-        if (!property().get().equals(other.property().get())) {
-            return false;
-        }
     if (module == null) {
         if (other.module != null)
             return false;
     }
         if (!module().get().equals(other.module().get())) {
+            return false;
+        }
+    if (property == null) {
+        if (other.property != null)
+            return false;
+    }
+        if (!property().get().equals(other.property().get())) {
             return false;
         }
         return true; 
@@ -233,10 +233,10 @@ public class PropertyAccessGremlin implements IPropertyAccess, TinkerpopDelegate
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        IPropertyTrace property = property().get();
-        result = prime * result + ((property == null) ? 0 : property.hashCode());
         IModuleExecutionTrace module = module().get();
         result = prime * result + ((module == null) ? 0 : module.hashCode());
+        IPropertyTrace property = property().get();
+        result = prime * result + ((property == null) ? 0 : property.hashCode());
         return result;
     }
     

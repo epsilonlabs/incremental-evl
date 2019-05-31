@@ -18,3 +18,4 @@ Export-Package: org.eclipse.epsilon.base.incremental,
 Require-Bundle: org.slf4j.api;bundle-version="1.7.2",
  org.eclipse.epsilon.eol.engine;bundle-version="1.6.0"
 Bundle-Vendor: Eclipse Epsilon
+Automatic-Module-Name: org.eclipse.epsilon.base.engine.incremental

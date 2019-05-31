@@ -17,7 +17,7 @@ import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 
 public interface IEvlExecutionTraceManager extends IExecutionTrace {
 
-	IEvlModuleTraceRepository<IEvlModuleTrace> getExecutionTraceRepository();
+	IEvlModuleTraceRepository getExecutionTraceRepository();
 	
 	IEvlRootElementsFactory getTraceFactory();
 

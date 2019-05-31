@@ -89,7 +89,13 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 			final IIncrementalModel model = getModelThatKnowsAboutProperty(modelElement, propertyName,context);
 			if (model != null) {
 				try {
-					record(tracedModuleElement.getModuleElementTrace(), tracedModuleElement.getCurrentContext(), model, modelElement, propertyName, result, (IIncrementalBaseContext) context);
+					record(tracedModuleElement.getModuleElementTrace(),
+							tracedModuleElement.getCurrentContext(),
+							model,
+							modelElement,
+							propertyName,
+							result,
+							(IIncrementalBaseContext) context);
 				} catch (EolIncrementalExecutionException | EolRuntimeException e) {
 					logger.error("Unable to create PropertyAccess traces for the execution of {}", ast, e);
 					throw new IllegalStateException(String.format("Unable to create PropertyAccess traces for the execution of %s", ast), e);
@@ -142,7 +148,7 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 				modelElement, propertyName, result == null ? "Null" : "SomeValue");
 		logger.debug("result: {}", result);
 
-		IModuleExecutionTraceRepository executionTraceRepository = context.getTraceManager()
+		IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager()
 				.getExecutionTraceRepository();
 		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
 		
@@ -180,10 +186,10 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 		Object result,
 		IIncrementalBaseContext context,
 		IPropertyAccess pa) throws EolIncrementalExecutionException {
-		String value = null;
+		Object value = null;
 		if (model.owns(result)) {
 			try {
-				value = model.convertToString(result);
+				value = model.serializePropertyValue(result);
 			} catch (NotSerializableModelException e) {
 				logger.error(e.getMessage());
 				throw new EolIncrementalExecutionException(
@@ -193,7 +199,7 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 			IModel resOwner = context.getModelRepository().getOwningModel(result);
 			if (resOwner != null && (resOwner instanceof IIncrementalModel)) {
 				try {
-					value = ((IIncrementalModel)resOwner).convertToString(result);
+					value = ((IIncrementalModel)resOwner).serializePropertyValue(result);
 				} catch (NotSerializableModelException e) {
 					logger.error(e.getMessage());
 					throw new EolIncrementalExecutionException(

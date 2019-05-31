@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-05-09.
+ * This file was automatically generated on: 2019-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -120,13 +120,13 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, TinkerpopDelega
             throw new TraceModelDuplicateElement();
         };
         try {
+            this.modelElement.create(modelElement);
             this.in.create(in);
             this.from.create(from);
-            this.modelElement.create(modelElement);
         } catch (TraceModelConflictRelation ex) {
+            ((SatisfiesAccessHasModelElementGremlin)this.modelElement).delegate().remove();
             ((AccessHasInGremlin)this.in).delegate().remove();
             ((AccessHasFromGremlin)this.from).delegate().remove();
-            ((SatisfiesAccessHasModelElementGremlin)this.modelElement).delegate().remove();
             throw ex;
         }
     

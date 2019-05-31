@@ -171,6 +171,7 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 			if (traceGuardValue()) {
 				check(selfModelElement, context);
 			}
+			break;
 		case "M":		// Invariant Message
 			// Make sure guard is true
 			if (traceGuardValue()) {
@@ -182,7 +183,6 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 				unsatisfiedConstraint.setMessage(messageResult);
 				context.getUnsatisfiedConstraints().add(unsatisfiedConstraint);
 			}
-			
 		}
 		return Optional.empty();
 	}

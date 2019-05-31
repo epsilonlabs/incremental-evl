@@ -137,7 +137,7 @@
       <details key="documentation" value="A PropertyAccess denotes access to property of a model element."/>
     </eAnnotations>
     <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//PropertyAccess/property"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="The value of the property when it was accessed."/>
       </eAnnotations>

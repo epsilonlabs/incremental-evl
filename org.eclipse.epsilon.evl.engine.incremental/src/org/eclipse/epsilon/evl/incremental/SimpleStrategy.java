@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.TraceReexecution;
+import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
@@ -95,8 +96,14 @@ public class SimpleStrategy implements IncrementalEvlExecutionStrategy {
 					}		
 					else {
 						for (IPropertyAccess pa : pas) {
-							Object newValue = null;
-							newValue = pg.invoke(element, pa.property().get().getName());
+							// The PropertyAccessExecutionListener asks the model how to store the properties
+							// so we must use the same "wrapping" in order to get comparable results
+							String newValue = null;
+							try {
+								newValue = ((IIncrementalModel)m).serializePropertyValue(pg.invoke(element, pa.property().get().getName()));
+							} catch (NotSerializableModelException e) {
+								throw new EolRuntimeException("Unable to retrieve property value representation.", e);
+							}
 							if (!pa.getValue().equals(newValue)) {
 								// Change
 								traces.addAll(executionTraceRepo
@@ -195,7 +202,7 @@ public class SimpleStrategy implements IncrementalEvlExecutionStrategy {
 		IGuardedElementTrace limits = guardTrace.limits().get();
 		assert limits instanceof IInvariantTrace;
 		IInvariantTrace invariantT = (IInvariantTrace) limits;
-		ConstraintContext conCtx = getConstraintContextForTrace(invariantT.invariantContext().get());
+		TracedConstraintContext conCtx = getConstraintContextForTrace(invariantT.invariantContext().get());
 		if (conCtx != null) {
 			return findTracedConstraint(invariantT, conCtx);
 		}
@@ -214,9 +221,9 @@ public class SimpleStrategy implements IncrementalEvlExecutionStrategy {
 		IGuardedElementTrace limits = guardTrace.limits().get();
 		assert limits instanceof IContextTrace;
 		IContextTrace contextT = (IContextTrace) limits;
-		ConstraintContext conCtx = getConstraintContextForTrace(contextT);
+		TracedConstraintContext conCtx = getConstraintContextForTrace(contextT);
 		if (conCtx != null) {
-			return (TracedConstraintContext) conCtx;
+			return conCtx;
 		}
 		throw new IllegalStateException("A traced context should always be found for an IGuardTrace. "
 				+ "One could not be found for: " + guardTrace.toString());
@@ -231,9 +238,9 @@ public class SimpleStrategy implements IncrementalEvlExecutionStrategy {
 	 */
 	@Override
 	public TracedConstraintContext getConstraintContext(IContextTrace contextTrace) {
-		ConstraintContext conCtx = getConstraintContextForTrace(contextTrace);
+		TracedConstraintContext conCtx = getConstraintContextForTrace(contextTrace);
 		if (conCtx != null) {
-			return (TracedConstraintContext) conCtx;
+			return conCtx;
 		}
 		throw new IllegalStateException("A traced context should always be found for an IContextTrace. "
 				+ "One could not be found for: " + contextTrace.toString());
@@ -246,11 +253,12 @@ public class SimpleStrategy implements IncrementalEvlExecutionStrategy {
 	 * @return the constraint context for trace
 	 */
 	// TODO Adding a cache could help a bit
-	private ConstraintContext getConstraintContextForTrace(IContextTrace trace) {
+	private TracedConstraintContext getConstraintContextForTrace(IContextTrace trace) {
 		for (ConstraintContext conCtx : incrementalEvlModule.getConstraintContexts()) {
 			TracedConstraintContext tConCtx = (TracedConstraintContext) conCtx;
 			if (conCtx.getTypeName().equals(trace.getKind()) && (tConCtx.getIndex() == trace.getIndex())) {
-				return conCtx;
+				tConCtx.setModuleElementTrace(trace);
+				return tConCtx;
 			}
 		}
 		return null;
@@ -265,9 +273,11 @@ public class SimpleStrategy implements IncrementalEvlExecutionStrategy {
 	 */
 	// TODO Cache?
 	private TracedConstraint findTracedConstraint(IInvariantTrace invariantTrace, ConstraintContext conCtx) {
-		return (TracedConstraint) conCtx.getConstraints().stream()
+		TracedConstraint tracedConstraint = (TracedConstraint) conCtx.getConstraints().stream()
 				.filter(c -> c.getName().equals(invariantTrace.getName()))
 				.findFirst().get();
+		tracedConstraint.setModuleElementTrace(invariantTrace);
+		return tracedConstraint;
 	}
 
 }

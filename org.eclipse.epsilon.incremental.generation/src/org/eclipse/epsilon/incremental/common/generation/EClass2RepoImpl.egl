@@ -21,27 +21,31 @@ import java.util.Set;
 import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%];
 import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%]Repository;
 [%
+var name;
+var implements;
 var superClass = ec.getESuperTypes().first();
-var extends = null;
-var name = ec.getJavaClassName(classPrefix, classSufix) + "RepositoryImpl";
-var implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+var extends = superClass.name + "RepositoryImpl<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
 var extendGeneric = ec.getJavaInterfaceName(interPrefix, interSufix);
-if (ec.isAbstract) {
-    name = name + "<T extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
-    implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<T>";
-    extendGeneric = "T";
+if (ec.getEAllSubclasses().isEmpty() and not ec.isAbstract) {
+    implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository";
+    name = ec.getJavaClassName(classPrefix, classSufix) + "RepositoryImpl";
 }
-if (not superClass.isInterface) {
-    extends = superClass.name + "RepositoryImpl<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";    
-    var erqp = superClass.getCorrectPackage(qp+".trace", ec);%]
+else {
+    name = name + "<ST extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+    if (ec.isAbstract) {
+	    implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<ST>";
+	    extendGeneric = "ST";
+	}
+	else {
+	   implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+	}
+}
+var erqp = superClass.getCorrectPackage(qp+".trace", ec);%]
 import [%=erqp%].impl.[%=superClass.name%]RepositoryImpl;
-[%
-}
-%]
+
 [%=out.startPreserve("/**", "**/", ec.name + "RepositoryImplImports", true)%]
 
 [%=out.stopPreserve()%]
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

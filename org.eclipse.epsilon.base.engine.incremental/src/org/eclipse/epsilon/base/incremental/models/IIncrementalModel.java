@@ -92,15 +92,17 @@ public interface IIncrementalModel extends IModel {
 	
 	
 	/**
-	 * Return a String representation of the object. If the object belongs to the
-	 * model, it will return a serializable version of the object.
+	 * Return a "serialisable" representation of the property value that can be easily stored
+	 * in the underlying Tinkerpop Graph. This method is mainly aimed towards providing 
+	 * representations for model elements and collections of model elements. As such, any non-model
+	 * values could simple be returned unmodified. 
 	 *
-	 * @param instance the instance
+	 * @param propertyValue the instance
 	 * @return the string
 	 * @throws EolNotAModelElementException if the instance does not belong to the
 	 *                                      model
 	 */
-	String convertToString(Object instance) throws NotSerializableModelException;
+	Object serializePropertyValue(Object propertyValue) throws NotSerializableModelException;
 
 	/**
 	 * Create an object from its string representation.
@@ -110,7 +112,7 @@ public interface IIncrementalModel extends IModel {
 	 * @throws UnsupportedOperationException if the value can not be converted to an
 	 *                                       object.
 	 */
-	Object getOrCreateFromString(String value) throws NotInstantiableModelElementValueException;
+	Object deserializePropertyValue(String value) throws NotInstantiableModelElementValueException;
 
 	/**
 	 * Returns the fully qualified names of every type to which the given object

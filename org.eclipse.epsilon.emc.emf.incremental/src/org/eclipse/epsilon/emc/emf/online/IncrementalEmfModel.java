@@ -37,7 +37,7 @@ public class IncrementalEmfModel extends EmfModel implements IIncrementalModel {
 	}
 
 	@Override
-	public String convertToString(Object instance) throws NotSerializableModelException {
+	public Object serializePropertyValue(Object instance) throws NotSerializableModelException {
 		if (!owns(instance)) {
 			throw new NotSerializableModelException("Can not convert objects that dont belong to this model.");
 		}
@@ -46,7 +46,7 @@ public class IncrementalEmfModel extends EmfModel implements IIncrementalModel {
 	}
 
 	@Override
-	public Object getOrCreateFromString(String value) throws NotInstantiableModelElementValueException {
+	public Object deserializePropertyValue(String value) throws NotInstantiableModelElementValueException {
 		return getElementById(value);
 	}
 

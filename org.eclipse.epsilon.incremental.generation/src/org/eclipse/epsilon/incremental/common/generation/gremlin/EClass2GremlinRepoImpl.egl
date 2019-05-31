@@ -31,9 +31,13 @@ import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 var superClass = ec.getESuperTypes().first();
 var extends = null;
 var name = ec.getJavaClassName(classPrefix, classSufix) + "RepositoryImpl";
-var implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+var implements;
 var extendGeneric = ec.getJavaInterfaceName(interPrefix, interSufix);
-if (ec.isAbstract) {
+if (ec.getEAllSubclasses().isEmpty() and not ec.isAbstract) {
+    implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository";
+}
+else {
+    implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
     name = name + "<ST extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
     implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<ST>";
     extendGeneric = "ST";

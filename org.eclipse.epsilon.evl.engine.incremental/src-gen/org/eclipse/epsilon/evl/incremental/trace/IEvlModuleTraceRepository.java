@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-29.
+ * This file was automatically generated on: 2019-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -25,13 +25,13 @@ import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 /** protected region IEvlModuleTraceRepositoryImports end **/
 
 @SuppressWarnings("unused")
-public interface IEvlModuleTraceRepository<T extends IEvlModuleTrace> extends IModuleExecutionTraceRepository<T> {
+public interface IEvlModuleTraceRepository extends IModuleExecutionTraceRepository<IEvlModuleTrace> {
 
 
     IEvlModuleTrace getEvlModuleTraceByIdentity(String uri);
 
 /** protected region IEvlModuleTraceRepositry on begin **/
-    Iterator<T> getAllModuleTraces();
+    Iterator<IEvlModuleTrace> getAllModuleTraces();
     
     /**
 	 * Find all ExecutionTraces related to an AllInstanceAccess (either by kind or by type) for the

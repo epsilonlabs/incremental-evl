@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-29.
+ * This file was automatically generated on: 2019-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -41,7 +41,7 @@ public class PropertyAccess implements IPropertyAccess {
     /**
 	 * The value.
 	 */
-    private String value;
+    private Object value;
 
     /**
      * The module.
@@ -103,13 +103,13 @@ public class PropertyAccess implements IPropertyAccess {
     }   
      
     @Override
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
     
     
     @Override
-    public void setValue(java.lang.String value) {
+    public void setValue(java.lang.Object value) {
         this.value = value;
     }   
      

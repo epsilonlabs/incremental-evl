@@ -5,9 +5,12 @@ import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.IncrementalExecutionStrategy;
 import org.eclipse.epsilon.base.incremental.TraceReexecution;
+import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
+import org.eclipse.epsilon.evl.incremental.execute.context.IIncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 
@@ -58,6 +61,18 @@ public class ReexecutionInvariantTrace extends ConstraintModuleElementTraceReexe
 		TraceReexecution parent) {
 		super(evlMdl, slfTrc, exctnCntxt, children, parent);
 		invariantTrace = invrtTrc;
+	}
+	
+	@Override
+	public void reexecute(IIncrementalBaseContext context, IncrementalExecutionStrategy strategy)
+			throws EolRuntimeException {
+	
+		// Do nothing
+//		assert context instanceof IIncrementalEvlContext;
+//		assert strategy instanceof IncrementalEvlExecutionStrategy;
+//		Object selfVal = getSelf((IIncrementalEvlContext) context);
+//		TracedConstraint tc = getTracedConstraint(strategy);
+//		tc.executeImpl(selfVal, (IIncrementalEvlContext) context, section());
 	}
 
 	/**

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-04-29.
+ * This file was automatically generated on: 2019-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -17,14 +17,14 @@ import org.eclipse.epsilon.base.incremental.trace.*;
 import org.eclipse.epsilon.base.incremental.trace.impl.*;    
 
 /**
- * A ModuleElementTrace that inherits its context from its parent module element.
- * There is one InContextModuleElementTrace for each child module element
- * present in a module element (e.g. one trace per guard of a rule), that is, an
- * InContextModuleElementTrace represents the static component of a child 
- * module element.
- * 
+ * A ModuleElementTrace that inherits its context from another module element.
  * During execution (dynamic component), the InContextModuleElemetTrace
- * populates de Accesss of its parent module element.
+ * populates the Accessses of its parent module element. That is, all accesses
+ * of to the module element are delegated to its context module element.
+ * 
+ * The contextModuleElement reference is derived as each module element
+ * can have a different method to determine it's "parent" context module
+ * element. E.g. It can be its container or another reference.
  */
 @SuppressWarnings("unused")
 public interface IInContextModuleElementTrace extends IModuleElementTrace {

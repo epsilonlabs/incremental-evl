@@ -234,7 +234,7 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 	private IEvlModuleTrace getModuleExecutionTrace(
 		IncrementalEvlContext context,
 		String moduleUri) throws EolRuntimeException {
-		IEvlModuleTraceRepository<?> repo = context.getTraceManager().getExecutionTraceRepository();
+		IEvlModuleTraceRepository repo = context.getTraceManager().getExecutionTraceRepository();
 		IEvlModuleTrace moduleExecutionTrace = repo.getEvlModuleTraceByIdentity(moduleUri);
 		if (moduleExecutionTrace == null) {
 			throw new EolRuntimeException(

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-05-09.
+ * This file was automatically generated on: 2019-05-31.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,7 +18,6 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.apache.tinkerpop.gremlin.structure.util.Attachable;
 import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertex;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
@@ -60,7 +59,7 @@ import com.google.inject.Inject;
  * @author Horacio Hoyos Rodriguez
  */
 @SuppressWarnings("unused")
-public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGremlinRepositoryImpl<IEvlModuleTrace> implements IEvlModuleTraceRepository<IEvlModuleTrace> {
+public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGremlinRepositoryImpl<IEvlModuleTrace> implements IEvlModuleTraceRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(EvlModuleTraceGremlinRepositoryImpl.class);
  
@@ -78,12 +77,7 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
         logger.info("Adding {} to repository", item);
         assert item instanceof EvlModuleTraceGremlin;
         EvlModuleTraceGremlin impl = (EvlModuleTraceGremlin)item;
-        Vertex attached = gts.getGraph().addVertex(impl.delegate().label());
-        Iterator<VertexProperty<Object>> it = impl.delegate().properties();
-        while (it.hasNext()) {
-        	VertexProperty<Object> vp = it.next();
-        	attached.property(vp.key(), vp.value());
-        }
+        Vertex attached = ((DetachedVertex)impl.delegate()).attach(Attachable.Method.getOrCreate(gts.getGraph()));
         return factory.createTraceElement(attached, gts);
     }
 

@@ -223,7 +223,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	public void onChange(IIncrementalModel model, Object object, String propertyName) throws EolRuntimeException {
 
 		logger.info("On Change event for {} with property {}", object, propertyName);
-		IEvlModuleTraceRepository<IEvlModuleTrace> repo = getContext().getTraceManager().getExecutionTraceRepository();
+		IEvlModuleTraceRepository repo = getContext().getTraceManager().getExecutionTraceRepository();
 		String moduleUri = context.getModule().getUri().toString();
 		Set<TraceReexecution> traces = repo.findPropertyAccessExecutionTraces(moduleUri,
 				getContext().getTraceManager().getModelTraceRepository()
@@ -256,7 +256,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 				logger.error("Error executing contexts for new element", e);
 			}
 		}
-		IEvlModuleTraceRepository<IEvlModuleTrace>  repo = getContext().getTraceManager().getExecutionTraceRepository();
+		IEvlModuleTraceRepository  repo = getContext().getTraceManager().getExecutionTraceRepository();
 		String moduleUri = context.getModule().getUri().toString();
 		Set<TraceReexecution> traces = repo.findAllInstancesExecutionTraces(moduleUri,
 				model.getModelUri(), model.getTypeNameOf(newElement));
@@ -275,7 +275,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 
 		logger.info("On Delete event for {}", modelElememt);
 		String elementUri = model.getElementId(modelElememt);
-		IEvlModuleTraceRepository<IEvlModuleTrace>  moduleRepo = getContext().getTraceManager().getExecutionTraceRepository();
+		IEvlModuleTraceRepository  moduleRepo = getContext().getTraceManager().getExecutionTraceRepository();
 		String moduleUri = context.getModule().getUri().toString();
 		
 		// FIXME This should follow the same pattern as change/create!
@@ -590,7 +590,7 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	private void executeIncremental(String sourceChksum) throws EolRuntimeException {
 		IEvlExecutionTraceManager etManager = getContext().getTraceManager();
 		ModelRepository modelRepository = context.getModelRepository();
-		IEvlModuleTraceRepository<IEvlModuleTrace>  executionTraceRepo = etManager.getExecutionTraceRepository();
+		IEvlModuleTraceRepository  executionTraceRepo = etManager.getExecutionTraceRepository();
 		IModelTraceRepository  modelTraceRepo = etManager.getModelTraceRepository();
 		// FIXME This should be injected so we can try different strategies!?
 		IncrementalEvlExecutionStrategy strategy = new SimpleStrategy(this);

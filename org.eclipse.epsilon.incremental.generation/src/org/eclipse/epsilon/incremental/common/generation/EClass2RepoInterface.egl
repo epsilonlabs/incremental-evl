@@ -19,34 +19,33 @@ import java.util.Set;
 
 [%var superClass = "";
 var name = "";
-if (ec.getESuperTypes().isEmpty) {
-    superClass = "IRepository<T>";
-    name = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<T extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";%]
+if (ec.getESuperTypes().isEmpty()) {
+    if (ec.getEAllSubclasses().isEmpty() and not ec.isAbstract) {
+        // No need to keep popping the generic
+        superClass = "IRepository<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+        name = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository";
+    }
+    else {
+        superClass = "IRepository<T>";
+        name = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<T extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+    }%]
 import org.eclipse.epsilon.base.incremental.execute.IRepository;
 [%}
 else {
     superClass = ec.getESuperTypes().first();
     var erqp = superClass.getCorrectPackage(qp+".trace", ec);%]
 import [%=erqp%].[%="I" + superClass.name + "Repository"%];
-[%  
-    superClass = "I" + superClass.name + "Repository<T>";
-    name = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<T extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
-/*
-if (ec.getEAllSubclasses().isEmpty()) {
-        // if (ec.isAbstract) {
-        //     superClass = "I" + superClass.name + "Repository<ec.getJavaInterfaceName(interPrefix, interSufix)>";
-        //     name = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository;
-        // }
-        // else {    
-
-        // }
+[% if (ec.getEAllSubclasses().isEmpty() and not ec.isAbstract) {
+        // No need to keep popping the generic
+        superClass = "I" + superClass.name + "Repository<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+        name = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository";
     }
     else {
-        superClass = "I" + superClass.name + "Repository<E>";
-        name = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<E extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+        superClass = "I" + superClass.name + "Repository<T>";
+        name = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<T extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
     }
-*/
-}%]
+    %]
+[%}%]
 [%=out.startPreserve("/**", "**/", ec.getJavaInterfaceName(interPrefix, interSufix) + "RepositoryImports", true)%]
 
 [%=out.stopPreserve()%]
