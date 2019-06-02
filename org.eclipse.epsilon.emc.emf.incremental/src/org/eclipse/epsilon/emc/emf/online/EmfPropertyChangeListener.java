@@ -17,7 +17,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentAdapter;
-import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
+import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

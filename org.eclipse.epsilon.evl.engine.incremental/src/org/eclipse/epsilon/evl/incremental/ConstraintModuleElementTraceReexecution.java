@@ -3,8 +3,8 @@ package org.eclipse.epsilon.evl.incremental;
 import java.util.Optional;
 import java.util.Set;
 
-import org.eclipse.epsilon.base.incremental.IncrementalExecutionStrategy;
 import org.eclipse.epsilon.base.incremental.TraceReexecution;
+import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
@@ -32,7 +32,7 @@ public abstract class ConstraintModuleElementTraceReexecution implements TraceRe
 	protected final Set<TraceReexecution> children;
 	protected final TraceReexecution parent;
 	
-	protected abstract TracedConstraint getTracedConstraint(IncrementalExecutionStrategy strategy);
+	protected abstract TracedConstraint getTracedConstraint(IEvlModuleIncremental evlModule);
 	
 	protected abstract String section();
 	
@@ -99,26 +99,27 @@ public abstract class ConstraintModuleElementTraceReexecution implements TraceRe
 	}
 	
 	@Override
-	public void reexecute(IIncrementalBaseContext context, IncrementalExecutionStrategy strategy)
-			throws EolRuntimeException {
+	public void reexecute(
+		IIncrementalBaseContext context,
+		IModuleIncremental evlModule)
+		throws EolRuntimeException {
 		assert context instanceof IIncrementalEvlContext;
-		assert strategy instanceof IncrementalEvlExecutionStrategy;
+		assert evlModule instanceof IEvlModuleIncremental;
 		Object selfVal = getSelf((IIncrementalEvlContext) context);
-		TracedConstraint tc = getTracedConstraint(strategy);
+		TracedConstraint tc = getTracedConstraint((IEvlModuleIncremental) evlModule);
 		tc.executeImpl(selfVal, (IIncrementalEvlContext) context, section());
 	}
 
 	@Override
-	public final int hashCode() {
+	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((executionContext == null) ? 0 : executionContext.hashCode());
-		result = prime * result + ((moduleElementTrace() == null) ? 0 : moduleElementTrace().hashCode());
 		return result;
 	}
 
 	@Override
-	public final boolean equals(Object obj) {
+	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -131,15 +132,7 @@ public abstract class ConstraintModuleElementTraceReexecution implements TraceRe
 				return false;
 		} else if (!executionContext.equals(other.executionContext))
 			return false;
-		if (moduleElementTrace() == null) {
-			if (other.moduleElementTrace() != null)
-				return false;
-		} else if (!moduleElementTrace().equals(other.moduleElementTrace()))
-			return false;
 		return true;
 	}
-
-	
-	
 
 }

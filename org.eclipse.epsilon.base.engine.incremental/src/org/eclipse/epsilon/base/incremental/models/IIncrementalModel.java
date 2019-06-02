@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
-import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
+import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
 import org.eclipse.epsilon.eol.exceptions.models.EolNotAModelElementException;
 import org.eclipse.epsilon.eol.models.IModel;
 
@@ -65,13 +65,13 @@ public interface IIncrementalModel extends IModel {
 	 *
 	 * @return true if this collection changed as a result of the call
 	 */
-	boolean registerModule(IIncrementalModule module);
+	boolean registerModule(IModuleIncremental module);
 	
 	/**
 	 * Determine if the module is registered with this model to receive notifications
 	 * @param module
 	 */
-	boolean isRegistered(IIncrementalModule module);
+	boolean isRegistered(IModuleIncremental module);
 	
 	/**
 	 * Unregister the module. The module will stop receiving notifications from changes in this
@@ -79,7 +79,7 @@ public interface IIncrementalModel extends IModel {
 	 * @param element
 	 * @param propertyName
 	 */
-	 boolean unregisterModule(IIncrementalModule module);
+	 boolean unregisterModule(IModuleIncremental module);
 	
 	// FIXME The incremental model should really do the comparing, notifying itself about its own 
 	// elements seems silly 

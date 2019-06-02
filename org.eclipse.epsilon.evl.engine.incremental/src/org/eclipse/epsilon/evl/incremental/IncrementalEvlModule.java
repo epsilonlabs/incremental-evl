@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,6 +33,7 @@ import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElemen
 import org.eclipse.epsilon.base.incremental.execute.ExecutionMode;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.common.module.ModuleElement;
@@ -52,12 +54,14 @@ import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraintContext;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
+import org.eclipse.epsilon.evl.incremental.execute.context.IIncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
 import org.eclipse.epsilon.evl.parse.EvlParser;
@@ -258,6 +262,8 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		}
 		IEvlModuleTraceRepository  repo = getContext().getTraceManager().getExecutionTraceRepository();
 		String moduleUri = context.getModule().getUri().toString();
+		
+		
 		Set<TraceReexecution> traces = repo.findAllInstancesExecutionTraces(moduleUri,
 				model.getModelUri(), model.getTypeNameOf(newElement));
 		// FIXME Need an strategy!
@@ -271,33 +277,23 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	}
 
 	@Override
-	public void onDelete(IIncrementalModel model, Object modelElememt) throws EolRuntimeException {
+	public void onDelete(IIncrementalModel model, Object modelElement) throws EolRuntimeException {
 
-		logger.info("On Delete event for {}", modelElememt);
-		String elementUri = model.getElementId(modelElememt);
+		logger.info("On Delete event for {}", modelElement);
+		String elementUri = model.getElementId(modelElement);
 		IEvlModuleTraceRepository  moduleRepo = getContext().getTraceManager().getExecutionTraceRepository();
 		String moduleUri = context.getModule().getUri().toString();
 		
-		// FIXME This should follow the same pattern as change/create!
-		Set<TraceReexecution> traces = moduleRepo.findIndirectExecutionTraces(moduleUri, elementUri, model.getAllTypeNamesOf(modelElememt));
-
-		IModelTrace modelTrace = getContext().getTraceManager().getModelTraceRepository()
-			.getModelTraceForModule(model.getModelUri(), moduleUri);
-		logger.info("Executing indirect contexts");
-		// FIXME Need an strategy!
-//		traces.stream().filter(IContextTrace.class::isInstance).map(IContextTrace.class::cast)
-//				.forEach(ct -> executeContextTrace(ct, modelTrace));
-//		
 		
-		logger.info("Executing indirect invariants");
-		// FIXME Need an strategy!
-//		traces.stream().filter(ReexecutionInvariantTrace.class::isInstance).map(ReexecutionInvariantTrace.class::cast).forEach(it -> {
-//			try {
-//				processInvariantReexecution(moduleUri, model, it, modelElememt);
-//			} catch (EolRuntimeException e) {
-//				logger.info("Error executing InvariantTrace trace", e);
-//			}
-//		});
+		Collection<IModelElementTrace> traces = new HashSet<>();
+		traces.add(moduleRepo.findModelElementTrace(model.getModelUri(), model.getElementId(modelElement)));
+		IncrementalEvlExecutionStrategy strategy = new DeletedElementsStrategy(traces, model);
+		logger.info("Executing indirect contexts and invariants");
+		strategy.execute(
+				moduleRepo,
+				getContext().getTraceManager().getModelTraceRepository(),
+				getContext(),
+				this);
 		
 		// Remove unsatisfied constraints related to the element.
 		Iterator<UnsatisfiedConstraint> it = getContext().getUnsatisfiedConstraints().iterator();
@@ -327,6 +323,113 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		}
 		return super.parse(uri);
 	}
+	
+
+	/**
+	 * Gets the constraint.
+	 *
+	 * @param checkTrace the check trace
+	 * @return the constraint
+	 */
+	@Override
+	public TracedConstraint getTracedConstraint(ICheckTrace checkTrace) {
+		IInvariantTrace invariantT = checkTrace.invariant().get();
+		ConstraintContext conCtx = getConstraintContextForTrace(invariantT.invariantContext().get());
+		if (conCtx != null) {
+			return findTracedConstraint(invariantT, conCtx);
+		}
+		throw new IllegalStateException("A traced constraint should always be found for an ICheckTrace. "
+				+ "One could not be found for: " + checkTrace.toString());
+	}
+
+	/**
+	 * Gets the constraint.
+	 *
+	 * @param messageTrace the message trace
+	 * @return the constraint
+	 */
+	@Override
+	public TracedConstraint getTracedConstraint(IMessageTrace messageTrace) {
+		IInvariantTrace invariantT = messageTrace.invariant().get();
+		ConstraintContext conCtx = getConstraintContextForTrace(invariantT.invariantContext().get());
+		if (conCtx != null) {
+			return findTracedConstraint(invariantT, conCtx);
+		}
+		throw new IllegalStateException("A traced constraint should always be found for an IMessageTrace. "
+				+ "One could not be found for: " + messageTrace.toString());
+	}
+
+	/**
+	 * Gets the constraint.
+	 *
+	 * @param invariantTrace the invariant trace
+	 * @return the constraint
+	 */
+	@Override
+	public TracedConstraint getTracedConstraint(IInvariantTrace invariantTrace) {
+		ConstraintContext conCtx = getConstraintContextForTrace(invariantTrace.invariantContext().get());
+		if (conCtx != null) {
+			return findTracedConstraint(invariantTrace, conCtx);
+		}
+		throw new IllegalStateException("A traced constraint should always be found for an IInvariantTrace. "
+				+ "One could not be found for: " + invariantTrace.toString());
+	}
+
+	/**
+	 * Gets the constraint.
+	 *
+	 * @param guardTrace the guard trace
+	 * @return the constraint
+	 */
+	@Override
+	public TracedConstraint getTracedConstraint(IGuardTrace guardTrace) {
+		IGuardedElementTrace limits = guardTrace.limits().get();
+		assert limits instanceof IInvariantTrace;
+		IInvariantTrace invariantT = (IInvariantTrace) limits;
+		TracedConstraintContext conCtx = getConstraintContextForTrace(invariantT.invariantContext().get());
+		if (conCtx != null) {
+			return findTracedConstraint(invariantT, conCtx);
+		}
+		throw new IllegalStateException("A traced constraint should always be found for an IGuardTrace. "
+				+ "One could not be found for: " + guardTrace.toString());
+	}
+	
+	/**
+	 * Gets the constraint context.
+	 *
+	 * @param guardTrace the guard trace
+	 * @return the constraint context
+	 */
+	@Override
+	public TracedConstraintContext getTracedConstraintContext(IGuardTrace guardTrace) {
+		IGuardedElementTrace limits = guardTrace.limits().get();
+		assert limits instanceof IContextTrace;
+		IContextTrace contextT = (IContextTrace) limits;
+		TracedConstraintContext conCtx = getConstraintContextForTrace(contextT);
+		if (conCtx != null) {
+			return conCtx;
+		}
+		throw new IllegalStateException("A traced context should always be found for an IGuardTrace. "
+				+ "One could not be found for: " + guardTrace.toString());
+		
+	}
+	
+	/**
+	 * Gets the constraint context.
+	 *
+	 * @param contextTrace the context trace
+	 * @return the constraint context
+	 */
+	@Override
+	public TracedConstraintContext getTracedConstraintContext(IContextTrace contextTrace) {
+		TracedConstraintContext conCtx = getConstraintContextForTrace(contextTrace);
+		if (conCtx != null) {
+			return conCtx;
+		}
+		throw new IllegalStateException("A traced context should always be found for an IContextTrace. "
+				+ "One could not be found for: " + contextTrace.toString());
+	}
+	
 
 	
    	/**
@@ -492,29 +595,29 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	 * @return true, if the invariant changed from true to false
 	 * @throws EolRuntimeException the eol runtime exception
 	 */
-	private void executeInvariantTrace(Object self, IInvariantTrace invariantT) throws EolRuntimeException {
-
-		logger.info("executeInvariantTrace for {}", invariantT.getName());
-		ConstraintContext conCtx = getConstraintContextForTrace(invariantT.invariantContext().get());
-		if (conCtx != null) {
-			// Found the context, now find the invariant
-			// FIXME Need to modify EVL so we can individually modify constraints
-			// (invariants)
-			logger.debug("Found ConstraintContext for invariant.");
-			Constraint inv = conCtx.getConstraints().stream()
-					.filter(c -> c.getName().equals(invariantT.getName()))
-					.findFirst().get();
-			logger.debug("Found invariant for trace.");
-			inv.check(self, getContext());
-			// FIXME Need to execute related satisfies traces if result changed!
-			// FIXME If the result of the invariant changed, we need to re-execute all dependent
-			// (via satisfies) invariants.
-			return;
-		}
-		logger.info("Can not find matching constraint for trace.");
-		throw new IllegalStateException();
-	}
-	
+//	private void executeInvariantTrace(Object self, IInvariantTrace invariantT) throws EolRuntimeException {
+//
+//		logger.info("executeInvariantTrace for {}", invariantT.getName());
+//		ConstraintContext conCtx = getConstraintContextForTrace(invariantT.invariantContext().get());
+//		if (conCtx != null) {
+//			// Found the context, now find the invariant
+//			// FIXME Need to modify EVL so we can individually modify constraints
+//			// (invariants)
+//			logger.debug("Found ConstraintContext for invariant.");
+//			Constraint inv = conCtx.getConstraints().stream()
+//					.filter(c -> c.getName().equals(invariantT.getName()))
+//					.findFirst().get();
+//			logger.debug("Found invariant for trace.");
+//			inv.check(self, getContext());
+//			// FIXME Need to execute related satisfies traces if result changed!
+//			// FIXME If the result of the invariant changed, we need to re-execute all dependent
+//			// (via satisfies) invariants.
+//			return;
+//		}
+//		logger.info("Can not find matching constraint for trace.");
+//		throw new IllegalStateException();
+//	}
+//	
 //	/**
 //	 * Execute all reexecution traces for the given object.Reexecution traces are created in
 //	 * response to onChange, onDelete and onCreate events, or generated by an
@@ -594,18 +697,52 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		IModelTraceRepository  modelTraceRepo = etManager.getModelTraceRepository();
 		// FIXME This should be injected so we can try different strategies!?
 		IncrementalEvlExecutionStrategy strategy = new SimpleStrategy(this);
-		strategy.execute(sourceChksum, modelRepository, executionTraceRepo, modelTraceRepo, getContext());
+		strategy.execute(executionTraceRepo, modelTraceRepo, getContext(), null);
 	}
-
-	private ConstraintContext getConstraintContextForTrace(IContextTrace trace) {
-		int index = 1;
+	
+	/**
+	 * Gets the constraint context for trace.
+	 *
+	 * @param trace the trace
+	 * @return the constraint context for trace
+	 */
+	// TODO Adding a cache could help a bit
+	private TracedConstraintContext getConstraintContextForTrace(IContextTrace trace) {
 		for (ConstraintContext conCtx : getConstraintContexts()) {
-			if (conCtx.getTypeName().equals(trace.getKind()) && (index++ == trace.getIndex())) {
-				return conCtx;
+			TracedConstraintContext tConCtx = (TracedConstraintContext) conCtx;
+			if (conCtx.getTypeName().equals(trace.getKind()) && (tConCtx.getIndex() == trace.getIndex())) {
+				tConCtx.setModuleElementTrace(trace);
+				return tConCtx;
 			}
 		}
 		return null;
 	}
+	
+	/**
+	 * Find traced constraint.
+	 *
+	 * @param invariantTrace the invariant trace
+	 * @param conCtx the con ctx
+	 * @return the traced constraint
+	 */
+	// TODO Cache?
+	private TracedConstraint findTracedConstraint(IInvariantTrace invariantTrace, ConstraintContext conCtx) {
+		TracedConstraint tracedConstraint = (TracedConstraint) conCtx.getConstraints().stream()
+				.filter(c -> c.getName().equals(invariantTrace.getName()))
+				.findFirst().get();
+		tracedConstraint.setModuleElementTrace(invariantTrace);
+		return tracedConstraint;
+	}
+
+//	private ConstraintContext getConstraintContextForTrace(IContextTrace trace) {
+//		int index = 1;
+//		for (ConstraintContext conCtx : getConstraintContexts()) {
+//			if (conCtx.getTypeName().equals(trace.getKind()) && (index++ == trace.getIndex())) {
+//				return conCtx;
+//			}
+//		}
+//		return null;
+//	}
 	
 	/**
 	 * Create an MD5 digest of the provided code
@@ -721,6 +858,8 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 			context.getExecutorFactory().addExecutionListener(iel);
 		}
 	}
+
+
 	
 //	/**
 //	 * Ideal: Re-execute the check and if result changed, execute related invariants (via satisfies)

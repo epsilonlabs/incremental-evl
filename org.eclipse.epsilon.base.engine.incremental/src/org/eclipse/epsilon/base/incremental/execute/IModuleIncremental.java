@@ -25,7 +25,7 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
  * 
  * @author Horacio Hoyos Rodriguez
  */
-public interface IIncrementalModule extends IModule {
+public interface IModuleIncremental extends IModule {
 
 	/**
 	 * Gets the incremental models that are used in this execution

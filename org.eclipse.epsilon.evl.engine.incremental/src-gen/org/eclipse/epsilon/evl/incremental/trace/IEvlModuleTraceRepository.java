@@ -20,6 +20,7 @@ import java.util.Iterator;
 
 import org.eclipse.epsilon.base.incremental.TraceReexecution;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
+import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 /** protected region IEvlModuleTraceRepositoryImports end **/
@@ -130,6 +131,8 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 	ICheckResult findResultInCheck(ICheckTrace checkTrace, IExecutionContext currentContext);
 	
 	IGuardResult findResultInGuard(IGuardTrace guardTrace, IExecutionContext currentContext);
+
+	IModelElementTrace findModelElementTrace(String modelUri, String elementId);
 
 
 	/** protected region IEvlModuleTraceRepositry end **/

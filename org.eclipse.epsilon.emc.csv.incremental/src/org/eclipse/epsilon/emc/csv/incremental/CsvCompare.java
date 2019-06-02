@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
+import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
 import org.eclipse.epsilon.emc.csv.CsvModel;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.slf4j.Logger;

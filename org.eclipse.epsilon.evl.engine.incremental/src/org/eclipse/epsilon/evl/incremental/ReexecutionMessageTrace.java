@@ -3,7 +3,6 @@ package org.eclipse.epsilon.evl.incremental;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.epsilon.base.incremental.IncrementalExecutionStrategy;
 import org.eclipse.epsilon.base.incremental.TraceReexecution;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
@@ -16,7 +15,8 @@ import org.eclipse.epsilon.evl.incremental.trace.IMessageTrace;
  *
  * @author Horacio Hoyos Rodriguez
  */
-public class ReexecutionMessageTrace extends ConstraintModuleElementTraceReexecution implements TraceReexecution {
+public class ReexecutionMessageTrace
+	extends ConstraintModuleElementTraceReexecution implements TraceReexecution {
 
 	/** The message trace. */
 	protected final IMessageTrace messageTrace;
@@ -70,15 +70,6 @@ public class ReexecutionMessageTrace extends ConstraintModuleElementTraceReexecu
 				parent);
 	}
 
-	/**
-	 * Module element trace.
-	 *
-	 * @return the i message trace
-	 */
-	@Override
-	public IMessageTrace moduleElementTrace() {
-		return messageTrace;
-	}
 
 	/**
 	 * Gets the traced constraint.
@@ -86,8 +77,8 @@ public class ReexecutionMessageTrace extends ConstraintModuleElementTraceReexecu
 	 * @param strategy the strategy
 	 * @return the traced constraint
 	 */
-	protected TracedConstraint getTracedConstraint(IncrementalExecutionStrategy strategy) {
-		return ((IncrementalEvlExecutionStrategy) strategy).getConstraint(moduleElementTrace());
+	protected TracedConstraint getTracedConstraint(IEvlModuleIncremental evlModule) {
+		return evlModule.getTracedConstraint(messageTrace);
 	}
 	
 	/**
@@ -98,5 +89,31 @@ public class ReexecutionMessageTrace extends ConstraintModuleElementTraceReexecu
 	protected String section() {
 		return "M";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((messageTrace == null) ? 0 : messageTrace.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ReexecutionMessageTrace other = (ReexecutionMessageTrace) obj;
+		if (messageTrace == null) {
+			if (other.messageTrace != null)
+				return false;
+		} else if (!messageTrace.equals(other.messageTrace))
+			return false;
+		return true;
+	}
+	
 
 }

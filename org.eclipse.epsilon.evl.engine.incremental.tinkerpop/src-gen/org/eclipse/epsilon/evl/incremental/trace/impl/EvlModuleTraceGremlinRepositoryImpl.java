@@ -187,6 +187,24 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 	}
 	
 	@Override
+	public IModelElementTrace findModelElementTrace(String modelUri, String elementId) {
+		IModelElementTrace result = null;
+		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+			GraphTraversal<Vertex, Vertex> gt = agts.V().hasLabel("ModelTrace")
+				.has("uri", modelUri)
+				.out("elements") 
+				.has("uri", elementId);
+			if (gt.hasNext()) {
+				result = factory.createTraceElement(gt.next(), gts);
+			}
+		} catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
+        }
+		return result;
+	}
+
+	
+	@Override
 	public Set<TraceReexecution> findIndirectExecutionTraces(
 	    String moduleUri,
 	    Object elementId,
@@ -458,7 +476,7 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
         }
 		return result;
 	}
-
+	
 	
 	private Optional<TraceReexecution>  makeRexecutionTrace(GraphTraversal<Vertex, Path> find_gt) {
 		Path p = find_gt.next();

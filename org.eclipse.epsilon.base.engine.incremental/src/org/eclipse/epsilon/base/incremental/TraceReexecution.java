@@ -2,8 +2,8 @@ package org.eclipse.epsilon.base.incremental;
 
 import java.util.Optional;
 
+import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
-import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 
 /**
@@ -21,14 +21,7 @@ public interface TraceReexecution {
 	/**
 	 * A ModuleElement trace is reexecuted in a particular context.
 	 */
-	 void reexecute(IIncrementalBaseContext context, IncrementalExecutionStrategy strategy) throws EolRuntimeException;
-	 
-	 
-	 /**
-	  * The module element trace being reexecuted
-	  * @return
-	  */
-	 IModuleElementTrace moduleElementTrace();
+	 void reexecute(IIncrementalBaseContext context, IModuleIncremental module) throws EolRuntimeException;
 			
 	/**
 	 * Assign the IReexecutionTrace as parent of this reexecution trace
@@ -38,12 +31,5 @@ public interface TraceReexecution {
 	TraceReexecution makeChildOf(TraceReexecution parent);
 	
 	Optional<TraceReexecution> parent();
-	
-	/**
-	 * Add the IReexecutionTrace as a child of this reexecution trace
-	 * @param child
-	 * @return	true, if the child could be added
-	 */
-	// boolean makeParentOf(TraceReexecution child);
 	
 }

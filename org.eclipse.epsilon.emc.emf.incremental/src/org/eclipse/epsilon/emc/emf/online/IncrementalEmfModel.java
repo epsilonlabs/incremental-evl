@@ -30,7 +30,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableModelException;
-import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
+import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.models.ModuleNotifications;
 import org.eclipse.epsilon.emc.emf.EmfModel;
@@ -203,17 +203,17 @@ public class IncrementalEmfModel extends EmfModel implements IIncrementalModel {
 	}
 	
 	@Override
-	public boolean registerModule(IIncrementalModule module) {
+	public boolean registerModule(IModuleIncremental module) {
 		return moduleNotifications.registerModule(module);
 	}
 
 	@Override
-	public boolean isRegistered(IIncrementalModule module) {
+	public boolean isRegistered(IModuleIncremental module) {
 		return moduleNotifications.isRegistered(module);
 	}
 
 	@Override
-	public boolean unregisterModule(IIncrementalModule module) {
+	public boolean unregisterModule(IModuleIncremental module) {
 		return moduleNotifications.unregisterModule(module);
 	}
 

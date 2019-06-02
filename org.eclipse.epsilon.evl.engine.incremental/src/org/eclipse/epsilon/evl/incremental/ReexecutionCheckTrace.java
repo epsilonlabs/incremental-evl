@@ -3,7 +3,6 @@ package org.eclipse.epsilon.evl.incremental;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.epsilon.base.incremental.IncrementalExecutionStrategy;
 import org.eclipse.epsilon.base.incremental.TraceReexecution;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
@@ -70,16 +69,6 @@ public class ReexecutionCheckTrace
 	public final TraceReexecution makeChildOf(TraceReexecution parent) {
 		return new ReexecutionCheckTrace(checkTrace, executionContext, moduleTrace, selfTrace, children, parent);
 	}
-	
-	/**
-	 * Module element trace.
-	 *
-	 * @return the i check trace
-	 */
-	@Override
-	public ICheckTrace moduleElementTrace() {
-		return checkTrace;
-	}
 
 	/**
 	 * Gets the traced constraint.
@@ -87,8 +76,9 @@ public class ReexecutionCheckTrace
 	 * @param strategy the strategy
 	 * @return the traced constraint
 	 */
-	protected TracedConstraint getTracedConstraint(IncrementalExecutionStrategy strategy) {
-		return ((IncrementalEvlExecutionStrategy) strategy).getConstraint(moduleElementTrace());
+	@Override
+	protected TracedConstraint getTracedConstraint(IEvlModuleIncremental evlModule) {
+		return evlModule.getTracedConstraint(checkTrace);
 	}
 	
 	/**
@@ -99,5 +89,32 @@ public class ReexecutionCheckTrace
 	protected String section() {
 		return "C";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((checkTrace == null) ? 0 : checkTrace.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ReexecutionCheckTrace other = (ReexecutionCheckTrace) obj;
+		if (checkTrace == null) {
+			if (other.checkTrace != null)
+				return false;
+		} else if (!checkTrace.equals(other.checkTrace))
+			return false;
+		return true;
+	}
+	
+	
 
 }

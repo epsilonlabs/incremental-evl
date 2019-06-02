@@ -5,7 +5,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
+import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.common.module.IModule;
 import org.eclipse.epsilon.common.module.ModuleElement;
@@ -14,7 +14,7 @@ import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.common.parse.Region;
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
 
-public abstract class AbstractModule implements IIncrementalModule {
+public abstract class AbstractModule implements IModuleIncremental {
 
 //	@Override
 //	public IModuleTrace getModuleTrace() {

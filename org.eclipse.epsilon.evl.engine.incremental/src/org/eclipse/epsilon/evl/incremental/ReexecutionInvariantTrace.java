@@ -3,14 +3,13 @@ package org.eclipse.epsilon.evl.incremental;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.epsilon.base.incremental.IncrementalExecutionStrategy;
 import org.eclipse.epsilon.base.incremental.TraceReexecution;
+import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
-import org.eclipse.epsilon.evl.incremental.execute.context.IIncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
 
@@ -21,7 +20,8 @@ import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
  *
  */
 //Invaraints should not have accesses and hence no need for re-execution, this class not needed
-public class ReexecutionInvariantTrace extends ConstraintModuleElementTraceReexecution implements TraceReexecution {
+public class ReexecutionInvariantTrace
+	extends ConstraintModuleElementTraceReexecution implements TraceReexecution {
 
 	/** The invariant trace. */
 	protected final IInvariantTrace invariantTrace;
@@ -64,15 +64,9 @@ public class ReexecutionInvariantTrace extends ConstraintModuleElementTraceReexe
 	}
 	
 	@Override
-	public void reexecute(IIncrementalBaseContext context, IncrementalExecutionStrategy strategy)
+	public void reexecute(IIncrementalBaseContext context, IModuleIncremental evlModule)
 			throws EolRuntimeException {
-	
 		// Do nothing
-//		assert context instanceof IIncrementalEvlContext;
-//		assert strategy instanceof IncrementalEvlExecutionStrategy;
-//		Object selfVal = getSelf((IIncrementalEvlContext) context);
-//		TracedConstraint tc = getTracedConstraint(strategy);
-//		tc.executeImpl(selfVal, (IIncrementalEvlContext) context, section());
 	}
 
 	/**
@@ -87,24 +81,10 @@ public class ReexecutionInvariantTrace extends ConstraintModuleElementTraceReexe
 				parent);
 	}
 
-	/**
-	 * Module element trace.
-	 *
-	 * @return the i invariant trace
-	 */
 	@Override
-	public IInvariantTrace moduleElementTrace() {
-		return invariantTrace;
-	}
-
-	/**
-	 * Gets the traced constraint.
-	 *
-	 * @param strategy the strategy
-	 * @return the traced constraint
-	 */
-	protected TracedConstraint getTracedConstraint(IncrementalExecutionStrategy strategy) {
-		return ((IncrementalEvlExecutionStrategy) strategy).getConstraint(moduleElementTrace());
+	protected TracedConstraint getTracedConstraint(IEvlModuleIncremental evlModul) {
+		// TODO Implement EvlModuleElementTraceReexecution.section
+		throw new RuntimeException("Unimplemented Method EvlModuleElementTraceReexecution.getTracedConstraint invoked.");
 	}
 
 	/**
@@ -115,4 +95,32 @@ public class ReexecutionInvariantTrace extends ConstraintModuleElementTraceReexe
 	protected String section() {
 		return "I";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((invariantTrace == null) ? 0 : invariantTrace.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ReexecutionInvariantTrace other = (ReexecutionInvariantTrace) obj;
+		if (invariantTrace == null) {
+			if (other.invariantTrace != null)
+				return false;
+		} else if (!invariantTrace.equals(other.invariantTrace))
+			return false;
+		return true;
+	}
+	
+	
+
 }

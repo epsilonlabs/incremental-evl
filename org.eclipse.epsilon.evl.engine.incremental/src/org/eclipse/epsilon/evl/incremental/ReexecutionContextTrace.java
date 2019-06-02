@@ -3,8 +3,8 @@ package org.eclipse.epsilon.evl.incremental;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.epsilon.base.incremental.IncrementalExecutionStrategy;
 import org.eclipse.epsilon.base.incremental.TraceReexecution;
+import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
@@ -20,7 +20,8 @@ import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
  *
  * @author Horacio Hoyos Rodriguez
  */
-public class ReexecutionContextTrace extends ConstraintModuleElementTraceReexecution implements TraceReexecution {
+public class ReexecutionContextTrace
+	extends ConstraintModuleElementTraceReexecution implements TraceReexecution {
 
 	/** The context trace. */
 	protected final IContextTrace contextTrace;
@@ -74,16 +75,6 @@ public class ReexecutionContextTrace extends ConstraintModuleElementTraceReexecu
 	}
 
 	/**
-	 * Module element trace.
-	 *
-	 * @return the i context trace
-	 */
-	@Override
-	public IContextTrace moduleElementTrace() {
-		return contextTrace;
-	}
-
-	/**
 	 * Reexecute.
 	 *
 	 * @param context the context
@@ -91,25 +82,15 @@ public class ReexecutionContextTrace extends ConstraintModuleElementTraceReexecu
 	 * @throws EolRuntimeException the eol runtime exception
 	 */
 	@Override
-	public void reexecute(IIncrementalBaseContext context, IncrementalExecutionStrategy strategy)
-			throws EolRuntimeException {
+	public void reexecute(
+		IIncrementalBaseContext context,
+		IModuleIncremental evlModule)
+		throws EolRuntimeException {
 		assert context instanceof IIncrementalEvlContext;
-		assert strategy instanceof IncrementalEvlExecutionStrategy;
+		assert evlModule instanceof IEvlModuleIncremental;
 		Object selfVal = getSelf((IIncrementalEvlContext) context);
-		TracedConstraintContext tcc = ((IncrementalEvlExecutionStrategy) strategy).getConstraintContext(moduleElementTrace());
+		TracedConstraintContext tcc = ((IEvlModuleIncremental) evlModule).getTracedConstraintContext(contextTrace);
 		tcc.execute(selfVal, (IIncrementalEvlContext)context);
-	}
-
-	/**
-	 * Gets the traced constraint.
-	 *
-	 * @param strategy the strategy
-	 * @return the traced constraint
-	 */
-	@Override
-	protected TracedConstraint getTracedConstraint(IncrementalExecutionStrategy strategy) {
-		// TODO Implement EvlModuleElementTraceReexecution.getTracedConstraint
-		throw new RuntimeException("Unimplemented Method EvlModuleElementTraceReexecution.getTracedConstraint invoked.");
 	}
 
 	/**
@@ -122,4 +103,37 @@ public class ReexecutionContextTrace extends ConstraintModuleElementTraceReexecu
 		// TODO Implement EvlModuleElementTraceReexecution.section
 		throw new RuntimeException("Unimplemented Method EvlModuleElementTraceReexecution.section invoked.");
 	}
+
+	@Override
+	protected TracedConstraint getTracedConstraint(IEvlModuleIncremental evlModule) {
+		// // TODO Implement EvlModuleElementTraceReexecution.section
+		throw new RuntimeException("Unimplemented Method EvlModuleElementTraceReexecution.getTracedConstraint invoked.");
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((contextTrace == null) ? 0 : contextTrace.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ReexecutionContextTrace other = (ReexecutionContextTrace) obj;
+		if (contextTrace == null) {
+			if (other.contextTrace != null)
+				return false;
+		} else if (!contextTrace.equals(other.contextTrace))
+			return false;
+		return true;
+	}
+	
+	
 }

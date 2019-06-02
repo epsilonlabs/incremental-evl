@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
+import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 
 /**
@@ -16,20 +16,20 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
  */
 public class ModuleNotifications {
 
-	private final Set<IIncrementalModule> modules;
+	private final Set<IModuleIncremental> modules;
 	private final IIncrementalModel owner;
 	
 	public ModuleNotifications(IIncrementalModel ownr) {
 		this(ownr, Collections.emptySet());
 	}
 	
-	public ModuleNotifications(IIncrementalModel ownr, Collection<IIncrementalModule> mdls) {
+	public ModuleNotifications(IIncrementalModel ownr, Collection<IModuleIncremental> mdls) {
 		modules = new HashSet<>(mdls);
 		owner = ownr;
 	}
 
 	public void notifyChange(Object element, String propertyName) {
-		for (IIncrementalModule m : modules) {
+		for (IModuleIncremental m : modules) {
 			try {
 				m.onChange(owner, element, propertyName);
 			} catch (EolRuntimeException e) {
@@ -40,7 +40,7 @@ public class ModuleNotifications {
 	}
 	
 	public void notifyDeletion(Object element) {
-		for (IIncrementalModule m : modules) {
+		for (IModuleIncremental m : modules) {
 			try {
 				m.onDelete(owner, element);
 			} catch (EolRuntimeException e) {
@@ -50,7 +50,7 @@ public class ModuleNotifications {
 	}
 	
 	public void notifyCreation(Object element) {
-		for (IIncrementalModule m : modules) {
+		for (IModuleIncremental m : modules) {
 			try {
 				m.onCreate(owner, element);
 			} catch (EolRuntimeException e) {
@@ -64,7 +64,7 @@ public class ModuleNotifications {
 	 *
 	 * @return true if this collection changed as a result of the call
 	 */
-	public boolean registerModule(IIncrementalModule module) {
+	public boolean registerModule(IModuleIncremental module) {
 		return modules.add(module);
 	}
 	
@@ -72,7 +72,7 @@ public class ModuleNotifications {
 	 * Determine if the module is registered with this model to receive notifications
 	 * @param module
 	 */
-	public boolean isRegistered(IIncrementalModule module) {
+	public boolean isRegistered(IModuleIncremental module) {
 		return modules.contains(module);
 	}
 	
@@ -82,7 +82,7 @@ public class ModuleNotifications {
 	 * @param element
 	 * @param propertyName
 	 */
-	public boolean unregisterModule(IIncrementalModule module) {
+	public boolean unregisterModule(IModuleIncremental module) {
 		return modules.remove(module);
 	
 	}

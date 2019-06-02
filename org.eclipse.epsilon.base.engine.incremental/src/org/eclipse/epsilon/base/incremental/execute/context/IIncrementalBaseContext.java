@@ -15,7 +15,7 @@ import java.util.Collection;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.execute.ExecutionMode;
 import org.eclipse.epsilon.base.incremental.execute.IExecutionTrace;
-import org.eclipse.epsilon.base.incremental.execute.IIncrementalModule;
+import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
@@ -46,8 +46,8 @@ public interface IIncrementalBaseContext extends IEolContext {
 	 * @since 1.6
 	 */
 	@Override
-	default IIncrementalModule getModule() {
-		return (IIncrementalModule) this.getModule();
+	default IModuleIncremental getModule() {
+		return (IModuleIncremental) this.getModule();
 	}
 	
 	/**
