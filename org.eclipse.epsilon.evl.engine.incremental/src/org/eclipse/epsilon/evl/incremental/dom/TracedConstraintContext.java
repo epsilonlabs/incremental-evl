@@ -11,6 +11,7 @@
 package org.eclipse.epsilon.evl.incremental.dom;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
@@ -22,7 +23,6 @@ import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
-import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
 import org.eclipse.epsilon.common.module.IModule;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
@@ -96,13 +96,12 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 			return false;
 		}
 		assert context instanceof IncrementalEvlContext;
-		IncrementalEvlContext tracedEvlContext = (IncrementalEvlContext) context;
-		if (moduleElementTrace == null) {
-			createModuleElementTraces(tracedEvlContext);	
-		}
-		populateExecutionContext(object, tracedEvlContext, (IIncrementalModel) owningModel);
+		IncrementalEvlContext incrementalContext = (IncrementalEvlContext) context;
+		populateExecutionContext(incrementalContext,
+				((IIncrementalModel) owningModel).getModelUri(),
+				((IIncrementalModel) owningModel).getElementId(object));
 		if (guardBlock != null) {
-			return guardBlock.execute(tracedEvlContext, Variable.createReadOnlyVariable("self", object));
+			return guardBlock.execute(incrementalContext, Variable.createReadOnlyVariable("self", object));
 		} else {
 			return true;
 		}
@@ -117,23 +116,23 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 	 * @param model
 	 * @throws EolRuntimeException
 	 */
-	private void populateExecutionContext(Object modelElement,
-		IncrementalEvlContext context,
-		final IIncrementalModel model) throws EolRuntimeException {		
-		logger.info("createExecutionContext for {}:{}  with element {}", getTypeName(), index,
-				modelElement);
-		IModelElementTrace elementTrace;
+	public void populateExecutionContext(IncrementalEvlContext context,
+		String modelUri,
+		String modelElementUri) throws EolRuntimeException {		
+		if (moduleElementTrace == null) {
+			createModuleElementTraces(context);	
+		}
+		logger.info("createExecutionContext for {}:{}  with element {}", getTypeName(), index, modelElementUri);
 		try {
 			currentContext = moduleElementTrace.getOrCreateExecutionContext();
 			assert this.currentContext != null;
-			elementTrace = IncrementalUtils.getOrCreateModelElementTrace(modelElement, context,
-					model);
+			Optional<IModelElementTrace> elementTrace = context.getTraceManager().getModelTraceRepository().getModelElementTraceFor(modelUri, modelElementUri);
 			if (guardBlock != null) {
 				((TracedExecutableBlock<?,?>) guardBlock).setCurrentContext(getCurrentContext());
 			}
-			getCurrentContext().getOrCreateModelElementVariable("self", elementTrace);
+			getCurrentContext().getOrCreateModelElementVariable("self", elementTrace.get());
 			
-			IModuleExecutionTraceRepository executionTraceRepository = context.getTraceManager()
+			IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager()
 					.getExecutionTraceRepository();
 			String moduleUri = context.getModule().getChksum();
 			IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository

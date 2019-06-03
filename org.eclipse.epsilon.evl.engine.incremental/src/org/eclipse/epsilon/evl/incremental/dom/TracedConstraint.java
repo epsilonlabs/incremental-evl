@@ -17,10 +17,13 @@ import java.util.Optional;
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
+import org.eclipse.epsilon.common.module.AbstractModuleElement;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.FrameType;
 import org.eclipse.epsilon.eol.execute.context.Variable;
+import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.erl.execute.context.IErlContext;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
@@ -153,6 +156,9 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 		IErlContext context_,
 		String part) throws EolRuntimeException {
 		IncrementalEvlContext context = (IncrementalEvlContext) context_;
+		IModel model = context.getModelRepository().getOwningModel(selfModelElement);
+		assert model instanceof IIncrementalModel;
+		((TracedConstraintContext) getConstraintContext()).populateExecutionContext(context, ((IIncrementalModel) model).getModelUri(), model.getElementId(selfModelElement));
 		switch(part) {
 		case "I":
 		case "GI":		// Invariant Guard
@@ -194,7 +200,7 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 		} catch (EolIncrementalExecutionException e) {
 			throw new EolRuntimeException(e);
 		}
-		boolean execute = false;
+		boolean execute = true;
 		if (rit.hasNext()) {
 			IGuardResult r = rit.next();
 			execute = r.getValue();

@@ -98,7 +98,7 @@ public class SimpleStrategy implements IncrementalEvlExecutionStrategy {
 						}
 						// If any property changed also get all Instance accesses by elements type/kind
 						// and then execute. FIXME Can we tell if the property access was after an AllInstances?
-						if (traces != null) {
+						if (!traces.isEmpty()) {
 							traces.addAll(moduleTraceRepo
 									.findAllInstancesExecutionTraces(
 										evlModule.getChksum(),
