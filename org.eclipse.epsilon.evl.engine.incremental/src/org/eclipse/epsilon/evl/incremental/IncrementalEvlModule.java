@@ -243,69 +243,21 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 
 	@Override
 	public void onCreate(IIncrementalModel model, Object newElement) throws EolRuntimeException {
-
 		logger.info("On Craete event for {}", newElement);
-		IEvlExecutionTraceManager etManager = getContext().getTraceManager();
-		// Do we need to execute the pre blocks to restore context?
-		// logger.info("Executing pre{}");
-		// execute(getPre(), context);
-
-		for (ConstraintContext conCtx : getConstraintContexts()) {
-			try {
-				if (conCtx.appliesTo(newElement, getContext())) {
-					logger.info("Found matching context, executing");
-					conCtx.execute(preProcessConstraintContext(conCtx), getContext());
-				}
-			} catch (EolRuntimeException e) {
-				logger.error("Error executing contexts for new element", e);
-			}
-		}
-		IEvlModuleTraceRepository  repo = getContext().getTraceManager().getExecutionTraceRepository();
-		String moduleUri = context.getModule().getUri().toString();
-		
-		
-		Set<TraceReexecution> traces = repo.findAllInstancesExecutionTraces(moduleUri,
-				model.getModelUri(), model.getTypeNameOf(newElement));
-		// FIXME Need an strategy!
-		//executeTraces(moduleUri, model, traces, newElement);
-		for (UnsatisfiedConstraint uc : getContext().getUnsatisfiedConstraints()) {
-			logger.debug(uc.getMessage());
-		}
-		logger.info("Persisting traces");
-		etManager.persistTraceInformation();
-		getContext().getConstraintTrace().clear();
+		IncrementalEvlExecutionStrategy strategy = new NewElementsStrategy(newElement, model, live);
+		strategy.execute(getContext(), this);
 	}
 
 	@Override
 	public void onDelete(IIncrementalModel model, Object modelElement) throws EolRuntimeException {
 
 		logger.info("On Delete event for {}", modelElement);
-		String elementUri = model.getElementId(modelElement);
 		IEvlModuleTraceRepository  moduleRepo = getContext().getTraceManager().getExecutionTraceRepository();
-		String moduleUri = context.getModule().getUri().toString();
-		
-		
 		Collection<IModelElementTrace> traces = new HashSet<>();
 		traces.add(moduleRepo.findModelElementTrace(model.getModelUri(), model.getElementId(modelElement)));
-		IncrementalEvlExecutionStrategy strategy = new DeletedElementsStrategy(traces, model);
+		IncrementalEvlExecutionStrategy strategy = new DeletedElementsStrategy(traces, model, live);
 		logger.info("Executing indirect contexts and invariants");
-		strategy.execute(
-				moduleRepo,
-				getContext().getTraceManager().getModelTraceRepository(),
-				getContext(),
-				this);
-		
-		// Remove unsatisfied constraints related to the element.
-		Iterator<UnsatisfiedConstraint> it = getContext().getUnsatisfiedConstraints().iterator();
-		while (it.hasNext()) {
-			UnsatisfiedConstraint usc = it.next();
-			if (model.getElementId(usc.getInstance()).equals(elementUri)) {
-				logger.info("Removing unsatisfied contraint");
-				it.remove();
-			}
-		}
-		moduleRepo.removeTraceInformation(moduleUri, elementUri, model.getModelUri());
-		getContext().getConstraintTrace().clear();
+		strategy.execute(getContext(), this);
 	}
 
 	@Override
@@ -688,16 +640,10 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	 * @param sourceChksum The checksum for the file/code executed.
 	 * @throws EolRuntimeException if there is an error accessing information from any of the models.
 	 */
-	 // FIXME We need to harmonize the live events (onDelete, onChange, onCreate) with this code
-	 // so we can reuse/optimize the behaviour
 	private void executeIncremental(String sourceChksum) throws EolRuntimeException {
-		IEvlExecutionTraceManager etManager = getContext().getTraceManager();
-		ModelRepository modelRepository = context.getModelRepository();
-		IEvlModuleTraceRepository  executionTraceRepo = etManager.getExecutionTraceRepository();
-		IModelTraceRepository  modelTraceRepo = etManager.getModelTraceRepository();
 		// FIXME This should be injected so we can try different strategies!?
-		IncrementalEvlExecutionStrategy strategy = new SimpleStrategy(this);
-		strategy.execute(executionTraceRepo, modelTraceRepo, getContext(), null);
+		IncrementalEvlExecutionStrategy strategy = new SimpleStrategy();
+		strategy.execute(getContext(), this);
 	}
 	
 	/**

@@ -1,10 +1,8 @@
 package org.eclipse.epsilon.evl.incremental;
 
 import org.eclipse.epsilon.base.incremental.IncrementalExecutionStrategy;
-import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.evl.incremental.execute.context.IIncrementalEvlContext;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 
 /**
  * Provide different Evl execution strategies so we can compare different approaches
@@ -22,10 +20,7 @@ public interface IncrementalEvlExecutionStrategy extends IncrementalExecutionStr
 	 *
 	 * @throws EolRuntimeException the eol runtime exception
 	 */
-	void execute(
-		IEvlModuleTraceRepository  moduleTraceRepo,
-		IModelTraceRepository  modelTraceRepo,
-		IIncrementalEvlContext context,
+	void execute(IIncrementalEvlContext context,
 		IncrementalEvlModule evlModule) throws EolRuntimeException;
 
 }
