@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 
-import org.eclipse.epsilon.base.incremental.TraceReexecution;
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
@@ -36,7 +35,6 @@ import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
@@ -44,7 +42,6 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.eol.models.IModel;
-import org.eclipse.epsilon.eol.models.ModelRepository;
 import org.eclipse.epsilon.evl.EvlModule;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
@@ -55,12 +52,10 @@ import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraint;
 import org.eclipse.epsilon.evl.incremental.dom.TracedConstraintContext;
 import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
-import org.eclipse.epsilon.evl.incremental.execute.context.IIncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardedElementTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
@@ -225,21 +220,11 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	}
 
 	@Override
-	public void onChange(IIncrementalModel model, Object object, String propertyName) throws EolRuntimeException {
+	public void onChange(IIncrementalModel model, Object changedElement, String propertyName) throws EolRuntimeException {
 
-//		logger.info("On Change event for {} with property {}", object, propertyName);
-//		IEvlModuleTraceRepository repo = getContext().getTraceManager().getExecutionTraceRepository();
-//		String moduleUri = context.getModule().getUri().toString();
-//		Set<TraceReexecution> traces = repo.findPropertyAccessExecutionTraces(moduleUri,
-//				getContext().getTraceManager().getModelTraceRepository()
-//				.getPropertyTraceFor(
-//					model.getModelUri(),
-//					model.getElementId(object),
-//					propertyName));
-//		traces.addAll(repo.findAllInstancesExecutionTraces(moduleUri, model.getModelUri(), model.getTypeNameOf(object)));
-//		logger.debug("Found {} traces for the element", traces.size());
-		// FIXME Need an strategy!
-		// executeTraces(moduleUri, model, traces, object);
+		logger.info("On Change event for {} with property {}", changedElement, propertyName);
+		IncrementalEvlExecutionStrategy strategy = new ChangedElementsStrategy(changedElement, model, propertyName, live);
+		strategy.execute(getContext(), this);
 	}
 
 	@Override
@@ -256,8 +241,9 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		Collection<IModelElementTrace> traces = new HashSet<>();
 		Optional<IModelElementTrace> modelElementTrace = getContext().getTraceManager().getModelTraceRepository().getModelElementTraceFor(model.getModelUri(), model.getElementId(modelElement));
 		traces.add(modelElementTrace.orElseThrow(() -> new IllegalStateException("Unable to find model element trace for " + modelElement)));
-		IncrementalEvlExecutionStrategy strategy = new DeletedElementsStrategy(traces, model, live);
 		logger.info("Executing indirect contexts and invariants");
+		IncrementalEvlExecutionStrategy strategy = new DeletedElementsStrategy(traces, model, live);
+		
 		strategy.execute(getContext(), this);
 	}
 
