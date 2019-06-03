@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
@@ -161,8 +162,8 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 							+ "The module execution trace must be created at the begining of the execution of the module.");
 		}
 		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
-		IModelTypeTrace typeTrace = modelTraceRepository.getTypeTraceFor(incrementalModel.getModelUri(), typeName);
-		if (typeTrace == null) {
+		Optional<IModelTypeTrace> typeTrace = modelTraceRepository.getTypeTraceFor(incrementalModel.getModelUri(), typeName);
+		if (typeTrace.isEmpty()) {
 			IModelTrace modelTrace = modelTraceRepository.getModelTraceByIdentity(incrementalModel.getModelUri());
 			if (modelTrace == null) {
 				try {
@@ -175,8 +176,8 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 							incrementalModel.getModelUri()));
 				}
 			}
-			typeTrace = modelTrace.getOrCreateModelTypeTrace(typeName);
+			typeTrace = Optional.of(modelTrace.getOrCreateModelTypeTrace(typeName));
 		}
-		moduleExecutionTrace.getOrCreateAccess(IAllInstancesAccess.class, ofKind, executionTrace, currentContext, typeTrace);
+		moduleExecutionTrace.getOrCreateAccess(IAllInstancesAccess.class, ofKind, executionTrace, currentContext, typeTrace.get());
 	}
 }

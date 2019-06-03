@@ -13,6 +13,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
@@ -86,58 +87,60 @@ public class ModelTraceRepositoryImpl implements IModelTraceRepository {
 	}
 
 	@Override
-	public IModelTypeTrace getTypeTraceFor(String modelUri, String typeName) {
+	public Optional<IModelTypeTrace> getTypeTraceFor(String modelUri, String typeName) {
 		IModelTrace modelTrace = getModelTraceByIdentity(modelUri);
 		Iterator<IModelTypeTrace> iterator = modelTrace.types().get();
 		while (iterator.hasNext()) {
 			IModelTypeTrace tt = iterator.next();
 			if (tt.getName() == typeName) {
-				return tt;
+				return Optional.of(tt);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
-	public IModelElementTrace getModelElementTraceFor(String modelUri, String modelElementUri) {
+	public Optional<IModelElementTrace> getModelElementTraceFor(String modelUri, String modelElementUri) {
 		IModelTrace modelTrace = getModelTraceByIdentity(modelUri);
 		Iterator<IModelElementTrace> iterator = modelTrace.elements().get();
 		while (iterator.hasNext()) {
 			IModelElementTrace et = iterator.next();
 			if (et.getUri().equals(modelElementUri)) {
-				return et;
+				return Optional.of(et);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
-	public IPropertyTrace getPropertyTraceFor(String modelUri, String elementId, String propertyName) {
-		IModelElementTrace modelElementTrace = getModelElementTraceFor(modelUri, elementId);
-		Iterator<IPropertyTrace> iterator = modelElementTrace.properties().get();
-		while (iterator.hasNext()) {
-			IPropertyTrace pt = iterator.next();
-			if (pt.getName() == propertyName) {
-				return pt;
+	public Optional<IPropertyTrace> getPropertyTraceFor(String modelUri, String elementId, String propertyName) {
+		Optional<IModelElementTrace> modelElementTrace = getModelElementTraceFor(modelUri, elementId);
+		if (modelElementTrace.isPresent()) {
+			Iterator<IPropertyTrace> iterator = modelElementTrace.get().properties().get();
+			while (iterator.hasNext()) {
+				IPropertyTrace pt = iterator.next();
+				if (pt.getName() == propertyName) {
+					return Optional.of(pt);
+				}
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
-	public IModelElementTrace getModelElementTrace(String elementUri, IModelTrace modelTrace) {
+	public Optional<IModelElementTrace> getModelElementTrace(String elementUri, IModelTrace modelTrace) {
 		// TODO Implement IModelTraceRepository.getModelElementTrace
 		throw new RuntimeException("Unimplemented Method IModelTraceRepository.getModelElementTrace invoked.");
 	}
 
 	@Override
-	public IModelTrace getModelTraceForModule(String modelUri, String moduleUri) {
+	public Optional<IModelTrace> getModelTraceForModule(String modelUri, String moduleUri) {
 		// TODO Implement IModelTraceRepository.getModelTraceForModule
 		throw new RuntimeException("Unimplemented Method IModelTraceRepository.getModelTraceForModule invoked.");
 	}
 
 	@Override
-	public IModelTrace getModelTraceForModule(String modelUri, IModuleExecutionTrace moduleTrace) {
+	public Optional<IModelTrace> getModelTraceForModule(String modelUri, IModuleExecutionTrace moduleTrace) {
 		// TODO Implement IModelTraceRepository.getModelTraceForModule
 		throw new RuntimeException("Unimplemented Method IModelTraceRepository.getModelTraceForModule invoked.");
 	}

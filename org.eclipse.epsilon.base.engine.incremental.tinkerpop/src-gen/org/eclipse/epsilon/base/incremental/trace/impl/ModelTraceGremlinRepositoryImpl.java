@@ -13,6 +13,7 @@ package org.eclipse.epsilon.base.incremental.trace.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
@@ -118,9 +119,8 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
 		return result;
 	}
 
-
 	@Override
-	public IModelElementTrace getModelElementTraceFor(String modelUri, String modelElementUri) {
+	public Optional<IModelElementTrace> getModelElementTraceFor(String modelUri, String modelElementUri) {
 		ModelElementTraceGremlin result = null;
 		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 			GraphTraversal<Vertex, Vertex> gt = agts.V().hasLabel("ModelTrace").has("uri", modelUri)
@@ -131,12 +131,12 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
 		} catch (Exception e) {
 			throw new IllegalStateException("There was an error during graph traversal.", e);
         }
-		return result;
+		return Optional.ofNullable(result);
 	}
 
 
 	@Override
-	public IModelTypeTrace getTypeTraceFor(String modelUri, String typeName) {
+	public Optional<IModelTypeTrace> getTypeTraceFor(String modelUri, String typeName) {
 		ModelTypeTraceGremlin result = null;
 		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 			GraphTraversal<Vertex, Vertex> gt = agts.V().hasLabel("ModelTrace")
@@ -148,12 +148,12 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
 		} catch (Exception e) {
 			throw new IllegalStateException("There was an error during graph traversal.", e);
         }
-		return result;
+		return Optional.ofNullable(result);
 	}
 
 
 	@Override
-	public IPropertyTrace getPropertyTraceFor(String modelUri, String modelElementUri, String propertyName) {
+	public Optional<IPropertyTrace> getPropertyTraceFor(String modelUri, String modelElementUri, String propertyName) {
 		PropertyTraceGremlin result = null;
 		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 			GraphTraversal<Vertex, Vertex> gt = agts.V().hasLabel("ModelTrace")
@@ -166,11 +166,11 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
 		} catch (Exception e) {
 			throw new IllegalStateException("There was an error during graph traversal.", e);
         }
-		return result;
+		return Optional.ofNullable(result);
 	}
 	
 	@Override
-	public IModelTrace getModelTraceForModule(String modelUri, String moduleUri) {
+	public Optional<IModelTrace> getModelTraceForModule(String modelUri, String moduleUri) {
 		IModelTrace result = null;
 		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 			GraphTraversal<Vertex, Vertex> gt = agts.V().hasLabel("EvlModuleTrace")
@@ -184,11 +184,11 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
 		catch (Exception e) {
 			throw new IllegalStateException("There was an error during graph traversal.", e);
         }
-		return result;
+		return Optional.ofNullable(result);
 	}
 	
 	@Override
-	public IModelTrace getModelTraceForModule(String modelUri, IModuleExecutionTrace moduleTrace) {
+	public Optional<IModelTrace> getModelTraceForModule(String modelUri, IModuleExecutionTrace moduleTrace) {
 		IModelTrace result = null;
 		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 			GraphTraversal<Vertex, Vertex> gt = agts.V(moduleTrace.getId())
@@ -201,12 +201,12 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
 		catch (Exception e) {
 			throw new IllegalStateException("There was an error during graph traversal.", e);
         }
-		return result;
+		return Optional.ofNullable(result);
 	}
 	
 	
 	@Override
-	public IModelElementTrace getModelElementTrace(String elementUri, IModelTrace modelTrace) {
+	public Optional<IModelElementTrace> getModelElementTrace(String elementUri, IModelTrace modelTrace) {
 		IModelElementTrace result = null;
 		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 			GraphTraversal<Vertex, Vertex> gt = agts.V(modelTrace.getId())
@@ -219,7 +219,7 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
 		catch (Exception e) {
 			throw new IllegalStateException("There was an error during graph traversal.", e);
         }
-		return result;
+		return Optional.ofNullable(result);
 		
 	}
 	

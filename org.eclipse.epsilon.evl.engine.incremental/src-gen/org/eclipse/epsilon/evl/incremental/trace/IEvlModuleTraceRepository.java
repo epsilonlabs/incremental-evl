@@ -132,9 +132,6 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 	
 	IGuardResult findResultInGuard(IGuardTrace guardTrace, IExecutionContext currentContext);
 
-	IModelElementTrace findModelElementTrace(String modelUri, String elementId);
-
-
 	/** protected region IEvlModuleTraceRepositry end **/
 
 }

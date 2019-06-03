@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.TraceReexecution;
@@ -226,17 +227,17 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	@Override
 	public void onChange(IIncrementalModel model, Object object, String propertyName) throws EolRuntimeException {
 
-		logger.info("On Change event for {} with property {}", object, propertyName);
-		IEvlModuleTraceRepository repo = getContext().getTraceManager().getExecutionTraceRepository();
-		String moduleUri = context.getModule().getUri().toString();
-		Set<TraceReexecution> traces = repo.findPropertyAccessExecutionTraces(moduleUri,
-				getContext().getTraceManager().getModelTraceRepository()
-				.getPropertyTraceFor(
-					model.getModelUri(),
-					model.getElementId(object),
-					propertyName));
-		traces.addAll(repo.findAllInstancesExecutionTraces(moduleUri, model.getModelUri(), model.getTypeNameOf(object)));
-		logger.debug("Found {} traces for the element", traces.size());
+//		logger.info("On Change event for {} with property {}", object, propertyName);
+//		IEvlModuleTraceRepository repo = getContext().getTraceManager().getExecutionTraceRepository();
+//		String moduleUri = context.getModule().getUri().toString();
+//		Set<TraceReexecution> traces = repo.findPropertyAccessExecutionTraces(moduleUri,
+//				getContext().getTraceManager().getModelTraceRepository()
+//				.getPropertyTraceFor(
+//					model.getModelUri(),
+//					model.getElementId(object),
+//					propertyName));
+//		traces.addAll(repo.findAllInstancesExecutionTraces(moduleUri, model.getModelUri(), model.getTypeNameOf(object)));
+//		logger.debug("Found {} traces for the element", traces.size());
 		// FIXME Need an strategy!
 		// executeTraces(moduleUri, model, traces, object);
 	}
@@ -252,9 +253,9 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 	public void onDelete(IIncrementalModel model, Object modelElement) throws EolRuntimeException {
 
 		logger.info("On Delete event for {}", modelElement);
-		IEvlModuleTraceRepository  moduleRepo = getContext().getTraceManager().getExecutionTraceRepository();
 		Collection<IModelElementTrace> traces = new HashSet<>();
-		traces.add(moduleRepo.findModelElementTrace(model.getModelUri(), model.getElementId(modelElement)));
+		Optional<IModelElementTrace> modelElementTrace = getContext().getTraceManager().getModelTraceRepository().getModelElementTraceFor(model.getModelUri(), model.getElementId(modelElement));
+		traces.add(modelElementTrace.orElseThrow(() -> new IllegalStateException("Unable to find model element trace for " + modelElement)));
 		IncrementalEvlExecutionStrategy strategy = new DeletedElementsStrategy(traces, model, live);
 		logger.info("Executing indirect contexts and invariants");
 		strategy.execute(getContext(), this);

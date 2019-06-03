@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 
@@ -216,18 +217,18 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 			logger.error("Error retreiving ModelTraceRepository");
 			throw new IllegalStateException("Error retreiving ModelTraceRepository", e1);
 		}
-		IModelElementTrace modelElementTrace = modelTraceRepository.getModelElementTraceFor(model.getModelUri(), (String) modelElementUri);
-		
-		
+		Optional<IModelElementTrace> modelElementTrace = modelTraceRepository.getModelElementTraceFor(model.getModelUri(), (String) modelElementUri);
+		if (modelElementTrace.isEmpty()) {
+			logger.error("Error retreiving modelElementTrace for " + modelElementUri);
+			throw new IllegalStateException("Error retreiving modelElementTrace for " + modelElementUri);
+		}
 		String moduleUri = context.getModule().getUri().toString();
 		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository
 				.getModuleExecutionTraceByIdentity(moduleUri);
-		
-		
 				
 		ISatisfiesAccess result = null;
 		try {
-			result = moduleExecutionTrace.getOrCreateAccess(ISatisfiesAccess.class, invariantTrace.getModuleElementTrace(), invariantTrace.getCurrentContext(), modelElementTrace);
+			result = moduleExecutionTrace.getOrCreateAccess(ISatisfiesAccess.class, invariantTrace.getModuleElementTrace(), invariantTrace.getCurrentContext(), modelElementTrace.get());
 		} catch (EolIncrementalExecutionException e) {
 			throw new IllegalStateException(e);
 		} finally {

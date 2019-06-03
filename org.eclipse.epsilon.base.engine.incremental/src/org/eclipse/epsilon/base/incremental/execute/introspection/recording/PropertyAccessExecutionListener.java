@@ -2,6 +2,7 @@ package org.eclipse.epsilon.base.incremental.execute.introspection.recording;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Optional;
 import java.util.WeakHashMap;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
@@ -159,12 +160,12 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 					"A moduleExecutionTrace was not found for the module under execution. "
 							+ "The module execution trace must be created at the begining of the execution of the module.");
 		}
-		IPropertyTrace propertyTrace = modelTraceRepository.getPropertyTraceFor(model.getModelUri(),
+		Optional<IPropertyTrace> propertyTrace = modelTraceRepository.getPropertyTraceFor(model.getModelUri(),
 				model.getElementId(modelElement), propertyName);
-		if (propertyTrace == null) {
+		if (propertyTrace.isEmpty()) {
 			IModelElementTrace elementTrace = IncrementalUtils.getOrCreateModelElementTrace(modelElement, context,
 					model);
-			propertyTrace = elementTrace.getOrCreatePropertyTrace(propertyName);
+			propertyTrace = Optional.of(elementTrace.getOrCreatePropertyTrace(propertyName));
 		}
 		// FIXME A property access should also generate the matching element access.
 		IPropertyAccess pa = moduleExecutionTrace.getOrCreateAccess(IPropertyAccess.class, executionTrace, currentContext, propertyTrace);

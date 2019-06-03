@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -115,9 +116,9 @@ public class IncrementalUtils {
 		throws EolIncrementalExecutionException, EolRuntimeException {
 
 		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
-		IModelElementTrace elementTrace = modelTraceRepository.getModelElementTraceFor(model.getModelUri(),
+		Optional<IModelElementTrace> elementTrace = modelTraceRepository.getModelElementTraceFor(model.getModelUri(),
 				model.getElementId(modelElement));
-		if (elementTrace == null) {
+		if (elementTrace.isEmpty()) {
 			IModelTrace modelTrace = modelTraceRepository.getModelTraceByIdentity(model.getModelUri());
 			if (modelTrace == null) {
 				try {
@@ -131,24 +132,24 @@ public class IncrementalUtils {
 				}
 			}
 			String elementType = model.getTypeNameOf(modelElement);
-			IModelTypeTrace typeTrace = modelTraceRepository.getTypeTraceFor(model.getModelUri(), elementType);
-			if (typeTrace == null) {
-				typeTrace = modelTrace.getOrCreateModelTypeTrace(elementType);
+			Optional<IModelTypeTrace> typeTrace = modelTraceRepository.getTypeTraceFor(model.getModelUri(), elementType);
+			if (typeTrace.isEmpty()) {
+				typeTrace = Optional.of(modelTrace.getOrCreateModelTypeTrace(elementType));
 			}
-			elementTrace = modelTrace.getOrCreateModelElementTrace(model.getElementId(modelElement), typeTrace);
+			elementTrace = Optional.of(modelTrace.getOrCreateModelElementTrace(model.getElementId(modelElement), typeTrace.get()));
 			for (String kind : model.getAllTypeNamesOf(modelElement)) {
 				typeTrace = modelTraceRepository.getTypeTraceFor(model.getModelUri(), kind);
-				if (typeTrace == null) {
-					typeTrace = modelTrace.getOrCreateModelTypeTrace(kind);
+				if (typeTrace.isEmpty()) {
+					typeTrace = Optional.of(modelTrace.getOrCreateModelTypeTrace(kind));
 				}
 				try {
-					elementTrace.kind().create(typeTrace);
+					elementTrace.get().kind().create(typeTrace.get());
 				} catch (TraceModelConflictRelation e) {
 					throw new EolIncrementalExecutionException("There was an error adding the kind information to the Element trace", e);
 				}
 			}
 		}
-		return elementTrace;
+		return elementTrace.orElseThrow(() -> new EolIncrementalExecutionException("There was an error creating the Element trace"));
 	}
 
 	public static boolean isLeftHandSideOfPointExpression(ModuleElement ast) {

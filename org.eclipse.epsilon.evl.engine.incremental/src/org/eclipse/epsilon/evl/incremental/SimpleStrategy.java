@@ -3,6 +3,7 @@ package org.eclipse.epsilon.evl.incremental;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.TraceReexecution;
@@ -67,10 +68,11 @@ public class SimpleStrategy implements IncrementalEvlExecutionStrategy {
 					if (pas.isEmpty()) {
 						// If there are not access maybe new element.
 						if (modelTrace == null) {
-							modelTrace = modelTraceRepo.getModelTraceForModule(im.getModelUri(), evlModule.getChksum());
+							modelTrace = modelTraceRepo.getModelTraceForModule(im.getModelUri(), evlModule.getChksum())
+									.orElseThrow(() -> new IllegalStateException("Unable to retreive model trace for model " + im.getModelUri()));
 						}
-						IModelElementTrace et = modelTraceRepo.getModelElementTrace(im.getElementId(element), modelTrace);
-						if (et == null) {
+						Optional<IModelElementTrace> et = modelTraceRepo.getModelElementTrace(im.getElementId(element), modelTrace);
+						if (et.isEmpty()) {
 							//Do we have any type/kind access?
 							Collection<String> alltypes = im.getAllTypeNamesOf(element);
 							for (String type : alltypes) {		// FIXME We can group all missing types, then execute?
@@ -122,38 +124,5 @@ public class SimpleStrategy implements IncrementalEvlExecutionStrategy {
 		}
 		context.getConstraintTrace().clear();
 	}
-
-//	public TracedConstraint getConstraint(ICheckTrace checkTrace) {
-//		return delegate.getConstraint(checkTrace);
-//	}
-//
-//	public TracedConstraint getConstraint(IMessageTrace messageTrace) {
-//		return delegate.getConstraint(messageTrace);
-//	}
-//
-//	public TracedConstraint getConstraint(IInvariantTrace invariantTrace) {
-//		return delegate.getConstraint(invariantTrace);
-//	}
-//
-//	public TracedConstraint getConstraint(IGuardTrace guardTrace) {
-//		return delegate.getConstraint(guardTrace);
-//	}
-//
-//	public TracedConstraintContext getConstraintContext(IGuardTrace guardTrace) {
-//		return delegate.getConstraintContext(guardTrace);
-//	}
-//
-//	public TracedConstraintContext getConstraintContext(IContextTrace contextTrace) {
-//		return delegate.getConstraintContext(contextTrace);
-//	}
-//
-//	@Override
-//	public void deleteModelElementTraces(
-//		Collection<IModelElementTrace> deleted,
-//		IEvlModuleTraceRepository moduleRepo, String sourceChksum,
-//		IIncrementalModel im,
-//		IIncrementalEvlContext context) throws EolRuntimeException {
-//		delegate.deleteModelElementTraces(deleted, moduleRepo, sourceChksum, im, context);
-//	}
 	
 }

@@ -12,6 +12,7 @@
 package org.eclipse.epsilon.base.incremental.trace;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.trace.IIdElementRepository;
@@ -34,7 +35,7 @@ public interface IModelTraceRepository extends IIdElementRepository<IModelTrace>
      * @return The model element trace, or null if not found
      */
      
-    IModelElementTrace getModelElementTraceFor(String modelUri, String modelElementUri);
+    Optional<IModelElementTrace> getModelElementTraceFor(String modelUri, String modelElementUri);
     
     /**
      * Get the model type trace for a given type name within a model trace
@@ -45,7 +46,7 @@ public interface IModelTraceRepository extends IIdElementRepository<IModelTrace>
      * @return The model type trace, or null if not found
      */
      
-    IModelTypeTrace getTypeTraceFor(String modelUri, String typeName);
+    Optional<IModelTypeTrace> getTypeTraceFor(String modelUri, String typeName);
     
     /**
      * Get the property trace for a given property name within a model element trace
@@ -57,7 +58,7 @@ public interface IModelTraceRepository extends IIdElementRepository<IModelTrace>
      * @return The property trace, or null if not found
      */
      
-    IPropertyTrace getPropertyTraceFor(String modelUri, String elementId, String propertyName);
+    Optional<IPropertyTrace> getPropertyTraceFor(String modelUri, String elementId, String propertyName);
     
     
     /**
@@ -68,7 +69,7 @@ public interface IModelTraceRepository extends IIdElementRepository<IModelTrace>
      * @return the model element trace from model
      */
      
-    IModelElementTrace getModelElementTrace(String elementUri, IModelTrace modelTrace);
+    Optional<IModelElementTrace> getModelElementTrace(String elementUri, IModelTrace modelTrace);
     
     /**
 	 * Get the model trace information of a model used within a module execution.
@@ -77,7 +78,7 @@ public interface IModelTraceRepository extends IIdElementRepository<IModelTrace>
 	 * @return
 	 */
 	
-    IModelTrace getModelTraceForModule(String modelUri, String moduleUri);
+    Optional<IModelTrace> getModelTraceForModule(String modelUri, String moduleUri);
 
 	/**
 	 * Get the model trace information of a model used within a module execution.
@@ -87,7 +88,7 @@ public interface IModelTraceRepository extends IIdElementRepository<IModelTrace>
 	 * @return
 	 */
 	
-    IModelTrace getModelTraceForModule(String modelUri, IModuleExecutionTrace moduleTrace);
+    Optional<IModelTrace> getModelTraceForModule(String modelUri, IModuleExecutionTrace moduleTrace);
     
     /**
 	 * Get all model element traces from the model. Elements with id included the filteredIds set
