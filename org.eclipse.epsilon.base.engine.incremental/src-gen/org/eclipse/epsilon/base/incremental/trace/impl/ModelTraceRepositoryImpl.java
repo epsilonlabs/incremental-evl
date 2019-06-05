@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-05-31.
+ * This file was automatically generated on: 2019-06-05.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,6 +18,8 @@ import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
+
+
 /** protected region ModelTraceRepositoryImplImports on begin **/
 import java.util.Collection;
 import java.util.Iterator;
@@ -26,7 +28,6 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 /** protected region ModelTraceRepositoryImplImports end **/
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,13 +83,13 @@ public class ModelTraceRepositoryImpl implements IModelTraceRepository {
     
     /** protected region IModelTraceRepositry on begin **/
 	@Override
-	public IModelTrace getModelTraceByIdentity(String modelUri) {
-		return extent.stream().filter(mt -> mt.getUri() == modelUri).findFirst().orElse(null);
+	public Optional<IModelTrace> getModelTraceByIdentity(String modelUri) {
+		return extent.stream().filter(mt -> mt.getUri() == modelUri).findFirst();
 	}
 
 	@Override
 	public Optional<IModelTypeTrace> getTypeTraceFor(String modelUri, String typeName) {
-		IModelTrace modelTrace = getModelTraceByIdentity(modelUri);
+		IModelTrace modelTrace = getModelTraceByIdentity(modelUri).get();
 		Iterator<IModelTypeTrace> iterator = modelTrace.types().get();
 		while (iterator.hasNext()) {
 			IModelTypeTrace tt = iterator.next();
@@ -101,7 +102,7 @@ public class ModelTraceRepositoryImpl implements IModelTraceRepository {
 
 	@Override
 	public Optional<IModelElementTrace> getModelElementTraceFor(String modelUri, String modelElementUri) {
-		IModelTrace modelTrace = getModelTraceByIdentity(modelUri);
+		IModelTrace modelTrace = getModelTraceByIdentity(modelUri).get();
 		Iterator<IModelElementTrace> iterator = modelTrace.elements().get();
 		while (iterator.hasNext()) {
 			IModelElementTrace et = iterator.next();

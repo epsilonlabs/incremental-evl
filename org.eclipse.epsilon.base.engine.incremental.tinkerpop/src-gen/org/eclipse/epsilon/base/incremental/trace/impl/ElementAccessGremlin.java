@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-05-31.
+ * This file was automatically generated on: 2019-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -111,13 +111,13 @@ public class ElementAccessGremlin implements IElementAccess, TinkerpopDelegate<V
             throw new TraceModelDuplicateElement();
         };
         try {
-            this.element.create(element);
             this.from.create(from);
             this.in.create(in);
+            this.element.create(element);
         } catch (TraceModelConflictRelation ex) {
-            ((ElementAccessHasElementGremlin)this.element).delegate().remove();
             ((AccessHasFromGremlin)this.from).delegate().remove();
             ((AccessHasInGremlin)this.in).delegate().remove();
+            ((ElementAccessHasElementGremlin)this.element).delegate().remove();
             throw ex;
         }
     

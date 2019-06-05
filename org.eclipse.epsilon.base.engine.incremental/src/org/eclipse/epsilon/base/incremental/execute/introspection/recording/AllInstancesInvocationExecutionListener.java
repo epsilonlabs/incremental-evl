@@ -4,24 +4,20 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IAllInstancesAccess;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.util.ModelTraceWizard;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.NameExpression;
 import org.eclipse.epsilon.eol.dom.OperationCallExpression;
@@ -155,29 +151,23 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 		IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager()
 				.getExecutionTraceRepository();
 		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository
-				.getModuleExecutionTraceByIdentity(context.getModule().getChksum());
-		if (moduleExecutionTrace == null) {
-			throw new EolIncrementalExecutionException(
-					"A moduleExecutionTrace was not found for the module under execution. "
-							+ "The module execution trace must be created at the begining of the execution of the module.");
-		}
+				.getModuleExecutionTraceByIdentity(context.getModule().getChksum())
+				.orElseThrow(() -> new EolIncrementalExecutionException(
+						"A moduleExecutionTrace was not found for the module under execution. "
+							+ "The module execution trace must be created at the begining of the "
+							+ "execution of the module."));
 		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
-		Optional<IModelTypeTrace> typeTrace = modelTraceRepository.getTypeTraceFor(incrementalModel.getModelUri(), typeName);
-		if (typeTrace.isEmpty()) {
-			IModelTrace modelTrace = modelTraceRepository.getModelTraceByIdentity(incrementalModel.getModelUri());
-			if (modelTrace == null) {
-				try {
-					modelTrace = new ModelTrace(incrementalModel.getModelUri());
-					modelTraceRepository.add(modelTrace);
-				} catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-					throw new EolIncrementalExecutionException(String.format(
-							"A modelTrace was not found for "
-									+ "the model wiht uri %s but there was an error craeting it.",
-							incrementalModel.getModelUri()));
-				}
-			}
-			typeTrace = Optional.of(modelTrace.getOrCreateModelTypeTrace(typeName));
+		IModelTypeTrace typeTrace = modelTraceRepository
+				.getTypeTraceFor(incrementalModel.getModelUri(), typeName)
+				.orElseGet(() -> 
+					new ModelTraceWizard().createTypeTrace(incrementalModel, typeName, modelTraceRepository)
+				);
+		if (typeTrace == null) {
+			throw new EolIncrementalExecutionException(String.format(
+					"A modelTrace was not found for "
+							+ "the model wiht uri %s but there was an error craeting it.",
+					incrementalModel.getModelUri()));	
 		}
-		moduleExecutionTrace.getOrCreateAccess(IAllInstancesAccess.class, ofKind, executionTrace, currentContext, typeTrace.get());
+		moduleExecutionTrace.getOrCreateAccess(IAllInstancesAccess.class, ofKind, executionTrace, currentContext, typeTrace);
 	}
 }

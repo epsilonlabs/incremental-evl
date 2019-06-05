@@ -16,7 +16,6 @@ import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionEx
 import org.eclipse.epsilon.base.incremental.execute.ExecutionMode;
 import org.eclipse.epsilon.base.incremental.execute.IExecutionTrace;
 import org.eclipse.epsilon.base.incremental.execute.IModuleIncremental;
-import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 
@@ -34,7 +33,7 @@ public interface IIncrementalBaseContext extends IEolContext {
 	 * @return the trace manager
 	 * @throws EolIncrementalExecutionException
 	 */
-	IExecutionTrace getTraceManager() throws EolRuntimeException;
+	IExecutionTrace getTraceManager();
 	
 
 

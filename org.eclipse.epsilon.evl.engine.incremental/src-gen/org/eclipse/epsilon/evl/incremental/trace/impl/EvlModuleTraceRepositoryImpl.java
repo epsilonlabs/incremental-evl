@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-05-31.
+ * This file was automatically generated on: 2019-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,11 +13,13 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceRepositoryImpl;
+
+
 /** protected region EvlModuleTraceRepositoryImplImports on begin **/
 import java.util.function.Function;
 import java.util.Collection;
@@ -37,18 +39,18 @@ import org.eclipse.epsilon.evl.incremental.ReexecutionMessageTrace;
 import org.eclipse.epsilon.evl.incremental.trace.*;
 /** protected region EvlModuleTraceRepositoryImplImports end **/
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unused")
-public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepositoryImpl<IEvlModuleTrace> implements IEvlModuleTraceRepository {
+public class EvlModuleTraceRepositoryImpl implements IEvlModuleTraceRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(EvlModuleTraceRepositoryImpl.class);
  
+    protected final Set<IEvlModuleTrace> extent;    
     
     public EvlModuleTraceRepositoryImpl() {
-        super();
+        this.extent = new LinkedHashSet<>();
     }
     
     @Override
@@ -69,7 +71,7 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
     
     @Override
     public void dispose() {
-        super.dispose();
+        this.extent.clear();
     }
     
     
@@ -96,12 +98,12 @@ public class EvlModuleTraceRepositoryImpl extends ModuleExecutionTraceRepository
 	}
 
     @Override
-	public IEvlModuleTrace getEvlModuleTraceByIdentity(String source) {
-		return (IEvlModuleTrace) extent.stream().filter(mt -> mt.getUri() == source).findFirst().orElse(null);
+	public Optional<IEvlModuleTrace> getEvlModuleTraceByIdentity(String source) {
+		return extent.stream().filter(mt -> mt.getUri() == source).findFirst();
 	}
 
     @Override
-	public IModuleExecutionTrace getModuleExecutionTraceByIdentity(String source) {
+	public Optional<IModuleExecutionTrace> getModuleExecutionTraceByIdentity(String source) {
 		return getEvlModuleTraceByIdentity(source);
 	}
     

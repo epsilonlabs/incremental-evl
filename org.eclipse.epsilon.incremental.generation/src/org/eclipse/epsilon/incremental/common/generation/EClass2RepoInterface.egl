@@ -14,6 +14,7 @@ import "Ecore2JavaTemplates.egl";
 [%=getHeader()%]
 package [%=qp%].trace;
 
+import java.util.Optional;
 import java.util.Collection;
 import java.util.Set;
 
@@ -57,7 +58,7 @@ public interface [%=name%] extends [%=superClass%] {
 var ids = ec.getIndexAttributes();
 if (not ids.isEmpty()) {%]
 
-    [%=ec.getJavaInterfaceName(interPrefix, interSufix)%] get[%=ec.name%]ByIdentity([%=ec.getEAttributeParameters().concat(", ")%]);
+    Optional<[%=ec.getJavaInterfaceName(interPrefix, interSufix)%]> get[%=ec.name%]ByIdentity([%=ec.getEAttributeParameters().concat(", ")%]);
 [%}%]
 
 [%=out.startPreserve("/**", "**/", ec.getJavaInterfaceName(interPrefix, interSufix) + "Repositry", true)%]

@@ -2,7 +2,6 @@ package org.eclipse.epsilon.base.incremental.execute.introspection.recording;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Optional;
 import java.util.WeakHashMap;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
@@ -11,7 +10,6 @@ import org.eclipse.epsilon.base.incremental.exceptions.models.NotSerializableMod
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
@@ -19,6 +17,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepositor
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.base.incremental.trace.util.IncrementalUtils;
+import org.eclipse.epsilon.base.incremental.trace.util.ModelTraceWizard;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.AssignmentStatement;
 import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
@@ -154,21 +153,18 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
 		
 		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository
-				.getModuleExecutionTraceByIdentity(context.getModule().getChksum());
-		if (moduleExecutionTrace == null) {
-			throw new EolIncrementalExecutionException(
-					"A moduleExecutionTrace was not found for the module under execution. "
-							+ "The module execution trace must be created at the begining of the execution of the module.");
-		}
-		Optional<IPropertyTrace> propertyTrace = modelTraceRepository.getPropertyTraceFor(model.getModelUri(),
-				model.getElementId(modelElement), propertyName);
-		if (propertyTrace.isEmpty()) {
-			IModelElementTrace elementTrace = IncrementalUtils.getOrCreateModelElementTrace(modelElement, context,
-					model);
-			propertyTrace = Optional.of(elementTrace.getOrCreatePropertyTrace(propertyName));
-		}
-		// FIXME A property access should also generate the matching element access.
-		IPropertyAccess pa = moduleExecutionTrace.getOrCreateAccess(IPropertyAccess.class, executionTrace, currentContext, propertyTrace.get());
+				.getModuleExecutionTraceByIdentity(context.getModule().getChksum())
+				.orElseThrow(() -> new EolIncrementalExecutionException(
+						"A moduleExecutionTrace was not found for the module under execution. "
+						+ "The module execution trace must be created at the begining of the "
+						+ "execution of the module."));
+		IPropertyTrace propertyTrace = modelTraceRepository
+			.getPropertyTraceFor(model.getModelUri(), model.getElementId(modelElement), propertyName)
+			.orElseGet(() -> {
+				return new ModelTraceWizard().createPropertyTrace(model, modelElement, propertyName, context);
+				});
+		// FIXME A property access should also generate the matching element access?
+		IPropertyAccess pa = moduleExecutionTrace.getOrCreateAccess(IPropertyAccess.class, executionTrace, currentContext, propertyTrace);
 		setPropertyAccessValue(model, result, context, pa, modelElement, propertyName);
 	}
 	

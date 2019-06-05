@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-05-31.
+ * This file was automatically generated on: 2019-06-05.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -75,8 +75,8 @@ public class PropertyAccess implements IPropertyAccess {
             throw new TraceModelDuplicateElement();
         };
 
-        this.property = new PropertyAccessHasProperty(this);
         this.module = new AccessHasModule(this);
+        this.property = new PropertyAccessHasProperty(this);
         if (!this.property.create(property)) {
             throw new TraceModelDuplicateElement();
         }
@@ -157,18 +157,18 @@ public class PropertyAccess implements IPropertyAccess {
         PropertyAccess other = (PropertyAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (property.get() == null) {
-            if (other.property.get() != null)
-                return false;
-        }
-        if (!property.get().equals(other.property.get())) {
-            return false;
-        }
         if (module.get() == null) {
             if (other.module.get() != null)
                 return false;
         }
         if (!module.get().equals(other.module.get())) {
+            return false;
+        }
+        if (property.get() == null) {
+            if (other.property.get() != null)
+                return false;
+        }
+        if (!property.get().equals(other.property.get())) {
             return false;
         }
         return true; 
@@ -178,8 +178,8 @@ public class PropertyAccess implements IPropertyAccess {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((property.get() == null) ? 0 : property.get().hashCode());
         result = prime * result + ((module.get() == null) ? 0 : module.get().hashCode());
+        result = prime * result + ((property.get() == null) ? 0 : property.get().hashCode());
         return result;
     }
 }

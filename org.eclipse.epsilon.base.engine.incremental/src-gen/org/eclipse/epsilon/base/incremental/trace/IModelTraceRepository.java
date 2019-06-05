@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-05-31.
+ * This file was automatically generated on: 2019-06-05.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -11,8 +11,8 @@
  ******************************************************************************/
 package org.eclipse.epsilon.base.incremental.trace;
 
-import java.util.Collection;
 import java.util.Optional;
+import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.trace.IIdElementRepository;
@@ -23,7 +23,7 @@ import org.eclipse.epsilon.base.incremental.trace.IIdElementRepository;
 public interface IModelTraceRepository extends IIdElementRepository<IModelTrace> {
 
 
-    IModelTrace getModelTraceByIdentity(String uri);
+    Optional<IModelTrace> getModelTraceByIdentity(String uri);
 
 /** protected region IModelTraceRepositry on begin **/
     /**
@@ -59,7 +59,6 @@ public interface IModelTraceRepository extends IIdElementRepository<IModelTrace>
      */
      
     Optional<IPropertyTrace> getPropertyTraceFor(String modelUri, String elementId, String propertyName);
-    
     
     /**
      * Gets the model element trace from model.

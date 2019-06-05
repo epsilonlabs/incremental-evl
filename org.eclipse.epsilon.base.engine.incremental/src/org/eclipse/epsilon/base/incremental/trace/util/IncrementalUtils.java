@@ -4,24 +4,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
-import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
-import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
-import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
-import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
-import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
-import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.PropertyCallExpression;
-import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 
 /**
  * A collection of helper methods
@@ -99,58 +87,6 @@ public class IncrementalUtils {
 		return hashCode;
 	}
 
-	/**
-	 * @param modelElement
-	 * @param context
-	 * @param model
-	 * @param moduleUri
-	 * @param moduleExecutionTrace
-	 * @return
-	 * @throws EolIncrementalExecutionException
-	 * @throws EolRuntimeException
-	 */
-	public static IModelElementTrace getOrCreateModelElementTrace(
-		final Object modelElement,
-		final IIncrementalBaseContext context,
-		final IIncrementalModel model)
-		throws EolIncrementalExecutionException, EolRuntimeException {
-
-		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
-		Optional<IModelElementTrace> elementTrace = modelTraceRepository.getModelElementTraceFor(model.getModelUri(),
-				model.getElementId(modelElement));
-		if (elementTrace.isEmpty()) {
-			IModelTrace modelTrace = modelTraceRepository.getModelTraceByIdentity(model.getModelUri());
-			if (modelTrace == null) {
-				try {
-					modelTrace = new ModelTrace(model.getModelUri());
-					modelTraceRepository.add(modelTrace);
-				} catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-					throw new EolIncrementalExecutionException(String.format(
-							"A modelTrace was not found for "
-									+ "the model wiht uri %s but there was an error craeting it.",
-							model.getModelUri()));
-				}
-			}
-			String elementType = model.getTypeNameOf(modelElement);
-			Optional<IModelTypeTrace> typeTrace = modelTraceRepository.getTypeTraceFor(model.getModelUri(), elementType);
-			if (typeTrace.isEmpty()) {
-				typeTrace = Optional.of(modelTrace.getOrCreateModelTypeTrace(elementType));
-			}
-			elementTrace = Optional.of(modelTrace.getOrCreateModelElementTrace(model.getElementId(modelElement), typeTrace.get()));
-			for (String kind : model.getAllTypeNamesOf(modelElement)) {
-				typeTrace = modelTraceRepository.getTypeTraceFor(model.getModelUri(), kind);
-				if (typeTrace.isEmpty()) {
-					typeTrace = Optional.of(modelTrace.getOrCreateModelTypeTrace(kind));
-				}
-				try {
-					elementTrace.get().kind().create(typeTrace.get());
-				} catch (TraceModelConflictRelation e) {
-					throw new EolIncrementalExecutionException("There was an error adding the kind information to the Element trace", e);
-				}
-			}
-		}
-		return elementTrace.orElseThrow(() -> new EolIncrementalExecutionException("There was an error creating the Element trace"));
-	}
 
 	public static boolean isLeftHandSideOfPointExpression(ModuleElement ast) {
 		return ast.getParent() instanceof PropertyCallExpression

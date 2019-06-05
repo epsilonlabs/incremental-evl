@@ -19,10 +19,8 @@ import java.util.Optional;
 
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.execute.ExecutionMode;
-import org.eclipse.epsilon.base.incremental.execute.IExecutionTrace;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
-import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.EvlContext;
@@ -67,15 +65,13 @@ public class IncrementalEvlContext extends EvlContext implements IIncrementalEvl
 		return (IEvlModuleIncremental) module;
 	}
 	
-	
-	
 	/**
 	 * Gets the trace manager.
 	 *
 	 * @return the trace manager
 	 * @throws EolIncrementalExecutionException
 	 */
-	public IEvlExecutionTraceManager getTraceManager() throws EolRuntimeException {
+	public IEvlExecutionTraceManager getTraceManager() {
 		return traceManager;
 	}
 

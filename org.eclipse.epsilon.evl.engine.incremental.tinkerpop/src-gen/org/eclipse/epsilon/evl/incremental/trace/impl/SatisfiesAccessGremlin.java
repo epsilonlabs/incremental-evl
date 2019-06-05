@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-05-31.
+ * This file was automatically generated on: 2019-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -88,8 +88,8 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, TinkerpopDelega
         this.delegate = vertex;
         this.gts = gts;
         this.wrapperFactory = wrapperFactory;
-        this.modelElement = new SatisfiesAccessHasModelElementGremlin(this, gts, wrapperFactory);
         this.module = new AccessHasModuleGremlin(this, gts, wrapperFactory);
+        this.modelElement = new SatisfiesAccessHasModelElementGremlin(this, gts, wrapperFactory);
         this.from = new AccessHasFromGremlin(this, gts, wrapperFactory);
         this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
         this.satisfiedInvariants = new SatisfiesAccessHasSatisfiedInvariantsGremlin(this, gts, wrapperFactory);
@@ -114,8 +114,8 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, TinkerpopDelega
         this.from = new AccessHasFromGremlin(this, gts, wrapperFactory);
         this.in = new AccessHasInGremlin(this, gts, wrapperFactory);
         this.satisfiedInvariants = new SatisfiesAccessHasSatisfiedInvariantsGremlin(this, gts, wrapperFactory);
-        this.modelElement = new SatisfiesAccessHasModelElementGremlin(this, gts, wrapperFactory);
         this.module = new AccessHasModuleGremlin(this, gts, wrapperFactory);
+        this.modelElement = new SatisfiesAccessHasModelElementGremlin(this, gts, wrapperFactory);
         if (!container.accesses().create(this)) {
             throw new TraceModelDuplicateElement();
         };
@@ -227,18 +227,18 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, TinkerpopDelega
         SatisfiesAccessGremlin other = (SatisfiesAccessGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
-    if (modelElement == null) {
-        if (other.modelElement != null)
-            return false;
-    }
-        if (!modelElement().get().equals(other.modelElement().get())) {
-            return false;
-        }
     if (module == null) {
         if (other.module != null)
             return false;
     }
         if (!module().get().equals(other.module().get())) {
+            return false;
+        }
+    if (modelElement == null) {
+        if (other.modelElement != null)
+            return false;
+    }
+        if (!modelElement().get().equals(other.modelElement().get())) {
             return false;
         }
         return true; 
@@ -248,10 +248,10 @@ public class SatisfiesAccessGremlin implements ISatisfiesAccess, TinkerpopDelega
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        IModelElementTrace modelElement = modelElement().get();
-        result = prime * result + ((modelElement == null) ? 0 : modelElement.hashCode());
         IModuleExecutionTrace module = module().get();
         result = prime * result + ((module == null) ? 0 : module.hashCode());
+        IModelElementTrace modelElement = modelElement().get();
+        result = prime * result + ((modelElement == null) ? 0 : modelElement.hashCode());
         return result;
     }
     

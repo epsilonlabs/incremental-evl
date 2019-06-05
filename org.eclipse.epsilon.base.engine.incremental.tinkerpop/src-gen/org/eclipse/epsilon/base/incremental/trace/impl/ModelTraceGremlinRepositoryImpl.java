@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-05-31.
+ * This file was automatically generated on: 2019-06-04.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -106,7 +106,7 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
     
     /** protected region IModelTraceRepositry on begin **/
     @Override
-	public IModelTrace getModelTraceByIdentity(String uri) {
+	public Optional<IModelTrace> getModelTraceByIdentity(String uri) {
     	ModelTraceGremlin result = null;
     	try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 			GraphTraversal<Vertex, Vertex> gt = agts.V().hasLabel("ModelTrace").has("uri", uri);
@@ -116,7 +116,7 @@ public class ModelTraceGremlinRepositoryImpl implements IModelTraceRepository {
 		} catch (Exception e) {
 			throw new IllegalStateException("There was an error during graph traversal.", e);
         }
-		return result;
+		return Optional.ofNullable(result);
 	}
 
 	@Override

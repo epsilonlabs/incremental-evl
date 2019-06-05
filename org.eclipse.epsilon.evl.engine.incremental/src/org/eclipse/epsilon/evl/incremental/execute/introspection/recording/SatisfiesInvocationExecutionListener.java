@@ -19,6 +19,7 @@ import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTrace;
+import org.eclipse.epsilon.base.incremental.trace.util.ModelTraceWizard;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.eol.dom.Expression;
 import org.eclipse.epsilon.eol.dom.OperationCallExpression;
@@ -210,21 +211,14 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 			invariants.add(targetInvariant);
 		}
 		
-		IModelTraceRepository modelTraceRepository;
-		try {
-			modelTraceRepository = context.getTraceManager().getModelTraceRepository();
-		} catch (EolRuntimeException e1) {
-			logger.error("Error retreiving ModelTraceRepository");
-			throw new IllegalStateException("Error retreiving ModelTraceRepository", e1);
-		}
-		Optional<IModelElementTrace> modelElementTrace = modelTraceRepository.getModelElementTraceFor(model.getModelUri(), (String) modelElementUri);
-		if (modelElementTrace.isEmpty()) {
-			logger.error("Error retreiving modelElementTrace for " + modelElementUri);
-			throw new IllegalStateException("Error retreiving modelElementTrace for " + modelElementUri);
-		}
+		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();		
+		IModelElementTrace modelElementTrace = modelTraceRepository
+			.getModelElementTraceFor(model.getModelUri(), (String) modelElementUri)
+			.orElseGet(() -> new ModelTraceWizard().createElementTrace(model, modelTraceRepository, modelElementUri));
 		String moduleUri = context.getModule().getUri().toString();
-		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository
+		Optional<IModuleExecutionTrace> moduleExecutionTrace = executionTraceRepository
 				.getModuleExecutionTraceByIdentity(moduleUri);
+		
 				
 		ISatisfiesAccess result = null;
 		try {

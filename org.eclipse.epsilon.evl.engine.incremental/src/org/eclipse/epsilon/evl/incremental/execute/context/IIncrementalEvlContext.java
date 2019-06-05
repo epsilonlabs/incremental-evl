@@ -13,7 +13,6 @@ package org.eclipse.epsilon.evl.incremental.execute.context;
 import java.util.Optional;
 
 import org.eclipse.epsilon.base.incremental.execute.context.IIncrementalBaseContext;
-import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.incremental.IEvlModuleIncremental;
@@ -28,7 +27,7 @@ import org.eclipse.epsilon.evl.incremental.execute.IEvlExecutionTraceManager;
 public interface IIncrementalEvlContext extends IIncrementalBaseContext, IEvlContext {
 
 	@Override
-	IEvlExecutionTraceManager getTraceManager() throws EolRuntimeException;
+	IEvlExecutionTraceManager getTraceManager();
 	
 
 	@Override

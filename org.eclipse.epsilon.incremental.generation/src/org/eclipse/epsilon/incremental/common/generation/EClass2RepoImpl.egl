@@ -16,19 +16,19 @@ package [%=qp%].trace.impl;
 
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 
 import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%];
 import [%=qp%].trace.[%=ec.getJavaInterfaceName(interPrefix, interSufix)%]Repository;
 [%
-var name;
+var name= ec.getJavaClassName(classPrefix, classSufix) + "RepositoryImpl";
 var implements;
 var superClass = ec.getESuperTypes().first();
-var extends = superClass.name + "RepositoryImpl<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+var extends;
 var extendGeneric = ec.getJavaInterfaceName(interPrefix, interSufix);
 if (ec.getEAllSubclasses().isEmpty() and not ec.isAbstract) {
     implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository";
-    name = ec.getJavaClassName(classPrefix, classSufix) + "RepositoryImpl";
 }
 else {
     name = name + "<ST extends " + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
@@ -39,9 +39,13 @@ else {
 	else {
 	   implements = ec.getJavaInterfaceName(interPrefix, interSufix) + "Repository<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
 	}
-}
-var erqp = superClass.getCorrectPackage(qp+".trace", ec);%]
+	if (not superClass.isAbstract) {
+        extends = superClass.name + "RepositoryImpl<" + ec.getJavaInterfaceName(interPrefix, interSufix) + ">";
+	    var erqp = superClass.getCorrectPackage(qp+".trace", ec);%]
 import [%=erqp%].impl.[%=superClass.name%]RepositoryImpl;
+[%  }
+}%]
+
 
 [%=out.startPreserve("/**", "**/", ec.name + "RepositoryImplImports", true)%]
 
