@@ -35,6 +35,7 @@ import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IModelAccess;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
+import org.eclipse.epsilon.base.incremental.trace.util.ModelTraceWizard;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.common.parse.AST;
 import org.eclipse.epsilon.eol.dom.ExecutableBlock;
@@ -404,28 +405,26 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		IEvlExecutionTraceManager etManager = getContext().getTraceManager();
 		IEvlRootElementsFactory factory = etManager.getTraceFactory();
 		logger.info("Getting the EvlModuleTrace.");
-		IEvlModuleTrace evlModuleTrace = etManager.getExecutionTraceRepository().getEvlModuleTraceByIdentity(sourceChksum);
+		IEvlModuleTrace evlModuleTrace = etManager
+			.getExecutionTraceRepository().getEvlModuleTraceByIdentity(sourceChksum)
+			.orElseGet(() -> {
+				try {
+					return etManager.getExecutionTraceRepository().add(factory.createModuleTrace(sourceChksum));
+				} catch (TraceModelConflictRelation | TraceModelDuplicateElement e1) {
+					logger.error("Duplicate module trace found.", e1);
+					return null;
+				}
+			});
 		if (evlModuleTrace == null) {
-			try {
-				evlModuleTrace = factory.createModuleTrace(sourceChksum);
-				evlModuleTrace = etManager.getExecutionTraceRepository().add(evlModuleTrace);
-			} catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-				throw new EolRuntimeException(e.getMessage());
-			}
+			throw new EolRuntimeException("Error craeting module trace (Duplicate information in DB).");
 		}
 		// Create ModelTraces for all the models
 		for (IModel m : context.getModelRepository().getModels()) {
 			if (m instanceof IIncrementalModel) {
 				IIncrementalModel im = (IIncrementalModel) m;
-				IModelTrace mt = etManager.getModelTraceRepository().getModelTraceByIdentity(im.getModelUri());
-				if (mt == null) {
-					try {
-						mt = factory.createModelTrace(im.getModelUri());
-						mt = etManager.getModelTraceRepository().add(mt);
-					} catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-						throw new EolRuntimeException(e.getMessage());
-					}
-				}
+				IModelTrace mt = etManager
+					.getModelTraceRepository().getModelTraceByIdentity(im.getModelUri())
+					.orElseGet(() -> new ModelTraceWizard(factory).createModelTrace(im, etManager.getModelTraceRepository()));
 				try {
 					evlModuleTrace.getOrCreateModelAccess(m.getName(), mt);
 				} catch (EolIncrementalExecutionException e) {
@@ -454,7 +453,8 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		// tuple.
 		try {
 			IEvlModuleTrace evlModuleTrace = etManager.getExecutionTraceRepository()
-					.getEvlModuleTraceByIdentity(sourceChecksum);
+					.getEvlModuleTraceByIdentity(sourceChecksum)
+					.orElse(null);	// TODO Make it nicer!
 			if (evlModuleTrace == null) {
 				incremental = false;
 			} else {
@@ -462,13 +462,13 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 				for (IModel m : context.getModelRepository().getModels()) {
 					if (m instanceof IIncrementalModel) {
 						IIncrementalModel im = (IIncrementalModel) m;
-						IModelTrace mt = etManager.getModelTraceRepository().getModelTraceByIdentity(im.getModelUri());
-						if (mt == null) {
+						Optional<IModelTrace> mt = etManager.getModelTraceRepository().getModelTraceByIdentity(im.getModelUri());
+						if (!mt.isPresent()) {
 							// If no trace information we need to re-execute
 							incremental = false;
 							break;
 						}
-						modelTraces.add(mt);
+						modelTraces.add(mt.get());
 					}
 				}
 				if (incremental) {

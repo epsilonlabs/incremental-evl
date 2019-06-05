@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 
@@ -185,13 +184,7 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 		logger.info("Creating SatisfiesTrace. invariant: {}, satisfied: {}, all: {}", invariantTrace.getModuleElementTrace().getName(),
 				parameterValues, all);
 
-		IEvlModuleTraceRepository executionTraceRepository = null;
-		try {
-			executionTraceRepository = (IEvlModuleTraceRepository) context.getTraceManager().getExecutionTraceRepository();
-		} catch (EolRuntimeException e1) {
-			logger.error("Error getting trace manager", e1);
-			throw new IllegalStateException("Error getting trace manager", e1);
-		}
+		IEvlModuleTraceRepository executionTraceRepository = (IEvlModuleTraceRepository) context.getTraceManager().getExecutionTraceRepository();
 		
 		// Each parameter should be an Invariant name
 		IContextTrace contextTrace = invariantTrace.getModuleElementTrace().invariantContext().get();
@@ -209,20 +202,19 @@ public class SatisfiesInvocationExecutionListener implements IExecutionListener 
 				}
 			}
 			invariants.add(targetInvariant);
-		}
-		
+		}		
 		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();		
 		IModelElementTrace modelElementTrace = modelTraceRepository
 			.getModelElementTraceFor(model.getModelUri(), (String) modelElementUri)
-			.orElseGet(() -> new ModelTraceWizard().createElementTrace(model, modelTraceRepository, modelElementUri));
+			.orElseGet(() -> new ModelTraceWizard(context.getTraceManager().getTraceFactory())
+				.createElementTrace(model, modelTraceRepository, modelElementUri));
 		String moduleUri = context.getModule().getUri().toString();
-		Optional<IModuleExecutionTrace> moduleExecutionTrace = executionTraceRepository
-				.getModuleExecutionTraceByIdentity(moduleUri);
-		
-				
+		IModuleExecutionTrace moduleExecutionTrace = executionTraceRepository
+				.getModuleExecutionTraceByIdentity(moduleUri)
+				.orElseThrow(() -> new IllegalStateException("Unable to fund module trace for module with checksum " + moduleUri));
 		ISatisfiesAccess result = null;
 		try {
-			result = moduleExecutionTrace.getOrCreateAccess(ISatisfiesAccess.class, invariantTrace.getModuleElementTrace(), invariantTrace.getCurrentContext(), modelElementTrace.get());
+			result = moduleExecutionTrace.getOrCreateAccess(ISatisfiesAccess.class, invariantTrace.getModuleElementTrace(), invariantTrace.getCurrentContext(), modelElementTrace);
 		} catch (EolIncrementalExecutionException e) {
 			throw new IllegalStateException(e);
 		} finally {

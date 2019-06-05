@@ -1,11 +1,9 @@
 package org.eclipse.epsilon.evl.incremental;
 
-import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.epsilon.base.incremental.TraceReexecution;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
-import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.evl.incremental.execute.context.IIncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
@@ -42,24 +40,24 @@ public class ChangedElementsStrategy implements IncrementalEvlExecutionStrategy 
 		IncrementalEvlModule evlModule) throws EolRuntimeException {
 		IEvlModuleTraceRepository repo = context.getTraceManager().getExecutionTraceRepository();
 		String moduleUri = context.getModule().getUri().toString();
-		Optional<IPropertyTrace> propertyTrace = context.getTraceManager().getModelTraceRepository()
+		context.getTraceManager().getModelTraceRepository()
 			.getPropertyTraceFor(
 				model.getModelUri(),
 				model.getElementId(changedElement),
-				propertyName);
-		if (propertyTrace.isEmpty()) {
-			logger.info(String.format("No propertry trace information found for property %s of %s", propertyName, model.getElementId(changedElement)));
-		}
-		Set<TraceReexecution> traces = repo.findPropertyAccessExecutionTraces(moduleUri,
-				propertyTrace.get());
-		traces.addAll(repo.findAllInstancesExecutionTraces(moduleUri, model.getModelUri(), model.getTypeNameOf(changedElement)));
-		logger.debug("Found {} traces for the element", traces.size());
-		for (TraceReexecution t : traces) {
-			try {
-				t.reexecute(context, evlModule);
-			} catch (EolRuntimeException e) {
-				logger.error("Error reexecuting trace", e);
-			}
-		}
+				propertyName)
+			.ifPresent(pt -> {
+				logger.info(String.format("Propertry trace information found for property %s of %s", propertyName, model.getElementId(changedElement)));
+				Set<TraceReexecution> traces = repo.findPropertyAccessExecutionTraces(moduleUri,
+						pt);
+				traces.addAll(repo.findAllInstancesExecutionTraces(moduleUri, model.getModelUri(), model.getTypeNameOf(changedElement)));
+				logger.debug("Found {} traces for the element", traces.size());
+				for (TraceReexecution t : traces) {
+					try {
+						t.reexecute(context, evlModule);
+					} catch (EolRuntimeException e) {
+						logger.error("Error reexecuting trace", e);
+					}
+				}
+			});
 	}
 }

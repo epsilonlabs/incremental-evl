@@ -72,7 +72,7 @@ public class SimpleStrategy implements IncrementalEvlExecutionStrategy {
 									.orElseThrow(() -> new IllegalStateException("Unable to retreive model trace for model " + im.getModelUri()));
 						}
 						Optional<IModelElementTrace> et = modelTraceRepo.getModelElementTrace(im.getElementId(element), modelTrace);
-						if (et.isEmpty()) {
+						if (!et.isPresent()) {
 							//Do we have any type/kind access?
 							Collection<String> alltypes = im.getAllTypeNamesOf(element);
 							for (String type : alltypes) {		// FIXME We can group all missing types, then execute?

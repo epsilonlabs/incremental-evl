@@ -123,7 +123,7 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 	}
     
 	@Override
-	public IEvlModuleTrace getEvlModuleTraceByIdentity(String uri) {
+	public Optional<IEvlModuleTrace> getEvlModuleTraceByIdentity(String uri) {
 		EvlModuleTraceGremlin result = null;
 		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 			GraphTraversal<Vertex, Vertex> gt = agts.V().hasLabel("EvlModuleTrace").has("uri", uri);
@@ -133,14 +133,13 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 		} catch (Exception e) {
             throw new IllegalStateException("There was an error during graph traversal.", e);
         }
-		return result;
+		return Optional.ofNullable(result);
 	}
 
 	@Override
-	public IModuleExecutionTrace getModuleExecutionTraceByIdentity(String uri) {
-		return getEvlModuleTraceByIdentity(uri);
+	public Optional<IModuleExecutionTrace> getModuleExecutionTraceByIdentity(String uri) {
+		return getEvlModuleTraceByIdentity(uri).map(t -> t);
 	}
-	
 	
 	@Override
 	public Set<TraceReexecution> findAllInstancesExecutionTraces(
@@ -191,8 +190,6 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 	    String moduleUri,
 	    Object elementId,
 	    Collection<String> allElementTypes) {
-		IEvlModuleTrace moduleTrace = getEvlModuleTraceByIdentity(moduleUri);
-		
 		Set<TraceReexecution> result = new HashSet<>();
 		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
 			GraphTraversal<Vertex, Path> find_gt = agts.V().hasLabel("EvlModuleTrace")
