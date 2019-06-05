@@ -1,5 +1,6 @@
 package org.eclipse.epsilon.base.incremental.trace.util;
 
+import org.eclipse.epsilon.base.incremental.IBaseRootElementsFactory;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.exceptions.TraceModelDuplicateElement;
@@ -10,7 +11,6 @@ import org.eclipse.epsilon.base.incremental.trace.IModelTrace;
 import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.base.incremental.trace.IModelTypeTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
-import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
 
 /**
  * A class that handles all creation of model traces: model, model elements, types, 
@@ -20,7 +20,14 @@ import org.eclipse.epsilon.base.incremental.trace.impl.ModelTrace;
  *
  */
 public class ModelTraceWizard {
+
+	private final IBaseRootElementsFactory factory;
 	
+	public ModelTraceWizard(IBaseRootElementsFactory fctry) {
+		super();
+		factory = fctry;
+	}
+
 	public IPropertyTrace createPropertyTrace(
 		IIncrementalModel incrementalModel,
 		Object modelElement,
@@ -79,10 +86,6 @@ public class ModelTraceWizard {
 		}
 	}
 	
-	/*
-	 * 
-	 */
-	
 	public IModelTypeTrace createTypeTrace(
 		IIncrementalModel incrementalModel,
 		String elementType,
@@ -102,8 +105,7 @@ public class ModelTraceWizard {
 	public IModelTrace createModelTrace(IIncrementalModel incrementalModel, IModelTraceRepository modelTraceRepository) {
 		IModelTrace newTrace = null;
 		try {
-			newTrace = new ModelTrace(incrementalModel.getModelUri());
-			modelTraceRepository.add(newTrace);
+			newTrace = modelTraceRepository.add(factory.createModelTrace(incrementalModel.getModelUri()));
 		} catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
 			// Since this should be called after a failed repository lookup, this exception
 			// should not happen and implies a big issue

@@ -160,7 +160,8 @@ public class AllInstancesInvocationExecutionListener implements IExecutionListen
 		IModelTypeTrace typeTrace = modelTraceRepository
 				.getTypeTraceFor(incrementalModel.getModelUri(), typeName)
 				.orElseGet(() -> 
-					new ModelTraceWizard().createTypeTrace(incrementalModel, typeName, modelTraceRepository)
+					new ModelTraceWizard(context.getTraceManager().getTraceFactory())
+						.createTypeTrace(incrementalModel, typeName, modelTraceRepository)
 				);
 		if (typeTrace == null) {
 			throw new EolIncrementalExecutionException(String.format(
