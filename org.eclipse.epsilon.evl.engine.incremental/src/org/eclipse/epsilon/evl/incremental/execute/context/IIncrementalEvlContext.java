@@ -35,10 +35,10 @@ public interface IIncrementalEvlContext extends IIncrementalBaseContext, IEvlCon
 		return (IEvlModuleIncremental) this.getModule();
 	}
 	
-	Optional<UnsatisfiedConstraint> getUnsatisfiedConstraint(TracedConstraint constraint);
+	Optional<UnsatisfiedConstraint> getUnsatisfiedConstraint(TracedConstraint constraint, Object self);
 	
-	void mapUnsatisfiedConstraint(TracedConstraint constraint, UnsatisfiedConstraint uc);
+	void mapUnsatisfiedConstraint(TracedConstraint constraint, UnsatisfiedConstraint uc, Object self);
 
-	void unmapUnsatisfiedConstraint(TracedConstraint constraint, UnsatisfiedConstraint uc);
+	void unmapUnsatisfiedConstraint(TracedConstraint constraint, UnsatisfiedConstraint uc, Object self);
 
 }

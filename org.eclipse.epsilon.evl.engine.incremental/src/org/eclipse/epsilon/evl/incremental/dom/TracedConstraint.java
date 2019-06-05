@@ -19,7 +19,6 @@ import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
-import org.eclipse.epsilon.common.module.AbstractModuleElement;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.FrameType;
 import org.eclipse.epsilon.eol.execute.context.Variable;
@@ -94,16 +93,12 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 		boolean result = !isLazy(context);
 		if (result && (guardBlock != null)) {
 			result &= appliesTo(modelElement, context);
-			try {
-				assert context instanceof IncrementalEvlContext;
-				IncrementalEvlContext tracedEvlContext = (IncrementalEvlContext) context;
-				IGuardTrace guardTrace = (IGuardTrace) ((TracedExecutableBlock<?, ?>) guardBlock).getModuleElementTrace();
-				IGuardResult guardResult = tracedEvlContext.getTraceManager().getExecutionTraceRepository()
-						.findResultInGuard(guardTrace, getCurrentContext());
-				guardResult.setValue(result);
-			} catch (EolRuntimeException e) {
-				logger.error("Error setting guard result", e);
-			}
+			assert context instanceof IncrementalEvlContext;
+			IncrementalEvlContext tracedEvlContext = (IncrementalEvlContext) context;
+			IGuardTrace guardTrace = (IGuardTrace) ((TracedExecutableBlock<?, ?>) guardBlock).getModuleElementTrace();
+			IGuardResult guardResult = tracedEvlContext.getTraceManager().getExecutionTraceRepository()
+					.findResultInGuard(guardTrace, getCurrentContext());
+			guardResult.setValue(result);
 		}
 		return result;
 	}
@@ -158,7 +153,7 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 		IncrementalEvlContext context = (IncrementalEvlContext) context_;
 		IModel model = context.getModelRepository().getOwningModel(selfModelElement);
 		assert model instanceof IIncrementalModel;
-		((TracedConstraintContext) getConstraintContext()).populateExecutionContext(context, ((IIncrementalModel) model).getModelUri(), model.getElementId(selfModelElement));
+		((TracedConstraintContext) getConstraintContext()).populateExecutionContext(context, (IIncrementalModel) model, selfModelElement);
 		switch(part) {
 		case "I":
 		case "GI":		// Invariant Guard
@@ -167,10 +162,11 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 			}
 			else {
 				// Remove unsatisfied constraint created by message/fix
-				Optional<UnsatisfiedConstraint> ouc = context.getUnsatisfiedConstraint(this);
+				Optional<UnsatisfiedConstraint> ouc = context.getUnsatisfiedConstraint(this, selfModelElement);
 				ouc.ifPresent(uc -> {
 						context.getUnsatisfiedConstraints().remove(uc);
-						context.unmapUnsatisfiedConstraint(this, uc);});
+						context.unmapUnsatisfiedConstraint(this, uc, selfModelElement);
+					});
 			}
 			break;
 		case "C":		// Check
@@ -188,6 +184,7 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 				String messageResult = messageBlock.execute(context, false);
 				unsatisfiedConstraint.setMessage(messageResult);
 				context.getUnsatisfiedConstraints().add(unsatisfiedConstraint);
+				context.mapUnsatisfiedConstraint(this, unsatisfiedConstraint, selfModelElement);
 			}
 		}
 		return Optional.empty();
@@ -210,10 +207,11 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 	// A previous Message/FIX may have created the UnsatisfiedConstraint
 	protected UnsatisfiedConstraint preprocessCheck(Object self, IEvlContext context_) {
 		IncrementalEvlContext context = (IncrementalEvlContext) context_;
-		Optional<UnsatisfiedConstraint> uc = context.getUnsatisfiedConstraint(this);
-		UnsatisfiedConstraint unsatisfiedConstraint = uc.orElseGet(() -> {
+		UnsatisfiedConstraint unsatisfiedConstraint = context
+			.getUnsatisfiedConstraint(this, self)
+		 	.orElseGet(() -> {
 					UnsatisfiedConstraint nuc = new UnsatisfiedConstraint();
-					context.mapUnsatisfiedConstraint(this, nuc);
+					context.mapUnsatisfiedConstraint(this, nuc, self);
 					return nuc;
 					});
 		context.getFrameStack()

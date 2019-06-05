@@ -22,6 +22,7 @@ import org.eclipse.epsilon.base.incremental.execute.ExecutionMode;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.AllInstancesInvocationExecutionListener;
 import org.eclipse.epsilon.base.incremental.execute.introspection.recording.PropertyAccessExecutionListener;
 import org.eclipse.epsilon.eol.execute.control.IExecutionListener;
+import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.EvlContext;
 import org.eclipse.epsilon.evl.incremental.IEvlModuleIncremental;
@@ -47,7 +48,9 @@ public class IncrementalEvlContext extends EvlContext implements IIncrementalEvl
 	
 	private List<IExecutionListener> executionListeners;
 	
-	private Map<TracedConstraint, UnsatisfiedConstraint> unsatisfiedMap = new HashMap<>();
+	//Map of TracedConstraints to their model element instances along with UnsatisfiedConstraint
+	// protected final Map<Object, Map<Constraint, Boolean>> storage;
+	private Map<TracedConstraint, Map<Object, UnsatisfiedConstraint>> unsatisfiedMap = new HashMap<>();
 	
 	/**
 	 * Flag to indicate that we are on live mode, i.e. listening to model changes
@@ -97,20 +100,39 @@ public class IncrementalEvlContext extends EvlContext implements IIncrementalEvl
 	}
 
 	@Override
-	public Optional<UnsatisfiedConstraint> getUnsatisfiedConstraint(TracedConstraint constraint) {
-		return Optional.ofNullable(unsatisfiedMap.get(constraint));
+	public Optional<UnsatisfiedConstraint> getUnsatisfiedConstraint(
+		TracedConstraint constraint,
+		Object self) {
+		if (!unsatisfiedMap.containsKey(constraint)) {
+			return Optional.empty();
+		}
+		return Optional.ofNullable(unsatisfiedMap.get(constraint).get(self));
 	}
 
 	@Override
-	public void mapUnsatisfiedConstraint(TracedConstraint constraint, UnsatisfiedConstraint uc) {
-		 unsatisfiedMap.put(constraint, uc);
+	public void mapUnsatisfiedConstraint(
+		TracedConstraint constraint,
+		UnsatisfiedConstraint uc,
+		Object self) {
+		Map<Object, UnsatisfiedConstraint> value = unsatisfiedMap.get(constraint);
+		if (value == null) {
+			value = new HashMap<>();
+			unsatisfiedMap.put(constraint, value);
+		}
+		if (value.put(self, uc) != null) {
+			throw new IllegalStateException("Trying to replace Unsatisfied Constraint for " + self);
+		}
 	}
 	
 	@Override
-	public void unmapUnsatisfiedConstraint(TracedConstraint constraint, UnsatisfiedConstraint uc) {
-		 unsatisfiedMap.remove(constraint, uc);
+	public void unmapUnsatisfiedConstraint(TracedConstraint constraint, UnsatisfiedConstraint uc, Object self) {
+		 Map<Object, UnsatisfiedConstraint> value = unsatisfiedMap.get(constraint);
+		 if (value == null) {
+		 	return;
+		 }
+		 value.remove(self, uc);
+		 if (value.isEmpty()) {
+		 	unsatisfiedMap.remove(constraint);
+		 }
 	}
-	
-	
-
 }
