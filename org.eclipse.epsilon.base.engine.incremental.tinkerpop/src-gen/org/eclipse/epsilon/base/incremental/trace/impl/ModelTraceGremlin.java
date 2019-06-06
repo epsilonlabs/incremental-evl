@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-06-04.
+ * This file was automatically generated on: 2019-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -147,7 +147,7 @@ public class ModelTraceGremlin implements IModelTrace, TinkerpopDelegate<Vertex>
     public IModelElementTrace getOrCreateModelElementTrace(String uri, IModelTypeTrace type) throws EolIncrementalExecutionException {    
         ModelElementTraceGremlin modelElementTrace = null;
         try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-            GraphTraversal<Vertex, Vertex> gt = agts.V(delegate).out("elements").has("uri", uri);
+            GraphTraversal<Vertex, Vertex> gt = agts.V(delegate).out("elements").has("uri", uri).out("type").hasId(type.getId());
             if (gt.hasNext()) {
                 modelElementTrace = new ModelElementTraceGremlin(gt.next(), gts, wrapperFactory);
             }

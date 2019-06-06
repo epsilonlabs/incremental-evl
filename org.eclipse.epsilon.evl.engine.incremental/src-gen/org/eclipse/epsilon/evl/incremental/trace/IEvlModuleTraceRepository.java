@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-06-04.
+ * This file was automatically generated on: 2019-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -18,12 +18,14 @@ import java.util.Set;
 import org.eclipse.epsilon.base.incremental.trace.IModuleExecutionTraceRepository;
 /** protected region IEvlModuleTraceRepositoryImports on begin **/
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.epsilon.base.incremental.TraceReexecution;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyAccess;
 import org.eclipse.epsilon.base.incremental.trace.IPropertyTrace;
+import org.eclipse.epsilon.base.incremental.trace.impl.ModelElementTrace;
 /** protected region IEvlModuleTraceRepositoryImports end **/
 
 @SuppressWarnings("unused")
@@ -132,6 +134,24 @@ public interface IEvlModuleTraceRepository extends IModuleExecutionTraceReposito
 	ICheckResult findResultInCheck(ICheckTrace checkTrace, IExecutionContext currentContext);
 	
 	IGuardResult findResultInGuard(IGuardTrace guardTrace, IExecutionContext currentContext);
+	
+	/**
+	 * Find an ExecutionContext for the given IContextTrace that matches a set of context variables.
+	 * The context variables are passed as a map of name:value pairs, where name should be the
+	 * variable name and value a ModelElementTrace id
+	 * @param moduleElementTrace
+	 * @param keyValues
+	 * @return
+	 */
+	IExecutionContext findExecutionContext(IContextTrace moduleElementTrace, Map<String, Object> contextVariables);
+	
+	/**
+	 * Find the result of a guard trace given a specific execution context
+	 * @param gt
+	 * @param ec
+	 * @return
+	 */
+	boolean findTraceGuardValue(IGuardTrace gt, IExecutionContext ec);
 
 	/** protected region IEvlModuleTraceRepositry end **/
 

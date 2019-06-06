@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-06-04.
+ * This file was automatically generated on: 2019-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -52,7 +52,9 @@ public class GuardTrace implements IGuardTrace {
     private final IGuardTraceHasLimits limits;
 
     /**
-     * The result.
+     * * A GuardTrace represents a Guard Block for either a Context or an Invariant.
+       * Since we only create one trace per AST element, we need to create multiple
+       * guard results, each associated to an execution context.
      */
     private final IGuardTraceHasResult result;
 

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-06-04.
+ * This file was automatically generated on: 2019-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -111,12 +111,12 @@ public class PropertyAccessGremlin implements IPropertyAccess, TinkerpopDelegate
             throw new TraceModelDuplicateElement();
         };
         try {
-            this.from.create(from);
             this.in.create(in);
+            this.from.create(from);
             this.property.create(property);
         } catch (TraceModelConflictRelation ex) {
-            ((AccessHasFromGremlin)this.from).delegate().remove();
             ((AccessHasInGremlin)this.in).delegate().remove();
+            ((AccessHasFromGremlin)this.from).delegate().remove();
             ((PropertyAccessHasPropertyGremlin)this.property).delegate().remove();
             throw ex;
         }

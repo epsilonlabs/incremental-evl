@@ -430,6 +430,9 @@ operation EClass createReferenceInstance(ref : EReference, subClass : Boolean, i
                   traversal += "\n";
                 }
             }
+            for (rf in self.getRequiredFeatures()) {
+                traversal += ".out(\"" + rf.name + "\").hasId(" + rf.name + ".getId())";
+            }
         }
         else {
             traversal = "";

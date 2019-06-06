@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-06-04.
+ * This file was automatically generated on: 2019-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -111,7 +111,15 @@ public class MessageTraceGremlin implements IMessageTrace, TinkerpopDelegate<Ver
     @Override
     public IInContextModuleElementTraceHasContextModuleElement contextModuleElement() {
         /** protected region contextModuleElement on begin **/
-        throw new UnsupportedOperationException("The reference contextModuleElement is derived and the getter hasn't been implemented");
+    	if (contextModuleElement == null) {
+        	contextModuleElement = new InContextModuleElementTraceHasContextModuleElementGremlin(this, gts, wrapperFactory);
+        	try {
+				contextModuleElement.create(invariant.get().invariantContext().get());
+			} catch (TraceModelConflictRelation e) {
+				throw new IllegalStateException("Error creating context relationship", e);
+			}
+        }
+        return contextModuleElement;
         /** protected region contextModuleElement end **/
     }
 

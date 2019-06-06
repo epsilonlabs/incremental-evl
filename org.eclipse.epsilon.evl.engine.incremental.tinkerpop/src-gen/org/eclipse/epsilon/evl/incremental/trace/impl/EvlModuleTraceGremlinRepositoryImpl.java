@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-06-04.
+ * This file was automatically generated on: 2019-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -13,6 +13,7 @@ package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
@@ -27,12 +28,17 @@ import org.eclipse.epsilon.base.incremental.trace.util.TraceFactory;
 import org.eclipse.epsilon.base.incremental.trace.impl.ModuleExecutionTraceGremlinRepositoryImpl;
 /** protected region EvlModuleTraceRepositoryImplImports on begin **/
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.Path;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
@@ -456,6 +462,77 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 		return result;
 	}
 	
+	@Override
+	public IExecutionContext findExecutionContext(
+		IContextTrace moduleElementTrace,
+		Map<String, Object> contextVariables) {
+		IExecutionContext result = null;
+		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+			GraphTraversal<Vertex, Path> gt =  agts.V(moduleElementTrace.getId())
+				.out("executionContext").as("ec")
+				.out("contextVariables").as("cvs")
+				.path();
+			Vertex match = null;
+			String key = null;
+			Object value = null;
+			while (gt.hasNext()) {
+				Path p = gt.next();
+				Map<String, Object> temp = Collections.emptyMap();
+				Object cvs = p.get("cvs");
+				if (cvs instanceof Vertex) {
+					temp = new HashMap<>(contextVariables);
+					removeMatchingVariable((Vertex) cvs, temp);
+				}
+				else {
+					@SuppressWarnings("unchecked")	// Paths can return multiple values
+					List<Vertex> cvs_ = (List<Vertex>) cvs;
+					for(Vertex cv : cvs_) {
+						temp = new HashMap<>(contextVariables);
+						removeMatchingVariable(cv, temp);
+					}
+				}
+				if (temp.isEmpty()) {
+					match = p.get("ec");
+					break;
+				}
+			}
+			if (match != null) {
+				result = factory.createTraceElement(match, gts);
+			}
+		} catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
+        }
+		return result;
+	}
+	
+	@Override
+	public boolean findTraceGuardValue(IGuardTrace guardTrace, IExecutionContext ec) {
+		try (ActiveTraversal agts = new ActiveTraversal(gts)) {
+			GraphTraversal<Vertex, Vertex> gt =  agts.V(guardTrace.getId())
+				.out("result").as("r")
+				.out("context").hasId(ec.getId())
+				.select("r");
+			if (gt.hasNext()) {
+				return (Boolean) gt.next().property("value").value();
+			}
+		} catch (Exception e) {
+            throw new IllegalStateException("There was an error during graph traversal.", e);
+        }
+        return false;
+	}
+	
+	private void removeMatchingVariable(Vertex cv, Map<String, Object> temp) {
+		Iterator<VertexProperty<Object>> it = cv.properties();
+		while (it.hasNext()) {
+			VertexProperty<Object> vp = it.next();
+			if (vp.label().equals("name")) {
+				temp.remove(
+					(String) vp.value(),
+					cv.vertices(Direction.OUT, "value").next().id());
+			}
+		}
+	}
+	
 	
 	private Optional<TraceReexecution>  makeRexecutionTrace(GraphTraversal<Vertex, Path> find_gt) {
 		Path p = find_gt.next();
@@ -485,6 +562,10 @@ public class EvlModuleTraceGremlinRepositoryImpl extends ModuleExecutionTraceGre
 		}
 		return Optional.ofNullable(rt);
 	}
+
+
+
+
 
     /** protected region IEvlModuleTraceRepositry end **/
 

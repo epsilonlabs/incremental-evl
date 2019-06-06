@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-06-04.
+ * This file was automatically generated on: 2019-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -119,6 +119,15 @@ public class ExecutionContextHasContextVariablesGremlin extends Feature
                     gt.has(id.getKey(), id.getValue());
                 }
                 result |= gt.hasNext();
+                if (target.value().get() != null) {
+	                gt.as("s")
+	                    .out("value").hasId(target.value().get().getId())
+	                    .select("s");
+	               result |= gt.hasNext();
+	            }
+	            else {
+	               return false;
+	            }
             }
         } catch (Exception e) {
             throw new IllegalStateException("There was an error during graph traversal.", e);

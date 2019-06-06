@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-06-04.
+ * This file was automatically generated on: 2019-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -121,6 +121,24 @@ public class ModuleExecutionTraceHasAccessesGremlin extends Feature
                     gt.has(id.getKey(), id.getValue());
                 }
                 result |= gt.hasNext();
+                if (target.from().get() != null) {
+	                gt.as("s")
+	                    .out("from").hasId(target.from().get().getId())
+	                    .select("s");
+	               result |= gt.hasNext();
+	            }
+	            else {
+	               return false;
+	            }
+                if (target.in().get() != null) {
+	                gt.as("s")
+	                    .out("in").hasId(target.in().get().getId())
+	                    .select("s");
+	               result |= gt.hasNext();
+	            }
+	            else {
+	               return false;
+	            }
             }
             result |= target.module().get() != null;
         } catch (Exception e) {

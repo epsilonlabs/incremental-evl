@@ -59,7 +59,7 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 	public void aboutToExecute(ModuleElement ast, IEolContext context) {
 		logger.debug("aboutToExecute {}", ast);
 		if (ast instanceof TracedModuleElement) {
-			moduleElementStack.addLast((TracedModuleElement<?>) ast);
+			moduleElementStack.addFirst((TracedModuleElement<?>) ast);
 		}
 	}
 

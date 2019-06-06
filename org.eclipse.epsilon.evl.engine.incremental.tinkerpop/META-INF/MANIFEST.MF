@@ -12,7 +12,8 @@ Require-Bundle: org.slf4j.api;bundle-version="1.7.10",
  org.eclipse.epsilon.base.engine.incremental,
  org.eclipse.epsilon.evl.engine.incremental,
  org.eclipse.epsilon.base.engine.incremental.tinkerpop,
- org.eclipse.epsilon.incremental.tinkerpop.dependencies;bundle-version="1.0.0"
+ org.eclipse.epsilon.incremental.tinkerpop.dependencies;bundle-version="1.0.0",
+ org.eclipse.epsilon.incremental.tinkerpop.dependencies.arangodb
 Export-Package: org.eclipse.epsilon.evl.incremental,
  org.eclipse.epsilon.evl.incremental.execute,
  org.eclipse.epsilon.evl.incremental.trace.impl,

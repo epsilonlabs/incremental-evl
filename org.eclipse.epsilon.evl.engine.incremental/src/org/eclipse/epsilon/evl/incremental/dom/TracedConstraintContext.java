@@ -11,7 +11,8 @@
 package org.eclipse.epsilon.evl.incremental.dom;
 
 import java.util.Collection;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
@@ -127,17 +128,24 @@ public class TracedConstraintContext extends ConstraintContext implements Traced
 		}
 		logger.info("createExecutionContext for {}:{}  with element {}", getTypeName(), index, element);
 		try {
-			currentContext = moduleElementTrace.getOrCreateExecutionContext();
-			assert this.currentContext != null;
-			if (guardBlock != null) {
-				((TracedExecutableBlock<?,?>) guardBlock).setCurrentContext(getCurrentContext());
-			}
 			IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
 			IModelElementTrace elementTrace = modelTraceRepository
 				.getModelElementTraceFor(incrementalModel.getModelUri(), incrementalModel.getElementId(element))
 				.orElseGet(() -> new ModelTraceWizard(context.getTraceManager().getTraceFactory())
 							.createElementTrace(incrementalModel, modelTraceRepository, element));
-			getCurrentContext().getOrCreateModelElementVariable("self", elementTrace);
+
+			Map<String, Object> contextVariables = new HashMap<>();
+			contextVariables.put("self", elementTrace.getId());						
+			currentContext = context.getTraceManager().getExecutionTraceRepository()
+					.findExecutionContext(moduleElementTrace, contextVariables);
+			if (currentContext == null) {
+				currentContext = moduleElementTrace.getOrCreateExecutionContext();
+				assert this.currentContext != null;
+				currentContext.getOrCreateModelElementVariable("self", elementTrace);
+			}
+			if (guardBlock != null) {
+				((TracedExecutableBlock<?,?>) guardBlock).setCurrentContext(currentContext);
+			}
 			IModuleExecutionTraceRepository<?> executionTraceRepository = context.getTraceManager()
 					.getExecutionTraceRepository();
 			String moduleUri = context.getModule().getChksum();

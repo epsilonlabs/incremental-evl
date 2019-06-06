@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-06-04.
+ * This file was automatically generated on: 2019-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -121,6 +121,11 @@ public class CheckTraceGremlin implements ICheckTrace, TinkerpopDelegate<Vertex>
         /** protected region contextModuleElement on begin **/
     	if (contextModuleElement == null) {
         	contextModuleElement = new InContextModuleElementTraceHasContextModuleElementGremlin(this, gts, wrapperFactory);
+        	try {
+				contextModuleElement.create(invariant.get().invariantContext().get());
+			} catch (TraceModelConflictRelation e) {
+				throw new IllegalStateException("Error creating context relationship", e);
+			}
         }
         return contextModuleElement;
         /** protected region contextModuleElement end **/

@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-06-04.
+ * This file was automatically generated on: 2019-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -40,12 +40,9 @@ public interface IGuardTrace extends IInContextModuleElementTrace {
                 
     /**
      * Returns the value of the '<em><b>result</b></em>' reference.
-     * <!-- protected region result-getter-doc on begin -->
-     * <p>
-     * If the meaning of the '<em>result</em>' attribute isn't clear,
-     * add it to the metamodel as a GenDoc or edit it here.
-     * </p>
-     * <!-- protected region result-getter-doc end --> 
+     * A GuardTrace represents a Guard Block for either a Context or an Invariant.
+     * Since we only create one trace per AST element, we need to create multiple
+     * guard results, each associated to an execution context.
      * @return the value of the '<em>result</em>' reference.
      */
     IGuardTraceHasResult result();

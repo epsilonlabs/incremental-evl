@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-06-04.
+ * This file was automatically generated on: 2019-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -64,7 +64,9 @@ public class GuardTraceGremlin implements IGuardTrace, TinkerpopDelegate<Vertex>
     private IGuardTraceHasLimits limits;
 
     /**
-     * The result.
+     * * A GuardTrace represents a Guard Block for either a Context or an Invariant.
+       * Since we only create one trace per AST element, we need to create multiple
+       * guard results, each associated to an execution context.
      */
     private IGuardTraceHasResult result;
 
@@ -119,7 +121,21 @@ public class GuardTraceGremlin implements IGuardTrace, TinkerpopDelegate<Vertex>
     @Override
     public IInContextModuleElementTraceHasContextModuleElement contextModuleElement() {
         /** protected region contextModuleElement on begin **/
-        throw new UnsupportedOperationException("The reference contextModuleElement is derived and the getter hasn't been implemented");
+    	if (contextModuleElement == null) {
+    		contextModuleElement = new InContextModuleElementTraceHasContextModuleElementGremlin(this, gts, wrapperFactory);
+	        IGuardedElementTrace ge = limits.get();
+	        try {
+		        if(ge instanceof IInvariantTrace) {
+		        	contextModuleElement.create(((IInvariantTrace) ge).invariantContext().get());
+		        }
+		        else { // Must be a context
+					contextModuleElement.create(((IContextTrace) ge));
+		        }
+	        } catch (TraceModelConflictRelation e) {
+	        	throw new IllegalStateException("Error creating context relationship", e);
+			}
+    	}
+    	return contextModuleElement;
         /** protected region contextModuleElement end **/
     }
 
@@ -139,15 +155,21 @@ public class GuardTraceGremlin implements IGuardTrace, TinkerpopDelegate<Vertex>
     public IGuardResult getOrCreateGuardResult(IExecutionContext context) throws EolIncrementalExecutionException {    
         GuardResultGremlin guardResult = null;
         try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-            Vertex v = null;
-            try {
-                v = agts.addV("GuardResult").next();
-                /* protected region guardResultTypeOverride on begin */
-                guardResult = new GuardResultGremlin(context, this, v, gts, wrapperFactory);
-                /* protected region guardResultTypeOverride end */
-            } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
-                agts.V(v).as("v").properties().drop().select("v").drop();
-                throw new EolIncrementalExecutionException("Error creating requested GuardResult", e);
+            GraphTraversal<Vertex, Vertex> gt = agts.V(delegate).out("result").out("context").hasId(context.getId());
+            if (gt.hasNext()) {
+                guardResult = new GuardResultGremlin(gt.next(), gts, wrapperFactory);
+            }
+            else {
+                Vertex v = null;
+                try {
+                    v = agts.addV("GuardResult").next();
+                    /* protected region guardResultTypeOverride on begin */
+	                guardResult = new GuardResultGremlin(context, this, v, gts, wrapperFactory);
+	                /* protected region guardResultTypeOverride end */
+                } catch (TraceModelDuplicateElement | TraceModelConflictRelation e) {
+                    agts.V(v).as("v").properties().drop().select("v").drop();
+                    throw new EolIncrementalExecutionException("Error creating requested GuardResult", e);
+                }
             }
         } catch (Exception e) {
             throw new IllegalStateException("There was an error during graph traversal.", e);

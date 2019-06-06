@@ -39,6 +39,7 @@
         eType="#//ContextTrace" eOpposite="#//ContextTrace/constraints"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="GuardResult" eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//IdElement">
+    <eAnnotations source="https://eclipse.org/epsilon/incremental/equivalency" references="#//GuardResult/context"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="context" lowerBound="1"
         eType="ecore:EClass ../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//ExecutionContext"/>
@@ -51,8 +52,12 @@
         <details key="edge" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="result" unique="false"
-        upperBound="-1" eType="#//GuardResult" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="result" upperBound="-1"
+        eType="#//GuardResult" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="A GuardTrace represents a Guard Block for either a Context or an Invariant.&#xA;Since we only create one trace per AST element, we need to create multiple&#xA;guard results, each associated to an execution context."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="CheckResult" eSuperTypes="../../org.eclipse.epsilon.base.engine.incremental/model/EpsilonExecutionTrace.ecore#//IdElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>

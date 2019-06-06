@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-06-04.
+ * This file was automatically generated on: 2019-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -190,7 +190,7 @@ public class EvlModuleTraceGremlin implements IEvlModuleTrace, TinkerpopDelegate
     public IModelAccess getOrCreateModelAccess(String modelName, IModelTrace modelTrace) throws EolIncrementalExecutionException {    
         ModelAccessGremlin modelAccess = null;
         try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-            GraphTraversal<Vertex, Vertex> gt = agts.V(delegate).out("models").has("modelName", modelName);
+            GraphTraversal<Vertex, Vertex> gt = agts.V(delegate).out("models").has("modelName", modelName).out("modelTrace").hasId(modelTrace.getId());
             if (gt.hasNext()) {
                 modelAccess = new ModelAccessGremlin(gt.next(), gts, wrapperFactory);
             }

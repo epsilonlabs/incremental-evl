@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-06-04.
+ * This file was automatically generated on: 2019-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -112,7 +112,7 @@ public class ExecutionContextGremlin implements IExecutionContext, TinkerpopDele
     public IModelElementVariable getOrCreateModelElementVariable(String name, IModelElementTrace value) throws EolIncrementalExecutionException {    
         ModelElementVariableGremlin modelElementVariable = null;
         try (ActiveTraversal agts = new ActiveTraversal(gts)) {
-            GraphTraversal<Vertex, Vertex> gt = agts.V(delegate).out("contextVariables").has("name", name);
+            GraphTraversal<Vertex, Vertex> gt = agts.V(delegate).out("contextVariables").has("name", name).out("value").hasId(value.getId());
             if (gt.hasNext()) {
                 modelElementVariable = new ModelElementVariableGremlin(gt.next(), gts, wrapperFactory);
             }

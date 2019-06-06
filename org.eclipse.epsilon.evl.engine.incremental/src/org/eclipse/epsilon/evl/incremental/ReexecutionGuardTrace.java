@@ -92,6 +92,7 @@ public class ReexecutionGuardTrace implements TraceReexecution {
 		}
 		else {
 			TracedConstraintContext tcc = ((IEvlModuleIncremental) evlModule).getTracedConstraintContext(guardTrace);
+			// FIXME need to evluate guard trace!!
 			tcc.execute(selfVal, (IIncrementalEvlContext)context);
 		}
 	}

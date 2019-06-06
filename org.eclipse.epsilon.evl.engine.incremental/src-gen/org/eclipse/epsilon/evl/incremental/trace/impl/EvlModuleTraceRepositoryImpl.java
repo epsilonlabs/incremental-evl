@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-06-04.
+ * This file was automatically generated on: 2019-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -12,14 +12,10 @@
 package org.eclipse.epsilon.evl.incremental.trace.impl;
 
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
-
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTrace;
-import org.eclipse.epsilon.evl.incremental.trace.IEvlModuleTraceRepository;
-
-
 /** protected region EvlModuleTraceRepositoryImplImports on begin **/
 import java.util.function.Function;
 import java.util.Collection;
@@ -452,6 +448,20 @@ public class EvlModuleTraceRepositoryImpl implements IEvlModuleTraceRepository {
 		// TODO Implement IEvlModuleTraceRepository.findModelElementExecutionTraces
 		throw new RuntimeException("Unimplemented Method IEvlModuleTraceRepository.findModelElementExecutionTraces invoked.");
 	}
+
+	@Override
+	public IExecutionContext findExecutionContext(IContextTrace moduleElementTrace,
+			Map<String, Object> contextVariables) {
+		// TODO Implement IEvlModuleTraceRepository.findExecutionContext
+		throw new RuntimeException("Unimplemented Method IEvlModuleTraceRepository.findExecutionContext invoked.");
+	}
+
+	@Override
+	public boolean findTraceGuardValue(IGuardTrace gt, IExecutionContext ec) {
+		// TODO Implement IEvlModuleTraceRepository.findTraceGuardValue
+		throw new RuntimeException("Unimplemented Method IEvlModuleTraceRepository.findTraceGuardValue invoked.");
+	}
+
 	
 	
 //	/**

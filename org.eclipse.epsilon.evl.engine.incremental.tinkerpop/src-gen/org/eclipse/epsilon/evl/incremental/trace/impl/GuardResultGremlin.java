@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-06-04.
+ * This file was automatically generated on: 2019-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -168,6 +168,13 @@ public class GuardResultGremlin implements IGuardResult, TinkerpopDelegate<Verte
         GuardResultGremlin other = (GuardResultGremlin) obj;
         if (!sameIdentityAs(other))
             return false;
+    if (context == null) {
+        if (other.context != null)
+            return false;
+    }
+        if (!context().get().equals(other.context().get())) {
+            return false;
+        }
         return true; 
   }
 
@@ -175,6 +182,8 @@ public class GuardResultGremlin implements IGuardResult, TinkerpopDelegate<Verte
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        IExecutionContext context = context().get();
+        result = prime * result + ((context == null) ? 0 : context.hashCode());
         return result;
     }
     

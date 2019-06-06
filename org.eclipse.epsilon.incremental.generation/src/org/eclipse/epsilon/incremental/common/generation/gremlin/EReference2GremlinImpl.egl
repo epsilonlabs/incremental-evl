@@ -201,6 +201,17 @@ public class [%=er.getRelationJavaClassName(classPrefix, classSufix)%] extends F
                     gt.has(id.getKey(), id.getValue());
                 }
                 result |= gt.hasNext();
+[%  for (rf in er.getEReferenceType().getRequiredFeatures()) {%]
+                if (target.[%=rf.name%]().get() != null) {
+	                gt.as("s")
+	                    .out("[%=rf.name%]").hasId(target.[%=rf.name%]().get().getId())
+	                    .select("s");
+	               result |= gt.hasNext();
+	            }
+	            else {
+	               return false;
+	            }
+[%  }%]
             }
 [%} else {%]
             result |= delegate == null ?

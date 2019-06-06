@@ -1,5 +1,5 @@
  /*******************************************************************************
- * This file was automatically generated on: 2019-06-05.
+ * This file was automatically generated on: 2019-06-06.
  * Only modify protected regions indicated by "/** **&#47;"
  *
  * Copyright (c) 2017 The University of York.
@@ -77,8 +77,8 @@ public class AllInstancesAccess implements IAllInstancesAccess {
             throw new TraceModelDuplicateElement();
         };
 
-        this.module = new AccessHasModule(this);
         this.type = new AllInstancesAccessHasType(this);
+        this.module = new AccessHasModule(this);
         if (!this.type.create(type)) {
             throw new TraceModelDuplicateElement();
         }
@@ -162,18 +162,18 @@ public class AllInstancesAccess implements IAllInstancesAccess {
         AllInstancesAccess other = (AllInstancesAccess) obj;
         if (!sameIdentityAs(other))
             return false;
-        if (module.get() == null) {
-            if (other.module.get() != null)
-                return false;
-        }
-        if (!module.get().equals(other.module.get())) {
-            return false;
-        }
         if (type.get() == null) {
             if (other.type.get() != null)
                 return false;
         }
         if (!type.get().equals(other.type.get())) {
+            return false;
+        }
+        if (module.get() == null) {
+            if (other.module.get() != null)
+                return false;
+        }
+        if (!module.get().equals(other.module.get())) {
             return false;
         }
         return true; 
@@ -185,8 +185,8 @@ public class AllInstancesAccess implements IAllInstancesAccess {
         int result = 1;
         Boolean ofKind = Boolean.valueOf(getOfKind());
         result = prime * result + ((ofKind == null) ? 0 : ofKind.hashCode());
-        result = prime * result + ((module.get() == null) ? 0 : module.get().hashCode());
         result = prime * result + ((type.get() == null) ? 0 : type.get().hashCode());
+        result = prime * result + ((module.get() == null) ? 0 : module.get().hashCode());
         return result;
     }
 }
