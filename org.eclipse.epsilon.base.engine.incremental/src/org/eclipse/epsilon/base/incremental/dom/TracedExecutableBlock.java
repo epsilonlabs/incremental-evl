@@ -55,6 +55,7 @@ public class TracedExecutableBlock<TraceType extends IModuleElementTrace, Return
 	@Override
 	public void setCurrentContext(IExecutionContext currentContext) {
 		this.currentContext = currentContext;
+
 	}
 
 	@Override

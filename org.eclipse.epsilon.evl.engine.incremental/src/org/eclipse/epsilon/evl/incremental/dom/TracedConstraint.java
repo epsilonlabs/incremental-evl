@@ -19,9 +19,12 @@ import java.util.Optional;
 import org.eclipse.epsilon.base.incremental.dom.TracedExecutableBlock;
 import org.eclipse.epsilon.base.incremental.dom.TracedModuleElement;
 import org.eclipse.epsilon.base.incremental.exceptions.EolIncrementalExecutionException;
+import org.eclipse.epsilon.base.incremental.exceptions.TraceModelConflictRelation;
 import org.eclipse.epsilon.base.incremental.models.IIncrementalModel;
+import org.eclipse.epsilon.base.incremental.trace.IContextModuleElementTrace;
 import org.eclipse.epsilon.base.incremental.trace.IExecutionContext;
 import org.eclipse.epsilon.base.incremental.trace.IModelElementTrace;
+import org.eclipse.epsilon.base.incremental.trace.IModelTraceRepository;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.FrameType;
 import org.eclipse.epsilon.eol.execute.context.Variable;
@@ -33,6 +36,7 @@ import org.eclipse.epsilon.evl.execute.context.IEvlContext;
 import org.eclipse.epsilon.evl.incremental.execute.context.IncrementalEvlContext;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckResult;
 import org.eclipse.epsilon.evl.incremental.trace.ICheckTrace;
+import org.eclipse.epsilon.evl.incremental.trace.IContextTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardResult;
 import org.eclipse.epsilon.evl.incremental.trace.IGuardTrace;
 import org.eclipse.epsilon.evl.incremental.trace.IInvariantTrace;
@@ -91,13 +95,16 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 		return this.currentContext;
 	}
 	
+	@Override
 	public boolean shouldBeChecked(Object modelElement, IEvlContext context) throws EolRuntimeException {
 		
+		assert context instanceof IncrementalEvlContext;
+		IncrementalEvlContext tracedEvlContext = (IncrementalEvlContext) context;
 		boolean result = !isLazy(context);
+		createModuleElementTraces(tracedEvlContext);
+		populateExecutionContext(tracedEvlContext);
 		if (result && (guardBlock != null)) {
 			result &= appliesTo(modelElement, context);
-			assert context instanceof IncrementalEvlContext;
-			IncrementalEvlContext tracedEvlContext = (IncrementalEvlContext) context;
 			IGuardTrace guardTrace = (IGuardTrace) ((TracedExecutableBlock<?, ?>) guardBlock).getModuleElementTrace();
 			IGuardResult guardResult = tracedEvlContext.getTraceManager().getExecutionTraceRepository()
 					.findResultInGuard(guardTrace, getCurrentContext());
@@ -154,20 +161,98 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 
 	}
 	
+	public void createModuleElementTraces(IncrementalEvlContext context) throws EolRuntimeException {
+		if (moduleElementTrace == null) {
+			IContextTrace constraintContextTrace = ((TracedConstraintContext) getConstraintContext()).getModuleElementTrace();
+			try {
+				moduleElementTrace = constraintContextTrace.getOrCreateInvariantTrace(this.getName());
+				moduleElementTrace.contextModuleElement().create(constraintContextTrace);
+				if (hasGuard()) {
+					IGuardTrace gt = getOrCreateGuardTrace();
+					if (!gt.contextModuleElement().create(constraintContextTrace)) {
+						logger.error("Not possible to create parent trace for guard");
+					}
+				}
+				if (hasCheck()) {
+					ICheckTrace ct = getOrCreateCheckTrace();
+					if (!ct.contextModuleElement().create(constraintContextTrace)) {
+						logger.error("Not possible to create parent trace for check");
+					}
+				}
+				if (hasMessage()) {
+					IMessageTrace mt = getOrCreateMessageTrace();
+					if (!mt.contextModuleElement().create(constraintContextTrace)) {
+						logger.error("Not possible to create parent trace for message");
+					}
+				}
+			}
+			catch (TraceModelConflictRelation e) {
+				throw new EolRuntimeException("Not possible to create module traces traces for invariant " + this, e);
+			}
+			catch (EolIncrementalExecutionException e) {
+				throw new EolRuntimeException("There was an error creating the incremental trace information.", e);
+			}
+		}
+	}
+	
+	/**
+	 * Create the execution context for the current element and create result traces for the guard
+	 * and the check. This method shuld be called after createModuleElementTraces
+	 * 
+	 * @param modelElement
+	 * @param context
+	 * @param model
+	 * @throws EolRuntimeException
+	 */
+	public void populateExecutionContext(
+		IncrementalEvlContext context) throws EolRuntimeException {	
+		TracedConstraintContext constraintContext = ((TracedConstraintContext) getConstraintContext());
+		setCurrentContext(constraintContext.getCurrentContext());
+		if (hasGuard()) {
+			TracedExecutableBlock<?, ?> tracedGuard = (TracedExecutableBlock<?,?>) guardBlock;
+			try {
+				((IGuardTrace) tracedGuard.getModuleElementTrace()).getOrCreateGuardResult(constraintContext.getCurrentContext());
+			} catch (EolIncrementalExecutionException e1) {
+				throw new EolRuntimeException("Error creating guard result", e1);
+			}
+			
+		}
+		if (hasCheck()) {
+			TracedExecutableBlock<?, ?> tracedCheck = (TracedExecutableBlock<?,?>) checkBlock;
+			try {
+				((ICheckTrace) tracedCheck.getModuleElementTrace()).getOrCreateCheckResult(constraintContext.getCurrentContext());
+			} catch (EolIncrementalExecutionException e2) {
+				throw new EolRuntimeException("Error creating check result", e2);
+			}
+		}		
+	}
+	
 	/** 
-	 * Only execute a specific part of the Constraint
+	 * Only execute a specific part of the Constraint. This method is used for incremental execution
 	 *   
 	 * @throws EolRuntimeException
 	 */
 	 // FIXME Do we need the guard part for the TracedContraintContext? Perhaps the applies to
-	public final Optional<UnsatisfiedConstraint> executeImpl(
+	public final Optional<UnsatisfiedConstraint> reexecute(
 		Object selfModelElement,
 		IErlContext context_,
 		String part) throws EolRuntimeException {
 		IncrementalEvlContext context = (IncrementalEvlContext) context_;
 		IModel model = context.getModelRepository().getOwningModel(selfModelElement);
 		assert model instanceof IIncrementalModel;
-		((TracedConstraintContext) getConstraintContext()).populateExecutionContext(context, (IIncrementalModel) model, selfModelElement);
+		IIncrementalModel incrementalModel = (IIncrementalModel)model;
+		IModelTraceRepository modelTraceRepository = context.getTraceManager().getModelTraceRepository();
+		IModelElementTrace elementTrace = modelTraceRepository
+				.getModelElementTraceFor(incrementalModel .getModelUri(), incrementalModel.getElementId(selfModelElement))
+				.orElseThrow(() -> new IllegalStateException("During re-execution the element trace must "
+						+ "exsit. A trace was not found for " + selfModelElement));
+		// Create module element traces
+		((TracedConstraintContext) getConstraintContext()).createModuleElementTraces(context);
+		createModuleElementTraces((IncrementalEvlContext) context);
+		// Populate execution context
+		((TracedConstraintContext) getConstraintContext())
+			.populateExecutionContext(context, (IIncrementalModel) model, elementTrace);
+		populateExecutionContext(context);
 		switch(part) {
 		case "I":
 		case "GI":		// Invariant Guard
@@ -203,46 +288,7 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 		}
 		return Optional.empty();
 	}
-	
-	private boolean traceGuardValue(
-		Object selfModelElement,
-		IIncrementalModel model,
-		IncrementalEvlContext context) throws EolRuntimeException {
-		IGuardTrace gt = moduleElementTrace.guard().get();
-		if (gt == null) {
-			return true;
-		}
-		Map<String, Object> contextVariables = new HashMap<>();
-		Optional<IModelElementTrace> met = context.getTraceManager()
-			.getModelTraceRepository()
-			.getModelElementTraceFor(
-				model.getModelUri(),
-				model.getElementId(selfModelElement));
-		contextVariables.put("self", met.get().getId());
-		IExecutionContext ec = context.getTraceManager().getExecutionTraceRepository()
-			.findExecutionContext(moduleElementTrace.invariantContext().get(), contextVariables);
-		return context.getTraceManager().getExecutionTraceRepository()
-				.findTraceGuardValue(gt, ec);
-	}	
-	
-	// A previous Message/FIX may have created the UnsatisfiedConstraint
-	protected UnsatisfiedConstraint preprocessCheck(Object self, IEvlContext context_) {
-		IncrementalEvlContext context = (IncrementalEvlContext) context_;
-		UnsatisfiedConstraint unsatisfiedConstraint = context
-			.getUnsatisfiedConstraint(this, self)
-		 	.orElseGet(() -> {
-					UnsatisfiedConstraint nuc = new UnsatisfiedConstraint();
-					context.mapUnsatisfiedConstraint(this, nuc, self);
-					return nuc;
-					});
-		context.getFrameStack()
-			.enterLocal(FrameType.UNPROTECTED, checkBlock.getBody())
-			.put(
-				Variable.createReadOnlyVariable("self", self),
-				Variable.createReadOnlyVariable("extras", unsatisfiedConstraint.getExtras())
-			);
-		return unsatisfiedConstraint;
-	}
+
 
 	/**
 	 * Create a new guard trace for the constraint.
@@ -339,8 +385,25 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 	public boolean hasMessage() {
 		return messageBlock != null;
 	}
-
 	
+	// A previous Message/FIX may have created the UnsatisfiedConstraint
+	protected UnsatisfiedConstraint preprocessCheck(Object self, IEvlContext context_) {
+		IncrementalEvlContext context = (IncrementalEvlContext) context_;
+		UnsatisfiedConstraint unsatisfiedConstraint = context
+			.getUnsatisfiedConstraint(this, self)
+		 	.orElseGet(() -> {
+					UnsatisfiedConstraint nuc = new UnsatisfiedConstraint();
+					context.mapUnsatisfiedConstraint(this, nuc, self);
+					return nuc;
+					});
+		context.getFrameStack()
+			.enterLocal(FrameType.UNPROTECTED, checkBlock.getBody())
+			.put(
+				Variable.createReadOnlyVariable("self", self),
+				Variable.createReadOnlyVariable("extras", unsatisfiedConstraint.getExtras())
+			);
+		return unsatisfiedConstraint;
+	}
 
 	private void removeUnsatisfiedConstraint(IEvlContext context, Object self) {
 		Iterator<UnsatisfiedConstraint> it = context.getUnsatisfiedConstraints().iterator();
@@ -351,7 +414,26 @@ public class TracedConstraint extends Constraint implements TracedModuleElement<
 			}
 		}
 	}
-
-
+	
+	private boolean traceGuardValue(
+			Object selfModelElement,
+			IIncrementalModel model,
+			IncrementalEvlContext context) throws EolRuntimeException {
+			IGuardTrace gt = moduleElementTrace.guard().get();
+			if (gt == null) {
+				return true;
+			}
+			Map<String, Object> contextVariables = new HashMap<>();
+			Optional<IModelElementTrace> met = context.getTraceManager()
+				.getModelTraceRepository()
+				.getModelElementTraceFor(
+					model.getModelUri(),
+					model.getElementId(selfModelElement));
+			contextVariables.put("self", met.get().getId());
+			IExecutionContext ec = context.getTraceManager().getExecutionTraceRepository()
+				.findExecutionContext(moduleElementTrace.invariantContext().get(), contextVariables);
+			return context.getTraceManager().getExecutionTraceRepository()
+					.findTraceGuardValue(gt, ec);
+		}	
 
 }

@@ -663,7 +663,6 @@ public class IncrementalEvlModule extends EvlModule implements IEvlModuleIncreme
 		TracedConstraint tracedConstraint = (TracedConstraint) conCtx.getConstraints().stream()
 				.filter(c -> c.getName().equals(invariantTrace.getName()))
 				.findFirst().get();
-		tracedConstraint.setModuleElementTrace(invariantTrace);
 		return tracedConstraint;
 	}
 

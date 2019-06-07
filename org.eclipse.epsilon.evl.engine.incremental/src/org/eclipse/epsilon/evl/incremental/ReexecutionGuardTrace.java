@@ -88,7 +88,7 @@ public class ReexecutionGuardTrace implements TraceReexecution {
 		Object selfVal = getSelf((IIncrementalEvlContext) context);
 		if (limits instanceof IInvariantTrace) {
 			TracedConstraint tc = ((IEvlModuleIncremental) evlModule).getTracedConstraint(guardTrace);
-			tc.executeImpl(selfVal, (IIncrementalEvlContext) context, "I");
+			tc.reexecute(selfVal, (IIncrementalEvlContext) context, "I");
 		}
 		else {
 			TracedConstraintContext tcc = ((IEvlModuleIncremental) evlModule).getTracedConstraintContext(guardTrace);

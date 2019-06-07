@@ -121,11 +121,14 @@ public class CheckTraceGremlin implements ICheckTrace, TinkerpopDelegate<Vertex>
         /** protected region contextModuleElement on begin **/
     	if (contextModuleElement == null) {
         	contextModuleElement = new InContextModuleElementTraceHasContextModuleElementGremlin(this, gts, wrapperFactory);
-        	try {
-				contextModuleElement.create(invariant.get().invariantContext().get());
-			} catch (TraceModelConflictRelation e) {
-				throw new IllegalStateException("Error creating context relationship", e);
-			}
+        	IContextModuleElementTrace existing = contextModuleElement.get();
+        	if (existing == null) {
+	        	try {
+					contextModuleElement.create(invariant.get().invariantContext().get());
+				} catch (TraceModelConflictRelation e) {
+					throw new IllegalStateException("Error creating context relationship", e);
+				}
+        	}
         }
         return contextModuleElement;
         /** protected region contextModuleElement end **/

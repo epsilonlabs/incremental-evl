@@ -124,16 +124,19 @@ public class GuardTraceGremlin implements IGuardTrace, TinkerpopDelegate<Vertex>
     	if (contextModuleElement == null) {
     		contextModuleElement = new InContextModuleElementTraceHasContextModuleElementGremlin(this, gts, wrapperFactory);
 	        IGuardedElementTrace ge = limits.get();
-	        try {
-		        if(ge instanceof IInvariantTrace) {
-		        	contextModuleElement.create(((IInvariantTrace) ge).invariantContext().get());
-		        }
-		        else { // Must be a context
-					contextModuleElement.create(((IContextTrace) ge));
-		        }
-	        } catch (TraceModelConflictRelation e) {
-	        	throw new IllegalStateException("Error creating context relationship", e);
-			}
+	        IContextModuleElementTrace existing = contextModuleElement.get();
+        	if (existing == null) {
+		        try {
+			        if(ge instanceof IInvariantTrace) {
+			        	contextModuleElement.create(((IInvariantTrace) ge).invariantContext().get());
+			        }
+			        else { // Must be a context
+						contextModuleElement.create(((IContextTrace) ge));
+			        }
+		        } catch (TraceModelConflictRelation e) {
+		        	throw new IllegalStateException("Error creating context relationship", e);
+				}
+        	}
     	}
     	return contextModuleElement;
         /** protected region contextModuleElement end **/

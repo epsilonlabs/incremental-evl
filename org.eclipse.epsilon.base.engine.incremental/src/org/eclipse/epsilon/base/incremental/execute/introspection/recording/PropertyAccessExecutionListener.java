@@ -165,7 +165,8 @@ public class PropertyAccessExecutionListener implements IExecutionListener {
 					.createPropertyTrace(model, modelElement, propertyName, context);
 				});
 		// FIXME A property access should also generate the matching element access?
-		IPropertyAccess pa = moduleExecutionTrace.getOrCreateAccess(IPropertyAccess.class, executionTrace, currentContext, propertyTrace);
+		IPropertyAccess pa = moduleExecutionTrace
+			.getOrCreateAccess(IPropertyAccess.class, executionTrace, currentContext, propertyTrace);
 		setPropertyAccessValue(model, result, context, pa, modelElement, propertyName);
 	}
 	

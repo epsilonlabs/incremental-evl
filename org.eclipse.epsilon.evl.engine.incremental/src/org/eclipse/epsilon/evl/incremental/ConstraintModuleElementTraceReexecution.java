@@ -107,7 +107,7 @@ public abstract class ConstraintModuleElementTraceReexecution implements TraceRe
 		assert evlModule instanceof IEvlModuleIncremental;
 		Object selfVal = getSelf((IIncrementalEvlContext) context);
 		TracedConstraint tc = getTracedConstraint((IEvlModuleIncremental) evlModule);
-		tc.executeImpl(selfVal, (IIncrementalEvlContext) context, section());
+		tc.reexecute(selfVal, (IIncrementalEvlContext) context, section());
 	}
 
 	@Override
